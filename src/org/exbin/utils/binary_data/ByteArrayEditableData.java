@@ -92,7 +92,7 @@ public class ByteArrayEditableData extends ByteArrayData implements EditableBina
         }
         int length = insertedData.length;
         if (length > 0) {
-            byte[] newData = new byte[(int) (data.length + length)];
+            byte[] newData = new byte[data.length + length];
             System.arraycopy(data, 0, newData, 0, (int) startFrom);
             try {
                 System.arraycopy(insertedData, 0, newData, (int) startFrom, length);
@@ -110,7 +110,7 @@ public class ByteArrayEditableData extends ByteArrayData implements EditableBina
             throw new OutOfBoundsException("Data can be inserted only inside or at the end");
         }
         if (length > 0) {
-            byte[] newData = new byte[(int) (data.length + length)];
+            byte[] newData = new byte[data.length + length];
             System.arraycopy(data, 0, newData, 0, (int) startFrom);
             try {
                 System.arraycopy(insertedData, insertedDataOffset, newData, (int) startFrom, length);

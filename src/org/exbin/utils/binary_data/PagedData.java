@@ -244,7 +244,7 @@ public class PagedData implements EditableBinaryData {
             if (fillSize > length) {
                 fillSize = (int) length;
             }
-            Arrays.fill(page, pageOffset, pageOffset + fillSize, (byte) fill);
+            Arrays.fill(page, pageOffset, pageOffset + fillSize, fill);
             length -= fillSize;
             startFrom += fillSize;
         }
@@ -367,7 +367,7 @@ public class PagedData implements EditableBinaryData {
 
                     int copySize = pageSize - offset;
                     if (copySize > ((PagedData) replacingData).getPageSize() - sourceOffset) {
-                        copySize = (int) (((PagedData) replacingData).getPageSize() - sourceOffset);
+                        copySize = ((PagedData) replacingData).getPageSize() - sourceOffset;
                     }
                     if (copySize > length) {
                         copySize = (int) length;
@@ -444,7 +444,7 @@ public class PagedData implements EditableBinaryData {
 
             int copySize = pageSize - offset;
             if (copySize > length) {
-                copySize = (int) length;
+                copySize = length;
             }
 
             try {

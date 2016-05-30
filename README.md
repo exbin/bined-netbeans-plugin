@@ -5,7 +5,7 @@ Hexadecimal viewer/editor component module for NetBeans platform.
 
 Homepage: http://deltahex.exbin.org  
 
-Inspired by: http://plugins.netbeans.org/plugin/40174/hexeditor
+Derived from: http://plugins.netbeans.org/plugin/40174/hexeditor
 
 Features
 --------
@@ -15,6 +15,8 @@ Features
 - Support for selection and clipboard
 - Optional scrollbars
 - Support for text encodings
+- Support for showing unprintable/whitespace characters
+- Partial support for undo/redo
 
 Todo
 ----

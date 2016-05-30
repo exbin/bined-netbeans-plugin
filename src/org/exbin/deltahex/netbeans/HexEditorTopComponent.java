@@ -171,8 +171,6 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
-        } else {
-            savable.deactivate();
         }
 
         return true;
@@ -217,7 +215,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 
         infoToolbar = new javax.swing.JPanel();
         encodingLabel = new javax.swing.JLabel();
-        encodingComboBox = new javax.swing.JComboBox();
+        encodingComboBox = new javax.swing.JComboBox<>();
         controlToolBar = new javax.swing.JToolBar();
         lineWrappingToggleButton = new javax.swing.JToggleButton();
         showUnprintablesToggleButton = new javax.swing.JToggleButton();
@@ -294,7 +292,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar controlToolBar;
-    private javax.swing.JComboBox encodingComboBox;
+    private javax.swing.JComboBox<String> encodingComboBox;
     private javax.swing.JLabel encodingLabel;
     private javax.swing.JPanel infoToolbar;
     private javax.swing.JToggleButton lineWrappingToggleButton;
@@ -303,10 +301,14 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 
     @Override
     public void componentOpened() {
+        hexadecimal.requestFocus();
     }
 
     @Override
     public void componentClosed() {
+        if (savable != null) {
+            savable.deactivate();
+        }
     }
 
     public void writeProperties(java.util.Properties p) {
