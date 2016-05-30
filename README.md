@@ -38,3 +38,7 @@ License
 Apache License, Version 2.0
 see LICENSE-2.0.txt
 
+Whole plugin is also dual-licensed:
+
+Common Development and Distribution License, Version 1.0
+see cddl-1.0.txt
