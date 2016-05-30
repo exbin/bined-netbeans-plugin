@@ -33,7 +33,8 @@ import javax.swing.KeyStroke;
 import org.exbin.deltahex.Hexadecimal;
 import org.exbin.deltahex.delta.MemoryHexadecimalData;
 import org.exbin.deltahex.operation.HexCommandHandler;
-import org.exbin.deltahex.operation.HexUndoHandler;
+import org.exbin.deltahex.operation.HexUndoSwingHandler;
+import org.exbin.xbup.operation.Command;
 import org.exbin.xbup.operation.undo.XBUndoUpdateListener;
 import org.netbeans.api.queries.FileEncodingQuery;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -75,13 +76,8 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 
         hexadecimal = new Hexadecimal();
 
-        HexUndoHandler undoHandler = new HexUndoHandler(hexadecimal);
-        undoHandler.addUndoUpdateListener(new XBUndoUpdateListener() {
-            @Override
-            public void undoChanged() {
-                hexadecimal.repaint();
-            }
-        });
+        undoRedo = new UndoRedo.Manager();
+        HexUndoSwingHandler undoHandler = new HexUndoSwingHandler(hexadecimal, undoRedo);
 
         hexadecimal.setData(new MemoryHexadecimalData());
         HexCommandHandler commandHandler = new HexCommandHandler(hexadecimal, undoHandler);
@@ -106,16 +102,18 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 
         setActivatedNodes(new Node[]{node});
 
-        undoRedo = new UndoRedo.Manager();
-
         undoHandler.addUndoUpdateListener(new XBUndoUpdateListener() {
             @Override
-            public void undoChanged() {
+            public void undoCommandPositionChanged() {
+                hexadecimal.repaint();
+            }
 
+            @Override
+            public void undoCommandAdded(final Command command) {
+                setModified(true);
             }
         });
 
-//        hexEditor.setUndoManager(undoRedo);
         setName(NbBundle.getMessage(HexEditorTopComponent.class, "CTL_HexEditorTopComponent"));
         setToolTipText(NbBundle.getMessage(HexEditorTopComponent.class, "HINT_HexEditorTopComponent"));
 
@@ -154,8 +152,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 
     @Override
     public boolean canClose() {
-        final Savable savable = getLookup().lookup(Savable.class);
-        if (null == savable) {
+        if (savable == null) {
             return true;
         }
 
@@ -164,16 +161,18 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         final String message = "File " + displayName + " is modified. Save?";
         final int choice = JOptionPane.showOptionDialog(parent, message, "Question", JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE, null, options, JOptionPane.YES_OPTION);
-        if (JOptionPane.CANCEL_OPTION == choice) {
+        if (choice == JOptionPane.CANCEL_OPTION) {
             return false;
         }
 
-        if (JOptionPane.YES_OPTION == choice) {
+        if (choice == JOptionPane.YES_OPTION) {
             try {
                 savable.handleSave();
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
+        } else {
+            savable.deactivate();
         }
 
         return true;
@@ -219,6 +218,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         infoToolbar = new javax.swing.JPanel();
         encodingLabel = new javax.swing.JLabel();
         encodingComboBox = new javax.swing.JComboBox();
+        controlToolBar = new javax.swing.JToolBar();
         lineWrappingToggleButton = new javax.swing.JToggleButton();
         showUnprintablesToggleButton = new javax.swing.JToggleButton();
 
@@ -233,29 +233,36 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(lineWrappingToggleButton, org.openide.util.NbBundle.getMessage(HexEditorTopComponent.class, "HexEditorTopComponent.lineWrappingToggleButton.text")); // NOI18N
+        controlToolBar.setBorder(null);
+        controlToolBar.setFloatable(false);
+        controlToolBar.setRollover(true);
+        controlToolBar.setBorderPainted(false);
+
+        lineWrappingToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/exbin/deltahex/netbeans/resource/icons/deltahex-linewrap.png"))); // NOI18N
+        lineWrappingToggleButton.setToolTipText(org.openide.util.NbBundle.getMessage(HexEditorTopComponent.class, "HexEditorTopComponent.lineWrappingToggleButton.toolTipText")); // NOI18N
         lineWrappingToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 lineWrappingToggleButtonActionPerformed(evt);
             }
         });
+        controlToolBar.add(lineWrappingToggleButton);
 
-        org.openide.awt.Mnemonics.setLocalizedText(showUnprintablesToggleButton, org.openide.util.NbBundle.getMessage(HexEditorTopComponent.class, "HexEditorTopComponent.showUnprintablesToggleButton.text")); // NOI18N
+        showUnprintablesToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/exbin/deltahex/netbeans/resource/icons/insert-pilcrow.png"))); // NOI18N
+        showUnprintablesToggleButton.setToolTipText(org.openide.util.NbBundle.getMessage(HexEditorTopComponent.class, "HexEditorTopComponent.showUnprintablesToggleButton.toolTipText")); // NOI18N
         showUnprintablesToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showUnprintablesToggleButtonActionPerformed(evt);
             }
         });
+        controlToolBar.add(showUnprintablesToggleButton);
 
         javax.swing.GroupLayout infoToolbarLayout = new javax.swing.GroupLayout(infoToolbar);
         infoToolbar.setLayout(infoToolbarLayout);
         infoToolbarLayout.setHorizontalGroup(
             infoToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(infoToolbarLayout.createSequentialGroup()
-                .addComponent(lineWrappingToggleButton)
+                .addComponent(controlToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(showUnprintablesToggleButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 282, Short.MAX_VALUE)
                 .addComponent(encodingLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(encodingComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -263,12 +270,11 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         );
         infoToolbarLayout.setVerticalGroup(
             infoToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, infoToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+            .addComponent(controlToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addGroup(infoToolbarLayout.createSequentialGroup()
                 .addComponent(encodingComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(encodingLabel))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, infoToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(lineWrappingToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(showUnprintablesToggleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(encodingLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         add(infoToolbar, java.awt.BorderLayout.NORTH);
@@ -287,6 +293,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     }//GEN-LAST:event_showUnprintablesToggleButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToolBar controlToolBar;
     private javax.swing.JComboBox encodingComboBox;
     private javax.swing.JLabel encodingLabel;
     private javax.swing.JPanel infoToolbar;
@@ -302,13 +309,11 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     public void componentClosed() {
     }
 
-    void writeProperties(java.util.Properties p) {
-        // better to version settings since initial version as advocated at
-        // http://wiki.apidesign.org/wiki/PropertyFiles
+    public void writeProperties(java.util.Properties p) {
         p.setProperty("version", "1.0");
     }
 
-    void readProperties(java.util.Properties p) {
+    public void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
     }
 

@@ -17,46 +17,45 @@ package org.exbin.deltahex.operation;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.UndoableEdit;
 import org.exbin.deltahex.Hexadecimal;
 import org.exbin.xbup.operation.Command;
 import org.exbin.xbup.operation.undo.XBUndoHandler;
 import org.exbin.xbup.operation.undo.XBUndoUpdateListener;
+import org.openide.awt.UndoRedo;
+import org.openide.util.Exceptions;
 
 /**
- * Undo handler for hexadecimal editor.
+ * Undo handler for hexadecimal editor using Swing undo.
  *
- * @version 0.1.0 2016/04/30
+ * @version 0.1.0 2016/05/30
  * @author ExBin Project (http://exbin.org)
  */
-public class HexUndoHandler implements XBUndoHandler {
+public class HexUndoSwingHandler implements XBUndoHandler {
 
-    private long undoMaximumCount;
-    private long undoMaximumSize;
-    private long usedSize;
-    private long commandPosition;
-    private long syncPointPosition = -1;
-    private final List<Command> commandList;
     private final Hexadecimal hexadecimal;
     private final List<XBUndoUpdateListener> listeners = new ArrayList<>();
+    private final UndoRedo.Manager undoManager;
+    private long commandPosition;
+    private long syncPointPosition = -1;
 
     /**
      * Creates a new instance.
      *
      * @param hexadecimal hexadecimal component
      */
-    public HexUndoHandler(Hexadecimal hexadecimal) {
+    public HexUndoSwingHandler(Hexadecimal hexadecimal, UndoRedo.Manager undoManager) {
         this.hexadecimal = hexadecimal;
-        undoMaximumCount = 1024;
-        undoMaximumSize = 65535;
-        commandList = new ArrayList<>();
+        this.undoManager = undoManager;
         init();
     }
 
     private void init() {
-        usedSize = 0;
         commandPosition = 0;
         setSyncPoint(0);
-        commandList.clear();
     }
 
     /**
@@ -78,14 +77,77 @@ public class HexUndoHandler implements XBUndoHandler {
         commandAdded(command);
     }
 
-    private void commandAdded(Command command) {
-        // TODO: Check for undoOperationsMaximumCount & size
-        while (commandList.size() > commandPosition) {
-            commandList.remove((int) commandPosition);
-        }
-        commandList.add(command);
-        commandPosition++;
+    private void commandAdded(final Command command) {
+        UndoableEdit edit = new UndoableEdit() {
+            @Override
+            public void undo() throws CannotUndoException {
+                commandPosition--;
+                try {
+                    command.undo();
+                } catch (Exception ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+                undoUpdated();
+            }
 
+            @Override
+            public boolean canUndo() {
+                return command.canUndo();
+            }
+
+            @Override
+            public void redo() throws CannotRedoException {
+                commandPosition++;
+                try {
+                    command.redo();
+                } catch (Exception ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+                undoUpdated();
+            }
+
+            @Override
+            public boolean canRedo() {
+                return command.canUndo();
+            }
+
+            @Override
+            public void die() {
+            }
+
+            @Override
+            public boolean addEdit(UndoableEdit anEdit) {
+                return false;
+            }
+
+            @Override
+            public boolean replaceEdit(UndoableEdit anEdit) {
+                return false;
+            }
+
+            @Override
+            public boolean isSignificant() {
+                return true;
+            }
+
+            @Override
+            public String getPresentationName() {
+                return command.getCaption();
+            }
+
+            @Override
+            public String getUndoPresentationName() {
+                return "";
+            }
+
+            @Override
+            public String getRedoPresentationName() {
+                return "";
+            }
+        };
+        undoManager.undoableEditHappened(new UndoableEditEvent(hexadecimal, edit));
+
+        commandPosition++;
         undoUpdated();
         for (XBUndoUpdateListener listener : listeners) {
             listener.undoCommandAdded(command);
@@ -104,9 +166,7 @@ public class HexUndoHandler implements XBUndoHandler {
     }
 
     private void performUndoInt() throws Exception {
-        commandPosition--;
-        Command command = commandList.get((int) commandPosition);
-        command.undo();
+        undoManager.undo();
     }
 
     /**
@@ -121,9 +181,7 @@ public class HexUndoHandler implements XBUndoHandler {
     }
 
     private void performRedoInt() throws Exception {
-        Command command = commandList.get((int) commandPosition);
-        command.redo();
-        commandPosition++;
+        undoManager.redo();
     }
 
     /**
@@ -134,14 +192,9 @@ public class HexUndoHandler implements XBUndoHandler {
      */
     @Override
     public void performUndo(int count) throws Exception {
-        if (commandPosition < count) {
-            throw new IllegalArgumentException("Unable to perform " + count + " undo steps");
+        for (int i = 0; i < count; i++) {
+            performUndo();
         }
-        while (count > 0) {
-            performUndoInt();
-            count--;
-        }
-        undoUpdated();
     }
 
     /**
@@ -152,14 +205,9 @@ public class HexUndoHandler implements XBUndoHandler {
      */
     @Override
     public void performRedo(int count) throws Exception {
-        if (commandList.size() - commandPosition < count) {
-            throw new IllegalArgumentException("Unable to perform " + count + " redo steps");
+        for (int i = 0; i < count; i++) {
+            performRedo();
         }
-        while (count > 0) {
-            performRedoInt();
-            count--;
-        }
-        undoUpdated();
     }
 
     @Override
@@ -169,17 +217,17 @@ public class HexUndoHandler implements XBUndoHandler {
 
     @Override
     public boolean canUndo() {
-        return commandPosition > 0;
+        return undoManager.canUndo();
     }
 
     @Override
     public boolean canRedo() {
-        return commandList.size() > commandPosition;
+        return undoManager.canRedo();
     }
 
     @Override
     public long getMaximumUndo() {
-        return undoMaximumCount;
+        return 0;
     }
 
     @Override
@@ -198,21 +246,21 @@ public class HexUndoHandler implements XBUndoHandler {
     }
 
     public void setUndoMaxCount(long maxUndo) {
-        this.undoMaximumCount = maxUndo;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public long getUndoMaximumSize() {
-        return undoMaximumSize;
+        return 0;
     }
 
     public void setUndoMaximumSize(long maxSize) {
-        this.undoMaximumSize = maxSize;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public long getUsedSize() {
-        return usedSize;
+        return 0;
     }
 
     @Override
@@ -232,7 +280,7 @@ public class HexUndoHandler implements XBUndoHandler {
 
     @Override
     public List<Command> getCommandList() {
-        return commandList;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**

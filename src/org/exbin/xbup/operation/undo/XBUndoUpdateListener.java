@@ -16,16 +16,25 @@
  */
 package org.exbin.xbup.operation.undo;
 
+import org.exbin.xbup.operation.Command;
+
 /**
  * Undo update listener.
  *
- * @version 0.2.0 2016/01/23
+ * @version 0.2.0 2016/05/30
  * @author ExBin Project (http://exbin.org)
  */
 public interface XBUndoUpdateListener {
 
     /**
-     * Notify about change in undo state.
+     * Notifies about change in undo state.
      */
-    void undoChanged();
+    void undoCommandPositionChanged();
+
+    /**
+     * Reports new command added to undo sequence.
+     *
+     * @param command
+     */
+    void undoCommandAdded(Command command);
 }

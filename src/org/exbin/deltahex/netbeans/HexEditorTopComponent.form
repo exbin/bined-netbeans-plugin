@@ -27,10 +27,8 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Component id="lineWrappingToggleButton" min="-2" max="-2" attributes="0"/>
+                  <Component id="controlToolBar" pref="366" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="showUnprintablesToggleButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="282" max="32767" attributes="0"/>
                   <Component id="encodingLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="encodingComboBox" min="-2" max="-2" attributes="0"/>
@@ -40,14 +38,12 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="103" alignment="1" groupAlignment="3" attributes="0">
-                  <Component id="encodingComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="encodingLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Component id="controlToolBar" pref="0" max="32767" attributes="0"/>
+              <Group type="102" attributes="0">
+                  <Component id="encodingComboBox" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
               </Group>
-              <Group type="103" alignment="1" groupAlignment="3" attributes="0">
-                  <Component id="lineWrappingToggleButton" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
-                  <Component id="showUnprintablesToggleButton" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
-              </Group>
+              <Component id="encodingLabel" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -69,26 +65,46 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="encodingComboBoxActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JToggleButton" name="lineWrappingToggleButton">
+        <Container class="javax.swing.JToolBar" name="controlToolBar">
           <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/Bundle.properties" key="HexEditorTopComponent.lineWrappingToggleButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="null"/>
             </Property>
+            <Property name="floatable" type="boolean" value="false"/>
+            <Property name="rollover" type="boolean" value="true"/>
+            <Property name="borderPainted" type="boolean" value="false"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="lineWrappingToggleButtonActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JToggleButton" name="showUnprintablesToggleButton">
-          <Properties>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/Bundle.properties" key="HexEditorTopComponent.showUnprintablesToggleButton.text" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
-            </Property>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showUnprintablesToggleButtonActionPerformed"/>
-          </Events>
-        </Component>
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JToggleButton" name="lineWrappingToggleButton">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/org/exbin/deltahex/netbeans/resource/icons/deltahex-linewrap.png"/>
+                </Property>
+                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="org/exbin/deltahex/netbeans/Bundle.properties" key="HexEditorTopComponent.lineWrappingToggleButton.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="lineWrappingToggleButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JToggleButton" name="showUnprintablesToggleButton">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/org/exbin/deltahex/netbeans/resource/icons/insert-pilcrow.png"/>
+                </Property>
+                <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="org/exbin/deltahex/netbeans/Bundle.properties" key="HexEditorTopComponent.showUnprintablesToggleButton.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showUnprintablesToggleButtonActionPerformed"/>
+              </Events>
+            </Component>
+          </SubComponents>
+        </Container>
       </SubComponents>
     </Container>
   </SubComponents>
