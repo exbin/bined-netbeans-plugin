@@ -23,6 +23,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
@@ -30,6 +31,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import org.exbin.deltahex.Hexadecimal;
 import org.exbin.deltahex.delta.MemoryHexadecimalData;
 import org.exbin.deltahex.operation.HexCommandHandler;
@@ -69,6 +71,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     private final int metaMask;
 
     private boolean opened = false;
+    private boolean modified = false;
     protected String displayName;
 
     public HexEditorTopComponent() {
@@ -153,7 +156,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 
     @Override
     public boolean canClose() {
-        if (savable == null) {
+        if (!modified) {
             return true;
         }
 
@@ -178,14 +181,31 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     }
 
     void setModified(boolean modified) {
+        this.modified = modified;
+        final String htmlDisplayName;
         if (modified && opened) {
             savable.activate();
             content.add(savable);
-            setHtmlDisplayName("<html><b>" + displayName + "</b></html>");
+            htmlDisplayName = "<html><b>" + displayName + "</b></html>";
         } else {
             savable.deactivate();
             content.remove(savable);
-            setHtmlDisplayName(displayName);
+            htmlDisplayName = displayName;
+        }
+
+        if (SwingUtilities.isEventDispatchThread()) {
+            setHtmlDisplayName(htmlDisplayName);
+        } else {
+            try {
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                        setHtmlDisplayName(htmlDisplayName);
+                    }
+                });
+            } catch (InterruptedException | InvocationTargetException ex) {
+                Exceptions.printStackTrace(ex);
+            }
         }
     }
 
