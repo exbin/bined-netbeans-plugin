@@ -75,6 +75,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         initComponents();
 
         hexadecimal = new Hexadecimal();
+//        hexadecimal.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 
         undoRedo = new UndoRedo.Manager();
         HexUndoSwingHandler undoHandler = new HexUndoSwingHandler(hexadecimal, undoRedo);
@@ -234,7 +235,6 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         controlToolBar.setBorder(null);
         controlToolBar.setFloatable(false);
         controlToolBar.setRollover(true);
-        controlToolBar.setBorderPainted(false);
 
         lineWrappingToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/exbin/deltahex/netbeans/resource/icons/deltahex-linewrap.png"))); // NOI18N
         lineWrappingToggleButton.setToolTipText(org.openide.util.NbBundle.getMessage(HexEditorTopComponent.class, "HexEditorTopComponent.lineWrappingToggleButton.toolTipText")); // NOI18N
