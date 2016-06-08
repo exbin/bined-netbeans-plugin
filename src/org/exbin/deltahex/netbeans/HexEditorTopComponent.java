@@ -17,6 +17,7 @@ package org.exbin.deltahex.netbeans;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -78,7 +79,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         initComponents();
 
         hexadecimal = new Hexadecimal();
-//        hexadecimal.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        hexadecimal.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
 
         undoRedo = new UndoRedo.Manager();
         HexUndoSwingHandler undoHandler = new HexUndoSwingHandler(hexadecimal, undoRedo);

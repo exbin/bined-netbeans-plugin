@@ -11,12 +11,12 @@ Features
 --------
 
 - Hexadecimal representation of data and ascii preview
-- Insertion and overwrite editation mode
+- Insertion and overwrite edit modes
 - Support for selection and clipboard
 - Optional scrollbars
 - Support for text encodings
 - Support for showing unprintable/whitespace characters
-- Partial support for undo/redo
+- Support for undo/redo
 
 Todo
 ----
