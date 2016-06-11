@@ -54,7 +54,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.0 2016/05/28
+ * @version 0.1.0 2016/06/12
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)
@@ -90,13 +90,21 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 //        hexEditor.addHexEditorListener(this);
         super.add(hexadecimal, BorderLayout.CENTER);
 
-        // TODO replace with fixed popup menu?
         hexadecimal.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() == MouseEvent.BUTTON3) {
-                    JPopupMenu contextMenu = createContextMenu();
-                    contextMenu.show(hexadecimal, e.getX(), e.getY());
+            public void mousePressed(MouseEvent e) {
+                maybeShowPopup(e);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                maybeShowPopup(e);
+            }
+
+            private void maybeShowPopup(MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    JPopupMenu popupMenu = createContextMenu();
+                    popupMenu.show(e.getComponent(), e.getX(), e.getY());
                 }
             }
         });

@@ -25,7 +25,7 @@ import org.exbin.xbup.operation.undo.XBUndoUpdateListener;
 /**
  * Undo handler for hexadecimal editor.
  *
- * @version 0.1.0 2016/04/30
+ * @version 0.1.0 2016/05/30
  * @author ExBin Project (http://exbin.org)
  */
 public class HexUndoHandler implements XBUndoHandler {

@@ -50,15 +50,14 @@ import org.exbin.deltahex.HexadecimalCaret.Section;
 import org.exbin.utils.binary_data.BinaryData;
 
 /**
- * Hex editor component.
+ * Hexadecimal viewer/editor component.
  *
- * @version 0.1.0 2016/06/06
+ * @version 0.1.0 2016/06/10
  * @author ExBin Project (http://exbin.org)
  */
 public class Hexadecimal extends JComponent {
 
     public static final int NO_MODIFIER = 0;
-
     public static final int DECORATION_LINENUM_HEX_LINE = 1;
     public static final int DECORATION_HEX_PREVIEW_LINE = 2;
     public static final int DECORATION_BOX = 4;
@@ -68,8 +67,6 @@ public class Hexadecimal extends JComponent {
     private int metaMask;
 
     private BinaryData data;
-    private Charset charset = Charset.defaultCharset();
-
     private HexadecimalPainter painter;
     private HexadecimalCommandHandler commandHandler;
     private HexadecimalCaret caret;
@@ -77,12 +74,15 @@ public class Hexadecimal extends JComponent {
 
     private ViewMode viewMode = ViewMode.DUAL;
     private BackgroundMode backgroundMode = BackgroundMode.STRIPPED;
+    private Charset charset = Charset.defaultCharset();
     private int decorationMode = DECORATION_DEFAULT;
     private EditationMode editationMode = EditationMode.OVERWRITE;
     private CharRenderingMode charRenderingMode = CharRenderingMode.AUTO;
     private CharAntialiasingMode charAntialiasingMode = CharAntialiasingMode.AUTO;
+    private HexCharactersCase hexCharactersCase = HexCharactersCase.UPPER;
     private int lineLength = 16;
     private int subFontSpace = 3;
+    private int headerCharacters = 8;
     private boolean showHeader = true;
     private boolean showLineNumbers = true;
     private boolean mouseDown;
@@ -100,6 +100,9 @@ public class Hexadecimal extends JComponent {
     private JScrollBar verticalScrollBar;
     private ScrollPosition scrollPosition = new ScrollPosition();
 
+    /**
+     * Component colors.
+     */
     private Color oddForegroundColor;
     private Color oddBackgroundColor;
     private Color selectionColor;
@@ -109,8 +112,12 @@ public class Hexadecimal extends JComponent {
     private Color cursorColor;
     private Color whiteSpaceColor;
 
+    /**
+     * Listeners.
+     */
     private final List<SelectionChangedListener> selectionChangedListeners = new ArrayList<>();
     private final List<CaretMovedListener> caretMovedListeners = new ArrayList<>();
+    private final List<EditationModeChangedListener> editationModeChangedListeners = new ArrayList<>();
 
     private final DimensionsCache dimensionsCache = new DimensionsCache();
 
@@ -182,15 +189,15 @@ public class Hexadecimal extends JComponent {
         painter.paintOverall(g);
         Rectangle hexRect = dimensionsCache.hexadecimalRectangle;
         if (showHeader) {
-            g.setClip(hexRect.x, 0, hexRect.width, hexRect.y);
+            g.setClip(clipBounds.createIntersection(new Rectangle(hexRect.x, 0, hexRect.width, hexRect.y)));
             painter.paintHeader(g);
         }
 
-        g.setClip(0, hexRect.y, hexRect.x + hexRect.width, hexRect.height);
+        g.setClip(clipBounds.createIntersection(new Rectangle(0, hexRect.y, hexRect.x + hexRect.width, hexRect.height)));
         painter.paintBackground(g);
         if (showLineNumbers) {
             painter.paintLineNumbers(g);
-            g.setClip(hexRect.x, hexRect.y, hexRect.width, hexRect.height);
+            g.setClip(clipBounds.createIntersection(new Rectangle(hexRect.x, hexRect.y, hexRect.width, hexRect.height)));
         }
 
         painter.paintMainArea(g);
@@ -504,6 +511,14 @@ public class Hexadecimal extends JComponent {
 
     public void removeCaretMovedListener(CaretMovedListener caretMovedListener) {
         caretMovedListeners.remove(caretMovedListener);
+    }
+
+    public void addEditationModeChangedListener(EditationModeChangedListener editationModeChangedListener) {
+        editationModeChangedListeners.add(editationModeChangedListener);
+    }
+
+    public void removeEditationModeChangedListener(EditationModeChangedListener editationModeChangedListener) {
+        editationModeChangedListeners.remove(editationModeChangedListener);
     }
 
     /**
@@ -916,6 +931,15 @@ public class Hexadecimal extends JComponent {
         this.subFontSpace = subFontSpace;
     }
 
+    public int getHeaderCharacters() {
+        return headerCharacters;
+    }
+
+    public void setHeaderCharacters(int headerCharacters) {
+        this.headerCharacters = headerCharacters;
+        repaint();
+    }
+
     public Section getActiveSection() {
         return caret.getSection();
     }
@@ -931,7 +955,14 @@ public class Hexadecimal extends JComponent {
     }
 
     public void setEditationMode(EditationMode editationMode) {
+        boolean chaged = editationMode != this.editationMode;
         this.editationMode = editationMode;
+        if (chaged) {
+            for (EditationModeChangedListener listener : editationModeChangedListeners) {
+                listener.editationModeChanged(editationMode);
+            }
+            repaint();
+        }
     }
 
     public boolean isShowHeader() {
@@ -1031,6 +1062,16 @@ public class Hexadecimal extends JComponent {
 
     public void setCharAntialiasingMode(CharAntialiasingMode charAntialiasingMode) {
         this.charAntialiasingMode = charAntialiasingMode;
+        repaint();
+    }
+
+    public HexCharactersCase getHexCharactersCase() {
+        return hexCharactersCase;
+    }
+
+    public void setHexCharactersCase(HexCharactersCase hexCharactersCase) {
+        this.hexCharactersCase = hexCharactersCase;
+        painter.setHexCharacters(hexCharactersCase == HexCharactersCase.LOWER ? HexadecimalUtils.LOWER_HEX_CODES : HexadecimalUtils.UPPER_HEX_CODES);
         repaint();
     }
 
@@ -1199,6 +1240,16 @@ public class Hexadecimal extends JComponent {
     }
 
     /**
+     * Editation mode change listener.
+     *
+     * Event is fired each time editation mode is changed.
+     */
+    public interface EditationModeChangedListener {
+
+        void editationModeChanged(EditationMode editationMode);
+    }
+
+    /**
      * Component supports showing hexadecimal codes and textual preview, but you
      * can view only one of them.
      */
@@ -1238,6 +1289,10 @@ public class Hexadecimal extends JComponent {
 
     public static enum CharAntialiasingMode {
         OFF, AUTO, DEFAULT, BASIC, GASP, LCD_HRGB, LCD_HBGR, LCD_VRGB, LCD_VBGR
+    }
+
+    public static enum HexCharactersCase {
+        LOWER, UPPER
     }
 
     /**
@@ -1531,7 +1586,6 @@ public class Hexadecimal extends JComponent {
                 case KeyEvent.VK_INSERT: {
                     if (editationMode != EditationMode.READ_ONLY) {
                         setEditationMode(editationMode == EditationMode.INSERT ? EditationMode.OVERWRITE : EditationMode.INSERT);
-                        repaint();
                     }
                     break;
                 }
