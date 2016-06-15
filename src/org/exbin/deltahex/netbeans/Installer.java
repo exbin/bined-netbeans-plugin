@@ -25,10 +25,13 @@ import org.openide.windows.WindowManager;
 /**
  * Installer for hexadecimal editor.
  *
- * @version 0.1.0 2016/05/28
+ * @version 0.1.0 2016/06/15
  * @author ExBin Project (http://exbin.org)
  */
 public class Installer extends ModuleInstall {
+
+    private static final String OPEN_AS_HEX_ACTION_STRING = "org-exbin-deltahex-OpenAsHexAction.shadow";
+    private static final String OPEN_ACTION_STRING = "org-openide-actions-OpenAction.shadow";
 
     @Override
     public void restored() {
@@ -73,11 +76,26 @@ public class Installer extends ModuleInstall {
         protected void handleFileType(FileObject fileType) {
             try {
                 final FileObject actionsFolder = FileUtil.createFolder(fileType, "Actions");
-                final FileObject openAsHexAction = actionsFolder.getFileObject("org-exbin-deltahex-OpenAsHexAction.shadow");
+                final FileObject openAsHexAction = actionsFolder.getFileObject(OPEN_AS_HEX_ACTION_STRING);
                 if (openAsHexAction == null) {
-                    final FileObject action = actionsFolder.createData("org-exbin-deltahex-OpenAsHexAction.shadow");
+                    // TODO: Unable to establish correct menu items order
+                    // Cut 400
+                    int actionPosition = 375;
+                    final FileObject openAction = actionsFolder.getFileObject(OPEN_ACTION_STRING);
+                    if (openAction != null) {
+                        Object openActionPosition = openAction.getAttribute("position");
+                        if (openActionPosition instanceof Integer) {
+                            if ((Integer) openActionPosition == 100) {
+                                actionPosition = 175;
+                            } else if ((Integer) openActionPosition == 500) {
+                                actionPosition = 575;
+                            }
+                        }
+                    }
+
+                    final FileObject action = actionsFolder.createData(OPEN_AS_HEX_ACTION_STRING);
                     action.setAttribute("originalFile", "Actions/File/org-exbin-deltahex-OpenAsHexAction.instance");
-                    action.setAttribute("position", 175);
+                    action.setAttribute("position", actionPosition);
                 }
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
@@ -97,7 +115,7 @@ public class Installer extends ModuleInstall {
         protected void handleFileType(FileObject fileType) {
             try {
                 final FileObject actionsFolder = FileUtil.createFolder(fileType, "Actions");
-                final FileObject openAsHexAction = actionsFolder.getFileObject("org-exbin-deltahex-OpenAsHexAction.shadow");
+                final FileObject openAsHexAction = actionsFolder.getFileObject(OPEN_AS_HEX_ACTION_STRING);
                 if (openAsHexAction != null) {
                     openAsHexAction.delete();
                 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.deltahex.operation;
+package org.exbin.deltahex.netbeans;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoableEdit;
-import org.exbin.deltahex.Hexadecimal;
+import org.exbin.deltahex.CodeArea;
 import org.exbin.xbup.operation.Command;
 import org.exbin.xbup.operation.undo.XBUndoHandler;
 import org.exbin.xbup.operation.undo.XBUndoUpdateListener;
@@ -31,12 +31,12 @@ import org.openide.util.Exceptions;
 /**
  * Undo handler for hexadecimal editor using Swing undo.
  *
- * @version 0.1.0 2016/05/30
+ * @version 0.1.0 2016/06/15
  * @author ExBin Project (http://exbin.org)
  */
 public class HexUndoSwingHandler implements XBUndoHandler {
 
-    private final Hexadecimal hexadecimal;
+    private final CodeArea codeArea;
     private final List<XBUndoUpdateListener> listeners = new ArrayList<>();
     private final UndoRedo.Manager undoManager;
     private long commandPosition;
@@ -45,10 +45,11 @@ public class HexUndoSwingHandler implements XBUndoHandler {
     /**
      * Creates a new instance.
      *
-     * @param hexadecimal hexadecimal component
+     * @param codeArea hexadecimal component
+     * @param undoManager undo manager
      */
-    public HexUndoSwingHandler(Hexadecimal hexadecimal, UndoRedo.Manager undoManager) {
-        this.hexadecimal = hexadecimal;
+    public HexUndoSwingHandler(CodeArea codeArea, UndoRedo.Manager undoManager) {
+        this.codeArea = codeArea;
         this.undoManager = undoManager;
         init();
     }
@@ -145,7 +146,7 @@ public class HexUndoSwingHandler implements XBUndoHandler {
                 return "";
             }
         };
-        undoManager.undoableEditHappened(new UndoableEditEvent(hexadecimal, edit));
+        undoManager.undoableEditHappened(new UndoableEditEvent(codeArea, edit));
 
         commandPosition++;
         undoUpdated();

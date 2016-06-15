@@ -17,7 +17,7 @@ package org.exbin.deltahex.netbeans;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.exbin.deltahex.Hexadecimal;
+import org.exbin.deltahex.CodeArea;
 import org.exbin.utils.binary_data.EditableBinaryData;
 import org.openide.loaders.DataObject;
 import org.openide.nodes.AbstractNode;
@@ -27,16 +27,16 @@ import org.openide.util.Exceptions;
 /**
  * Hexadecimal editor node.
  *
- * @version 0.1.0 2016/05/28
+ * @version 0.1.0 2016/06/15
  * @author ExBin Project (http://exbin.org)
  */
 public class HexEditorNode extends AbstractNode {
 
-    private final Hexadecimal hexadecimal;
+    private final CodeArea codeArea;
 
-    public HexEditorNode(Hexadecimal hexadecimal) {
+    public HexEditorNode(CodeArea codeArea) {
         super(Children.LEAF);
-        this.hexadecimal = hexadecimal;
+        this.codeArea = codeArea;
     }
 
     public void openFile(DataObject dataObject) {
@@ -44,8 +44,8 @@ public class HexEditorNode extends AbstractNode {
         try {
             stream = dataObject.getPrimaryFile().getInputStream();
             if (stream != null) {
-                ((EditableBinaryData) hexadecimal.getData()).loadFromStream(stream);
-                hexadecimal.setEditable(dataObject.getPrimaryFile().canWrite());
+                ((EditableBinaryData) codeArea.getData()).loadFromStream(stream);
+                codeArea.setEditable(dataObject.getPrimaryFile().canWrite());
             }
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);

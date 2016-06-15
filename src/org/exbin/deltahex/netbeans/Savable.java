@@ -18,7 +18,7 @@ package org.exbin.deltahex.netbeans;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Objects;
-import org.exbin.deltahex.Hexadecimal;
+import org.exbin.deltahex.CodeArea;
 import org.netbeans.spi.actions.AbstractSavable;
 import org.openide.loaders.DataObject;
 import org.openide.util.Exceptions;
@@ -26,18 +26,18 @@ import org.openide.util.Exceptions;
 /**
  * Saving capability for hexadecimal editor.
  *
- * @version 0.1.0 2016/05/28
+ * @version 0.1.0 2016/06/15
  * @author ExBin Project (http://exbin.org)
  */
 class Savable extends AbstractSavable {
 
     private DataObject dataObject;
     private final HexEditorTopComponent component;
-    private final Hexadecimal hexEditor;
+    private final CodeArea codeArea;
 
-    public Savable(HexEditorTopComponent component, Hexadecimal hexEditor) {
+    public Savable(HexEditorTopComponent component, CodeArea codeArea) {
         this.component = component;
-        this.hexEditor = hexEditor;
+        this.codeArea = codeArea;
     }
 
     public void activate() {
@@ -85,7 +85,7 @@ class Savable extends AbstractSavable {
 
         OutputStream stream = dataObject.getPrimaryFile().getOutputStream();
         try {
-            hexEditor.getData().saveToStream(stream);
+            codeArea.getData().saveToStream(stream);
             stream.flush();
             component.setModified(false);
         } catch (IOException ex) {

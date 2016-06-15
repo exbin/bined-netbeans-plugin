@@ -27,35 +27,35 @@ import org.exbin.utils.binary_data.BinaryData;
 /**
  * Hexadecimal component painter.
  *
- * @version 0.1.0 2016/06/10
+ * @version 0.1.0 2016/06/15
  * @author ExBin Project (http://exbin.org)
  */
-public class DefaultHexadecimalPainter implements HexadecimalPainter {
+public class DefaultCodeAreaPainter implements CodeAreaPainter {
 
-    protected final Hexadecimal hexadecimal;
+    protected final CodeArea codeArea;
 
     private Charset charMappingCharset = null;
     protected final char[] charMapping = new char[256];
     private Charset charShiftsCharset = null;
     protected final byte[] charShifts = new byte[16];
-    private char[] hexCharacters = HexadecimalUtils.UPPER_HEX_CODES;
+    private char[] hexCharacters = CodeAreaUtils.UPPER_HEX_CODES;
     protected Map<Character, Character> nonprintingMapping = null;
 
-    public DefaultHexadecimalPainter(Hexadecimal hexadecimal) {
-        this.hexadecimal = hexadecimal;
+    public DefaultCodeAreaPainter(CodeArea codeArea) {
+        this.codeArea = codeArea;
     }
 
     @Override
     public void paintOverall(Graphics g) {
-        Rectangle compRect = hexadecimal.getComponentRectangle();
-        Rectangle hexRect = hexadecimal.getHexadecimalRectangle();
-        int decorationMode = hexadecimal.getDecorationMode();
-        if ((decorationMode & Hexadecimal.DECORATION_LINENUM_HEX_LINE) > 0) {
+        Rectangle compRect = codeArea.getComponentRectangle();
+        Rectangle hexRect = codeArea.getCodeSectionRectangle();
+        int decorationMode = codeArea.getDecorationMode();
+        if ((decorationMode & CodeArea.DECORATION_LINENUM_HEX_LINE) > 0) {
             g.setColor(Color.GRAY);
-            int lineX = hexRect.x - hexadecimal.getCharWidth() / 2;
+            int lineX = hexRect.x - codeArea.getCharWidth() / 2;
             g.drawLine(lineX, compRect.y, lineX, hexRect.y);
         }
-        if ((decorationMode & Hexadecimal.DECORATION_BOX) > 0) {
+        if ((decorationMode & CodeArea.DECORATION_BOX) > 0) {
             g.setColor(Color.GRAY);
             g.drawLine(hexRect.x - 1, hexRect.y - 1, hexRect.x + hexRect.width, hexRect.y - 1);
         }
@@ -63,43 +63,45 @@ public class DefaultHexadecimalPainter implements HexadecimalPainter {
 
     @Override
     public void paintHeader(Graphics g) {
-        Hexadecimal.ScrollPosition scrollPosition = hexadecimal.getScrollPosition();
-        Rectangle compRect = hexadecimal.getComponentRectangle();
-        Rectangle hexRect = hexadecimal.getHexadecimalRectangle();
-        if (hexadecimal.getViewMode() != Hexadecimal.ViewMode.PREVIEW) {
-            int charWidth = hexadecimal.getCharWidth();
-            int bytesPerBounds = hexadecimal.getBytesPerLine();
+        CodeArea.ScrollPosition scrollPosition = codeArea.getScrollPosition();
+        Rectangle compRect = codeArea.getComponentRectangle();
+        Rectangle hexRect = codeArea.getCodeSectionRectangle();
+        int codeDigits = codeArea.getCodeType().getMaxDigits();
+        int charsPerByte = codeDigits + 1;
+        if (codeArea.getViewMode() != CodeArea.ViewMode.TEXT_PREVIEW) {
+            int charWidth = codeArea.getCharWidth();
+            int bytesPerBounds = codeArea.getBytesPerLine();
             int headerX = hexRect.x - scrollPosition.scrollBytePosition * charWidth - scrollPosition.scrollByteOffset;
-            int headerY = hexadecimal.getLineHeight();
+            int headerY = codeArea.getLineHeight();
 
-            if (hexadecimal.getBackgroundMode() == Hexadecimal.BackgroundMode.GRIDDED) {
-                g.setColor(hexadecimal.getOddBackgroundColor());
+            if (codeArea.getBackgroundMode() == CodeArea.BackgroundMode.GRIDDED) {
+                g.setColor(codeArea.getOddBackgroundColor());
                 int positionX = hexRect.x - scrollPosition.scrollByteOffset - scrollPosition.scrollBytePosition * charWidth;
                 for (int i = 0; i < bytesPerBounds / 2; i++) {
-                    g.fillRect(positionX + charWidth * (3 + i * 6), hexRect.y, charWidth * 2, hexRect.height);
+                    g.fillRect(positionX + charWidth * (3 + i * charsPerByte * 2), hexRect.y, charWidth * 2, hexRect.height);
                 }
             }
 
-            g.setColor(hexadecimal.getForeground());
+            g.setColor(codeArea.getForeground());
             char[] chars = new char[2];
-            if (hexadecimal.isCharFixedMode()) {
+            if (codeArea.isCharFixedMode()) {
                 for (int i = 0; i < bytesPerBounds; i++) {
-                    HexadecimalUtils.byteToHexChars(chars, (byte) i);
-                    g.drawChars(chars, 0, 2, headerX + i * charWidth * 3, headerY);
+                    CodeAreaUtils.byteToHexChars(chars, (byte) i);
+                    g.drawChars(chars, 0, 2, headerX + i * charWidth * charsPerByte, headerY);
                 }
             } else {
                 for (int i = 0; i < bytesPerBounds; i++) {
-                    HexadecimalUtils.byteToHexChars(chars, (byte) i);
-                    int startX = headerX + i * charWidth * 3;
+                    CodeAreaUtils.byteToHexChars(chars, (byte) i);
+                    int startX = headerX + i * charWidth * charsPerByte;
                     drawCenteredChar(g, chars, 0, charWidth, startX, headerY);
                     drawCenteredChar(g, chars, 1, charWidth, startX, headerY);
                 }
             }
         }
 
-        int decorationMode = hexadecimal.getDecorationMode();
-        if ((decorationMode & Hexadecimal.DECORATION_HEX_PREVIEW_LINE) > 0) {
-            int lineX = hexadecimal.getPreviewX() - scrollPosition.scrollBytePosition * hexadecimal.getCharWidth() - scrollPosition.scrollByteOffset - hexadecimal.getCharWidth() / 2;
+        int decorationMode = codeArea.getDecorationMode();
+        if ((decorationMode & CodeArea.DECORATION_HEX_PREVIEW_LINE) > 0) {
+            int lineX = codeArea.getPreviewX() - scrollPosition.scrollBytePosition * codeArea.getCharWidth() - scrollPosition.scrollByteOffset - codeArea.getCharWidth() / 2;
             if (lineX >= hexRect.x) {
                 g.setColor(Color.GRAY);
                 g.drawLine(lineX, compRect.y, lineX, hexRect.y);
@@ -110,23 +112,23 @@ public class DefaultHexadecimalPainter implements HexadecimalPainter {
     @Override
     public void paintBackground(Graphics g) {
         Rectangle clipBounds = g.getClipBounds();
-        Rectangle hexRect = hexadecimal.getHexadecimalRectangle();
-        int bytesPerBounds = hexadecimal.getBytesPerLine();
-        int lineHeight = hexadecimal.getLineHeight();
-        if (hexadecimal.getBackgroundMode() != Hexadecimal.BackgroundMode.NONE) {
-            g.setColor(hexadecimal.getBackground());
+        Rectangle hexRect = codeArea.getCodeSectionRectangle();
+        int bytesPerBounds = codeArea.getBytesPerLine();
+        int lineHeight = codeArea.getLineHeight();
+        if (codeArea.getBackgroundMode() != CodeArea.BackgroundMode.NONE) {
+            g.setColor(codeArea.getBackground());
             g.fillRect(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height);
         }
 
-        Hexadecimal.ScrollPosition scrollPosition = hexadecimal.getScrollPosition();
+        CodeArea.ScrollPosition scrollPosition = codeArea.getScrollPosition();
         long line = scrollPosition.scrollLinePosition;
-        long maxDataPosition = hexadecimal.getData().getDataSize();
+        long maxDataPosition = codeArea.getData().getDataSize();
         int maxY = clipBounds.y + clipBounds.height;
 
         int positionY;
         long dataPosition = line * bytesPerBounds;
-        if (hexadecimal.getBackgroundMode() != Hexadecimal.BackgroundMode.PLAIN) {
-            g.setColor(hexadecimal.getOddBackgroundColor());
+        if (codeArea.getBackgroundMode() != CodeArea.BackgroundMode.PLAIN) {
+            g.setColor(codeArea.getOddBackgroundColor());
 
             positionY = hexRect.y - scrollPosition.scrollLineOffset;
             if ((line & 1) == 0) {
@@ -144,25 +146,25 @@ public class DefaultHexadecimalPainter implements HexadecimalPainter {
     @Override
     public void paintLineNumbers(Graphics g) {
         Rectangle clipBounds = g.getClipBounds();
-        Rectangle compRect = hexadecimal.getComponentRectangle();
-        Rectangle hexRect = hexadecimal.getHexadecimalRectangle();
-        int bytesPerBounds = hexadecimal.getBytesPerLine();
-        int lineHeight = hexadecimal.getLineHeight();
+        Rectangle compRect = codeArea.getComponentRectangle();
+        Rectangle hexRect = codeArea.getCodeSectionRectangle();
+        int bytesPerBounds = codeArea.getBytesPerLine();
+        int lineHeight = codeArea.getLineHeight();
 
-        Hexadecimal.ScrollPosition scrollPosition = hexadecimal.getScrollPosition();
+        CodeArea.ScrollPosition scrollPosition = codeArea.getScrollPosition();
         long line = scrollPosition.scrollLinePosition;
-        long maxDataPosition = hexadecimal.getData().getDataSize();
+        long maxDataPosition = codeArea.getData().getDataSize();
         int maxY = clipBounds.y + clipBounds.height + lineHeight;
         long dataPosition = line * bytesPerBounds;
-        int charWidth = hexadecimal.getCharWidth();
-        int positionY = hexRect.y - hexadecimal.getSubFontSpace() - scrollPosition.scrollLineOffset + hexadecimal.getLineHeight();
+        int charWidth = codeArea.getCharWidth();
+        int positionY = hexRect.y - codeArea.getSubFontSpace() - scrollPosition.scrollLineOffset + codeArea.getLineHeight();
 
-        g.setColor(hexadecimal.getForeground());
-        int headerChars = hexadecimal.getHeaderCharacters();
+        g.setColor(codeArea.getForeground());
+        int headerChars = codeArea.getHeaderCharacters();
         char[] lineNumberCode = new char[headerChars];
         while (positionY <= maxY && dataPosition <= maxDataPosition) {
-            HexadecimalUtils.longToHexChars(lineNumberCode, dataPosition, headerChars);
-            if (hexadecimal.isCharFixedMode()) {
+            CodeAreaUtils.longToHexChars(lineNumberCode, dataPosition, headerChars);
+            if (codeArea.isCharFixedMode()) {
                 g.drawChars(lineNumberCode, 0, headerChars, compRect.x, positionY);
             } else {
                 for (int i = 0; i < headerChars; i++) {
@@ -173,13 +175,13 @@ public class DefaultHexadecimalPainter implements HexadecimalPainter {
             dataPosition += bytesPerBounds;
         }
 
-        int decorationMode = hexadecimal.getDecorationMode();
-        if ((decorationMode & Hexadecimal.DECORATION_LINENUM_HEX_LINE) > 0) {
+        int decorationMode = codeArea.getDecorationMode();
+        if ((decorationMode & CodeArea.DECORATION_LINENUM_HEX_LINE) > 0) {
             g.setColor(Color.GRAY);
-            int lineX = hexRect.x - hexadecimal.getCharWidth() / 2;
+            int lineX = hexRect.x - codeArea.getCharWidth() / 2;
             g.drawLine(lineX, compRect.y, lineX, hexRect.y + hexRect.height);
         }
-        if ((decorationMode & Hexadecimal.DECORATION_BOX) > 0) {
+        if ((decorationMode & CodeArea.DECORATION_BOX) > 0) {
             g.setColor(Color.GRAY);
             g.drawLine(hexRect.x - 1, hexRect.y - 1, hexRect.x - 1, hexRect.y + hexRect.height);
         }
@@ -187,17 +189,19 @@ public class DefaultHexadecimalPainter implements HexadecimalPainter {
 
     @Override
     public void paintMainArea(Graphics g) {
-        Rectangle hexRect = hexadecimal.getHexadecimalRectangle();
-        Hexadecimal.ScrollPosition scrollPosition = hexadecimal.getScrollPosition();
-        int charWidth = hexadecimal.getCharWidth();
-        int bytesPerLine = hexadecimal.getBytesPerLine();
-        int lineHeight = hexadecimal.getLineHeight();
+        Rectangle hexRect = codeArea.getCodeSectionRectangle();
+        CodeArea.ScrollPosition scrollPosition = codeArea.getScrollPosition();
+        int charWidth = codeArea.getCharWidth();
+        int bytesPerLine = codeArea.getBytesPerLine();
+        int lineHeight = codeArea.getLineHeight();
+        int codeDigits = codeArea.getCodeType().getMaxDigits();
+        int charsPerByte = codeDigits + 1;
 
-        if (hexadecimal.getViewMode() != Hexadecimal.ViewMode.PREVIEW && hexadecimal.getBackgroundMode() == Hexadecimal.BackgroundMode.GRIDDED) {
-            g.setColor(hexadecimal.getOddBackgroundColor());
+        if (codeArea.getViewMode() != CodeArea.ViewMode.TEXT_PREVIEW && codeArea.getBackgroundMode() == CodeArea.BackgroundMode.GRIDDED) {
+            g.setColor(codeArea.getOddBackgroundColor());
             int positionX = hexRect.x - scrollPosition.scrollByteOffset - scrollPosition.scrollBytePosition * charWidth;
             for (int i = 0; i < bytesPerLine / 2; i++) {
-                g.fillRect(positionX + charWidth * (3 + i * 6), hexRect.y, charWidth * 2, hexRect.height);
+                g.fillRect(positionX + charWidth * (3 + i * charsPerByte * 2), hexRect.y, charWidth * 2, hexRect.height);
             }
         }
 
@@ -206,20 +210,20 @@ public class DefaultHexadecimalPainter implements HexadecimalPainter {
         int positionX = hexRect.x - scrollPosition.scrollBytePosition * charWidth - scrollPosition.scrollByteOffset;
         long dataPosition = line * bytesPerLine;
 
-        Charset charset = hexadecimal.getCharset();
+        Charset charset = codeArea.getCharset();
         CharsetEncoder encoder = charset.newEncoder();
         int charLength = (int) encoder.maxBytesPerChar();
         LineDataCache lineDataCache = new LineDataCache();
         lineDataCache.lineData = new byte[bytesPerLine + charLength - 1];
 
         do {
-            long dataSize = hexadecimal.getData().getDataSize();
+            long dataSize = codeArea.getData().getDataSize();
             if (dataPosition < dataSize) {
                 int lineDataSize = bytesPerLine + charLength - 1;
                 if (dataPosition + lineDataSize > dataSize) {
                     lineDataSize = (int) (dataSize - dataPosition);
                 }
-                hexadecimal.getData().copyToArray(dataPosition, lineDataCache.lineData, 0, lineDataSize);
+                codeArea.getData().copyToArray(dataPosition, lineDataCache.lineData, 0, lineDataSize);
             }
 
             paintLineBackground(g, line, positionY + lineHeight, dataPosition, bytesPerLine, lineHeight, charWidth);
@@ -229,9 +233,9 @@ public class DefaultHexadecimalPainter implements HexadecimalPainter {
             positionY += lineHeight;
         } while (positionY - lineHeight < hexRect.y + hexRect.height);
 
-        int decorationMode = hexadecimal.getDecorationMode();
-        if ((decorationMode & Hexadecimal.DECORATION_HEX_PREVIEW_LINE) > 0) {
-            int lineX = hexadecimal.getPreviewX() - scrollPosition.scrollBytePosition * hexadecimal.getCharWidth() - scrollPosition.scrollByteOffset - hexadecimal.getCharWidth() / 2;
+        int decorationMode = codeArea.getDecorationMode();
+        if ((decorationMode & CodeArea.DECORATION_HEX_PREVIEW_LINE) > 0) {
+            int lineX = codeArea.getPreviewX() - scrollPosition.scrollBytePosition * codeArea.getCharWidth() - scrollPosition.scrollByteOffset - codeArea.getCharWidth() / 2;
             if (lineX >= hexRect.x) {
                 g.setColor(Color.GRAY);
                 g.drawLine(lineX, hexRect.y, lineX, hexRect.y + hexRect.height);
@@ -244,9 +248,9 @@ public class DefaultHexadecimalPainter implements HexadecimalPainter {
     }
 
     public void paintLineText(Graphics g, long line, int linePositionX, int linePositionY, long dataPosition, int bytesPerBounds, int lineHeight, Charset charset, int charWidth, int charLength, LineDataCache lineDataCache) {
-        int bytesPerLine = hexadecimal.getBytesPerLine();
-        long dataSize = hexadecimal.getData().getDataSize();
-        g.setColor(hexadecimal.getForeground());
+        int bytesPerLine = codeArea.getBytesPerLine();
+        long dataSize = codeArea.getData().getDataSize();
+        g.setColor(codeArea.getForeground());
         for (int byteOnLine = 0; byteOnLine < bytesPerLine; byteOnLine++) {
             if (dataPosition < dataSize || (dataPosition == dataSize && byteOnLine == 0)) {
                 paintText(g, line, linePositionX, byteOnLine, linePositionY + lineHeight, dataPosition, bytesPerLine, lineHeight, charset, charWidth, charLength, lineDataCache);
@@ -266,25 +270,27 @@ public class DefaultHexadecimalPainter implements HexadecimalPainter {
             charShiftsCharset = charset;
         }
 
-        BinaryData data = hexadecimal.getData();
-        Hexadecimal.ScrollPosition scrollPosition = hexadecimal.getScrollPosition();
-        int positionY = linePositionY - hexadecimal.getSubFontSpace();
+        int codeDigits = codeArea.getCodeType().getMaxDigits();
+        int charsPerByte = codeDigits + 1;
+        BinaryData data = codeArea.getData();
+        CodeArea.ScrollPosition scrollPosition = codeArea.getScrollPosition();
+        int positionY = linePositionY - codeArea.getSubFontSpace();
         if (dataPosition < data.getDataSize()) {
             byte dataByte = lineDataCache.lineData[byteOnLine];
-            if (hexadecimal.getViewMode() != Hexadecimal.ViewMode.PREVIEW) {
-                int startX = linePositionX + byteOnLine * charWidth * 3;
-                lineDataCache.chars[0] = hexCharacters[(dataByte >> 4) & 15];
-                lineDataCache.chars[1] = hexCharacters[dataByte & 15];
-                if (hexadecimal.isCharFixedMode()) {
-                    g.drawChars(lineDataCache.chars, 0, 2, startX, positionY);
+            if (codeArea.getViewMode() != CodeArea.ViewMode.TEXT_PREVIEW) {
+                int startX = linePositionX + byteOnLine * charWidth * charsPerByte;
+                byteToCharsCode(dataByte, lineDataCache);
+                if (codeArea.isCharFixedMode()) {
+                    g.drawChars(lineDataCache.chars, 0, codeDigits, startX, positionY);
                 } else {
-                    drawShiftedChar(g, lineDataCache.chars, 0, charWidth, startX, positionY, charShifts[(dataByte >> 4) & 15]);
-                    drawShiftedChar(g, lineDataCache.chars, 1, charWidth, startX, positionY, charShifts[dataByte & 15]);
+                    for (int i = 0; i < codeDigits; i++) {
+                        drawShiftedChar(g, lineDataCache.chars, i, charWidth, startX, positionY, charShifts[lineDataCache.codeValues[i]]);
+                    }
                 }
             }
 
-            if (hexadecimal.getViewMode() != Hexadecimal.ViewMode.HEXADECIMAL) {
-                int startX = hexadecimal.getPreviewX() + byteOnLine * charWidth;
+            if (codeArea.getViewMode() != CodeArea.ViewMode.CODE_MATRIX) {
+                int startX = codeArea.getPreviewX() + byteOnLine * charWidth;
                 startX -= scrollPosition.scrollBytePosition * charWidth + scrollPosition.scrollByteOffset;
                 if (charLength > 1) {
                     if (dataPosition + charLength > data.getDataSize()) {
@@ -311,7 +317,7 @@ public class DefaultHexadecimalPainter implements HexadecimalPainter {
                 }
 
                 Character replacement = null;
-                if (hexadecimal.isShowNonprintingCharacters()) {
+                if (codeArea.isShowNonprintingCharacters()) {
                     if (nonprintingMapping == null) {
                         nonprintingMapping = new HashMap<>();
                         // Unicode control characters, might not be supported by font
@@ -336,35 +342,79 @@ public class DefaultHexadecimalPainter implements HexadecimalPainter {
                 }
 
                 if (replacement != null) {
-                    g.setColor(hexadecimal.getWhiteSpaceColor());
+                    g.setColor(codeArea.getWhiteSpaceColor());
                 }
-                if (hexadecimal.isCharFixedMode()) {
+                if (codeArea.isCharFixedMode()) {
                     g.drawChars(lineDataCache.previewChar, 0, 1, startX, positionY);
                 } else {
                     drawCenteredChar(g, lineDataCache.previewChar, 0, charWidth, startX, positionY);
                 }
                 if (replacement != null) {
-                    g.setColor(hexadecimal.getForeground());
+                    g.setColor(codeArea.getForeground());
                 }
             }
         }
     }
 
-    public void paintSelectionBackground(Graphics g, long line, int positionY, long dataPosition, int bytesPerBounds, int fontHeight, int charWidth) {
-        Rectangle hexRect = hexadecimal.getHexadecimalRectangle();
+    public void byteToCharsCode(byte dataByte, LineDataCache lineDataCache) {
+        CodeArea.CodeType codeType = codeArea.getCodeType();
+        switch (codeType) {
+            case BINARY: {
+                int bitMask = 1;
+                for (int i = 0; i < 8; i++) {
+                    lineDataCache.codeValues[i] = (dataByte & bitMask) > 0 ? 1 : 0;
+                    lineDataCache.chars[i] = hexCharacters[lineDataCache.codeValues[i]];
+                    bitMask = bitMask << 1;
+                }
+                break;
+            }
+            case DECIMAL: {
+                lineDataCache.codeValues[0] = dataByte / 100;
+                lineDataCache.chars[0] = hexCharacters[lineDataCache.codeValues[0]];
+                lineDataCache.codeValues[1] = (dataByte / 10) % 10;
+                lineDataCache.chars[1] = hexCharacters[lineDataCache.codeValues[1]];
+                lineDataCache.codeValues[2] = dataByte % 10;
+                lineDataCache.chars[2] = hexCharacters[lineDataCache.codeValues[2]];
+                break;
+            }
+            case OCTAL: {
+                lineDataCache.codeValues[0] = dataByte / 64;
+                lineDataCache.chars[0] = hexCharacters[lineDataCache.codeValues[0]];
+                lineDataCache.codeValues[1] = (dataByte / 8) & 7;
+                lineDataCache.chars[1] = hexCharacters[lineDataCache.codeValues[1]];
+                lineDataCache.codeValues[2] = dataByte % 8;
+                lineDataCache.chars[2] = hexCharacters[lineDataCache.codeValues[2]];
+                break;
+            }
+            case HEXADECIMAL: {
+                lineDataCache.codeValues[0] = (dataByte >> 4) & 15;
+                lineDataCache.chars[0] = hexCharacters[lineDataCache.codeValues[0]];
+                lineDataCache.codeValues[1] = dataByte & 15;
+                lineDataCache.chars[1] = hexCharacters[lineDataCache.codeValues[1]];
+                break;
+            }
+            default:
+                throw new IllegalStateException("Unexpected code type: " + codeType.name());
+        }
+    }
 
-        Hexadecimal.SelectionRange selection = hexadecimal.getSelection();
+    public void paintSelectionBackground(Graphics g, long line, int positionY, long dataPosition, int bytesPerBounds, int fontHeight, int charWidth) {
+        Rectangle hexRect = codeArea.getCodeSectionRectangle();
+
+        CodeArea.SelectionRange selection = codeArea.getSelection();
         if (selection == null) {
             return;
         }
 
-        Hexadecimal.ScrollPosition scrollPosition = hexadecimal.getScrollPosition();
+        CodeArea.ScrollPosition scrollPosition = codeArea.getScrollPosition();
         int selectionStart = 0;
         int selectionEnd = 0;
         int selectionPreviewStart = 0;
         int selectionPreviewEnd = 0;
         int startX = hexRect.x - scrollPosition.scrollBytePosition * charWidth - scrollPosition.scrollByteOffset;
-        int previewStartX = hexadecimal.getPreviewX() - scrollPosition.scrollBytePosition * charWidth - scrollPosition.scrollByteOffset;
+        int previewStartX = codeArea.getPreviewX() - scrollPosition.scrollBytePosition * charWidth - scrollPosition.scrollByteOffset;
+        int codeDigits = codeArea.getCodeType().getMaxDigits();
+        int charsPerByte = codeDigits + 1;
 
         long maxLinePosition = dataPosition + bytesPerBounds - 1;
         long selectionFirst = selection.getFirst();
@@ -372,7 +422,7 @@ public class DefaultHexadecimalPainter implements HexadecimalPainter {
         if (selectionFirst <= maxLinePosition) {
             if (selectionFirst >= dataPosition) {
                 int linePosition = (int) (selectionFirst - dataPosition);
-                selectionStart = startX + charWidth * (linePosition * 3);
+                selectionStart = startX + charWidth * (linePosition * charsPerByte);
                 selectionPreviewStart = previewStartX + charWidth * linePosition;
             } else {
                 selectionStart = startX;
@@ -382,11 +432,11 @@ public class DefaultHexadecimalPainter implements HexadecimalPainter {
 
         if (selectionLast >= dataPosition && selectionFirst <= maxLinePosition) {
             if (selectionLast >= maxLinePosition) {
-                selectionEnd = startX + (bytesPerBounds * 3 - 1) * charWidth;
+                selectionEnd = startX + (bytesPerBounds * charsPerByte - 1) * charWidth;
                 selectionPreviewEnd = previewStartX + bytesPerBounds * charWidth;
             } else {
                 int linePosition = (int) (selectionLast - dataPosition + 1);
-                selectionEnd = startX + charWidth * (linePosition * 3);
+                selectionEnd = startX + charWidth * (linePosition * charsPerByte);
                 selectionPreviewEnd = previewStartX + charWidth * linePosition;
             }
         }
@@ -394,28 +444,28 @@ public class DefaultHexadecimalPainter implements HexadecimalPainter {
         if (selectionEnd > 0) {
             Color hexadecimalColor;
             Color previewColor;
-            switch (hexadecimal.getActiveSection()) {
-                case HEXADECIMAL: {
-                    hexadecimalColor = hexadecimal.getSelectionBackgroundColor();
-                    previewColor = hexadecimal.getMirrorSelectionBackgroundColor();
+            switch (codeArea.getActiveSection()) {
+                case CODE_MATRIX: {
+                    hexadecimalColor = codeArea.getSelectionBackgroundColor();
+                    previewColor = codeArea.getMirrorSelectionBackgroundColor();
                     break;
                 }
-                case PREVIEW: {
-                    hexadecimalColor = hexadecimal.getMirrorSelectionBackgroundColor();
-                    previewColor = hexadecimal.getSelectionBackgroundColor();
+                case TEXT_PREVIEW: {
+                    hexadecimalColor = codeArea.getMirrorSelectionBackgroundColor();
+                    previewColor = codeArea.getSelectionBackgroundColor();
                     break;
                 }
                 default: {
-                    throw new IllegalStateException("Unexpected active section " + hexadecimal.getActiveSection().name());
+                    throw new IllegalStateException("Unexpected active section " + codeArea.getActiveSection().name());
                 }
             }
 
-            if (hexadecimal.getViewMode() != Hexadecimal.ViewMode.PREVIEW) {
+            if (codeArea.getViewMode() != CodeArea.ViewMode.TEXT_PREVIEW) {
                 g.setColor(hexadecimalColor);
                 g.fillRect(selectionStart, positionY - fontHeight, selectionEnd - selectionStart, fontHeight);
             }
 
-            if (hexadecimal.getViewMode() != Hexadecimal.ViewMode.HEXADECIMAL) {
+            if (codeArea.getViewMode() != CodeArea.ViewMode.CODE_MATRIX) {
                 g.setColor(previewColor);
                 g.fillRect(selectionPreviewStart, positionY - fontHeight, selectionPreviewEnd - selectionPreviewStart, fontHeight);
             }
@@ -461,7 +511,12 @@ public class DefaultHexadecimalPainter implements HexadecimalPainter {
         /**
          * Characters cache.
          */
-        public char[] chars = new char[2];
+        public char[] chars = new char[8];
+
+        /**
+         * Code values cache.
+         */
+        public int[] codeValues = new int[8];
         /**
          * Preview character.
          */
