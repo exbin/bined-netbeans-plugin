@@ -53,7 +53,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.0 2016/06/15
+ * @version 0.1.1 2016/06/15
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)
@@ -286,8 +286,8 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         controlToolBar.add(showUnprintablesToggleButton);
         controlToolBar.add(jSeparator1);
 
-        codeTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "BINARY", "OCTAL", "DECIMAL", "HEXADECIMAL" }));
-        codeTypeComboBox.setMaximumSize(new java.awt.Dimension(90, 25));
+        codeTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "BIN", "OCT", "DEC", "HEX" }));
+        codeTypeComboBox.setMaximumSize(new java.awt.Dimension(58, 25));
         codeTypeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 codeTypeComboBoxActionPerformed(evt);

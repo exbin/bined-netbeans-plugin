@@ -27,7 +27,7 @@ import org.openide.windows.WindowManager;
 /**
  * Open file in hexadecimal editor action.
  *
- * @version 0.1.0 2016/05/28
+ * @version 0.1.1 2016/05/28
  * @author ExBin Project (http://exbin.org)
  */
 @ActionID(category = "File", id = "org.exbin.deltahex.OpenAsHexAction")

@@ -31,7 +31,7 @@ import org.openide.util.Exceptions;
 /**
  * Undo handler for hexadecimal editor using Swing undo.
  *
- * @version 0.1.0 2016/06/15
+ * @version 0.1.1 2016/06/15
  * @author ExBin Project (http://exbin.org)
  */
 public class HexUndoSwingHandler implements XBUndoHandler {

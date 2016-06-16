@@ -1,4 +1,4 @@
-DeltaHex Editor - Netbeans Module
+DeltaHex Editor - NetBeans Module
 =================================
 
 Hexadecimal viewer/editor component module for NetBeans platform.
@@ -39,5 +39,5 @@ License
 
 Dual licensed as:
 
-Apache License, Version 2.0 - see LICENSE-2.0.txt (primary)
-Common Development and Distribution License, Version 1.0 - see cddl-1.0.txt
+- Apache License, Version 2.0 - see LICENSE-2.0.txt (primary)
+- Common Development and Distribution License, Version 1.0 - see cddl-1.0.txt

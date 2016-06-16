@@ -25,13 +25,15 @@ import org.openide.windows.WindowManager;
 /**
  * Installer for hexadecimal editor.
  *
- * @version 0.1.0 2016/06/15
+ * @version 0.1.1 2016/06/15
  * @author ExBin Project (http://exbin.org)
  */
 public class Installer extends ModuleInstall {
 
     private static final String OPEN_AS_HEX_ACTION_STRING = "org-exbin-deltahex-OpenAsHexAction.shadow";
-    private static final String OPEN_ACTION_STRING = "org-openide-actions-OpenAction.shadow";
+    private static final String OPENIDE_OPEN_ACTION_STRING = "org-openide-actions-OpenAction.shadow";
+    private static final String OPEN_ACTION_STRING = "OpenAction.shadow";
+    private static final String CUT_TO_CLIPBOARD_ACTION_STRING = "CutAction.shadow";
 
     @Override
     public void restored() {
@@ -78,17 +80,47 @@ public class Installer extends ModuleInstall {
                 final FileObject actionsFolder = FileUtil.createFolder(fileType, "Actions");
                 final FileObject openAsHexAction = actionsFolder.getFileObject(OPEN_AS_HEX_ACTION_STRING);
                 if (openAsHexAction == null) {
-                    // TODO: Unable to establish correct menu items order
-                    // Cut 400
+                    System.out.println("Actions: " + fileType.getName());
+                    for (FileObject fileObject : actionsFolder.getChildren()) {
+                        System.out.println(fileObject.getName() + ": " + fileObject.getAttribute("position"));
+                    }
+                    System.out.println();
+                    /**
+                     * Attempt to establish correct position in context menu for
+                     * different mime types.
+                     *
+                     * TODO: check on different platforms and collisions with
+                     * other modules / modes
+                     */
                     int actionPosition = 375;
                     final FileObject openAction = actionsFolder.getFileObject(OPEN_ACTION_STRING);
+                    final FileObject openIdeOpenAction = actionsFolder.getFileObject(OPENIDE_OPEN_ACTION_STRING);
+                    final FileObject cutAction = actionsFolder.getFileObject(CUT_TO_CLIPBOARD_ACTION_STRING);
                     if (openAction != null) {
-                        Object openActionPosition = openAction.getAttribute("position");
-                        if (openActionPosition instanceof Integer) {
-                            if ((Integer) openActionPosition == 100) {
+                        Object position = openAction.getAttribute("position");
+                        if (position instanceof Integer) {
+                            if ((Integer) position == 100) {
                                 actionPosition = 175;
-                            } else if ((Integer) openActionPosition == 500) {
-                                actionPosition = 575;
+                            } else if ((Integer) position > actionPosition) {
+                                actionPosition = (Integer) position + 25;
+                            }
+                        }
+                    }
+                    if (openIdeOpenAction != null) {
+                        Object position = openIdeOpenAction.getAttribute("position");
+                        if (position instanceof Integer) {
+                            if ((Integer) position == 100) {
+                                actionPosition = 175;
+                            } else if ((Integer) position > actionPosition) {
+                                actionPosition = (Integer) position + 25;
+                            }
+                        }
+                    }
+                    if (cutAction != null) {
+                        Object position = cutAction.getAttribute("position");
+                        if (position instanceof Integer) {
+                            if ((Integer) position < actionPosition) {
+                                actionPosition = (Integer) position - 25;
                             }
                         }
                     }

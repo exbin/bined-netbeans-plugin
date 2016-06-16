@@ -26,7 +26,7 @@ import org.openide.util.Exceptions;
 /**
  * Saving capability for hexadecimal editor.
  *
- * @version 0.1.0 2016/06/15
+ * @version 0.1.1 2016/06/15
  * @author ExBin Project (http://exbin.org)
  */
 class Savable extends AbstractSavable {
