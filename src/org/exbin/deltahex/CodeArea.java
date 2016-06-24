@@ -46,6 +46,7 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JScrollBar;
 import javax.swing.UIManager;
+import javax.swing.border.Border;
 import org.exbin.utils.binary_data.BinaryData;
 
 /**
@@ -53,16 +54,17 @@ import org.exbin.utils.binary_data.BinaryData;
  *
  * Also supports binary, octal and decimal codes.
  *
- * @version 0.1.0 2016/06/17
+ * @version 0.1.0 2016/06/24
  * @author ExBin Project (http://exbin.org)
  */
 public class CodeArea extends JComponent {
 
     public static final int NO_MODIFIER = 0;
-    public static final int DECORATION_LINENUM_HEX_LINE = 1;
-    public static final int DECORATION_HEX_PREVIEW_LINE = 2;
-    public static final int DECORATION_BOX = 4;
-    public static final int DECORATION_DEFAULT = DECORATION_HEX_PREVIEW_LINE | DECORATION_LINENUM_HEX_LINE;
+    public static final int DECORATION_HEADER_LINE = 1;
+    public static final int DECORATION_LINENUM_LINE = 2;
+    public static final int DECORATION_PREVIEW_LINE = 4;
+    public static final int DECORATION_BOX = 8;
+    public static final int DECORATION_DEFAULT = DECORATION_PREVIEW_LINE | DECORATION_LINENUM_LINE | DECORATION_HEADER_LINE;
     public static final int MOUSE_SCROLL_LINES = 3;
 
     private int metaMask;
@@ -75,6 +77,7 @@ public class CodeArea extends JComponent {
 
     private ViewMode viewMode = ViewMode.DUAL;
     private CodeType codeType = CodeType.HEXADECIMAL;
+    private PositionCodeType positionCodeType = PositionCodeType.HEXADECIMAL;
     private BackgroundMode backgroundMode = BackgroundMode.STRIPPED;
     private Charset charset = Charset.defaultCharset();
     private int decorationMode = DECORATION_DEFAULT;
@@ -82,16 +85,19 @@ public class CodeArea extends JComponent {
     private CharRenderingMode charRenderingMode = CharRenderingMode.AUTO;
     private CharAntialiasingMode charAntialiasingMode = CharAntialiasingMode.AUTO;
     private HexCharactersCase hexCharactersCase = HexCharactersCase.UPPER;
+    private final CodeAreaSpace headerSpace = new CodeAreaSpace(CodeAreaSpace.SpaceType.HALF_UNIT);
+    private final CodeAreaSpace lineNumberSpace = new CodeAreaSpace();
+    private final CodeAreaLineNumberLength lineNumberLength = new CodeAreaLineNumberLength();
+
     private int lineLength = 16;
     private int subFontSpace = 3;
-    private int headerCharacters = 8;
     private boolean showHeader = true;
     private boolean showLineNumbers = true;
     private boolean mouseDown;
     private boolean editable = true;
     private boolean wrapMode = false;
     private boolean handleClipboard = true;
-    private boolean showNonprintingCharacters = false;
+    private boolean showUnprintableCharacters = false;
     private boolean showShadowCursor = true;
 
     private ScrollBarVisibility verticalScrollBarVisibility = ScrollBarVisibility.IF_NEEDED;
@@ -103,16 +109,15 @@ public class CodeArea extends JComponent {
     private ScrollPosition scrollPosition = new ScrollPosition();
 
     /**
-     * Component colors.
+     * Component colors. Parent foreground and background are used for header
+     * and line numbers section.
      */
-    private Color oddForegroundColor;
-    private Color oddBackgroundColor;
-    private Color selectionColor;
-    private Color selectionBackgroundColor;
-    private Color mirrorSelectionColor;
-    private Color mirrorSelectionBackgroundColor;
+    private final ColorsGroup mainColors = new ColorsGroup();
+    private final ColorsGroup alternateColors = new ColorsGroup();
+    private final ColorsGroup selectionColors = new ColorsGroup();
+    private final ColorsGroup mirrorSelectionColors = new ColorsGroup();
     private Color cursorColor;
-    private Color whiteSpaceColor;
+    private Color decorationLineColor;
 
     /**
      * Listeners.
@@ -120,6 +125,8 @@ public class CodeArea extends JComponent {
     private final List<SelectionChangedListener> selectionChangedListeners = new ArrayList<>();
     private final List<CaretMovedListener> caretMovedListeners = new ArrayList<>();
     private final List<EditationModeChangedListener> editationModeChangedListeners = new ArrayList<>();
+    private final List<DataChangedListener> dataChangedListeners = new ArrayList<>();
+    private final List<ScrollingListener> scrollingListeners = new ArrayList<>();
 
     private final DimensionsCache dimensionsCache = new DimensionsCache();
 
@@ -129,17 +136,29 @@ public class CodeArea extends JComponent {
         painter = new DefaultCodeAreaPainter(this);
         commandHandler = new DefaultCodeAreaCommandHandler(this);
 
-        super.setForeground(UIManager.getColor("TextArea.foreground"));
-        super.setBackground(UIManager.getColor("TextArea.background"));
-        oddBackgroundColor = createOddColor(UIManager.getColor("TextArea.background"));
-        selectionColor = UIManager.getColor("TextArea.selectionForeground");
-        selectionBackgroundColor = UIManager.getColor("TextArea.selectionBackground");
-        mirrorSelectionColor = UIManager.getColor("TextArea.selectionForeground");
+        Color textColor = UIManager.getColor("TextArea.foreground");
+        Color backgroundColor = UIManager.getColor("TextArea.background");
+        super.setForeground(textColor);
+        super.setBackground(createOddColor(backgroundColor));
+        Color unprintablesColor = new Color(textColor.getRed(), (textColor.getGreen() + 128) % 256, textColor.getBlue());
+        mainColors.setTextColor(textColor);
+        mainColors.setBothBackgroundColors(backgroundColor);
+        mainColors.setUnprintablesColor(unprintablesColor);
+        alternateColors.setTextColor(textColor);
+        alternateColors.setBothBackgroundColors(createOddColor(backgroundColor));
+        alternateColors.setUnprintablesColor(unprintablesColor);
+        Color selectionTextColor = UIManager.getColor("TextArea.selectionForeground");
+        Color selectionBackgroundColor = UIManager.getColor("TextArea.selectionBackground");
+        selectionColors.setTextColor(selectionTextColor);
+        selectionColors.setBothBackgroundColors(selectionBackgroundColor);
+        selectionColors.setUnprintablesColor(unprintablesColor);
+        mirrorSelectionColors.setTextColor(selectionTextColor);
         int grayLevel = (selectionBackgroundColor.getRed() + selectionBackgroundColor.getGreen() + selectionBackgroundColor.getBlue()) / 3;
-        mirrorSelectionBackgroundColor = new Color(grayLevel, grayLevel, grayLevel);
+        mirrorSelectionColors.setBothBackgroundColors(new Color(grayLevel, grayLevel, grayLevel));
+        mirrorSelectionColors.setUnprintablesColor(unprintablesColor);
+
         cursorColor = UIManager.getColor("TextArea.caretForeground");
-        Color foreground = super.getForeground();
-        whiteSpaceColor = new Color(foreground.getRed(), (foreground.getGreen() + 128) % 256, foreground.getBlue());
+        decorationLineColor = Color.GRAY;
 
         try {
             metaMask = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -165,11 +184,11 @@ public class CodeArea extends JComponent {
         setFocusTraversalKeysEnabled(false);
         addComponentListener(new CodeAreaComponentListener());
 
-        HexMouseListener hexMouseListener = new HexMouseListener();
-        addMouseListener(hexMouseListener);
-        addMouseMotionListener(hexMouseListener);
-        addMouseWheelListener(hexMouseListener);
-        addKeyListener(new HexKeyListener());
+        CodeAreaMouseListener codeAreaMouseListener = new CodeAreaMouseListener();
+        addMouseListener(codeAreaMouseListener);
+        addMouseMotionListener(codeAreaMouseListener);
+        addMouseWheelListener(codeAreaMouseListener);
+        addKeyListener(new CodeAreaKeyListener());
     }
 
     @Override
@@ -181,8 +200,6 @@ public class CodeArea extends JComponent {
                     RenderingHints.KEY_TEXT_ANTIALIASING,
                     antialiasingHint);
         }
-
-        g.setFont(getFont());
 
         if (dimensionsCache.fontMetrics == null) {
             computeFontMetrics();
@@ -326,6 +343,23 @@ public class CodeArea extends JComponent {
         }
     }
 
+    public void notifyScrolled() {
+        for (ScrollingListener scrollingListener : scrollingListeners) {
+            scrollingListener.scrolled();
+        }
+    }
+
+    public void notifyDataChanged() {
+        if (caret.getDataPosition() > data.getDataSize()) {
+            caret.setCaretPosition(0);
+            notifyCaretMoved();
+        }
+
+        for (DataChangedListener dataChangedListener : dataChangedListeners) {
+            dataChangedListener.dataChanged();
+        }
+    }
+
     public Point getScrollPoint() {
         return new Point(scrollPosition.scrollBytePosition * dimensionsCache.charWidth + scrollPosition.scrollByteOffset, (int) scrollPosition.scrollLinePosition * dimensionsCache.lineHeight + scrollPosition.scrollLineOffset);
     }
@@ -388,6 +422,7 @@ public class CodeArea extends JComponent {
 
         if (scrolled) {
             updateScrollBars();
+            notifyScrolled();
         }
     }
 
@@ -532,6 +567,22 @@ public class CodeArea extends JComponent {
         editationModeChangedListeners.remove(editationModeChangedListener);
     }
 
+    public void addDataChangedListener(DataChangedListener dataChangedListener) {
+        dataChangedListeners.add(dataChangedListener);
+    }
+
+    public void removeDataChangedListener(DataChangedListener dataChangedListener) {
+        dataChangedListeners.remove(dataChangedListener);
+    }
+
+    public void addScrollingListener(ScrollingListener scrollingListener) {
+        scrollingListeners.add(scrollingListener);
+    }
+
+    public void removeScrollingListener(ScrollingListener scrollingListener) {
+        scrollingListeners.remove(scrollingListener);
+    }
+
     /**
      * Returns component area rectangle.
      *
@@ -573,15 +624,44 @@ public class CodeArea extends JComponent {
         return dimensionsCache.charWidth;
     }
 
+    public FontMetrics getFontMetrics() {
+        return dimensionsCache.fontMetrics;
+    }
+
+    /**
+     * Returns header space size.
+     *
+     * @return header space size
+     */
+    public int getHeaderSpace() {
+        return dimensionsCache.headerSpace;
+    }
+
+    /**
+     * Returns line number space size.
+     *
+     * @return line number space size
+     */
+    public int getLineNumberSpace() {
+        return dimensionsCache.lineNumberSpace;
+    }
+
+    /**
+     * Returns current line number length in characters.
+     *
+     * @return line number length
+     */
+    public int getLineNumberLength() {
+        return dimensionsCache.lineNumbersLength;
+    }
+
     public BinaryData getData() {
         return data;
     }
 
     public void setData(BinaryData data) {
         this.data = data;
-        if (caret.getDataPosition() > data.getDataSize()) {
-            caret.setCaretPosition(0);
-        }
+        notifyDataChanged();
         computeDimensions();
         repaint();
     }
@@ -625,6 +705,12 @@ public class CodeArea extends JComponent {
         computeFontMetrics();
     }
 
+    @Override
+    public void setBorder(Border border) {
+        super.setBorder(border);
+        computeDimensions();
+    }
+
     private void computeFontMetrics() {
         Graphics g = getGraphics();
         if (g != null) {
@@ -639,7 +725,7 @@ public class CodeArea extends JComponent {
              *
              * TODO: Is there better way?
              */
-            dimensionsCache.monospaced = dimensionsCache.charWidth == dimensionsCache.fontMetrics.charWidth('i');
+            dimensionsCache.monospaceFont = dimensionsCache.charWidth == dimensionsCache.fontMetrics.charWidth('i');
             int fontHeight = font.getSize();
             if (dimensionsCache.charWidth == 0) {
                 dimensionsCache.charWidth = fontHeight;
@@ -654,7 +740,7 @@ public class CodeArea extends JComponent {
             return;
         }
 
-        // TODO byte groups, other code types
+        // TODO byte groups
         switch (viewMode) {
             case CODE_MATRIX: {
                 dimensionsCache.charsPerByte = codeType.maxDigits + 1;
@@ -683,6 +769,21 @@ public class CodeArea extends JComponent {
         compRect.width = size.width - insets.left - insets.right;
         compRect.height = size.height - insets.top - insets.bottom;
 
+        switch (lineNumberLength.getLineNumberType()) {
+            case AUTO: {
+                double natLog = Math.log(getData().getDataSize());
+                dimensionsCache.lineNumbersLength = (int) Math.ceil(natLog / positionCodeType.baseLog);
+                if (dimensionsCache.lineNumbersLength == 0) {
+                    dimensionsCache.lineNumbersLength = 1;
+                }
+                break;
+            }
+            case SPECIFIED: {
+                dimensionsCache.lineNumbersLength = lineNumberLength.getLineNumberLength();
+                break;
+            }
+        }
+
         int charsPerRect = computeCharsPerRect(compRect.width);
         int bytesPerLine;
         if (wrapMode) {
@@ -694,10 +795,77 @@ public class CodeArea extends JComponent {
             bytesPerLine = lineLength;
         }
         int lines = (int) (data.getDataSize() / bytesPerLine) + 1;
+        CodeAreaSpace.SpaceType headerSpaceType = headerSpace.getSpaceType();
+        switch (headerSpaceType) {
+            case NONE: {
+                dimensionsCache.headerSpace = 0;
+                break;
+            }
+            case SPECIFIED: {
+                dimensionsCache.headerSpace = headerSpace.getSpaceSize();
+                break;
+            }
+            case QUARTER_UNIT: {
+                dimensionsCache.headerSpace = dimensionsCache.lineHeight / 4;
+                break;
+            }
+            case HALF_UNIT: {
+                dimensionsCache.headerSpace = dimensionsCache.lineHeight / 2;
+                break;
+            }
+            case ONE_UNIT: {
+                dimensionsCache.headerSpace = dimensionsCache.lineHeight;
+                break;
+            }
+            case ONE_AND_HALF_UNIT: {
+                dimensionsCache.headerSpace = (int) (dimensionsCache.lineHeight * 1.5f);
+                break;
+            }
+            case DOUBLE_UNIT: {
+                dimensionsCache.headerSpace = dimensionsCache.lineHeight * 2;
+                break;
+            }
+            default:
+                throw new IllegalStateException("Unexpected header space type " + headerSpaceType.name());
+        }
+
+        CodeAreaSpace.SpaceType lineNumberSpaceType = lineNumberSpace.getSpaceType();
+        switch (lineNumberSpaceType) {
+            case NONE: {
+                dimensionsCache.lineNumberSpace = 0;
+                break;
+            }
+            case SPECIFIED: {
+                dimensionsCache.lineNumberSpace = lineNumberSpace.getSpaceSize();
+                break;
+            }
+            case QUARTER_UNIT: {
+                dimensionsCache.lineNumberSpace = dimensionsCache.charWidth / 4;
+                break;
+            }
+            case HALF_UNIT: {
+                dimensionsCache.lineNumberSpace = dimensionsCache.charWidth / 2;
+                break;
+            }
+            case ONE_UNIT: {
+                dimensionsCache.lineNumberSpace = dimensionsCache.charWidth;
+                break;
+            }
+            case ONE_AND_HALF_UNIT: {
+                dimensionsCache.lineNumberSpace = (int) (dimensionsCache.charWidth * 1.5f);
+                break;
+            }
+            case DOUBLE_UNIT: {
+                dimensionsCache.lineNumberSpace = dimensionsCache.charWidth * 2;
+                break;
+            }
+            default:
+                throw new IllegalStateException("Unexpected line number space type " + lineNumberSpaceType.name());
+        }
 
         Rectangle hexRect = dimensionsCache.codeSectionRectangle;
-        hexRect.y = insets.top + (showHeader ? dimensionsCache.lineHeight * 2 : 0);
-        hexRect.x = insets.left + (showLineNumbers ? dimensionsCache.charWidth * 9 : 0);
+        hexRect.y = insets.top + (showHeader ? dimensionsCache.lineHeight + dimensionsCache.headerSpace : 0);
+        hexRect.x = insets.left + (showLineNumbers ? dimensionsCache.charWidth * dimensionsCache.lineNumbersLength + dimensionsCache.lineNumberSpace : 0);
 
         if (verticalScrollBarVisibility == ScrollBarVisibility.IF_NEEDED) {
             verticalScrollBarVisible = lines > dimensionsCache.linesPerRect;
@@ -845,63 +1013,52 @@ public class CodeArea extends JComponent {
 
         if (scrolled) {
             updateScrollBars();
+            notifyScrolled();
         }
     }
 
     private int computeCharsPerRect(int width) {
         if (showLineNumbers) {
-            width -= dimensionsCache.charWidth * 9;
+            width -= dimensionsCache.charWidth * dimensionsCache.lineNumbersLength + getLineNumberSpace();
         }
 
         return width / dimensionsCache.charWidth;
     }
 
-    public Color getOddForegroundColor() {
-        return oddForegroundColor;
+    public ColorsGroup getMainColors() {
+        return new ColorsGroup(mainColors);
     }
 
-    public void setOddForegroundColor(Color oddForegroundColor) {
-        this.oddForegroundColor = oddForegroundColor;
+    public ColorsGroup getAlternateColors() {
+        return new ColorsGroup(alternateColors);
     }
 
-    public Color getOddBackgroundColor() {
-        return oddBackgroundColor;
+    public ColorsGroup getSelectionColors() {
+        return new ColorsGroup(selectionColors);
     }
 
-    public void setOddBackgroundColor(Color oddBackgroundColor) {
-        this.oddBackgroundColor = oddBackgroundColor;
+    public ColorsGroup getMirrorSelectionColors() {
+        return new ColorsGroup(mirrorSelectionColors);
     }
 
-    public Color getSelectionColor() {
-        return selectionColor;
+    public void setMainColors(ColorsGroup colorsGroup) {
+        mainColors.setColors(colorsGroup);
+        repaint();
     }
 
-    public void setSelectionColor(Color selectionColor) {
-        this.selectionColor = selectionColor;
+    public void setAlternateColors(ColorsGroup colorsGroup) {
+        alternateColors.setColors(colorsGroup);
+        repaint();
     }
 
-    public Color getSelectionBackgroundColor() {
-        return selectionBackgroundColor;
+    public void setSelectionColors(ColorsGroup colorsGroup) {
+        selectionColors.setColors(colorsGroup);
+        repaint();
     }
 
-    public void setSelectionBackgroundColor(Color selectionBackgroundColor) {
-        this.selectionBackgroundColor = selectionBackgroundColor;
-    }
-
-    public Color getMirrorSelectionColor() {
-        return mirrorSelectionColor;
-    }
-
-    public void setMirrorSelectionColor(Color mirrorSelectionColor) {
-        this.mirrorSelectionColor = mirrorSelectionColor;
-    }
-
-    public Color getMirrorSelectionBackgroundColor() {
-        return mirrorSelectionBackgroundColor;
-    }
-
-    public void setMirrorSelectionBackgroundColor(Color mirrorSelectionBackgroundColor) {
-        this.mirrorSelectionBackgroundColor = mirrorSelectionBackgroundColor;
+    public void setMirrorSelectionColors(ColorsGroup colorsGroup) {
+        mirrorSelectionColors.setColors(colorsGroup);
+        repaint();
     }
 
     public Color getCursorColor() {
@@ -910,14 +1067,16 @@ public class CodeArea extends JComponent {
 
     public void setCursorColor(Color cursorColor) {
         this.cursorColor = cursorColor;
+        repaint();
     }
 
-    public Color getWhiteSpaceColor() {
-        return whiteSpaceColor;
+    public Color getDecorationLineColor() {
+        return decorationLineColor;
     }
 
-    public void setWhiteSpaceColor(Color whiteSpaceColor) {
-        this.whiteSpaceColor = whiteSpaceColor;
+    public void setDecorationLineColor(Color decorationLineColor) {
+        this.decorationLineColor = decorationLineColor;
+        repaint();
     }
 
     public ViewMode getViewMode() {
@@ -928,8 +1087,10 @@ public class CodeArea extends JComponent {
         this.viewMode = viewMode;
         if (viewMode == ViewMode.CODE_MATRIX) {
             caret.setSection(Section.CODE_MATRIX);
+            notifyCaretMoved();
         } else if (viewMode == ViewMode.TEXT_PREVIEW) {
             caret.setSection(Section.TEXT_PREVIEW);
+            notifyCaretMoved();
         }
         computeDimensions();
         repaint();
@@ -941,6 +1102,16 @@ public class CodeArea extends JComponent {
 
     public void setCodeType(CodeType codeType) {
         this.codeType = codeType;
+        computeDimensions();
+        repaint();
+    }
+
+    public PositionCodeType getPositionCodeType() {
+        return positionCodeType;
+    }
+
+    public void setPositionCodeType(PositionCodeType positionCodeType) {
+        this.positionCodeType = positionCodeType;
         computeDimensions();
         repaint();
     }
@@ -969,15 +1140,6 @@ public class CodeArea extends JComponent {
 
     public void setSubFontSpace(int subFontSpace) {
         this.subFontSpace = subFontSpace;
-    }
-
-    public int getHeaderCharacters() {
-        return headerCharacters;
-    }
-
-    public void setHeaderCharacters(int headerCharacters) {
-        this.headerCharacters = headerCharacters;
-        repaint();
     }
 
     public Section getActiveSection() {
@@ -1052,12 +1214,12 @@ public class CodeArea extends JComponent {
         this.handleClipboard = handleClipboard;
     }
 
-    public boolean isShowNonprintingCharacters() {
-        return showNonprintingCharacters;
+    public boolean isShowUnprintableCharacters() {
+        return showUnprintableCharacters;
     }
 
-    public void setShowNonprintingCharacters(boolean showNonprintingCharacters) {
-        this.showNonprintingCharacters = showNonprintingCharacters;
+    public void setShowUnprintableCharacters(boolean showUnprintableCharacters) {
+        this.showUnprintableCharacters = showUnprintableCharacters;
         repaint();
     }
 
@@ -1086,8 +1248,8 @@ public class CodeArea extends JComponent {
         return charRenderingMode;
     }
 
-    public boolean isCharFixedMode() {
-        return charRenderingMode == CharRenderingMode.FIXED || (charRenderingMode == CharRenderingMode.AUTO && dimensionsCache.monospaced);
+    public boolean isMonospaceFontDetected() {
+        return dimensionsCache.monospaceFont;
     }
 
     public void setCharRenderingMode(CharRenderingMode charRenderingMode) {
@@ -1115,6 +1277,84 @@ public class CodeArea extends JComponent {
         repaint();
     }
 
+    public CodeAreaSpace.SpaceType getHeaderSpaceType() {
+        return headerSpace.getSpaceType();
+    }
+
+    public void setHeaderSpaceType(CodeAreaSpace.SpaceType spaceType) {
+        if (spaceType == null) {
+            throw new NullPointerException();
+        }
+        headerSpace.setSpaceType(spaceType);
+        computeDimensions();
+        repaint();
+    }
+
+    public int getHeaderSpaceSize() {
+        return headerSpace.getSpaceSize();
+    }
+
+    public void setHeaderSpaceSize(int spaceSize) {
+        if (spaceSize < 0) {
+            throw new IllegalArgumentException("Negative space size is not valid");
+        }
+        headerSpace.setSpaceSize(spaceSize);
+        computeDimensions();
+        repaint();
+    }
+
+    public CodeAreaSpace.SpaceType getLineNumberSpaceType() {
+        return lineNumberSpace.getSpaceType();
+    }
+
+    public void setLineNumberSpaceType(CodeAreaSpace.SpaceType spaceType) {
+        if (spaceType == null) {
+            throw new NullPointerException();
+        }
+        lineNumberSpace.setSpaceType(spaceType);
+        computeDimensions();
+        repaint();
+    }
+
+    public int getLineNumberSpaceSize() {
+        return lineNumberSpace.getSpaceSize();
+    }
+
+    public void setLineNumberSpaceSize(int spaceSize) {
+        if (spaceSize < 0) {
+            throw new IllegalArgumentException("Negative space size is not valid");
+        }
+        lineNumberSpace.setSpaceSize(spaceSize);
+        computeDimensions();
+        repaint();
+    }
+
+    public CodeAreaLineNumberLength.LineNumberType getLineNumberType() {
+        return lineNumberLength.getLineNumberType();
+    }
+
+    public void setLineNumberType(CodeAreaLineNumberLength.LineNumberType lineNumberType) {
+        if (lineNumberType == null) {
+            throw new NullPointerException("Line number type cannot be null");
+        }
+        lineNumberLength.setLineNumberType(lineNumberType);
+        computeDimensions();
+        repaint();
+    }
+
+    public int getLineNumberSpecifiedLength() {
+        return lineNumberLength.getLineNumberLength();
+    }
+
+    public void setLineNumberSpecifiedLength(int lineNumberSize) {
+        if (lineNumberSize < 1) {
+            throw new NullPointerException("Line number type cannot be less then 1");
+        }
+        lineNumberLength.setLineNumberLength(lineNumberSize);
+        computeDimensions();
+        repaint();
+    }
+
     public ScrollBarVisibility getVerticalScrollBarVisibility() {
         return verticalScrollBarVisibility;
     }
@@ -1138,6 +1378,7 @@ public class CodeArea extends JComponent {
         computeDimensions();
         scrollPosition.scrollLinePosition = linePosition;
         updateScrollBars();
+        notifyScrolled();
     }
 
     public ScrollBarVisibility getHorizontalScrollBarVisibility() {
@@ -1163,6 +1404,7 @@ public class CodeArea extends JComponent {
         computeDimensions();
         scrollPosition.scrollBytePosition = bytePosition;
         updateScrollBars();
+        notifyScrolled();
     }
 
     public long getDataPosition() {
@@ -1249,10 +1491,20 @@ public class CodeArea extends JComponent {
             this.end = end;
         }
 
+        /**
+         * Returns first data position of the selection.
+         *
+         * @return data position
+         */
         public long getFirst() {
             return end >= start ? start : end;
         }
 
+        /**
+         * Returns last data position of the selection.
+         *
+         * @return data position
+         */
         public long getLast() {
             return end >= start ? end : start - 1;
         }
@@ -1290,6 +1542,26 @@ public class CodeArea extends JComponent {
     }
 
     /**
+     * Data changed listener.
+     *
+     * Event is fired each time data is modified.
+     */
+    public interface DataChangedListener {
+
+        void dataChanged();
+    }
+
+    /**
+     * Scrolling listener.
+     *
+     * Event is fired each time component is scrolled.
+     */
+    public interface ScrollingListener {
+
+        void scrolled();
+    }
+
+    /**
      * Component supports showing numerical codes or textual preview, or both.
      */
     public static enum ViewMode {
@@ -1312,6 +1584,26 @@ public class CodeArea extends JComponent {
          */
         public int getMaxDigits() {
             return maxDigits;
+        }
+    }
+
+    public static enum PositionCodeType {
+        OCTAL(8), DECIMAL(10), HEXADECIMAL(16);
+
+        int base;
+        double baseLog;
+
+        private PositionCodeType(int base) {
+            this.base = base;
+            baseLog = Math.log(base);
+        }
+
+        public int getBase() {
+            return base;
+        }
+
+        public double getBaseLog() {
+            return baseLog;
         }
     }
 
@@ -1342,18 +1634,19 @@ public class CodeArea extends JComponent {
     /**
      * Character rendering mode.
      *
-     * AUTO - Detect if font is monospaced and use FIXED in such case or DYNAMIC
-     * in other cases
+     * AUTO - Centers characters if width is not default and detects monospace
+     * fonts to render characters as string if possible
      *
-     * DYNAMIC - For each character compute width to center this character in
-     * area
+     * LINE_AT_ONCE - Render sequence of characters from top left corner of the
+     * line ignoring character width. It's fastest, but render correctly only
+     * for monospaced fonts and charsets where all characters have same width
      *
-     * LEFT - Render each character from top left corner of it's position
+     * TOP_LEFT - Render each character from top left corner of it's position
      *
-     * FIXED - Render sequence of characters from top left corner
+     * CENTER - Centers each character in it's area
      */
     public static enum CharRenderingMode {
-        AUTO, CENTER, LEFT, FIXED
+        AUTO, LINE_AT_ONCE, TOP_LEFT, CENTER
     }
 
     public static enum CharAntialiasingMode {
@@ -1372,14 +1665,28 @@ public class CodeArea extends JComponent {
         FontMetrics fontMetrics = null;
         int charWidth;
         int lineHeight;
-        int charsPerByte;
         int bytesPerLine;
-        boolean monospaced = false;
+        int charsPerByte;
+        int lineNumbersLength;
+        boolean monospaceFont = false;
 
         /**
          * Component area without border insets.
          */
         final Rectangle componentRectangle = new Rectangle();
+        /**
+         * Space between header and code area.
+         */
+        int headerSpace;
+        /**
+         * Space between line numbers and code area.
+         */
+        int lineNumberSpace;
+        /**
+         * Space between main code area and preview.
+         */
+        int previewSpace;
+
         /**
          * Main data area.
          *
@@ -1401,9 +1708,144 @@ public class CodeArea extends JComponent {
         int scrollLineOffset = 0;
         int scrollBytePosition = 0;
         int scrollByteOffset = 0;
+
+        public long getScrollLinePosition() {
+            return scrollLinePosition;
+        }
+
+        public int getScrollLineOffset() {
+            return scrollLineOffset;
+        }
+
+        public int getScrollBytePosition() {
+            return scrollBytePosition;
+        }
+
+        public int getScrollByteOffset() {
+            return scrollByteOffset;
+        }
     }
 
-    private class HexMouseListener extends MouseAdapter implements MouseMotionListener, MouseWheelListener {
+    /**
+     * Set of colors for different sections of component rendering.
+     */
+    public static class ColorsGroup {
+
+        private Color textColor;
+        private Color backgroundColor;
+        private Color unprintablesColor;
+        private Color unprintablesBackgroundColor;
+
+        public ColorsGroup() {
+        }
+
+        /**
+         * Copy constructor.
+         *
+         * @param colorsGroup colors group
+         */
+        public ColorsGroup(ColorsGroup colorsGroup) {
+            setColorsFromGroup(colorsGroup);
+        }
+
+        private void setColorsFromGroup(ColorsGroup colorsGroup) {
+            textColor = colorsGroup.getTextColor();
+            backgroundColor = colorsGroup.getBackgroundColor();
+            unprintablesColor = colorsGroup.getUnprintablesColor();
+            unprintablesBackgroundColor = colorsGroup.getUnprintablesBackgroundColor();
+        }
+
+        public Color getTextColor() {
+            return textColor;
+        }
+
+        public void setTextColor(Color textColor) {
+            this.textColor = textColor;
+        }
+
+        public Color getBackgroundColor() {
+            return backgroundColor;
+        }
+
+        public void setBackgroundColor(Color backgroundColor) {
+            this.backgroundColor = backgroundColor;
+        }
+
+        public Color getUnprintablesColor() {
+            return unprintablesColor;
+        }
+
+        public void setUnprintablesColor(Color unprintablesColor) {
+            this.unprintablesColor = unprintablesColor;
+        }
+
+        public Color getUnprintablesBackgroundColor() {
+            return unprintablesBackgroundColor;
+        }
+
+        public void setUnprintablesBackgroundColor(Color unprintablesBackgroundColor) {
+            this.unprintablesBackgroundColor = unprintablesBackgroundColor;
+        }
+
+        public void setBothBackgroundColors(Color backgroundColor) {
+            this.backgroundColor = backgroundColor;
+            this.unprintablesBackgroundColor = backgroundColor;
+        }
+
+        public void setColors(ColorsGroup colorsGroup) {
+            setColorsFromGroup(colorsGroup);
+        }
+
+        public Color getColor(ColorType colorType) {
+            switch (colorType) {
+                case TEXT:
+                    return textColor;
+                case BACKGROUND:
+                    return backgroundColor;
+                case UNPRINTABLES:
+                    return unprintablesColor;
+                case UNPRINTABLES_BACKGROUND:
+                    return unprintablesBackgroundColor;
+                default:
+                    throw new IllegalStateException();
+            }
+        }
+
+        public void setColor(ColorType colorType, Color color) {
+            switch (colorType) {
+                case TEXT: {
+                    textColor = color;
+                    break;
+                }
+                case BACKGROUND: {
+                    backgroundColor = color;
+                    break;
+                }
+                case UNPRINTABLES: {
+                    unprintablesColor = color;
+                    break;
+                }
+                case UNPRINTABLES_BACKGROUND: {
+                    unprintablesBackgroundColor = color;
+                    break;
+                }
+                default:
+                    throw new IllegalStateException();
+            }
+        }
+    }
+
+    /**
+     * Enumeration of color types in group.
+     */
+    public static enum ColorType {
+        TEXT,
+        BACKGROUND,
+        UNPRINTABLES,
+        UNPRINTABLES_BACKGROUND
+    }
+
+    private class CodeAreaMouseListener extends MouseAdapter implements MouseMotionListener, MouseWheelListener {
 
         private Cursor currentCursor = getCursor();
         private final Cursor defaultCursor = Cursor.getDefaultCursor();
@@ -1412,11 +1854,11 @@ public class CodeArea extends JComponent {
         @Override
         public void mousePressed(MouseEvent me) {
             requestFocus();
-            if (me.getButton() == MouseEvent.BUTTON1) {
+            if (isEnabled() && me.getButton() == MouseEvent.BUTTON1) {
                 moveCaret(me, me.getModifiersEx());
                 revealCursor();
+                mouseDown = true;
             }
-            mouseDown = true;
         }
 
         @Override
@@ -1426,20 +1868,17 @@ public class CodeArea extends JComponent {
 
         @Override
         public void mouseExited(MouseEvent e) {
-            super.mouseExited(e);
             currentCursor = defaultCursor;
             setCursor(defaultCursor);
         }
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            super.mouseEntered(e);
             updateMouseCursor(e);
         }
 
         @Override
         public void mouseMoved(MouseEvent e) {
-            super.mouseMoved(e);
             updateMouseCursor(e);
         }
 
@@ -1459,7 +1898,7 @@ public class CodeArea extends JComponent {
         @Override
         public void mouseDragged(MouseEvent me) {
             updateMouseCursor(me);
-            if (mouseDown) {
+            if (isEnabled() && mouseDown) {
                 moveCaret(me, KeyEvent.SHIFT_DOWN_MASK);
                 revealCursor();
             }
@@ -1467,6 +1906,10 @@ public class CodeArea extends JComponent {
 
         @Override
         public void mouseWheelMoved(MouseWheelEvent e) {
+            if (!isEnabled()) {
+                return;
+            }
+
             if (e.isShiftDown() && horizontalScrollBar.isVisible()) {
                 if (e.getWheelRotation() > 0) {
                     int visibleBytes = dimensionsCache.codeSectionRectangle.width / (dimensionsCache.charWidth * dimensionsCache.charsPerByte);
@@ -1478,6 +1921,7 @@ public class CodeArea extends JComponent {
                             scrollPosition.scrollBytePosition = bytes;
                         }
                         updateScrollBars();
+                        notifyScrolled();
                     }
                 } else if (scrollPosition.scrollBytePosition > 0) {
                     if (scrollPosition.scrollBytePosition > MOUSE_SCROLL_LINES) {
@@ -1486,12 +1930,14 @@ public class CodeArea extends JComponent {
                         scrollPosition.scrollBytePosition = 0;
                     }
                     updateScrollBars();
+                    notifyScrolled();
                 }
             } else if (e.getWheelRotation() > 0) {
-                long lines = (int) (data.getDataSize() / dimensionsCache.bytesPerLine) - dimensionsCache.linesPerRect;
-                if (isShowHeader()) {
-                    lines += 2;
+                long lines = (int) (data.getDataSize() / dimensionsCache.bytesPerLine);
+                if (lines * dimensionsCache.bytesPerLine < data.getDataSize()) {
+                    lines++;
                 }
+                lines -= dimensionsCache.linesPerRect;
                 if (scrollPosition.scrollLinePosition < lines) {
                     if (scrollPosition.scrollLinePosition < lines - MOUSE_SCROLL_LINES) {
                         scrollPosition.scrollLinePosition += MOUSE_SCROLL_LINES;
@@ -1499,6 +1945,7 @@ public class CodeArea extends JComponent {
                         scrollPosition.scrollLinePosition = lines;
                     }
                     updateScrollBars();
+                    notifyScrolled();
                 }
             } else if (scrollPosition.scrollLinePosition > 0) {
                 if (scrollPosition.scrollLinePosition > MOUSE_SCROLL_LINES) {
@@ -1507,30 +1954,29 @@ public class CodeArea extends JComponent {
                     scrollPosition.scrollLinePosition = 0;
                 }
                 updateScrollBars();
+                notifyScrolled();
             }
         }
     }
 
-    private class HexKeyListener extends KeyAdapter {
+    private class CodeAreaKeyListener extends KeyAdapter {
 
-        public HexKeyListener() {
+        public CodeAreaKeyListener() {
         }
 
         @Override
         public void keyTyped(KeyEvent e) {
-            super.keyTyped(e);
             if (e.getKeyChar() != 0xffff) {
                 commandHandler.keyPressed(e.getKeyChar());
             }
         }
 
         @Override
-        public void keyReleased(KeyEvent e) {
-            super.keyReleased(e);
-        }
-
-        @Override
         public void keyPressed(KeyEvent e) {
+            if (!isEnabled()) {
+                return;
+            }
+
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT: {
                     moveLeft(e.getModifiersEx());
@@ -1631,6 +2077,7 @@ public class CodeArea extends JComponent {
                     }
                     revealCursor();
                     updateScrollBars();
+                    notifyScrolled();
                     break;
                 }
                 case KeyEvent.VK_PAGE_DOWN: {
@@ -1654,6 +2101,7 @@ public class CodeArea extends JComponent {
                     }
                     revealCursor();
                     updateScrollBars();
+                    notifyScrolled();
                     break;
                 }
                 case KeyEvent.VK_INSERT: {
@@ -1746,6 +2194,7 @@ public class CodeArea extends JComponent {
                 scrollPosition.scrollLineOffset = verticalScrollBar.getValue() % dimensionsCache.lineHeight;
             }
             repaint();
+            notifyScrolled();
         }
     }
 
@@ -1763,6 +2212,7 @@ public class CodeArea extends JComponent {
                 scrollPosition.scrollByteOffset = horizontalScrollBar.getValue() % dimensionsCache.charWidth;
             }
             repaint();
+            notifyScrolled();
         }
     }
 }

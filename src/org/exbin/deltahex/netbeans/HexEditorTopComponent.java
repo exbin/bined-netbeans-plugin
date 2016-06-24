@@ -328,7 +328,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     }//GEN-LAST:event_lineWrappingToggleButtonActionPerformed
 
     private void showUnprintablesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showUnprintablesToggleButtonActionPerformed
-        codeArea.setShowNonprintingCharacters(showUnprintablesToggleButton.isSelected());
+        codeArea.setShowUnprintableCharacters(showUnprintablesToggleButton.isSelected());
     }//GEN-LAST:event_showUnprintablesToggleButtonActionPerformed
 
     private void codeTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_codeTypeComboBoxActionPerformed
