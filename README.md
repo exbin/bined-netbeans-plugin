@@ -12,13 +12,13 @@ Derived from: http://plugins.netbeans.org/plugin/40174/hexeditor
 Features
 --------
 
-- Hexadecimal representation of data and ascii preview
+- Data as hexadecimal codes and text preview
 - Insert and overwrite edit modes
 - Support for selection and clipboard
-- Optional scrollbars
-- Support for text encodings
-- Support for showing unprintable/whitespace characters
 - Support for undo/redo
+- Support for encoding selection
+- Support for showing unprintable/whitespace characters
+- Codes can be also binary, octal or decimal
 
 Todo
 ----
