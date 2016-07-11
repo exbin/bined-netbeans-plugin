@@ -44,7 +44,7 @@ public final class OpenAsHexAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ev) {
         final Mode editorMode = WindowManager.getDefault().findMode("editor");
-        if (null == editorMode) {
+        if (editorMode == null) {
             return;
         }
 
