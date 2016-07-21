@@ -105,4 +105,41 @@ public class ByteArrayData implements BinaryData {
     public InputStream getDataInputStream() {
         return new ByteArrayDataInputStream(this);
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            if (obj instanceof BinaryData) {
+                // TODO Simple byte comparision, optimize ussing buffer later
+                BinaryData other = (BinaryData) obj;
+                if (other.getDataSize() != getDataSize()) {
+                    return false;
+                }
+
+                for (long position = 0; position < getDataSize(); position++) {
+                    if (other.getByte(position) != getByte(position)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+        final ByteArrayData other = (ByteArrayData) obj;
+        return Arrays.equals(this.data, other.data);
+    }
 }

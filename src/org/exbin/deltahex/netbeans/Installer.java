@@ -80,11 +80,6 @@ public class Installer extends ModuleInstall {
                 final FileObject actionsFolder = FileUtil.createFolder(fileType, "Actions");
                 final FileObject openAsHexAction = actionsFolder.getFileObject(OPEN_AS_HEX_ACTION_STRING);
                 if (openAsHexAction == null) {
-                    System.out.println("Actions: " + fileType.getName());
-                    for (FileObject fileObject : actionsFolder.getChildren()) {
-                        System.out.println(fileObject.getName() + ": " + fileObject.getAttribute("position"));
-                    }
-                    System.out.println();
                     /**
                      * Attempt to establish correct position in context menu for
                      * different mime types.

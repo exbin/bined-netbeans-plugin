@@ -32,6 +32,8 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -54,7 +56,7 @@ import org.exbin.utils.binary_data.BinaryData;
  *
  * Also supports binary, octal and decimal codes.
  *
- * @version 0.1.0 2016/06/24
+ * @version 0.1.0 2016/07/20
  * @author ExBin Project (http://exbin.org)
  */
 public class CodeArea extends JComponent {
@@ -109,8 +111,10 @@ public class CodeArea extends JComponent {
     private ScrollPosition scrollPosition = new ScrollPosition();
 
     /**
-     * Component colors. Parent foreground and background are used for header
-     * and line numbers section.
+     * Component colors.
+     *
+     * Parent foreground and background are used for header and line numbers
+     * section.
      */
     private final ColorsGroup mainColors = new ColorsGroup();
     private final ColorsGroup alternateColors = new ColorsGroup();
@@ -136,6 +140,15 @@ public class CodeArea extends JComponent {
         painter = new DefaultCodeAreaPainter(this);
         commandHandler = new DefaultCodeAreaCommandHandler(this);
 
+        try {
+            metaMask = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+        } catch (java.awt.HeadlessException ex) {
+            metaMask = java.awt.Event.CTRL_MASK;
+        }
+        init();
+    }
+
+    private void init() {
         Color textColor = UIManager.getColor("TextArea.foreground");
         Color backgroundColor = UIManager.getColor("TextArea.background");
         super.setForeground(textColor);
@@ -160,15 +173,6 @@ public class CodeArea extends JComponent {
         cursorColor = UIManager.getColor("TextArea.caretForeground");
         decorationLineColor = Color.GRAY;
 
-        try {
-            metaMask = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-        } catch (java.awt.HeadlessException ex) {
-            metaMask = java.awt.Event.CTRL_MASK;
-        }
-        init();
-    }
-
-    private void init() {
         verticalScrollBar = new JScrollBar(Scrollbar.VERTICAL);
         verticalScrollBar.setVisible(false);
         verticalScrollBar.setIgnoreRepaint(true);
@@ -189,6 +193,17 @@ public class CodeArea extends JComponent {
         addMouseMotionListener(codeAreaMouseListener);
         addMouseWheelListener(codeAreaMouseListener);
         addKeyListener(new CodeAreaKeyListener());
+        addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                repaint();
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                repaint();
+            }
+        });
     }
 
     @Override
@@ -372,7 +387,7 @@ public class CodeArea extends JComponent {
     }
 
     public Point getScrollPoint() {
-        return new Point(scrollPosition.scrollBytePosition * paintDataCache.charWidth + scrollPosition.scrollByteOffset, (int) scrollPosition.scrollLinePosition * paintDataCache.lineHeight + scrollPosition.scrollLineOffset);
+        return new Point(scrollPosition.scrollCharPosition * paintDataCache.charWidth + scrollPosition.scrollCharOffset, (int) scrollPosition.scrollLinePosition * paintDataCache.lineHeight + scrollPosition.scrollLineOffset);
     }
 
     public ScrollPosition getScrollPosition() {
@@ -417,16 +432,16 @@ public class CodeArea extends JComponent {
             }
             scrolled = true;
         }
-        if (positionByte <= scrollPosition.scrollBytePosition) {
-            scrollPosition.scrollBytePosition = positionByte;
-            scrollPosition.scrollByteOffset = 0;
+        if (positionByte <= scrollPosition.scrollCharPosition) {
+            scrollPosition.scrollCharPosition = positionByte;
+            scrollPosition.scrollCharOffset = 0;
             scrolled = true;
-        } else if (positionByte >= scrollPosition.scrollBytePosition + paintDataCache.bytesPerRect) {
-            scrollPosition.scrollBytePosition = positionByte - paintDataCache.bytesPerRect;
+        } else if (positionByte >= scrollPosition.scrollCharPosition + paintDataCache.bytesPerRect) {
+            scrollPosition.scrollCharPosition = positionByte - paintDataCache.bytesPerRect;
             if (horizontalScrollMode == HorizontalScrollMode.PIXEL) {
-                scrollPosition.scrollByteOffset = paintDataCache.charWidth - (hexRect.width % paintDataCache.charWidth);
+                scrollPosition.scrollCharOffset = paintDataCache.charWidth - (hexRect.width % paintDataCache.charWidth);
             } else {
-                scrollPosition.scrollBytePosition++;
+                scrollPosition.scrollCharPosition++;
             }
             scrolled = true;
         }
@@ -445,9 +460,9 @@ public class CodeArea extends JComponent {
         }
 
         if (horizontalScrollMode == HorizontalScrollMode.PER_CHAR) {
-            horizontalScrollBar.setValue(scrollPosition.scrollBytePosition);
+            horizontalScrollBar.setValue(scrollPosition.scrollCharPosition);
         } else {
-            horizontalScrollBar.setValue(scrollPosition.scrollBytePosition * paintDataCache.charWidth + scrollPosition.scrollByteOffset);
+            horizontalScrollBar.setValue(scrollPosition.scrollCharPosition * paintDataCache.charWidth + scrollPosition.scrollCharOffset);
         }
         repaint();
     }
@@ -509,15 +524,17 @@ public class CodeArea extends JComponent {
             if (codeOffset > 0) {
                 caret.setCodeOffset(codeOffset - 1);
                 updateSelection(modifiers, caretPosition);
+                notifyCaretMoved();
             } else if (caretPosition.getDataPosition() > 0) {
                 caret.setCaretPosition(caretPosition.getDataPosition() - 1, codeType.maxDigits - 1);
                 updateSelection(modifiers, caretPosition);
+                notifyCaretMoved();
             }
         } else if (caretPosition.getDataPosition() > 0) {
             caret.setCaretPosition(caretPosition.getDataPosition() - 1);
             updateSelection(modifiers, caretPosition);
+            notifyCaretMoved();
         }
-        notifyCaretMoved();
     }
 
     public SelectionRange getSelection() {
@@ -552,6 +569,21 @@ public class CodeArea extends JComponent {
     public void setSelection(SelectionRange selection) {
         this.selection = selection;
         notifySelectionChanged();
+    }
+
+    public void setCaretPosition(CaretPosition caretPosition) {
+        caret.setCaretPosition(caretPosition);
+        notifyCaretMoved();
+    }
+
+    public void setCaretPosition(long dataPosition) {
+        caret.setCaretPosition(dataPosition);
+        notifyCaretMoved();
+    }
+
+    public void setCaretPosition(long dataPosition, int codeOffset) {
+        caret.setCaretPosition(dataPosition, codeOffset);
+        notifyCaretMoved();
     }
 
     public void addSelectionChangedListener(SelectionChangedListener selectionChangedListener) {
@@ -606,7 +638,7 @@ public class CodeArea extends JComponent {
     }
 
     /**
-     * Returns main hexadecimal area rectangle.
+     * Returns main code area rectangle.
      *
      * @return rectangle of main hexadecimal area
      */
@@ -1002,23 +1034,23 @@ public class CodeArea extends JComponent {
             int maxByteScroll = horizontalMaximum - horizontalVisibleAmount;
             if (horizontalVisibleAmount < horizontalMaximum) {
                 if (horizontalScrollMode == HorizontalScrollMode.PIXEL) {
-                    int byteScroll = scrollPosition.scrollBytePosition * paintDataCache.charWidth + scrollPosition.scrollByteOffset;
+                    int byteScroll = scrollPosition.scrollCharPosition * paintDataCache.charWidth + scrollPosition.scrollCharOffset;
                     if (byteScroll > maxByteScroll) {
-                        scrollPosition.scrollBytePosition = maxByteScroll / paintDataCache.charWidth;
-                        scrollPosition.scrollByteOffset = maxByteScroll % paintDataCache.charWidth;
+                        scrollPosition.scrollCharPosition = maxByteScroll / paintDataCache.charWidth;
+                        scrollPosition.scrollCharOffset = maxByteScroll % paintDataCache.charWidth;
                         scrolled = true;
                     }
                 } else {
-                    int byteScroll = scrollPosition.scrollBytePosition;
+                    int byteScroll = scrollPosition.scrollCharPosition;
                     if (byteScroll > maxByteScroll) {
-                        scrollPosition.scrollBytePosition = maxByteScroll;
+                        scrollPosition.scrollCharPosition = maxByteScroll;
                         scrolled = true;
                     }
                 }
             }
-        } else if (scrollPosition.scrollBytePosition > 0 || scrollPosition.scrollByteOffset > 0) {
-            scrollPosition.scrollBytePosition = 0;
-            scrollPosition.scrollByteOffset = 0;
+        } else if (scrollPosition.scrollCharPosition > 0 || scrollPosition.scrollCharOffset > 0) {
+            scrollPosition.scrollCharPosition = 0;
+            scrollPosition.scrollCharOffset = 0;
             scrolled = true;
         }
 
@@ -1359,7 +1391,7 @@ public class CodeArea extends JComponent {
 
     public void setLineNumberSpecifiedLength(int lineNumberSize) {
         if (lineNumberSize < 1) {
-            throw new NullPointerException("Line number type cannot be less then 1");
+            throw new IllegalArgumentException("Line number type cannot be less then 1");
         }
         lineNumberLength.setLineNumberLength(lineNumberSize);
         computePaintData();
@@ -1408,12 +1440,12 @@ public class CodeArea extends JComponent {
 
     public void setHorizontalScrollMode(HorizontalScrollMode horizontalScrollMode) {
         this.horizontalScrollMode = horizontalScrollMode;
-        int bytePosition = scrollPosition.scrollBytePosition;
+        int bytePosition = scrollPosition.scrollCharPosition;
         if (horizontalScrollMode == HorizontalScrollMode.PER_CHAR) {
-            scrollPosition.scrollByteOffset = 0;
+            scrollPosition.scrollCharOffset = 0;
         }
         computePaintData();
-        scrollPosition.scrollBytePosition = bytePosition;
+        scrollPosition.scrollCharPosition = bytePosition;
         updateScrollBars();
         notifyScrolled();
     }
@@ -1721,8 +1753,8 @@ public class CodeArea extends JComponent {
 
         long scrollLinePosition = 0;
         int scrollLineOffset = 0;
-        int scrollBytePosition = 0;
-        int scrollByteOffset = 0;
+        int scrollCharPosition = 0;
+        int scrollCharOffset = 0;
 
         public long getScrollLinePosition() {
             return scrollLinePosition;
@@ -1732,12 +1764,12 @@ public class CodeArea extends JComponent {
             return scrollLineOffset;
         }
 
-        public int getScrollBytePosition() {
-            return scrollBytePosition;
+        public int getScrollCharPosition() {
+            return scrollCharPosition;
         }
 
-        public int getScrollByteOffset() {
-            return scrollByteOffset;
+        public int getScrollCharOffset() {
+            return scrollCharOffset;
         }
     }
 
@@ -1851,7 +1883,7 @@ public class CodeArea extends JComponent {
     }
 
     /**
-     * Enumeration of color types in group.
+     * Enumeration of color types in ColorsGroup.
      */
     public static enum ColorType {
         TEXT,
@@ -1929,20 +1961,20 @@ public class CodeArea extends JComponent {
                 if (e.getWheelRotation() > 0) {
                     int visibleBytes = paintDataCache.codeSectionRectangle.width / (paintDataCache.charWidth * paintDataCache.charsPerByte);
                     int bytes = paintDataCache.bytesPerLine - visibleBytes;
-                    if (scrollPosition.scrollBytePosition < bytes) {
-                        if (scrollPosition.scrollBytePosition < bytes - MOUSE_SCROLL_LINES) {
-                            scrollPosition.scrollBytePosition += MOUSE_SCROLL_LINES;
+                    if (scrollPosition.scrollCharPosition < bytes) {
+                        if (scrollPosition.scrollCharPosition < bytes - MOUSE_SCROLL_LINES) {
+                            scrollPosition.scrollCharPosition += MOUSE_SCROLL_LINES;
                         } else {
-                            scrollPosition.scrollBytePosition = bytes;
+                            scrollPosition.scrollCharPosition = bytes;
                         }
                         updateScrollBars();
                         notifyScrolled();
                     }
-                } else if (scrollPosition.scrollBytePosition > 0) {
-                    if (scrollPosition.scrollBytePosition > MOUSE_SCROLL_LINES) {
-                        scrollPosition.scrollBytePosition -= MOUSE_SCROLL_LINES;
+                } else if (scrollPosition.scrollCharPosition > 0) {
+                    if (scrollPosition.scrollCharPosition > MOUSE_SCROLL_LINES) {
+                        scrollPosition.scrollCharPosition -= MOUSE_SCROLL_LINES;
                     } else {
-                        scrollPosition.scrollBytePosition = 0;
+                        scrollPosition.scrollCharPosition = 0;
                     }
                     updateScrollBars();
                     notifyScrolled();
@@ -1997,12 +2029,14 @@ public class CodeArea extends JComponent {
                     moveLeft(e.getModifiersEx());
                     commandHandler.caretMoved();
                     revealCursor();
+                    e.consume();
                     break;
                 }
                 case KeyEvent.VK_RIGHT: {
                     moveRight(e.getModifiersEx());
                     commandHandler.caretMoved();
                     revealCursor();
+                    e.consume();
                     break;
                 }
                 case KeyEvent.VK_UP: {
@@ -2017,6 +2051,7 @@ public class CodeArea extends JComponent {
                     }
                     commandHandler.caretMoved();
                     revealCursor();
+                    e.consume();
                     break;
                 }
                 case KeyEvent.VK_DOWN: {
@@ -2033,6 +2068,7 @@ public class CodeArea extends JComponent {
                     }
                     commandHandler.caretMoved();
                     revealCursor();
+                    e.consume();
                     break;
                 }
                 case KeyEvent.VK_HOME: {
@@ -2051,6 +2087,7 @@ public class CodeArea extends JComponent {
                         updateSelection(e.getModifiersEx(), caretPosition);
                     }
                     revealCursor();
+                    e.consume();
                     break;
                 }
                 case KeyEvent.VK_END: {
@@ -2072,6 +2109,7 @@ public class CodeArea extends JComponent {
                         updateSelection(e.getModifiersEx(), caretPosition);
                     }
                     revealCursor();
+                    e.consume();
                     break;
                 }
                 case KeyEvent.VK_PAGE_UP: {
@@ -2093,6 +2131,7 @@ public class CodeArea extends JComponent {
                     revealCursor();
                     updateScrollBars();
                     notifyScrolled();
+                    e.consume();
                     break;
                 }
                 case KeyEvent.VK_PAGE_DOWN: {
@@ -2117,12 +2156,14 @@ public class CodeArea extends JComponent {
                     revealCursor();
                     updateScrollBars();
                     notifyScrolled();
+                    e.consume();
                     break;
                 }
                 case KeyEvent.VK_INSERT: {
                     if (editationMode != EditationMode.READ_ONLY) {
                         setEditationMode(editationMode == EditationMode.INSERT ? EditationMode.OVERWRITE : EditationMode.INSERT);
                     }
+                    e.consume();
                     break;
                 }
                 case KeyEvent.VK_TAB: {
@@ -2135,35 +2176,36 @@ public class CodeArea extends JComponent {
                         revealCursor();
                         repaint();
                     }
+                    e.consume();
                     break;
                 }
                 case KeyEvent.VK_DELETE: {
                     commandHandler.deletePressed();
+                    e.consume();
                     break;
                 }
                 case KeyEvent.VK_BACK_SPACE: {
                     commandHandler.backSpacePressed();
-                    break;
-                }
-                case KeyEvent.VK_ESCAPE: {
-                    if (hasSelection()) {
-                        clearSelection();
-                    }
+                    e.consume();
                     break;
                 }
                 default: {
                     if (handleClipboard) {
                         if ((e.getModifiers() & metaMask) > 0 && e.getKeyCode() == KeyEvent.VK_C) {
                             commandHandler.copy();
+                            e.consume();
                             break;
                         } else if ((e.getModifiers() & metaMask) > 0 && e.getKeyCode() == KeyEvent.VK_X) {
                             commandHandler.cut();
+                            e.consume();
                             break;
                         } else if ((e.getModifiers() & metaMask) > 0 && e.getKeyCode() == KeyEvent.VK_V) {
                             commandHandler.paste();
+                            e.consume();
                             break;
                         } else if ((e.getModifiers() & metaMask) > 0 && e.getKeyCode() == KeyEvent.VK_A) {
                             selectAll();
+                            e.consume();
                             break;
                         }
                     }
@@ -2221,10 +2263,10 @@ public class CodeArea extends JComponent {
         @Override
         public void adjustmentValueChanged(AdjustmentEvent e) {
             if (horizontalScrollMode == HorizontalScrollMode.PER_CHAR) {
-                scrollPosition.scrollBytePosition = horizontalScrollBar.getValue();
+                scrollPosition.scrollCharPosition = horizontalScrollBar.getValue();
             } else {
-                scrollPosition.scrollBytePosition = horizontalScrollBar.getValue() / paintDataCache.charWidth;
-                scrollPosition.scrollByteOffset = horizontalScrollBar.getValue() % paintDataCache.charWidth;
+                scrollPosition.scrollCharPosition = horizontalScrollBar.getValue() / paintDataCache.charWidth;
+                scrollPosition.scrollCharOffset = horizontalScrollBar.getValue() % paintDataCache.charWidth;
             }
             repaint();
             notifyScrolled();
