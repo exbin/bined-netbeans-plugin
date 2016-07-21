@@ -53,7 +53,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.1 2016/06/15
+ * @version 0.1.2 2016/07/21
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)
@@ -86,7 +86,6 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         codeArea.setData(new MemoryPagedData());
         CodeCommandHandler commandHandler = new CodeCommandHandler(codeArea, undoHandler);
         codeArea.setCommandHandler(commandHandler);
-//        hexEditor.addHexEditorListener(this);
         super.add(codeArea, BorderLayout.CENTER);
 
         codeArea.addMouseListener(new MouseAdapter() {
@@ -397,6 +396,17 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         });
         result.add(copyMenuItem);
 
+        final JMenuItem copyAsCodeMenuItem = new JMenuItem("Copy as Code");
+        copyAsCodeMenuItem.setEnabled(codeArea.hasSelection());
+        copyAsCodeMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                codeArea.copyAsCode();
+                result.setVisible(false);
+            }
+        });
+        result.add(copyAsCodeMenuItem);
+
         final JMenuItem pasteMenuItem = new JMenuItem("Paste");
         pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, metaMask));
         pasteMenuItem.setEnabled(codeArea.canPaste());
@@ -408,6 +418,17 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
             }
         });
         result.add(pasteMenuItem);
+
+        final JMenuItem pasteFromCodeMenuItem = new JMenuItem("Paste from Code");
+        pasteFromCodeMenuItem.setEnabled(codeArea.canPaste());
+        pasteFromCodeMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                codeArea.pasteFromCode();
+                result.setVisible(false);
+            }
+        });
+        result.add(pasteFromCodeMenuItem);
 
         final JMenuItem deleteMenuItem = new JMenuItem("Delete");
         deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));

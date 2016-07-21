@@ -9,6 +9,11 @@ Published as: http://plugins.netbeans.org/plugin/67898/deltahexeditor
 
 Derived from: http://plugins.netbeans.org/plugin/40174/hexeditor  
 
+Screenshot
+----------
+
+![DeltaHex-Editor Screenshot](images/netbeans-screenshot.png?raw=true)
+
 Features
 --------
 

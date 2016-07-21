@@ -20,14 +20,16 @@ import java.awt.event.ActionListener;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
 import org.openide.loaders.DataObject;
+import org.openide.loaders.DataShadow;
 import org.openide.util.NbBundle.Messages;
 import org.openide.windows.Mode;
+import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
 /**
  * Open file in hexadecimal editor action.
  *
- * @version 0.1.1 2016/05/28
+ * @version 0.1.2 2016/07/21
  * @author ExBin Project (http://exbin.org)
  */
 @ActionID(category = "File", id = "org.exbin.deltahex.OpenAsHexAction")
@@ -35,12 +37,9 @@ import org.openide.windows.WindowManager;
 @Messages("CTL_OpenAsHexAction=Open as Hex")
 public final class OpenAsHexAction implements ActionListener {
 
-    private final DataObject context;
-
-    public OpenAsHexAction(DataObject context) {
-        this.context = context;
+    public OpenAsHexAction() {
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent ev) {
         final Mode editorMode = WindowManager.getDefault().findMode("editor");
@@ -51,8 +50,16 @@ public final class OpenAsHexAction implements ActionListener {
         final HexEditorTopComponent hexEditor = new HexEditorTopComponent();
         editorMode.dockInto(hexEditor);
 
-        hexEditor.openDataObject(context);
-        hexEditor.open();
-        hexEditor.requestActive();
+        TopComponent activeTC = TopComponent.getRegistry().getActivated();
+        DataObject dataObject = activeTC.getLookup().lookup(DataObject.class);
+        if (dataObject instanceof DataShadow) {
+            dataObject = ((DataShadow) dataObject).getOriginal();
+        }
+        
+        if (dataObject != null) {
+            hexEditor.openDataObject(dataObject);
+            hexEditor.open();
+            hexEditor.requestActive();
+        }
     }
 }

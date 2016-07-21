@@ -25,7 +25,7 @@ import org.openide.windows.WindowManager;
 /**
  * Installer for hexadecimal editor.
  *
- * @version 0.1.1 2016/06/15
+ * @version 0.1.2 2016/07/21
  * @author ExBin Project (http://exbin.org)
  */
 public class Installer extends ModuleInstall {
@@ -80,6 +80,12 @@ public class Installer extends ModuleInstall {
                 final FileObject actionsFolder = FileUtil.createFolder(fileType, "Actions");
                 final FileObject openAsHexAction = actionsFolder.getFileObject(OPEN_AS_HEX_ACTION_STRING);
                 if (openAsHexAction == null) {
+                    System.out.println("Actions: " + fileType.getName());
+                    for (FileObject fileObject : actionsFolder.getChildren()) {
+                        System.out.println(fileObject.getName() + ": " + fileObject.getAttribute("position"));
+                    }
+                    System.out.println();
+
                     /**
                      * Attempt to establish correct position in context menu for
                      * different mime types.
@@ -87,16 +93,22 @@ public class Installer extends ModuleInstall {
                      * TODO: check on different platforms and collisions with
                      * other modules / modes
                      */
-                    int actionPosition = 375;
+                    int actionPosition = 175;
                     final FileObject openAction = actionsFolder.getFileObject(OPEN_ACTION_STRING);
                     final FileObject openIdeOpenAction = actionsFolder.getFileObject(OPENIDE_OPEN_ACTION_STRING);
                     final FileObject cutAction = actionsFolder.getFileObject(CUT_TO_CLIPBOARD_ACTION_STRING);
+                    if (cutAction != null) {
+                        Object position = cutAction.getAttribute("position");
+                        if (position instanceof Integer) {
+                            if ((Integer) position < actionPosition) {
+                                actionPosition = (Integer) position - 25;
+                            }
+                        }
+                    }
                     if (openAction != null) {
                         Object position = openAction.getAttribute("position");
                         if (position instanceof Integer) {
-                            if ((Integer) position == 100) {
-                                actionPosition = 175;
-                            } else if ((Integer) position > actionPosition) {
+                            if ((Integer) position + 25 > actionPosition) {
                                 actionPosition = (Integer) position + 25;
                             }
                         }
@@ -104,18 +116,8 @@ public class Installer extends ModuleInstall {
                     if (openIdeOpenAction != null) {
                         Object position = openIdeOpenAction.getAttribute("position");
                         if (position instanceof Integer) {
-                            if ((Integer) position == 100) {
-                                actionPosition = 175;
-                            } else if ((Integer) position > actionPosition) {
+                            if ((Integer) position + 25 > actionPosition) {
                                 actionPosition = (Integer) position + 25;
-                            }
-                        }
-                    }
-                    if (cutAction != null) {
-                        Object position = cutAction.getAttribute("position");
-                        if (position instanceof Integer) {
-                            if ((Integer) position < actionPosition) {
-                                actionPosition = (Integer) position - 25;
                             }
                         }
                     }
@@ -131,10 +133,7 @@ public class Installer extends ModuleInstall {
     }
 
     /**
-     * Creates references to the 'Open As Hex' action for all known file types.
-     *
-     * This is done when all modules are loaded and thus all file types have
-     * been registered.
+     * Drops all references to the 'Open As Hex' action.
      */
     private static final class ActionUninstaller extends FileTypeHandler {
 
