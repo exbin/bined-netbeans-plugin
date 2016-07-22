@@ -424,7 +424,11 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         pasteFromCodeMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                codeArea.pasteFromCode();
+                try {
+                    codeArea.pasteFromCode();
+                } catch (IllegalArgumentException ex) {
+                    JOptionPane.showMessageDialog(codeArea, ex.getMessage(), "Unable to Paste Code", JOptionPane.ERROR_MESSAGE);
+                }
                 result.setVisible(false);
             }
         });
