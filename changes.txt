@@ -1,0 +1,14 @@
+0.1.2 (2016-07-23)
+- Added copy as code and paste from code
+- Fixed opening of .shadow files
+- Fixed clipboard related IllegalStateException issue
+- Improved plugin description
+
+0.1.1 (2016-06-25)
+- Added binary, decimal and octal mode
+- Partially fixed "Open as Hex" menu item position
+- Slightly improved rendering performance
+
+0.1.0 (2016-06-08)
+- Released
+
