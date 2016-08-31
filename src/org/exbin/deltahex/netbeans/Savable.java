@@ -18,7 +18,7 @@ package org.exbin.deltahex.netbeans;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Objects;
-import org.exbin.deltahex.CodeArea;
+import org.exbin.deltahex.swing.CodeArea;
 import org.netbeans.spi.actions.AbstractSavable;
 import org.openide.loaders.DataObject;
 import org.openide.util.Exceptions;
@@ -26,7 +26,7 @@ import org.openide.util.Exceptions;
 /**
  * Saving capability for hexadecimal editor.
  *
- * @version 0.1.1 2016/06/15
+ * @version 0.1.3 2016/08/31
  * @author ExBin Project (http://exbin.org)
  */
 class Savable extends AbstractSavable {

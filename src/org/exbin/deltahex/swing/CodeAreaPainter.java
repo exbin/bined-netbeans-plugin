@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.deltahex;
+package org.exbin.deltahex.swing;
 
 import java.awt.Graphics;
 
 /**
  * Hexadecimal editor painter.
  *
- * @version 0.1.0 2016/04/18
+ * @version 0.1.0 2016/04/23
  * @author ExBin Project (http://exbin.org)
  */
 public interface CodeAreaPainter {
@@ -59,6 +59,13 @@ public interface CodeAreaPainter {
      * @param g graphics
      */
     void paintMainArea(Graphics g);
+
+    /**
+     * Paints cursor symbol.
+     *
+     * @param g graphics
+     */
+    void paintCursor(Graphics g);
 
     /**
      * Returns current array of hexadecimal characters (0..9 and A..F).

@@ -33,9 +33,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
-import org.exbin.deltahex.CodeArea;
+import org.exbin.deltahex.CodeType;
 import org.exbin.deltahex.delta.MemoryPagedData;
 import org.exbin.deltahex.operation.CodeCommandHandler;
+import org.exbin.deltahex.swing.CodeArea;
 import org.exbin.xbup.operation.Command;
 import org.exbin.xbup.operation.undo.XBUndoUpdateListener;
 import org.netbeans.api.queries.FileEncodingQuery;
@@ -53,7 +54,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.2 2016/07/21
+ * @version 0.1.3 2016/08/31
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)
@@ -79,6 +80,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 
         codeArea = new CodeArea();
         codeArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        codeArea.getCaret().setBlinkRate(300);
 
         undoRedo = new UndoRedo.Manager();
         HexUndoSwingHandler undoHandler = new HexUndoSwingHandler(codeArea, undoRedo);
@@ -331,7 +333,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     }//GEN-LAST:event_showUnprintablesToggleButtonActionPerformed
 
     private void codeTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_codeTypeComboBoxActionPerformed
-        codeArea.setCodeType(CodeArea.CodeType.values()[codeTypeComboBox.getSelectedIndex()]);
+        codeArea.setCodeType(CodeType.values()[codeTypeComboBox.getSelectedIndex()]);
     }//GEN-LAST:event_codeTypeComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

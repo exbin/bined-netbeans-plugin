@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.deltahex;
+package org.exbin.deltahex.swing;
 
+import org.exbin.deltahex.CaretPosition;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -49,6 +50,23 @@ import javax.swing.JComponent;
 import javax.swing.JScrollBar;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+import org.exbin.deltahex.CaretMovedListener;
+import org.exbin.deltahex.CodeAreaLineNumberLength;
+import org.exbin.deltahex.CodeAreaUtils;
+import org.exbin.deltahex.CodeType;
+import org.exbin.deltahex.ColorsGroup;
+import org.exbin.deltahex.DataChangedListener;
+import org.exbin.deltahex.EditationAllowed;
+import org.exbin.deltahex.EditationMode;
+import org.exbin.deltahex.EditationModeChangedListener;
+import org.exbin.deltahex.HexCharactersCase;
+import org.exbin.deltahex.PositionCodeType;
+import org.exbin.deltahex.ScrollBarVisibility;
+import org.exbin.deltahex.ScrollingListener;
+import org.exbin.deltahex.Section;
+import org.exbin.deltahex.SelectionChangedListener;
+import org.exbin.deltahex.SelectionRange;
+import org.exbin.deltahex.ViewMode;
 import org.exbin.utils.binary_data.BinaryData;
 
 /**
@@ -56,7 +74,7 @@ import org.exbin.utils.binary_data.BinaryData;
  *
  * Also supports binary, octal and decimal codes.
  *
- * @version 0.1.1 2016/08/15
+ * @version 0.1.1 2016/08/31
  * @author ExBin Project (http://exbin.org)
  */
 public class CodeArea extends JComponent {
@@ -69,18 +87,17 @@ public class CodeArea extends JComponent {
     public static final int DECORATION_DEFAULT = DECORATION_PREVIEW_LINE | DECORATION_LINENUM_LINE | DECORATION_HEADER_LINE;
     public static final int MOUSE_SCROLL_LINES = 3;
 
-    private int metaMask;
-
     private BinaryData data;
     private CodeAreaPainter painter;
     private CodeAreaCommandHandler commandHandler;
-    private CodeAreaCaret caret;
+    private final CodeAreaCaret caret;
     private SelectionRange selection;
 
     private ViewMode viewMode = ViewMode.DUAL;
     private CodeType codeType = CodeType.HEXADECIMAL;
     private PositionCodeType positionCodeType = PositionCodeType.HEXADECIMAL;
     private BackgroundMode backgroundMode = BackgroundMode.STRIPPED;
+    private boolean lineNumberBackground = true;
     private Charset charset = Charset.defaultCharset();
     private int decorationMode = DECORATION_DEFAULT;
     private EditationAllowed editationAllowed = EditationAllowed.ALLOWED;
@@ -93,6 +110,8 @@ public class CodeArea extends JComponent {
     private final CodeAreaLineNumberLength lineNumberLength = new CodeAreaLineNumberLength();
 
     private int lineLength = 16;
+    private int byteGroupSize = 1;
+    private int spaceGroupSize = 0;
     private int subFontSpace = 3;
     private boolean showHeader = true;
     private boolean showLineNumbers = true;
@@ -108,7 +127,7 @@ public class CodeArea extends JComponent {
     private HorizontalScrollMode horizontalScrollMode = HorizontalScrollMode.PIXEL;
     private JScrollBar horizontalScrollBar;
     private JScrollBar verticalScrollBar;
-    private ScrollPosition scrollPosition = new ScrollPosition();
+    private final ScrollPosition scrollPosition = new ScrollPosition();
 
     /**
      * Component colors.
@@ -121,6 +140,7 @@ public class CodeArea extends JComponent {
     private final ColorsGroup selectionColors = new ColorsGroup();
     private final ColorsGroup mirrorSelectionColors = new ColorsGroup();
     private Color cursorColor;
+    private Color negativeCursorColor;
     private Color decorationLineColor;
 
     /**
@@ -140,11 +160,6 @@ public class CodeArea extends JComponent {
         painter = new DefaultCodeAreaPainter(this);
         commandHandler = new DefaultCodeAreaCommandHandler(this);
 
-        try {
-            metaMask = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-        } catch (java.awt.HeadlessException ex) {
-            metaMask = java.awt.Event.CTRL_MASK;
-        }
         init();
     }
 
@@ -186,6 +201,7 @@ public class CodeArea extends JComponent {
         if (cursorColor == null) {
             cursorColor = Color.BLACK;
         }
+        negativeCursorColor = createNegativeColor(cursorColor);
         decorationLineColor = Color.GRAY;
 
         verticalScrollBar = new JScrollBar(Scrollbar.VERTICAL);
@@ -261,10 +277,8 @@ public class CodeArea extends JComponent {
         }
 
         painter.paintMainArea(g);
+        painter.paintCursor(g);
 
-        if (hasFocus()) {
-            caret.paint(g);
-        }
         g.setClip(clipBounds);
     }
 
@@ -322,9 +336,6 @@ public class CodeArea extends JComponent {
 
     private void moveCaret(MouseEvent me, int modifiers) {
         Rectangle hexRect = paintDataCache.codeSectionRectangle;
-        int codeDigits = getCodeType().getMaxDigits();
-        int charsPerByte = codeDigits + 1;
-
         Point scrollPoint = getScrollPoint();
         int bytesPerLine = paintDataCache.bytesPerLine;
         int cursorCharX = (me.getX() - hexRect.x + scrollPoint.x) / paintDataCache.charWidth;
@@ -339,23 +350,22 @@ public class CodeArea extends JComponent {
         long dataPosition;
         int codeOffset = 0;
         int byteOnLine;
-        if ((viewMode == ViewMode.DUAL && cursorCharX < bytesPerLine * charsPerByte) || viewMode == ViewMode.CODE_MATRIX) {
+        if ((viewMode == ViewMode.DUAL && cursorCharX < paintDataCache.previewStartChar) || viewMode == ViewMode.CODE_MATRIX) {
             caret.setSection(Section.CODE_MATRIX);
-            int bytePosition = cursorCharX % (codeType.maxDigits + 1);
-            codeOffset = bytePosition;
-            if (codeOffset >= codeType.maxDigits) {
-                codeOffset = codeType.maxDigits - 1;
-            }
-
-            byteOnLine = cursorCharX / (codeType.maxDigits + 1);
+            byteOnLine = computeByteOffsetPerCodeCharOffset(cursorCharX, false);
             if (byteOnLine >= bytesPerLine) {
                 codeOffset = 0;
+            } else {
+                codeOffset = cursorCharX - computeByteCharPos(byteOnLine);
+                if (codeOffset >= codeType.getMaxDigits()) {
+                    codeOffset = codeType.getMaxDigits() - 1;
+                }
             }
         } else {
             caret.setSection(Section.TEXT_PREVIEW);
             byteOnLine = cursorCharX;
             if (viewMode == ViewMode.DUAL) {
-                byteOnLine -= bytesPerLine * charsPerByte;
+                byteOnLine -= paintDataCache.previewStartChar;
             }
         }
 
@@ -363,7 +373,12 @@ public class CodeArea extends JComponent {
             byteOnLine = bytesPerLine - 1;
         }
 
-        dataPosition = byteOnLine + (cursorLineY * bytesPerLine);
+        dataPosition = byteOnLine + (cursorLineY * bytesPerLine) - scrollPosition.lineByteShift;
+        if (dataPosition < 0) {
+            dataPosition = 0;
+            codeOffset = 0;
+        }
+
         long dataSize = data.getDataSize();
         if (dataPosition >= dataSize) {
             dataPosition = dataSize;
@@ -378,7 +393,7 @@ public class CodeArea extends JComponent {
         updateSelection(modifiers, caretPosition);
     }
 
-    private void notifyCaretMoved() {
+    public void notifyCaretMoved() {
         for (CaretMovedListener caretMovedListener : caretMovedListeners) {
             caretMovedListener.caretMoved(caret.getCaretPosition(), caret.getSection());
         }
@@ -421,16 +436,14 @@ public class CodeArea extends JComponent {
         boolean scrolled = false;
         Rectangle hexRect = paintDataCache.codeSectionRectangle;
         long caretLine = position / paintDataCache.bytesPerLine;
-        int codeDigits = getCodeType().getMaxDigits();
-        int charsPerByte = codeDigits + 1;
 
         int positionByte;
         if (section == Section.CODE_MATRIX) {
-            positionByte = (int) (position % paintDataCache.bytesPerLine) * charsPerByte + caret.getCodeOffset();
+            positionByte = computeByteCharPos((int) (position % paintDataCache.bytesPerLine)) + caret.getCodeOffset();
         } else {
             positionByte = (int) (position % paintDataCache.bytesPerLine);
             if (viewMode == ViewMode.DUAL) {
-                positionByte += paintDataCache.bytesPerLine * charsPerByte;
+                positionByte += paintDataCache.previewStartChar;
             }
         }
 
@@ -482,17 +495,17 @@ public class CodeArea extends JComponent {
         repaint();
     }
 
-    private void updateSelection(int modifiers, CaretPosition caretPosition) {
+    public void updateSelection(int modifiers, CaretPosition caretPosition) {
         if ((modifiers & KeyEvent.SHIFT_DOWN_MASK) > 0) {
             long currentPosition = caret.getDataPosition();
             long end = currentPosition;
             long start;
             if (selection != null) {
-                start = selection.start;
+                start = selection.getStart();
                 if (start == currentPosition) {
                     clearSelection();
                 } else {
-                    selection.end = start < currentPosition ? end - 1 : end;
+                    selection.setEnd(start < currentPosition ? end - 1 : end);
                 }
             } else {
                 start = caretPosition.getDataPosition();
@@ -516,7 +529,7 @@ public class CodeArea extends JComponent {
             if (caret.getSection() == Section.CODE_MATRIX) {
                 int codeOffset = caret.getCodeOffset();
                 if (caretPosition.getDataPosition() < data.getDataSize()) {
-                    if (codeOffset < codeType.maxDigits - 1) {
+                    if (codeOffset < codeType.getMaxDigits() - 1) {
                         caret.setCodeOffset(codeOffset + 1);
                     } else {
                         caret.setCaretPosition(caretPosition.getDataPosition() + 1, 0);
@@ -541,7 +554,7 @@ public class CodeArea extends JComponent {
                 updateSelection(modifiers, caretPosition);
                 notifyCaretMoved();
             } else if (caretPosition.getDataPosition() > 0) {
-                caret.setCaretPosition(caretPosition.getDataPosition() - 1, codeType.maxDigits - 1);
+                caret.setCaretPosition(caretPosition.getDataPosition() - 1, codeType.getMaxDigits() - 1);
                 updateSelection(modifiers, caretPosition);
                 notifyCaretMoved();
             }
@@ -678,6 +691,14 @@ public class CodeArea extends JComponent {
         return paintDataCache.bytesPerLine;
     }
 
+    public int getLinesPerRect() {
+        return paintDataCache.linesPerRect;
+    }
+
+    public int getCharsPerLine() {
+        return paintDataCache.charsPerLine;
+    }
+
     public int getCharWidth() {
         return paintDataCache.charWidth;
     }
@@ -722,6 +743,10 @@ public class CodeArea extends JComponent {
         notifyDataChanged();
         computePaintData();
         repaint();
+    }
+
+    public long getDataSize() {
+        return data == null ? 0 : data.getDataSize();
     }
 
     public Charset getCharset() {
@@ -798,24 +823,6 @@ public class CodeArea extends JComponent {
             return;
         }
 
-        // TODO byte groups
-        switch (viewMode) {
-            case CODE_MATRIX: {
-                paintDataCache.charsPerByte = codeType.maxDigits + 1;
-                break;
-            }
-            case TEXT_PREVIEW: {
-                paintDataCache.charsPerByte = 1;
-                break;
-            }
-            case DUAL: {
-                paintDataCache.charsPerByte = codeType.maxDigits + 2;
-                break;
-            }
-            default:
-                throw new IllegalStateException("Unexpected view mode " + viewMode.name());
-        }
-
         boolean verticalScrollBarVisible;
         boolean horizontalScrollBarVisible;
 
@@ -829,8 +836,8 @@ public class CodeArea extends JComponent {
 
         switch (lineNumberLength.getLineNumberType()) {
             case AUTO: {
-                double natLog = Math.log(getData().getDataSize());
-                paintDataCache.lineNumbersLength = (int) Math.ceil(natLog / positionCodeType.baseLog);
+                double natLog = Math.log(getDataSize());
+                paintDataCache.lineNumbersLength = (int) Math.ceil(natLog / positionCodeType.getBaseLog());
                 if (paintDataCache.lineNumbersLength == 0) {
                     paintDataCache.lineNumbersLength = 1;
                 }
@@ -845,7 +852,7 @@ public class CodeArea extends JComponent {
         int charsPerRect = computeCharsPerRect(compRect.width);
         int bytesPerLine;
         if (wrapMode) {
-            bytesPerLine = charsPerRect / paintDataCache.charsPerByte;
+            bytesPerLine = computeFittingBytes(charsPerRect);
             if (bytesPerLine == 0) {
                 bytesPerLine = 1;
             }
@@ -933,7 +940,7 @@ public class CodeArea extends JComponent {
         if (verticalScrollBarVisible) {
             charsPerRect = computeCharsPerRect(compRect.x + compRect.width - paintDataCache.scrollBarThickness);
             if (wrapMode) {
-                bytesPerLine = charsPerRect / paintDataCache.charsPerByte;
+                bytesPerLine = computeFittingBytes(charsPerRect);
                 if (bytesPerLine <= 0) {
                     bytesPerLine = 1;
                 }
@@ -942,6 +949,7 @@ public class CodeArea extends JComponent {
         }
 
         paintDataCache.bytesPerLine = bytesPerLine;
+        paintDataCache.charsPerLine = computeCharsPerLine(bytesPerLine);
 
         int maxWidth = compRect.x + compRect.width - hexRect.x;
         if (verticalScrollBarVisible) {
@@ -949,7 +957,7 @@ public class CodeArea extends JComponent {
         }
 
         if (horizontalScrollBarVisibility == ScrollBarVisibility.IF_NEEDED) {
-            horizontalScrollBarVisible = paintDataCache.bytesPerLine * paintDataCache.charWidth * paintDataCache.charsPerByte > maxWidth;
+            horizontalScrollBarVisible = paintDataCache.charsPerLine * paintDataCache.charWidth > maxWidth;
         } else {
             horizontalScrollBarVisible = horizontalScrollBarVisibility == ScrollBarVisibility.ALWAYS;
         }
@@ -969,15 +977,15 @@ public class CodeArea extends JComponent {
         paintDataCache.bytesPerRect = hexRect.width / paintDataCache.charWidth;
         paintDataCache.linesPerRect = hexRect.height / paintDataCache.lineHeight;
 
-        int codeDigits = getCodeType().getMaxDigits();
-        int charsPerByte = codeDigits + 1;
         // Compute sections positions
+        paintDataCache.previewStartChar = 0;
         if (viewMode == ViewMode.CODE_MATRIX) {
             paintDataCache.previewX = -1;
         } else {
             paintDataCache.previewX = hexRect.x;
             if (viewMode == ViewMode.DUAL) {
-                paintDataCache.previewX += paintDataCache.bytesPerLine * paintDataCache.charWidth * charsPerByte;
+                paintDataCache.previewStartChar = paintDataCache.charsPerLine - paintDataCache.bytesPerLine;
+                paintDataCache.previewX += (paintDataCache.charsPerLine - paintDataCache.bytesPerLine) * paintDataCache.charWidth;
             }
         }
 
@@ -1035,7 +1043,7 @@ public class CodeArea extends JComponent {
             horizontalScrollBar.setBounds(hexRect.x, compRect.y + compRect.height - paintDataCache.scrollBarThickness, horizontalScrollBarWidth, paintDataCache.scrollBarThickness);
 
             int horizontalVisibleAmount;
-            int horizontalMaximum = paintDataCache.bytesPerLine * paintDataCache.charsPerByte;
+            int horizontalMaximum = paintDataCache.charsPerLine;
             if (horizontalScrollMode == HorizontalScrollMode.PIXEL) {
                 horizontalVisibleAmount = hexRect.width;
                 horizontalMaximum *= paintDataCache.charWidth;
@@ -1083,6 +1091,123 @@ public class CodeArea extends JComponent {
         return width / paintDataCache.charWidth;
     }
 
+    public int computeFittingBytes(int charsPerRect) {
+        if (viewMode == ViewMode.TEXT_PREVIEW) {
+            return charsPerRect;
+        }
+
+        int fittingBytes = computeByteOffsetPerCodeCharOffset(charsPerRect, viewMode == ViewMode.DUAL);
+        if (byteGroupSize != 0 || spaceGroupSize != 0) {
+            if (computeCharsPerLine(fittingBytes + 1) <= charsPerRect) {
+                fittingBytes++;
+            }
+        }
+
+        return fittingBytes;
+    }
+
+    /**
+     * Computes byte offset index for given code line offset.
+     *
+     * @param charOffset char offset position
+     * @param includePreview flag if preview should be included
+     * @return byte offset index
+     */
+    public int computeByteOffsetPerCodeCharOffset(int charOffset, boolean includePreview) {
+        int byteOffset;
+        if (byteGroupSize == 0) {
+            if (spaceGroupSize == 0) {
+                byteOffset = (charOffset - (includePreview ? 1 : 0))
+                        / (codeType.getMaxDigits() + (includePreview ? 1 : 0));
+            } else {
+                byteOffset = (int) (((long) (charOffset - (includePreview ? 1 : 0)) * spaceGroupSize)
+                        / ((long) (codeType.getMaxDigits() + (includePreview ? 1 : 0)) * spaceGroupSize + 2));
+            }
+        } else if (spaceGroupSize == 0) {
+            byteOffset = (int) (((long) (charOffset - (includePreview ? 1 : 0)) * byteGroupSize)
+                    / ((long) (codeType.getMaxDigits() + (includePreview ? 1 : 0)) * byteGroupSize + 1));
+        } else {
+            byteOffset = 0;
+            int charsPerLine = includePreview ? 1 : 0;
+            while (charsPerLine < charOffset) {
+                charsPerLine += codeType.getMaxDigits() + (includePreview ? 1 : 0);
+                byteOffset++;
+                if ((byteOffset % byteGroupSize) == 0) {
+                    if ((byteOffset % spaceGroupSize) == 0) {
+                        charsPerLine += 2;
+                    } else {
+                        charsPerLine++;
+                    }
+                } else if ((byteOffset % spaceGroupSize) == 0) {
+                    charsPerLine += 2;
+                }
+                if (charsPerLine > charOffset) {
+                    return byteOffset - 1;
+                }
+            }
+        }
+
+        return byteOffset;
+    }
+
+    /**
+     * Computes number of characters for given number of bytes / offset.
+     *
+     * @param bytesPerLine number of bytes per line
+     * @return characters count
+     */
+    public int computeCharsPerLine(int bytesPerLine) {
+        if (viewMode == ViewMode.TEXT_PREVIEW) {
+            return bytesPerLine;
+        }
+
+        int charsPerLine = computeByteCharPos(bytesPerLine, false);
+
+        if (viewMode == ViewMode.DUAL) {
+            charsPerLine += bytesPerLine + 1;
+        }
+
+        return charsPerLine;
+    }
+
+    /**
+     * Computes character position for byte code of given offset position
+     *
+     * @param byteOffset byte start offset
+     * @return characters position
+     */
+    public int computeByteCharPos(int byteOffset) {
+        return computeByteCharPos(byteOffset, true);
+    }
+
+    public int computeByteCharPos(int byteOffset, boolean includeTail) {
+        int charsPerLine = codeType.getMaxDigits() * byteOffset;
+        if (!includeTail) {
+            byteOffset--;
+        }
+        if (byteGroupSize == 0) {
+            if (spaceGroupSize != 0) {
+                charsPerLine += (byteOffset / spaceGroupSize) * 2;
+            }
+        } else if (spaceGroupSize == 0) {
+            charsPerLine += (byteOffset / byteGroupSize);
+        } else {
+            for (int index = 1; index <= byteOffset; index++) {
+                if ((index % byteGroupSize) == 0) {
+                    if ((index % spaceGroupSize) == 0) {
+                        charsPerLine += 2;
+                    } else {
+                        charsPerLine++;
+                    }
+                } else if ((index % spaceGroupSize) == 0) {
+                    charsPerLine += 2;
+                }
+            }
+        }
+
+        return charsPerLine;
+    }
+
     public ColorsGroup getMainColors() {
         return new ColorsGroup(mainColors);
     }
@@ -1125,7 +1250,12 @@ public class CodeArea extends JComponent {
 
     public void setCursorColor(Color cursorColor) {
         this.cursorColor = cursorColor;
+        negativeCursorColor = createNegativeColor(cursorColor);
         repaint();
+    }
+
+    public Color getNegativeCursorColor() {
+        return negativeCursorColor;
     }
 
     public Color getDecorationLineColor() {
@@ -1180,6 +1310,15 @@ public class CodeArea extends JComponent {
 
     public void setBackgroundMode(BackgroundMode backgroundMode) {
         this.backgroundMode = backgroundMode;
+        repaint();
+    }
+
+    public boolean isLineNumberBackground() {
+        return lineNumberBackground;
+    }
+
+    public void setLineNumberBackground(boolean lineNumberBackground) {
+        this.lineNumberBackground = lineNumberBackground;
         repaint();
     }
 
@@ -1252,6 +1391,7 @@ public class CodeArea extends JComponent {
             for (EditationModeChangedListener listener : editationModeChangedListeners) {
                 listener.editationModeChanged(editationMode);
             }
+            caret.resetBlink();
             repaint();
         }
     }
@@ -1325,11 +1465,40 @@ public class CodeArea extends JComponent {
     }
 
     public void setLineLength(int lineLength) {
+        if (lineLength < 1) {
+            throw new IllegalStateException("Line length must be at least 1");
+        }
         this.lineLength = lineLength;
         if (!wrapMode) {
             computePaintData();
             repaint();
         }
+    }
+
+    public int getByteGroupSize() {
+        return byteGroupSize;
+    }
+
+    public void setByteGroupSize(int byteGroupSize) {
+        if (byteGroupSize < 0) {
+            throw new IllegalStateException("Negative group size is not valid");
+        }
+        this.byteGroupSize = byteGroupSize;
+        computePaintData();
+        repaint();
+    }
+
+    public int getSpaceGroupSize() {
+        return spaceGroupSize;
+    }
+
+    public void setSpaceGroupSize(int spaceGroupSize) {
+        if (spaceGroupSize < 0) {
+            throw new IllegalStateException("Negative group size is not valid");
+        }
+        this.spaceGroupSize = spaceGroupSize;
+        computePaintData();
+        repaint();
     }
 
     public CharRenderingMode getCharRenderingMode() {
@@ -1543,6 +1712,17 @@ public class CodeArea extends JComponent {
         return commandHandler.canPaste();
     }
 
+    public void resetPosition() {
+        getScrollPosition().reset();
+        updateScrollBars();
+        notifyScrolled();
+        caret.setCaretPosition(0);
+        notifyCaretMoved();
+        commandHandler.caretMoved();
+        computePaintData();
+        clearSelection();
+    }
+
     private static Color createOddColor(Color color) {
         return new Color(
                 computeOddColorComponent(color.getRed()),
@@ -1554,169 +1734,15 @@ public class CodeArea extends JComponent {
         return colorComponent + (colorComponent > 64 ? - 16 : 16);
     }
 
-    /**
-     * Selection range is selection between two points where begin represents
-     * originating point. End of the selection can be before or after begin.
-     */
-    public static class SelectionRange {
-
-        private long start;
-        private long end;
-
-        public SelectionRange() {
-        }
-
-        public SelectionRange(long start, long end) {
-            this.start = start;
-            this.end = end;
-        }
-
-        public long getStart() {
-            return start;
-        }
-
-        public void setStart(long start) {
-            this.start = start;
-        }
-
-        public long getEnd() {
-            return end;
-        }
-
-        public void setEnd(long end) {
-            this.end = end;
-        }
-
-        /**
-         * Returns first data position of the selection.
-         *
-         * @return data position
-         */
-        public long getFirst() {
-            return end >= start ? start : end;
-        }
-
-        /**
-         * Returns last data position of the selection.
-         *
-         * @return data position
-         */
-        public long getLast() {
-            return end >= start ? end : start - 1;
-        }
-    }
-
-    /**
-     * Selection change listener.
-     *
-     * Event is fired each time selection range changes or selection is created
-     * or cleared.
-     */
-    public interface SelectionChangedListener {
-
-        void selectionChanged(SelectionRange selection);
-    }
-
-    /**
-     * Caret moved listener.
-     *
-     * Event is fired each time caret is moved or section is changed.
-     */
-    public interface CaretMovedListener {
-
-        void caretMoved(CaretPosition caretPosition, Section section);
-    }
-
-    /**
-     * Editation mode change listener.
-     *
-     * Event is fired each time editation mode is changed.
-     */
-    public interface EditationModeChangedListener {
-
-        void editationModeChanged(EditationMode editationMode);
-    }
-
-    /**
-     * Data changed listener.
-     *
-     * Event is fired each time data is modified.
-     */
-    public interface DataChangedListener {
-
-        void dataChanged();
-    }
-
-    /**
-     * Scrolling listener.
-     *
-     * Event is fired each time component is scrolled.
-     */
-    public interface ScrollingListener {
-
-        void scrolled();
-    }
-
-    /**
-     * Component supports showing numerical codes or textual preview, or both.
-     */
-    public static enum ViewMode {
-        DUAL, CODE_MATRIX, TEXT_PREVIEW;
-    }
-
-    public static enum CodeType {
-        BINARY(8), OCTAL(3), DECIMAL(3), HEXADECIMAL(2);
-
-        private int maxDigits;
-
-        CodeType(int maxDigits) {
-            this.maxDigits = maxDigits;
-        }
-
-        /**
-         * Maximum number of digits per single byte.
-         *
-         * @return number of digits
-         */
-        public int getMaxDigits() {
-            return maxDigits;
-        }
-    }
-
-    public static enum PositionCodeType {
-        OCTAL(8), DECIMAL(10), HEXADECIMAL(16);
-
-        int base;
-        double baseLog;
-
-        private PositionCodeType(int base) {
-            this.base = base;
-            baseLog = Math.log(base);
-        }
-
-        public int getBase() {
-            return base;
-        }
-
-        public double getBaseLog() {
-            return baseLog;
-        }
-    }
-
-    public static enum Section {
-        CODE_MATRIX, TEXT_PREVIEW
+    private static Color createNegativeColor(Color color) {
+        return new Color(
+                255 - color.getRed(),
+                255 - color.getGreen(),
+                255 - color.getBlue());
     }
 
     public static enum BackgroundMode {
         NONE, PLAIN, STRIPPED, GRIDDED
-    }
-
-    public static enum EditationAllowed {
-        READ_ONLY, OVERWRITE_ONLY, ALLOWED
-    }
-
-    public static enum EditationMode {
-        INSERT, OVERWRITE
     }
 
     public static enum VerticalScrollMode {
@@ -1727,34 +1753,33 @@ public class CodeArea extends JComponent {
         PER_CHAR, PIXEL
     }
 
-    public static enum ScrollBarVisibility {
-        NEVER, IF_NEEDED, ALWAYS
-    }
-
     /**
      * Character rendering mode.
-     *
-     * AUTO - Centers characters if width is not default and detects monospace
-     * fonts to render characters as string if possible
-     *
-     * LINE_AT_ONCE - Render sequence of characters from top left corner of the
-     * line ignoring character width. It's fastest, but render correctly only
-     * for monospaced fonts and charsets where all characters have same width
-     *
-     * TOP_LEFT - Render each character from top left corner of it's position
-     *
-     * CENTER - Centers each character in it's area
      */
     public static enum CharRenderingMode {
-        AUTO, LINE_AT_ONCE, TOP_LEFT, CENTER
+        /**
+         * Centers characters if width is not default and detects monospace
+         * fonts to render characters as string if possible
+         */
+        AUTO,
+        /**
+         * Render sequence of characters from top left corner of the line
+         * ignoring character width. It's fastest, but render correctly only for
+         * monospaced fonts and charsets where all characters have same width
+         */
+        LINE_AT_ONCE,
+        /**
+         * Render each character from top left corner of it's position
+         */
+        TOP_LEFT,
+        /**
+         * Centers each character in it's area
+         */
+        CENTER
     }
 
     public static enum CharAntialiasingMode {
         OFF, AUTO, DEFAULT, BASIC, GASP, LCD_HRGB, LCD_HBGR, LCD_VRGB, LCD_VBGR
-    }
-
-    public static enum HexCharactersCase {
-        LOWER, UPPER
     }
 
     /**
@@ -1771,7 +1796,7 @@ public class CodeArea extends JComponent {
         boolean monospaceFont = false;
 
         int bytesPerLine;
-        int charsPerByte;
+        int charsPerLine;
         int lineNumbersLength;
 
         /**
@@ -1798,6 +1823,7 @@ public class CodeArea extends JComponent {
          */
         final Rectangle codeSectionRectangle = new Rectangle();
         int previewX;
+        int previewStartChar;
         int bytesPerRect;
         int linesPerRect;
         int scrollBarThickness = 17;
@@ -1808,10 +1834,14 @@ public class CodeArea extends JComponent {
      */
     public static class ScrollPosition {
 
-        long scrollLinePosition = 0;
-        int scrollLineOffset = 0;
-        int scrollCharPosition = 0;
-        int scrollCharOffset = 0;
+        private long scrollLinePosition = 0;
+        private int scrollLineOffset = 0;
+        private int scrollCharPosition = 0;
+        private int scrollCharOffset = 0;
+        /**
+         * How is start of the line scrolled compare it's normal position.
+         */
+        private int lineByteShift = 0;
 
         public long getScrollLinePosition() {
             return scrollLinePosition;
@@ -1828,125 +1858,38 @@ public class CodeArea extends JComponent {
         public int getScrollCharOffset() {
             return scrollCharOffset;
         }
-    }
 
-    /**
-     * Set of colors for different sections of component rendering.
-     */
-    public static class ColorsGroup {
-
-        private Color textColor;
-        private Color backgroundColor;
-        private Color unprintablesColor;
-        private Color unprintablesBackgroundColor;
-
-        public ColorsGroup() {
+        public int getLineByteShift() {
+            return lineByteShift;
         }
 
-        /**
-         * Copy constructor.
-         *
-         * @param colorsGroup colors group
-         */
-        public ColorsGroup(ColorsGroup colorsGroup) {
-            setColorsFromGroup(colorsGroup);
+        public void setScrollLinePosition(long scrollLinePosition) {
+            this.scrollLinePosition = scrollLinePosition;
         }
 
-        private void setColorsFromGroup(ColorsGroup colorsGroup) {
-            textColor = colorsGroup.getTextColor();
-            backgroundColor = colorsGroup.getBackgroundColor();
-            unprintablesColor = colorsGroup.getUnprintablesColor();
-            unprintablesBackgroundColor = colorsGroup.getUnprintablesBackgroundColor();
+        public void setScrollLineOffset(int scrollLineOffset) {
+            this.scrollLineOffset = scrollLineOffset;
         }
 
-        public Color getTextColor() {
-            return textColor;
+        public void setScrollCharPosition(int scrollCharPosition) {
+            this.scrollCharPosition = scrollCharPosition;
         }
 
-        public void setTextColor(Color textColor) {
-            this.textColor = textColor;
+        public void setScrollCharOffset(int scrollCharOffset) {
+            this.scrollCharOffset = scrollCharOffset;
         }
 
-        public Color getBackgroundColor() {
-            return backgroundColor;
+        public void setLineByteShift(int lineByteShift) {
+            this.lineByteShift = lineByteShift;
         }
 
-        public void setBackgroundColor(Color backgroundColor) {
-            this.backgroundColor = backgroundColor;
+        private void reset() {
+            scrollLinePosition = 0;
+            scrollLineOffset = 0;
+            scrollCharPosition = 0;
+            scrollCharOffset = 0;
+            lineByteShift = 0;
         }
-
-        public Color getUnprintablesColor() {
-            return unprintablesColor;
-        }
-
-        public void setUnprintablesColor(Color unprintablesColor) {
-            this.unprintablesColor = unprintablesColor;
-        }
-
-        public Color getUnprintablesBackgroundColor() {
-            return unprintablesBackgroundColor;
-        }
-
-        public void setUnprintablesBackgroundColor(Color unprintablesBackgroundColor) {
-            this.unprintablesBackgroundColor = unprintablesBackgroundColor;
-        }
-
-        public void setBothBackgroundColors(Color backgroundColor) {
-            this.backgroundColor = backgroundColor;
-            this.unprintablesBackgroundColor = backgroundColor;
-        }
-
-        public void setColors(ColorsGroup colorsGroup) {
-            setColorsFromGroup(colorsGroup);
-        }
-
-        public Color getColor(ColorType colorType) {
-            switch (colorType) {
-                case TEXT:
-                    return textColor;
-                case BACKGROUND:
-                    return backgroundColor;
-                case UNPRINTABLES:
-                    return unprintablesColor;
-                case UNPRINTABLES_BACKGROUND:
-                    return unprintablesBackgroundColor;
-                default:
-                    throw new IllegalStateException();
-            }
-        }
-
-        public void setColor(ColorType colorType, Color color) {
-            switch (colorType) {
-                case TEXT: {
-                    textColor = color;
-                    break;
-                }
-                case BACKGROUND: {
-                    backgroundColor = color;
-                    break;
-                }
-                case UNPRINTABLES: {
-                    unprintablesColor = color;
-                    break;
-                }
-                case UNPRINTABLES_BACKGROUND: {
-                    unprintablesBackgroundColor = color;
-                    break;
-                }
-                default:
-                    throw new IllegalStateException();
-            }
-        }
-    }
-
-    /**
-     * Enumeration of color types in ColorsGroup.
-     */
-    public static enum ColorType {
-        TEXT,
-        BACKGROUND,
-        UNPRINTABLES,
-        UNPRINTABLES_BACKGROUND
     }
 
     private class CodeAreaMouseListener extends MouseAdapter implements MouseMotionListener, MouseWheelListener {
@@ -2016,8 +1959,9 @@ public class CodeArea extends JComponent {
 
             if (e.isShiftDown() && horizontalScrollBar.isVisible()) {
                 if (e.getWheelRotation() > 0) {
-                    int visibleBytes = paintDataCache.codeSectionRectangle.width / (paintDataCache.charWidth * paintDataCache.charsPerByte);
-                    int bytes = paintDataCache.bytesPerLine - visibleBytes;
+                    // TODO
+                    int visibleChars = paintDataCache.codeSectionRectangle.width / paintDataCache.charWidth;
+                    int bytes = paintDataCache.bytesPerLine - visibleChars;
                     if (scrollPosition.scrollCharPosition < bytes) {
                         if (scrollPosition.scrollCharPosition < bytes - MOUSE_SCROLL_LINES) {
                             scrollPosition.scrollCharPosition += MOUSE_SCROLL_LINES;
@@ -2069,207 +2013,13 @@ public class CodeArea extends JComponent {
         }
 
         @Override
-        public void keyTyped(KeyEvent e) {
-            if (e.getKeyChar() != 0xffff) {
-                commandHandler.keyPressed(e.getKeyChar());
-            }
+        public void keyTyped(KeyEvent keyEvent) {
+            commandHandler.keyTyped(keyEvent);
         }
 
         @Override
-        public void keyPressed(KeyEvent e) {
-            if (!isEnabled()) {
-                return;
-            }
-
-            switch (e.getKeyCode()) {
-                case KeyEvent.VK_LEFT: {
-                    moveLeft(e.getModifiersEx());
-                    commandHandler.caretMoved();
-                    revealCursor();
-                    e.consume();
-                    break;
-                }
-                case KeyEvent.VK_RIGHT: {
-                    moveRight(e.getModifiersEx());
-                    commandHandler.caretMoved();
-                    revealCursor();
-                    e.consume();
-                    break;
-                }
-                case KeyEvent.VK_UP: {
-                    CaretPosition caretPosition = caret.getCaretPosition();
-                    int bytesPerLine = paintDataCache.bytesPerLine;
-                    if (caretPosition.getDataPosition() > 0) {
-                        if (caretPosition.getDataPosition() >= bytesPerLine) {
-                            caret.setCaretPosition(caretPosition.getDataPosition() - bytesPerLine, caret.getCodeOffset());
-                            notifyCaretMoved();
-                        }
-                        updateSelection(e.getModifiersEx(), caretPosition);
-                    }
-                    commandHandler.caretMoved();
-                    revealCursor();
-                    e.consume();
-                    break;
-                }
-                case KeyEvent.VK_DOWN: {
-                    CaretPosition caretPosition = caret.getCaretPosition();
-                    int bytesPerLine = paintDataCache.bytesPerLine;
-                    long dataSize = data.getDataSize();
-                    if (caretPosition.getDataPosition() < dataSize) {
-                        if (caretPosition.getDataPosition() + bytesPerLine < dataSize
-                                || (caretPosition.getDataPosition() + bytesPerLine == dataSize && caretPosition.getCodeOffset() == 0)) {
-                            caret.setCaretPosition(caretPosition.getDataPosition() + bytesPerLine, caret.getCodeOffset());
-                            notifyCaretMoved();
-                        }
-                        updateSelection(e.getModifiersEx(), caretPosition);
-                    }
-                    commandHandler.caretMoved();
-                    revealCursor();
-                    e.consume();
-                    break;
-                }
-                case KeyEvent.VK_HOME: {
-                    CaretPosition caretPosition = caret.getCaretPosition();
-                    int bytesPerLine = paintDataCache.bytesPerLine;
-                    if (caretPosition.getDataPosition() > 0 || caret.getCodeOffset() > 0) {
-                        long targetPosition;
-                        if ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) > 0) {
-                            targetPosition = 0;
-                        } else {
-                            targetPosition = (caretPosition.getDataPosition() / bytesPerLine) * bytesPerLine;
-                        }
-                        caret.setCaretPosition(targetPosition);
-                        commandHandler.caretMoved();
-                        notifyCaretMoved();
-                        updateSelection(e.getModifiersEx(), caretPosition);
-                    }
-                    revealCursor();
-                    e.consume();
-                    break;
-                }
-                case KeyEvent.VK_END: {
-                    CaretPosition caretPosition = caret.getCaretPosition();
-                    int bytesPerLine = paintDataCache.bytesPerLine;
-                    long dataSize = data.getDataSize();
-                    if (caretPosition.getDataPosition() < dataSize) {
-                        if ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) > 0) {
-                            caret.setCaretPosition(data.getDataSize());
-                        } else if (caret.getSection() == Section.CODE_MATRIX) {
-                            long newPosition = ((caretPosition.getDataPosition() / bytesPerLine) + 1) * bytesPerLine - 1;
-                            caret.setCaretPosition(newPosition < dataSize ? newPosition : dataSize, newPosition < dataSize ? codeType.maxDigits - 1 : 0);
-                        } else {
-                            long newPosition = ((caretPosition.getDataPosition() / bytesPerLine) + 1) * bytesPerLine - 1;
-                            caret.setCaretPosition(newPosition < dataSize ? newPosition : dataSize);
-                        }
-                        commandHandler.caretMoved();
-                        notifyCaretMoved();
-                        updateSelection(e.getModifiersEx(), caretPosition);
-                    }
-                    revealCursor();
-                    e.consume();
-                    break;
-                }
-                case KeyEvent.VK_PAGE_UP: {
-                    CaretPosition caretPosition = caret.getCaretPosition();
-                    int bytesStep = paintDataCache.bytesPerLine * paintDataCache.linesPerRect;
-                    if (scrollPosition.scrollLinePosition > paintDataCache.linesPerRect) {
-                        scrollPosition.scrollLinePosition -= paintDataCache.linesPerRect;
-                        updateScrollBars();
-                        notifyScrolled();
-                    }
-                    if (caretPosition.getDataPosition() > 0) {
-                        if (caretPosition.getDataPosition() >= bytesStep) {
-                            caret.setCaretPosition(caretPosition.getDataPosition() - bytesStep, caret.getCodeOffset());
-                        } else if (caretPosition.getDataPosition() >= paintDataCache.bytesPerLine) {
-                            caret.setCaretPosition(caretPosition.getDataPosition() % paintDataCache.bytesPerLine, caret.getCodeOffset());
-                        }
-                        commandHandler.caretMoved();
-                        notifyCaretMoved();
-                        updateSelection(e.getModifiersEx(), caretPosition);
-                    }
-                    revealCursor();
-                    e.consume();
-                    break;
-                }
-                case KeyEvent.VK_PAGE_DOWN: {
-                    CaretPosition caretPosition = caret.getCaretPosition();
-                    int bytesStep = paintDataCache.bytesPerLine * paintDataCache.linesPerRect;
-                    long dataSize = data.getDataSize();
-                    if (scrollPosition.scrollLinePosition < dataSize / paintDataCache.bytesPerLine - paintDataCache.linesPerRect * 2) {
-                        scrollPosition.scrollLinePosition += paintDataCache.linesPerRect;
-                        updateScrollBars();
-                        notifyScrolled();
-                    }
-                    if (caretPosition.getDataPosition() < dataSize) {
-                        if (caretPosition.getDataPosition() + bytesStep < dataSize) {
-                            caret.setCaretPosition(caretPosition.getDataPosition() + bytesStep, caret.getCodeOffset());
-                        } else if (caretPosition.getDataPosition() + paintDataCache.bytesPerLine <= dataSize) {
-                            long dataPosition = dataSize
-                                    - dataSize % paintDataCache.bytesPerLine
-                                    - ((caretPosition.getDataPosition() % paintDataCache.bytesPerLine <= dataSize % paintDataCache.bytesPerLine) ? 0 : paintDataCache.bytesPerLine)
-                                    + (caretPosition.getDataPosition() % paintDataCache.bytesPerLine);
-                            caret.setCaretPosition(dataPosition, dataPosition == dataSize ? 0 : caret.getCodeOffset());
-                        }
-                        commandHandler.caretMoved();
-                        notifyCaretMoved();
-                        updateSelection(e.getModifiersEx(), caretPosition);
-                    }
-                    revealCursor();
-                    e.consume();
-                    break;
-                }
-                case KeyEvent.VK_INSERT: {
-                    if (editationAllowed == EditationAllowed.ALLOWED) {
-                        setEditationMode(editationMode == EditationMode.INSERT ? EditationMode.OVERWRITE : EditationMode.INSERT);
-                    }
-                    e.consume();
-                    break;
-                }
-                case KeyEvent.VK_TAB: {
-                    if (viewMode == ViewMode.DUAL) {
-                        Section activeSection = caret.getSection() == Section.CODE_MATRIX ? Section.TEXT_PREVIEW : Section.CODE_MATRIX;
-                        if (activeSection == Section.TEXT_PREVIEW) {
-                            caret.setCodeOffset(0);
-                        }
-                        caret.setSection(activeSection);
-                        revealCursor();
-                        repaint();
-                    }
-                    e.consume();
-                    break;
-                }
-                case KeyEvent.VK_DELETE: {
-                    commandHandler.deletePressed();
-                    e.consume();
-                    break;
-                }
-                case KeyEvent.VK_BACK_SPACE: {
-                    commandHandler.backSpacePressed();
-                    e.consume();
-                    break;
-                }
-                default: {
-                    if (handleClipboard) {
-                        if ((e.getModifiers() & metaMask) > 0 && e.getKeyCode() == KeyEvent.VK_C) {
-                            commandHandler.copy();
-                            e.consume();
-                            break;
-                        } else if ((e.getModifiers() & metaMask) > 0 && e.getKeyCode() == KeyEvent.VK_X) {
-                            commandHandler.cut();
-                            e.consume();
-                            break;
-                        } else if ((e.getModifiers() & metaMask) > 0 && e.getKeyCode() == KeyEvent.VK_V) {
-                            commandHandler.paste();
-                            e.consume();
-                            break;
-                        } else if ((e.getModifiers() & metaMask) > 0 && e.getKeyCode() == KeyEvent.VK_A) {
-                            selectAll();
-                            e.consume();
-                            break;
-                        }
-                    }
-                }
-            }
+        public void keyPressed(KeyEvent keyEvent) {
+            commandHandler.keyPressed(keyEvent);
         }
     }
 

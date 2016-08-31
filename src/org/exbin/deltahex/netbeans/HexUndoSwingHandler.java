@@ -21,7 +21,7 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoableEdit;
-import org.exbin.deltahex.CodeArea;
+import org.exbin.deltahex.swing.CodeArea;
 import org.exbin.xbup.operation.Command;
 import org.exbin.xbup.operation.undo.XBUndoHandler;
 import org.exbin.xbup.operation.undo.XBUndoUpdateListener;
@@ -31,7 +31,7 @@ import org.openide.util.Exceptions;
 /**
  * Undo handler for hexadecimal editor using Swing undo.
  *
- * @version 0.1.1 2016/06/15
+ * @version 0.1.3 2016/08/31
  * @author ExBin Project (http://exbin.org)
  */
 public class HexUndoSwingHandler implements XBUndoHandler {

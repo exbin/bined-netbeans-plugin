@@ -17,7 +17,7 @@ package org.exbin.deltahex.netbeans;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.exbin.deltahex.CodeArea;
+import org.exbin.deltahex.swing.CodeArea;
 import org.exbin.utils.binary_data.EditableBinaryData;
 import org.openide.loaders.DataObject;
 import org.openide.nodes.AbstractNode;
@@ -27,7 +27,7 @@ import org.openide.util.Exceptions;
 /**
  * Hexadecimal editor node.
  *
- * @version 0.1.1 2016/06/15
+ * @version 0.1.3 2016/08/31
  * @author ExBin Project (http://exbin.org)
  */
 public class HexEditorNode extends AbstractNode {
