@@ -23,7 +23,7 @@ import javax.swing.JComponent;
  * @version 0.1.0 2016/06/20
  * @author ExBin Project (http://exbin.org)
  */
-public class CodeAreaSpace extends JComponent {
+public class CodeAreaSpace {
 
     private SpaceType spaceType = SpaceType.ONE_UNIT;
     private int spaceSize;
