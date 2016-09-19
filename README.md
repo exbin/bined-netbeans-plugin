@@ -1,7 +1,7 @@
-DeltaHex Editor - NetBeans Module
+DeltaHex Editor - NetBeans Plugin
 =================================
 
-Hexadecimal viewer/editor component module for NetBeans platform.
+Hexadecimal viewer/editor plugin module for NetBeans platform.
 
 Homepage: http://deltahex.exbin.org  
 
