@@ -32,7 +32,6 @@ import java.util.logging.Logger;
 import org.exbin.deltahex.CaretPosition;
 import org.exbin.deltahex.swing.CodeArea;
 import org.exbin.deltahex.swing.CodeAreaCaret;
-import org.exbin.deltahex.delta.MemoryPagedData;
 import org.exbin.deltahex.operation.command.CodeAreaCommandType;
 import org.exbin.deltahex.operation.command.EditCharDataCommand;
 import org.exbin.deltahex.operation.command.EditDataCommand;
@@ -54,11 +53,12 @@ import org.exbin.deltahex.Section;
 import org.exbin.deltahex.SelectionRange;
 import org.exbin.deltahex.ViewMode;
 import org.exbin.utils.binary_data.ByteArrayEditableData;
+import org.exbin.utils.binary_data.PagedData;
 
 /**
  * Command handler for undo/redo aware hexadecimal editor editing.
  *
- * @version 0.1.1 2016/09/01
+ * @version 0.1.1 2016/09/26
  * @author ExBin Project (http://exbin.org)
  */
 public class CodeCommandHandler implements CodeAreaCommandHandler {
@@ -669,7 +669,7 @@ public class CodeCommandHandler implements CodeAreaCommandHandler {
 
                     CodeAreaCommand insertCommand = null;
                     if (pastedData.getDataSize() > 0) {
-                        insertCommand = new InsertDataCommand(codeArea, insertionPosition, pastedData);
+                        insertCommand = new InsertDataCommand(codeArea, insertionPosition, (EditableBinaryData) pastedData);
                     }
 
                     CodeAreaCommand pasteCommand = HexCompoundCommand.buildCompoundCommand(codeArea, deleteSelectionCommand, modifyCommand, insertCommand);
@@ -697,7 +697,8 @@ public class CodeCommandHandler implements CodeAreaCommandHandler {
                     CodeAreaCommand modifyCommand = null;
                     byte[] bytes = ((String) insertedData).getBytes(codeArea.getCharset());
                     int dataSize = bytes.length;
-                    BinaryData pastedData = new MemoryPagedData(bytes);
+                    PagedData pastedData = new PagedData();
+                    pastedData.insert(0, bytes);
                     long insertionPosition = dataPosition;
                     if (codeArea.getEditationMode() == EditationMode.OVERWRITE) {
                         BinaryData modifiedData = pastedData;
@@ -812,8 +813,8 @@ public class CodeCommandHandler implements CodeAreaCommandHandler {
                     }
 
                     long dataSize = data.getDataSize();
-                    BinaryData pastedData = new MemoryPagedData();
-                    ((EditableBinaryData) pastedData).insert(0, data);
+                    PagedData pastedData = new PagedData();
+                    pastedData.insert(0, data);
                     long insertionPosition = dataPosition;
                     if (codeArea.getEditationMode() == EditationMode.OVERWRITE) {
                         BinaryData modifiedData = pastedData;
