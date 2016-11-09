@@ -1,4 +1,5 @@
 0.1.4
+- Fixed charset for clipboard copy/paste
 
 0.1.3 (2016-10-05)
 - Full cursor and cursor blinking

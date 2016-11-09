@@ -22,7 +22,7 @@ import java.io.OutputStream;
 /**
  * Interface for editable binary data.
  *
- * @version 0.1.0 2016/05/24
+ * @version 0.1.1 2016/11/01
  * @author ExBin Project (http://exbin.org)
  */
 public interface EditableBinaryData extends BinaryData {
@@ -97,6 +97,19 @@ public interface EditableBinaryData extends BinaryData {
      * @param insertedDataLength inserted data length
      */
     void insert(long startFrom, BinaryData insertedData, long insertedDataOffset, long insertedDataLength);
+
+    /**
+     * Loads data from given stream expecting given size.
+     *
+     * Preserves original data outside loaded range. Extends data if needed.
+     *
+     * @param startFrom start position to insert data
+     * @param inputStream input stream
+     * @param maximumDataSize size of data to load or -1 for all data
+     * @return length of loaded data
+     * @throws java.io.IOException if input/output error
+     */
+    long insert(long startFrom, InputStream inputStream, long maximumDataSize) throws IOException;
 
     /**
      * Replaces data in given area with given data.
@@ -187,19 +200,6 @@ public interface EditableBinaryData extends BinaryData {
      * @throws java.io.IOException if input/output error
      */
     void loadFromStream(InputStream inputStream) throws IOException;
-
-    /**
-     * Loads data from given stream expecting given size.
-     *
-     * Preserves original data outside loaded range. Extends data if needed.
-     *
-     * @param inputStream input stream
-     * @param startFrom start position to load data to
-     * @param maximumDataSize size of data to load
-     * @return length of loaded data
-     * @throws java.io.IOException if input/output error
-     */
-    long loadFromStream(InputStream inputStream, long startFrom, long maximumDataSize) throws IOException;
 
     /**
      * Provides handler for output stream generation.

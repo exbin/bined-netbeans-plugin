@@ -482,43 +482,39 @@ public class PagedData implements EditableBinaryData {
     }
 
     @Override
-    public long loadFromStream(InputStream inputStream, long startFrom, long dataSize) throws IOException {
+    public long insert(long startFrom, InputStream inputStream, long dataSize) throws IOException {
         if (startFrom > getDataSize()) {
             setDataSize(startFrom);
         }
+        
         long loadedData = 0;
         int pageOffset = (int) (startFrom % pageSize);
         byte[] buffer = new byte[pageSize];
-        while (dataSize > 0) {
-            int blockSize = pageSize - pageOffset;
-            if (dataSize < blockSize) {
-                blockSize = (int) dataSize;
+        while (dataSize == -1 || dataSize > 0) {
+            int dataToRead = pageSize - pageOffset;
+            if (dataSize >= 0 && dataSize < dataToRead) {
+                dataToRead = (int) dataSize;
+            }
+            if (pageOffset > 0 && dataToRead > pageOffset) {
+                // Align to data pages
+                dataToRead = pageOffset;
             }
 
-            int readOffset = 0;
-            int length = blockSize;
-            while (length > 0) {
-                int read = inputStream.read(buffer, readOffset, length);
-                if (read == -1) {
-                    throw new IOException("Unexpected data processed - " + dataSize + " expected, but not met.");
+            int redLength = 0;
+            while (dataToRead > 0) {
+                int red = inputStream.read(buffer, redLength, dataToRead);
+                if (red == -1) {
+                    break;
                 } else {
-                    readOffset += read;
-                    length -= read;
+                    redLength += red;
+                    dataToRead -= red;
                 }
             }
 
-            if (getDataSize() == startFrom) {
-                insert(startFrom, buffer, 0, blockSize);
-                startFrom += blockSize;
-            } else {
-                if (startFrom + blockSize > getDataSize()) {
-                    setDataSize(startFrom + blockSize);
-                }
-
-                replace(startFrom, buffer);
-            }
-            dataSize -= blockSize;
-            loadedData += blockSize;
+            insert(startFrom, buffer, 0, redLength);
+            startFrom += redLength;
+            dataSize -= redLength;
+            loadedData += redLength;
             pageOffset = 0;
         }
         return loadedData;

@@ -23,24 +23,24 @@ import org.exbin.utils.binary_data.EditableBinaryData;
 import org.exbin.utils.binary_data.PagedData;
 
 /**
- * Encapsulation of data for hexadecimal editor.
+ * Data source for binary data stored in memory.
  *
- * @version 0.1.0 2016/05/25
+ * @version 0.1.1 2016/11/02
  * @author ExBin Project (http://exbin.org)
  */
-public class MemoryPagedData implements EditableBinaryData {
+public class MemoryDataSource implements EditableBinaryData {
 
     private final PagedData data;
 
-    public MemoryPagedData() {
+    public MemoryDataSource() {
         data = new PagedData();
     }
 
-    public MemoryPagedData(PagedData data) {
+    public MemoryDataSource(PagedData data) {
         this.data = data;
     }
 
-    public MemoryPagedData(byte[] data) {
+    public MemoryDataSource(byte[] data) {
         this.data = new PagedData();
         this.data.insert(0, data);
     }
@@ -121,6 +121,11 @@ public class MemoryPagedData implements EditableBinaryData {
     }
 
     @Override
+    public long insert(long startFrom, InputStream inputStream, long length) throws IOException {
+        return data.insert(startFrom, inputStream, length);
+    }
+
+    @Override
     public void replace(long targetPosition, BinaryData replacingData) {
         data.replace(targetPosition, replacingData);
     }
@@ -158,11 +163,6 @@ public class MemoryPagedData implements EditableBinaryData {
     @Override
     public void loadFromStream(InputStream inputStream) throws IOException {
         data.loadFromStream(inputStream);
-    }
-
-    @Override
-    public long loadFromStream(InputStream inputStream, long startFrom, long length) throws IOException {
-        return data.loadFromStream(inputStream, startFrom, length);
     }
 
     @Override

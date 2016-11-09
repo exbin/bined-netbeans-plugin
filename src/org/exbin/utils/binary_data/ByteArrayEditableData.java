@@ -24,10 +24,12 @@ import java.util.Arrays;
 /**
  * Basic implementation of editable binary data interface using byte array.
  *
- * @version 0.1.0 2016/05/24
+ * @version 0.1.0 2016/11/02
  * @author ExBin Project (http://exbin.org)
  */
 public class ByteArrayEditableData extends ByteArrayData implements EditableBinaryData {
+
+    public static final int BUFFER_SIZE = 1024;
 
     public ByteArrayEditableData() {
         this(new byte[0]);
@@ -156,6 +158,32 @@ public class ByteArrayEditableData extends ByteArrayData implements EditableBina
     }
 
     @Override
+    public long insert(long startFrom, InputStream inputStream, long dataSize) throws IOException {
+        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[BUFFER_SIZE];
+            while (inputStream.available() > 0 && dataSize > 0) {
+                int toRead = buffer.length;
+                if (toRead > dataSize) {
+                    toRead = (int) dataSize;
+                }
+                int red = inputStream.read(buffer, 0, toRead);
+                if (red > 0) {
+                    output.write(buffer, 0, red);
+                    dataSize -= red;
+                } else {
+                    break;
+                }
+            }
+            byte[] newData = output.toByteArray();
+            if (startFrom + newData.length > getDataSize()) {
+                setDataSize(startFrom + newData.length);
+            }
+            replace(startFrom, newData);
+            return newData.length;
+        }
+    }
+
+    @Override
     public void fillData(long startFrom, long length) {
         fillData(startFrom, length, (byte) 0);
     }
@@ -233,7 +261,7 @@ public class ByteArrayEditableData extends ByteArrayData implements EditableBina
     @Override
     public void loadFromStream(InputStream inputStream) throws IOException {
         try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[BUFFER_SIZE];
             while (inputStream.available() > 0) {
                 int read = inputStream.read(buffer);
                 if (read > 0) {
@@ -241,32 +269,6 @@ public class ByteArrayEditableData extends ByteArrayData implements EditableBina
                 }
             }
             data = output.toByteArray();
-        }
-    }
-
-    @Override
-    public long loadFromStream(InputStream inputStream, long startFrom, long maximumDataSize) throws IOException {
-        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-            byte[] buffer = new byte[1024];
-            while (inputStream.available() > 0 && maximumDataSize > 0) {
-                int toRead = buffer.length;
-                if (toRead > maximumDataSize) {
-                    toRead = (int) maximumDataSize;
-                }
-                int read = inputStream.read(buffer, 0, toRead);
-                if (read > 0) {
-                    output.write(buffer, 0, read);
-                    maximumDataSize -= read;
-                }
-            }
-            byte[] newData = output.toByteArray();
-            if (getDataSize() > startFrom + newData.length) {
-                replace(startFrom, newData);
-            } else {
-                setDataSize(startFrom);
-                insert(startFrom, newData);
-            }
-            return newData.length;
         }
     }
 

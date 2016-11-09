@@ -23,7 +23,7 @@ import java.util.ListIterator;
 /**
  * Default implementation of doubly linked list of items.
  *
- * @version 0.1.0 2016/06/03
+ * @version 0.1.1 2016/10/15
  * @author ExBin Project (http://exbin.org)
  * @param <T> doubly linked list item
  */
@@ -31,9 +31,7 @@ public class DefaultDoublyLinkedList<T extends DoublyLinkedItem> implements Doub
 
     private T first;
 
-    /**
-     * Cached values
-     */
+    /* Cached values. */
     private T last;
     private int size = 0;
 
@@ -119,17 +117,59 @@ public class DefaultDoublyLinkedList<T extends DoublyLinkedItem> implements Doub
 
     @Override
     public Iterator<T> iterator() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new Iterator<T>() {
+
+            private T current = first;
+
+            @Override
+            public boolean hasNext() {
+                return current != null;
+            }
+
+            @Override
+            public T next() {
+                T result = current;
+                current = (T) result.getNext();
+                return result;
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        };
     }
 
     @Override
     public Object[] toArray() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (last == null) {
+            return new Object[0];
+        }
+        int count = indexOf(last);
+        Object[] result = new Object[count];
+        int index = 0;
+        T item = first;
+        while (item != null) {
+            result[index] = item;
+            item = nextTo(item);
+            index++;
+        }
+        return result;
     }
 
     @Override
-    public <T> T[] toArray(T[] a) {
+    public <T> T[] toArray(T[] template) {
         throw new UnsupportedOperationException("Not supported yet.");
+//        int count = last == null ? 0 : indexOf(last);
+//        T[] result = template.length >= count ? template : Arrays.copyOf(template, count);
+//        int index = 0;
+//        T item = (T) first;
+//        while (item != null) {
+//            result[index] = item;
+//            item = nextTo(item);
+//            index++;
+//        }
+//        return result;
     }
 
     @Override
@@ -168,6 +208,14 @@ public class DefaultDoublyLinkedList<T extends DoublyLinkedItem> implements Doub
             element.setPrev(last);
             element.setNext(null);
             last = element;
+        } else if (index == 0) {
+            if (first == null) {
+                last = element;
+            } else {
+                first.setPrev(element);
+            }
+            element.setNext(first);
+            first = element;
         } else {
             T item = get(index);
             T prevItem = (T) item.getPrev();
@@ -223,7 +271,12 @@ public class DefaultDoublyLinkedList<T extends DoublyLinkedItem> implements Doub
 
     @Override
     public boolean addAll(int index, Collection<? extends T> c) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        for (T t : c) {
+            add(index, t);
+            index++;
+        }
+
+        return true;
     }
 
     @Override

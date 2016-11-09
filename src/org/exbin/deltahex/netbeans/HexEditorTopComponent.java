@@ -34,9 +34,9 @@ import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import org.exbin.deltahex.CodeType;
-import org.exbin.deltahex.delta.MemoryPagedData;
 import org.exbin.deltahex.operation.CodeCommandHandler;
 import org.exbin.deltahex.swing.CodeArea;
+import org.exbin.utils.binary_data.PagedData;
 import org.exbin.xbup.operation.Command;
 import org.exbin.xbup.operation.undo.XBUndoUpdateListener;
 import org.netbeans.api.queries.FileEncodingQuery;
@@ -54,7 +54,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.3 2016/08/31
+ * @version 0.1.3 2016/11/09
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)
@@ -85,7 +85,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         undoRedo = new UndoRedo.Manager();
         HexUndoSwingHandler undoHandler = new HexUndoSwingHandler(codeArea, undoRedo);
 
-        codeArea.setData(new MemoryPagedData());
+        codeArea.setData(new PagedData());
         CodeCommandHandler commandHandler = new CodeCommandHandler(codeArea, undoHandler);
         codeArea.setCommandHandler(commandHandler);
         super.add(codeArea, BorderLayout.CENTER);
