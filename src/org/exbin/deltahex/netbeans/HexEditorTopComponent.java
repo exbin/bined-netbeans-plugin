@@ -226,7 +226,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         savable.setDataObject(dataObject);
         opened = true;
 
-        final Charset charset = FileEncodingQuery.getEncoding(dataObject.getPrimaryFile());
+        final Charset charset = Charset.forName(FileEncodingQuery.getEncoding(dataObject.getPrimaryFile()).name());
         encodingComboBox.setSelectedItem(charset.name());
         codeArea.setCharset(charset);
     }
