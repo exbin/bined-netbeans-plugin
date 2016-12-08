@@ -82,7 +82,7 @@
             <Component class="javax.swing.JToggleButton" name="lineWrappingToggleButton">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/org/exbin/deltahex/netbeans/resource/icons/deltahex-linewrap.png"/>
+                  <Image iconType="3" name="/org/exbin/deltahex/netbeans/resources/icons/deltahex-linewrap.png"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="org/exbin/deltahex/netbeans/Bundle.properties" key="HexEditorTopComponent.lineWrappingToggleButton.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
@@ -95,7 +95,7 @@
             <Component class="javax.swing.JToggleButton" name="showUnprintablesToggleButton">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/org/exbin/deltahex/netbeans/resource/icons/insert-pilcrow.png"/>
+                  <Image iconType="3" name="/org/exbin/deltahex/netbeans/resources/icons/insert-pilcrow.png"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
                   <ResourceString bundle="org/exbin/deltahex/netbeans/Bundle.properties" key="HexEditorTopComponent.showUnprintablesToggleButton.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>

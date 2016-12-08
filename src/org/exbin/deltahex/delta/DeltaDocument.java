@@ -18,14 +18,16 @@ package org.exbin.deltahex.delta;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import org.exbin.deltahex.delta.list.DefaultDoublyLinkedList;
 import org.exbin.utils.binary_data.BinaryData;
 import org.exbin.utils.binary_data.EditableBinaryData;
 
 /**
- * Delta document defined as sequence of segments.
+ * Delta document defined as a sequence of segments.
  *
- * @version 0.1.1 2016/11/05
+ * @version 0.1.2 2016/12/07
  * @author ExBin Project (http://exbin.org)
  */
 public class DeltaDocument implements EditableBinaryData {
@@ -35,7 +37,8 @@ public class DeltaDocument implements EditableBinaryData {
     private final DefaultDoublyLinkedList<DataSegment> segments = new DefaultDoublyLinkedList<>();
 
     private long dataLength = 0;
-    private final DeltaDocumentWindow window = new DeltaDocumentWindow(this);
+    private final DeltaDocumentWindow window;
+    private final List<DeltaDocumentChangedListener> changeListeners = new ArrayList<>();
 
     public DeltaDocument(SegmentsRepository repository, FileDataSource fileSource) throws IOException {
         this.repository = repository;
@@ -43,12 +46,14 @@ public class DeltaDocument implements EditableBinaryData {
         dataLength = fileSource.getFileLength();
         DataSegment fullFileSegment = repository.createFileSegment(fileSource, 0, dataLength);
         segments.add(fullFileSegment);
+        window = new DeltaDocumentWindow(this);
         window.reset();
     }
 
     public DeltaDocument(SegmentsRepository repository) {
         this.repository = repository;
         dataLength = 0;
+        window = new DeltaDocumentWindow(this);
         window.reset();
     }
 
@@ -57,6 +62,14 @@ public class DeltaDocument implements EditableBinaryData {
         return segments;
     }
 
+    /**
+     * Returns segment starting at or before given position and ending after it.
+     *
+     * Returns null if position is at the end or after then end of the document.
+     *
+     * @param position requested position
+     * @return data segment or null
+     */
     public DataSegment getSegment(long position) {
         return window.getSegment(position);
     }
@@ -142,6 +155,11 @@ public class DeltaDocument implements EditableBinaryData {
     public void replace(long targetPosition, byte[] replacingData, int replacingDataOffset, int length) {
         remove(targetPosition, length);
         insert(targetPosition, replacingData, replacingDataOffset, length);
+    }
+
+    public void replace(long targetPosition, DataSegment segment) {
+        remove(targetPosition, segment.getLength());
+        insert(targetPosition, segment);
     }
 
     @Override
@@ -255,5 +273,19 @@ public class DeltaDocument implements EditableBinaryData {
 
     public SegmentsRepository getRepository() {
         return repository;
+    }
+
+    public void addChangeListener(DeltaDocumentChangedListener listener) {
+        changeListeners.add(listener);
+    }
+
+    public void removeChangeListener(DeltaDocumentChangedListener listener) {
+        changeListeners.remove(listener);
+    }
+
+    public void notifyChangeListeners(DeltaDocumentWindow window) {
+        for (DeltaDocumentChangedListener listener : changeListeners) {
+            listener.dataChanged(window);
+        }
     }
 }

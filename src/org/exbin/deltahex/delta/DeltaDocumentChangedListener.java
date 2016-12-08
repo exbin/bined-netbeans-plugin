@@ -13,30 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.deltahex;
+package org.exbin.deltahex.delta;
 
 /**
- * Enumeration of editation modes.
+ * Listener for delta document data changes.
  *
- * @version 0.1.1 2016/08/31
+ * @version 0.1.2 2016/12/07
  * @author ExBin Project (http://exbin.org)
  */
-public enum EditationMode {
+public interface DeltaDocumentChangedListener {
 
     /**
-     * Data are inserted at cursor position.
+     * Change in data occured.
      *
-     * Document is extended by size of the inserted data, data at cursor
-     * position moved forward to provide space and then inserted data are stored
-     * in this new space.
+     * @param window updated window for reference
      */
-    INSERT,
-    /**
-     * Data are replaced at cursor position.
-     *
-     * If size of data is greater than size of the document and editation is not
-     * in "overwrite only" mode, document is extended so that inserted data will
-     * fit in.
-     */
-    OVERWRITE;
+    void dataChanged(DeltaDocumentWindow window);
 }
