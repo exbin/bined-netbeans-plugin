@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.deltahex.operation;
+package org.exbin.deltahex.operation.swing;
 
-import org.exbin.deltahex.CodeType;
 import org.exbin.deltahex.swing.CodeArea;
 import org.exbin.utils.binary_data.EditableBinaryData;
 
 /**
  * Operation for editing data in delete mode.
  *
- * @version 0.1.1 2015/09/21
+ * @version 0.1.1 2016/09/21
  * @author ExBin Project (http://exbin.org)
  */
-public class DeleteCodeEditDataOperation extends CodeEditDataOperation {
+public class DeleteCharEditDataOperation extends CharEditDataOperation {
 
     private static final char BACKSPACE_CHAR = '\b';
     private static final char DELETE_CHAR = (char) 0x7f;
@@ -33,7 +32,7 @@ public class DeleteCodeEditDataOperation extends CodeEditDataOperation {
     private long position;
     private EditableBinaryData undoData = null;
 
-    public DeleteCodeEditDataOperation(CodeArea codeArea, long startPosition) {
+    public DeleteCharEditDataOperation(CodeArea codeArea, long startPosition) {
         super(codeArea);
         this.position = startPosition;
     }
@@ -53,17 +52,12 @@ public class DeleteCodeEditDataOperation extends CodeEditDataOperation {
         return execute(true);
     }
 
-    @Override
-    public CodeType getCodeType() {
-        return null;
-    }
-
     private CodeAreaOperation execute(boolean withUndo) {
         throw new IllegalStateException("Cannot be executed");
     }
 
     @Override
-    public void appendEdit(byte value) {
+    public void appendEdit(char value) {
         EditableBinaryData data = (EditableBinaryData) codeArea.getData();
         switch (value) {
             case BACKSPACE_CHAR: {

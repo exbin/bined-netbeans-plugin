@@ -13,33 +13,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.deltahex.operation;
-
-import org.exbin.deltahex.swing.CodeArea;
+package org.exbin.deltahex.operation.swing;
 
 /**
- * Abstract operation for editing data.
+ * Operation type enumeration.
  *
- * @version 0.1.0 2015/05/16
+ * @version 0.1.0 2016/04/30
  * @author ExBin Project (http://exbin.org)
  */
-public abstract class CharEditDataOperation extends CodeAreaOperation {
+public enum CodeAreaOperationType {
 
-    public CharEditDataOperation(CodeArea hexadecimal) {
-        super(hexadecimal);
+    /**
+     * Insert data operation.
+     */
+    INSERT_DATA("Insert data"),
+    /**
+     * Remove data operation.
+     */
+    REMOVE_DATA("Remove data"),
+    /**
+     * Modify data operation.
+     */
+    MODIFY_DATA("Modify data"),
+    /**
+     * Move data operation.
+     */
+    MOVE_DATA("Move data"),
+    /**
+     * Edit data operation.
+     */
+    EDIT_DATA("Edit data");
+
+    private final String caption;
+
+    private CodeAreaOperationType(String caption) {
+        this.caption = caption;
     }
 
-    /**
-     * Appends next character value in editing action sequence.
-     *
-     * @param value character
-     */
-    public abstract void appendEdit(char value);
-
-    /**
-     * Generates undo operation for combined editing action.
-     *
-     * @return hexadecimal operation
-     */
-    public abstract CodeAreaOperation[] generateUndo();
+    public String getCaption() {
+        return caption;
+    }
 }

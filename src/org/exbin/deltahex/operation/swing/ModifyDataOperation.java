@@ -13,33 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.deltahex.operation;
+package org.exbin.deltahex.operation.swing;
 
 import org.exbin.deltahex.swing.CodeArea;
+import org.exbin.utils.binary_data.BinaryData;
 import org.exbin.utils.binary_data.EditableBinaryData;
 
 /**
- * Operation for deleting child block.
+ * Operation for modifying data.
  *
- * @version 0.1.1 2016/09/26
+ * @version 0.1.0 2016/11/05
  * @author ExBin Project (http://exbin.org)
  */
-public class RemoveDataOperation extends CodeAreaOperation {
+public class ModifyDataOperation extends CodeAreaOperation {
 
     private final long position;
-    private final int codeOffset;
-    private final long size;
+    private final BinaryData data;
 
-    public RemoveDataOperation(CodeArea codeArea, long position, int codeOffset, long size) {
+    public ModifyDataOperation(CodeArea codeArea, long position, BinaryData data) {
         super(codeArea);
         this.position = position;
-        this.codeOffset = codeOffset;
-        this.size = size;
+        this.data = data;
     }
 
     @Override
     public CodeAreaOperationType getType() {
-        return CodeAreaOperationType.REMOVE_DATA;
+        return CodeAreaOperationType.MODIFY_DATA;
     }
 
     @Override
@@ -55,11 +54,14 @@ public class RemoveDataOperation extends CodeAreaOperation {
     private CodeAreaOperation execute(boolean withUndo) {
         CodeAreaOperation undoOperation = null;
         if (withUndo) {
-            EditableBinaryData undoData = (EditableBinaryData) codeArea.getData().copy(position, size);
-            undoOperation = new InsertDataOperation(codeArea, position, codeOffset, undoData);
+            BinaryData undoData = codeArea.getData().copy(position, data.getDataSize());
+            undoOperation = new ModifyDataOperation(codeArea, position, undoData);
         }
-        ((EditableBinaryData) codeArea.getData()).remove(position, size);
-        codeArea.getCaret().setCaretPosition(position, codeOffset);
+        ((EditableBinaryData) codeArea.getData()).replace(position, data);
         return undoOperation;
+    }
+
+    public void appendData(BinaryData appendData) {
+        ((EditableBinaryData) data).insert(data.getDataSize(), appendData);
     }
 }

@@ -14,45 +14,45 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along this application.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.exbin.deltahex.operation.command;
+package org.exbin.deltahex.operation.swing.command;
 
 import org.exbin.deltahex.swing.CodeArea;
-import org.exbin.deltahex.operation.DeleteCodeEditDataOperation;
-import org.exbin.deltahex.operation.CodeEditDataOperation;
-import org.exbin.deltahex.operation.InsertCodeEditDataOperation;
-import org.exbin.deltahex.operation.OverwriteCodeEditDataOperation;
-import org.exbin.deltahex.operation.CodeAreaOperation;
-import org.exbin.deltahex.operation.CodeAreaOperationEvent;
+import org.exbin.deltahex.operation.swing.CharEditDataOperation;
+import org.exbin.deltahex.operation.swing.DeleteCharEditDataOperation;
+import org.exbin.deltahex.operation.swing.CodeAreaOperation;
+import org.exbin.deltahex.operation.swing.CodeAreaOperationEvent;
+import org.exbin.deltahex.operation.swing.InsertCharEditDataOperation;
+import org.exbin.deltahex.operation.swing.OverwriteCharEditDataOperation;
 import org.exbin.xbup.operation.OperationListener;
-import org.exbin.deltahex.operation.CodeAreaOperationListener;
+import org.exbin.deltahex.operation.swing.CodeAreaOperationListener;
 
 /**
- * Command for editing data in hexadecimal mode.
+ * Command for editing data in text mode.
  *
  * @version 0.1.1 2016/09/26
  * @author ExBin Project (http://exbin.org)
  */
-public class EditCodeDataCommand extends EditDataCommand {
+public class EditCharDataCommand extends EditDataCommand {
 
     private final EditCommandType commandType;
     protected boolean operationPerformed = false;
     private CodeAreaOperation[] operations = null;
 
-    public EditCodeDataCommand(CodeArea codeArea, EditCommandType commandType, long position, int positionCodeOffset) {
+    public EditCharDataCommand(CodeArea codeArea, EditCommandType commandType, long position) {
         super(codeArea);
         this.commandType = commandType;
         CodeAreaOperation operation;
         switch (commandType) {
             case INSERT: {
-                operation = new InsertCodeEditDataOperation(codeArea, position, positionCodeOffset);
+                operation = new InsertCharEditDataOperation(codeArea, position);
                 break;
             }
             case OVERWRITE: {
-                operation = new OverwriteCodeEditDataOperation(codeArea, position, positionCodeOffset);
+                operation = new OverwriteCharEditDataOperation(codeArea, position);
                 break;
             }
             case DELETE: {
-                operation = new DeleteCodeEditDataOperation(codeArea, position);
+                operation = new DeleteCharEditDataOperation(codeArea, position);
                 break;
             }
             default: {
@@ -65,8 +65,8 @@ public class EditCodeDataCommand extends EditDataCommand {
 
     @Override
     public void undo() throws Exception {
-        if (operations.length == 1 && operations[0] instanceof CodeEditDataOperation) {
-            CodeEditDataOperation operation = (CodeEditDataOperation) operations[0];
+        if (operations.length == 1 && operations[0] instanceof CharEditDataOperation) {
+            CharEditDataOperation operation = (CharEditDataOperation) operations[0];
             operations = operation.generateUndo();
             operation.dispose();
         }
@@ -77,7 +77,7 @@ public class EditCodeDataCommand extends EditDataCommand {
                 CodeAreaOperation redoOperation = operation.executeWithUndo();
                 operation.dispose();
                 if (codeArea instanceof OperationListener) {
-                    ((CodeAreaOperationListener) codeArea).notifyChange(new CodeAreaOperationEvent(operation));
+                    ((CodeAreaOperationListener) codeArea).notifyChange(new CodeAreaOperationEvent(operations[i]));
                 }
                 operations[i] = redoOperation;
             }
@@ -95,7 +95,7 @@ public class EditCodeDataCommand extends EditDataCommand {
                 CodeAreaOperation undoOperation = operation.executeWithUndo();
                 operation.dispose();
                 if (codeArea instanceof OperationListener) {
-                    ((CodeAreaOperationListener) codeArea).notifyChange(new CodeAreaOperationEvent(operations[i]));
+                    ((CodeAreaOperationListener) codeArea).notifyChange(new CodeAreaOperationEvent(operation));
                 }
 
                 operations[i] = undoOperation;
@@ -116,14 +116,9 @@ public class EditCodeDataCommand extends EditDataCommand {
         return true;
     }
 
-    /**
-     * Appends next hexadecimal value in editing action sequence.
-     *
-     * @param value half-byte value (0..15)
-     */
-    public void appendEdit(byte value) {
-        if (operations.length == 1 && operations[0] instanceof CodeEditDataOperation) {
-            ((CodeEditDataOperation) operations[0]).appendEdit(value);
+    public void appendEdit(char value) {
+        if (operations.length == 1 && operations[0] instanceof CharEditDataOperation) {
+            ((CharEditDataOperation) operations[0]).appendEdit(value);
         } else {
             throw new IllegalStateException("Cannot append edit on reverted command");
         }
@@ -136,7 +131,7 @@ public class EditCodeDataCommand extends EditDataCommand {
 
     @Override
     public boolean wasReverted() {
-        return !(operations.length == 1 && operations[0] instanceof CodeEditDataOperation);
+        return !(operations.length == 1 && operations[0] instanceof CharEditDataOperation);
     }
 
     @Override

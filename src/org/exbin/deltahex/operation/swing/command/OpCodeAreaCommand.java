@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.deltahex.operation.command;
+package org.exbin.deltahex.operation.swing.command;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.exbin.deltahex.swing.CodeArea;
-import org.exbin.deltahex.operation.CodeAreaOperation;
-import org.exbin.deltahex.operation.CodeAreaOperationEvent;
+import org.exbin.deltahex.operation.swing.CodeAreaOperation;
+import org.exbin.deltahex.operation.swing.CodeAreaOperationEvent;
 import org.exbin.xbup.operation.OperationListener;
-import org.exbin.deltahex.operation.CodeAreaOperationListener;
+import org.exbin.deltahex.operation.swing.CodeAreaOperationListener;
 
 /**
  * Abstract class for operation on hexadecimal document.

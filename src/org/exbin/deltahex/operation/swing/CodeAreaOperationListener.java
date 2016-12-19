@@ -14,27 +14,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along this application.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.exbin.deltahex.operation;
+package org.exbin.deltahex.operation.swing;
 
 /**
- * Operation execution event.
+ * Operation execution listener.
  *
  * @version 0.1.0 2016/05/25
  * @author ExBin Project (http://exbin.org)
  */
-public class CodeAreaOperationEvent {
+public interface CodeAreaOperationListener {
 
-    private CodeAreaOperation operation;
-
-    public CodeAreaOperationEvent(CodeAreaOperation operation) {
-        this.operation = operation;
-    }
-
-    public CodeAreaOperation getOperation() {
-        return operation;
-    }
-
-    public void setOperation(CodeAreaOperation operation) {
-        this.operation = operation;
-    }
+    /**
+     * Notifies about change in document content.
+     *
+     * @param event change event
+     */
+    void notifyChange(CodeAreaOperationEvent event);
 }

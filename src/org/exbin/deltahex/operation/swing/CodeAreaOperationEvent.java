@@ -14,42 +14,27 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along this application.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.exbin.deltahex.operation.command;
-
-import org.exbin.deltahex.swing.CodeArea;
+package org.exbin.deltahex.operation.swing;
 
 /**
- * Command for editing data in text mode.
+ * Operation execution event.
  *
- * @version 0.1.0 2016/05/17
+ * @version 0.1.0 2016/05/25
  * @author ExBin Project (http://exbin.org)
  */
-public abstract class EditDataCommand extends CodeAreaCommand {
+public class CodeAreaOperationEvent {
 
-    public EditDataCommand(CodeArea codeArea) {
-        super(codeArea);
+    private CodeAreaOperation operation;
+
+    public CodeAreaOperationEvent(CodeAreaOperation operation) {
+        this.operation = operation;
     }
 
-    @Override
-    public CodeAreaCommandType getType() {
-        return CodeAreaCommandType.DATA_EDITED;
+    public CodeAreaOperation getOperation() {
+        return operation;
     }
 
-    @Override
-    public boolean canUndo() {
-        return true;
-    }
-
-    public abstract EditCommandType getCommandType();
-
-    /**
-     * Returns true if command was already used for undo action.
-     *
-     * @return true if undo step performed
-     */
-    public abstract boolean wasReverted();
-
-    public enum EditCommandType {
-        INSERT, OVERWRITE, DELETE
+    public void setOperation(CodeAreaOperation operation) {
+        this.operation = operation;
     }
 }

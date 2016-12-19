@@ -13,44 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.deltahex.operation;
+package org.exbin.deltahex.operation.swing.command;
+
+import org.exbin.deltahex.swing.CodeArea;
+import org.exbin.xbup.operation.AbstractCommand;
 
 /**
- * Operation type enumeration.
+ * Abstract class for operation on code area component.
  *
- * @version 0.1.0 2016/04/30
+ * @version 0.1.0 2016/06/13
  * @author ExBin Project (http://exbin.org)
  */
-public enum CodeAreaOperationType {
+public abstract class CodeAreaCommand extends AbstractCommand {
 
-    /**
-     * Insert data operation.
-     */
-    INSERT_DATA("Insert data"),
-    /**
-     * Remove data operation.
-     */
-    REMOVE_DATA("Remove data"),
-    /**
-     * Modify data operation.
-     */
-    MODIFY_DATA("Modify data"),
-    /**
-     * Move data operation.
-     */
-    MOVE_DATA("Move data"),
-    /**
-     * Edit data operation.
-     */
-    EDIT_DATA("Edit data");
+    protected final CodeArea codeArea;
 
-    private final String caption;
-
-    private CodeAreaOperationType(String caption) {
-        this.caption = caption;
+    public CodeAreaCommand(CodeArea codeArea) {
+        this.codeArea = codeArea;
     }
 
+    /**
+     * Returns type of the command.
+     *
+     * @return command type
+     */
+    public abstract CodeAreaCommandType getType();
+
+    @Override
     public String getCaption() {
-        return caption;
+        return getType().getCaption();
     }
 }

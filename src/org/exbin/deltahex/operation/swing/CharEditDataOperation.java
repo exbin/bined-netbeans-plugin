@@ -13,34 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.deltahex.operation.command;
+package org.exbin.deltahex.operation.swing;
 
 import org.exbin.deltahex.swing.CodeArea;
-import org.exbin.xbup.operation.AbstractCommand;
 
 /**
- * Abstract class for operation on code area component.
+ * Abstract operation for editing data.
  *
- * @version 0.1.0 2016/06/13
+ * @version 0.1.0 2015/05/16
  * @author ExBin Project (http://exbin.org)
  */
-public abstract class CodeAreaCommand extends AbstractCommand {
+public abstract class CharEditDataOperation extends CodeAreaOperation {
 
-    protected final CodeArea codeArea;
-
-    public CodeAreaCommand(CodeArea codeArea) {
-        this.codeArea = codeArea;
+    public CharEditDataOperation(CodeArea hexadecimal) {
+        super(hexadecimal);
     }
 
     /**
-     * Returns type of the command.
+     * Appends next character value in editing action sequence.
      *
-     * @return command type
+     * @param value character
      */
-    public abstract CodeAreaCommandType getType();
+    public abstract void appendEdit(char value);
 
-    @Override
-    public String getCaption() {
-        return getType().getCaption();
-    }
+    /**
+     * Generates undo operation for combined editing action.
+     *
+     * @return hexadecimal operation
+     */
+    public abstract CodeAreaOperation[] generateUndo();
 }

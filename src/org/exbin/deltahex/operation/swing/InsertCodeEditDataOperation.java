@@ -13,37 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.deltahex.operation;
+package org.exbin.deltahex.operation.swing;
 
 import org.exbin.deltahex.CodeType;
 import org.exbin.deltahex.swing.CodeArea;
 import org.exbin.utils.binary_data.EditableBinaryData;
 
 /**
- * Operation for editing data using overwrite mode.
+ * Operation for editing data unsing insert mode.
  *
  * @version 0.1.1 2016/09/21
  * @author ExBin Project (http://exbin.org)
  */
-public class OverwriteCodeEditDataOperation extends CodeEditDataOperation {
+public class InsertCodeEditDataOperation extends CodeEditDataOperation {
 
     private final long startPosition;
     private final int startCodeOffset;
-    private long length = 0;
-    private EditableBinaryData undoData = null;
+    private boolean trailing = false;
+    private EditableBinaryData trailingValue = null;
     private final CodeType codeType;
 
+    private long length;
     private int codeOffset = 0;
 
-    public OverwriteCodeEditDataOperation(CodeArea codeArea, long startPosition, int startCodeOffset) {
+    public InsertCodeEditDataOperation(CodeArea codeArea, long startPosition, int startCodeOffset) {
         super(codeArea);
+        codeType = codeArea.getCodeType();
         this.startPosition = startPosition;
         this.startCodeOffset = startCodeOffset;
         this.codeOffset = startCodeOffset;
-        this.codeType = codeArea.getCodeType();
-        if (startCodeOffset > 0 && codeArea.getDataSize() > startPosition) {
-            undoData = (EditableBinaryData) codeArea.getData().copy(startPosition, 1);
-            length++;
+        if (codeOffset > 0) {
+            length = 1;
         }
     }
 
@@ -78,23 +78,41 @@ public class OverwriteCodeEditDataOperation extends CodeEditDataOperation {
 
         byte byteValue = 0;
         if (codeOffset > 0) {
-            if (editedDataPosition <= data.getDataSize()) {
-                byteValue = data.getByte(editedDataPosition - 1);
+            byteValue = data.getByte(editedDataPosition - 1);
+            byte byteRest = 0;
+            switch (codeType) {
+                case BINARY: {
+                    byteRest = (byte) (byteValue & (0xff >> codeOffset));
+                    break;
+                }
+                case DECIMAL: {
+                    byteRest = (byte) (byteValue % (codeOffset == 1 ? 100 : 10));
+                    break;
+                }
+                case OCTAL: {
+                    byteRest = (byte) (byteValue % (codeOffset == 1 ? 64 : 8));
+                    break;
+                }
+                case HEXADECIMAL: {
+                    byteRest = (byte) (byteValue & 0xf);
+                    break;
+                }
+                default:
+                    throw new IllegalStateException("Unexpected code type " + codeType.name());
             }
-
+            if (byteRest > 0) {
+                if (trailing) {
+                    throw new IllegalStateException("Unexpected trailing flag");
+                }
+                trailingValue = (EditableBinaryData) data.copy(editedDataPosition - 1, 1);
+                data.insert(editedDataPosition, 1);
+                data.setByte(editedDataPosition, byteRest);
+                byteValue -= byteRest;
+                trailing = true;
+            }
             editedDataPosition--;
         } else {
-            if (editedDataPosition < data.getDataSize()) {
-                if (undoData == null) {
-                    undoData = (EditableBinaryData) data.copy(editedDataPosition, 1);
-                    byteValue = undoData.getByte(0);
-                } else {
-                    undoData.insert(undoData.getDataSize(), data, editedDataPosition, 1);
-                }
-            } else {
-                throw new IllegalStateException("Cannot overwrite outside of the document");
-            }
-
+            data.insert(editedDataPosition, 1);
             length++;
         }
 
@@ -164,8 +182,8 @@ public class OverwriteCodeEditDataOperation extends CodeEditDataOperation {
             default:
                 throw new IllegalStateException("Unexpected code type " + codeType.name());
         }
-
         data.setByte(editedDataPosition, byteValue);
+
         codeOffset++;
         if (codeOffset == codeType.getMaxDigits()) {
             codeOffset = 0;
@@ -174,22 +192,12 @@ public class OverwriteCodeEditDataOperation extends CodeEditDataOperation {
 
     @Override
     public CodeAreaOperation[] generateUndo() {
-        ModifyDataOperation modifyOperation = null;
-        if (undoData != null && !undoData.isEmpty()) {
-            modifyOperation = new ModifyDataOperation(codeArea, startPosition, undoData);
+        if (trailing) {
+            ModifyDataOperation modifyDataOperation = new ModifyDataOperation(codeArea, startPosition, trailingValue);
+            return new CodeAreaOperation[]{modifyDataOperation, new RemoveDataOperation(codeArea, startPosition, startCodeOffset, length)};
         }
-        long undoDataSize = undoData == null ? 0 : undoData.getDataSize();
-        long removeLength = length - undoDataSize;
-        RemoveDataOperation removeOperation;
-        if (removeLength == 0) {
-            return new CodeAreaOperation[]{modifyOperation};
-        }
-        removeOperation = new RemoveDataOperation(codeArea, startPosition + undoDataSize, startCodeOffset, removeLength);
 
-        if (modifyOperation != null) {
-            return new CodeAreaOperation[]{modifyOperation, removeOperation};
-        }
-        return new CodeAreaOperation[]{removeOperation};
+        return new CodeAreaOperation[]{new RemoveDataOperation(codeArea, startPosition, startCodeOffset, length)};
     }
 
     public long getStartPosition() {

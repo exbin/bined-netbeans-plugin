@@ -14,20 +14,42 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along this application.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.exbin.deltahex.operation;
+package org.exbin.deltahex.operation.swing.command;
+
+import org.exbin.deltahex.swing.CodeArea;
 
 /**
- * Operation execution listener.
+ * Command for editing data in text mode.
  *
- * @version 0.1.0 2016/05/25
+ * @version 0.1.0 2016/05/17
  * @author ExBin Project (http://exbin.org)
  */
-public interface CodeAreaOperationListener {
+public abstract class EditDataCommand extends CodeAreaCommand {
+
+    public EditDataCommand(CodeArea codeArea) {
+        super(codeArea);
+    }
+
+    @Override
+    public CodeAreaCommandType getType() {
+        return CodeAreaCommandType.DATA_EDITED;
+    }
+
+    @Override
+    public boolean canUndo() {
+        return true;
+    }
+
+    public abstract EditCommandType getCommandType();
 
     /**
-     * Notifies about change in document content.
+     * Returns true if command was already used for undo action.
      *
-     * @param event change event
+     * @return true if undo step performed
      */
-    void notifyChange(CodeAreaOperationEvent event);
+    public abstract boolean wasReverted();
+
+    public enum EditCommandType {
+        INSERT, OVERWRITE, DELETE
+    }
 }

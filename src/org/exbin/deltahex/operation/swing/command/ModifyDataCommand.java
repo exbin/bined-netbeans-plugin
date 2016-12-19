@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along this application.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.exbin.deltahex.operation.command;
+package org.exbin.deltahex.operation.swing.command;
 
 import org.exbin.deltahex.swing.CodeArea;
-import org.exbin.deltahex.operation.ModifyDataOperation;
+import org.exbin.deltahex.operation.swing.ModifyDataOperation;
 import org.exbin.utils.binary_data.BinaryData;
 
 /**

@@ -34,7 +34,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import org.exbin.deltahex.CodeType;
-import org.exbin.deltahex.operation.CodeCommandHandler;
+import org.exbin.deltahex.operation.swing.CodeCommandHandler;
 import org.exbin.deltahex.swing.CodeArea;
 import org.exbin.utils.binary_data.PagedData;
 import org.exbin.xbup.operation.Command;
@@ -54,7 +54,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.4 2016/12/08
+ * @version 0.1.4 2016/12/19
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)
