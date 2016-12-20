@@ -83,17 +83,6 @@ class Savable extends AbstractSavable {
             return;
         }
 
-        OutputStream stream = dataObject.getPrimaryFile().getOutputStream();
-        try {
-            codeArea.getData().saveToStream(stream);
-            stream.flush();
-            component.setModified(false);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        } finally {
-            if (null != stream) {
-                stream.close();
-            }
-        }
+        component.saveDataObject(dataObject);
     }
 }

@@ -17,6 +17,7 @@ package org.exbin.deltahex.netbeans;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dialog;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,16 +25,29 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import org.exbin.deltahex.CaretMovedListener;
+import org.exbin.deltahex.CaretPosition;
 import org.exbin.deltahex.CodeType;
+import org.exbin.deltahex.DataChangedListener;
+import org.exbin.deltahex.EditationAllowed;
+import org.exbin.deltahex.EditationMode;
+import org.exbin.deltahex.EditationModeChangedListener;
+import org.exbin.deltahex.Section;
+import org.exbin.deltahex.netbeans.panel.GoToHexPanel;
+import org.exbin.deltahex.netbeans.panel.HexStatusApi;
+import org.exbin.deltahex.netbeans.panel.HexStatusPanel;
+import org.exbin.deltahex.netbeans.panel.TextEncodingStatusApi;
 import org.exbin.deltahex.operation.swing.CodeCommandHandler;
 import org.exbin.deltahex.swing.CodeArea;
 import org.exbin.utils.binary_data.PagedData;
@@ -41,6 +55,8 @@ import org.exbin.deltahex.operation.BinaryDataCommand;
 import org.exbin.deltahex.operation.undo.BinaryDataUndoUpdateListener;
 import org.netbeans.api.queries.FileEncodingQuery;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
 import org.openide.awt.UndoRedo;
 import org.openide.loaders.DataObject;
 import org.openide.nodes.Node;
@@ -71,9 +87,17 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     private final InstanceContent content = new InstanceContent();
     private final int metaMask;
 
+    private HexStatusPanel statusPanel;
+    private HexStatusApi hexStatus;
+    private TextEncodingStatusApi encodingStatus;
+    private CharsetChangeListener charsetChangeListener = null;
+    private Action goToLineAction;
+    private EncodingsHandler encodingsHandler;
+
     private boolean opened = false;
     private boolean modified = false;
     protected String displayName;
+    private long documentOriginalSize;
 
     public HexEditorTopComponent() {
         initComponents();
@@ -89,6 +113,11 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         CodeCommandHandler commandHandler = new CodeCommandHandler(codeArea, undoHandler);
         codeArea.setCommandHandler(commandHandler);
         super.add(codeArea, BorderLayout.CENTER);
+        statusPanel = new HexStatusPanel();
+        add(statusPanel, BorderLayout.SOUTH);
+        registerHexStatus(statusPanel);
+        registerEncodingStatus(statusPanel);
+        encodingsHandler = new EncodingsHandler(encodingStatus);
 
         codeArea.addMouseListener(new MouseAdapter() {
             @Override
@@ -119,11 +148,23 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
             @Override
             public void undoCommandPositionChanged() {
                 codeArea.repaint();
+                updateCurrentDocumentSize();
             }
 
             @Override
             public void undoCommandAdded(final BinaryDataCommand command) {
+                updateCurrentDocumentSize();
                 setModified(true);
+            }
+        });
+
+        codeArea.addDataChangedListener(new DataChangedListener() {
+            @Override
+            public void dataChanged() {
+//                if (hexSearchPanel.isVisible()) {
+//                    hexSearchPanel.dataChanged();
+//                }
+                updateCurrentDocumentSize();
             }
         });
 
@@ -161,7 +202,86 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         }
         metaMask = metaMaskValue;
 
+        goToLineAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GoToHexPanel goToPanel = new GoToHexPanel();
+                goToPanel.setCursorPosition(codeArea.getCaretPosition().getDataPosition());
+                goToPanel.setMaxPosition(codeArea.getDataSize());
+                goToPanel.setVisible(true);
+                DialogDescriptor dialogDescriptor = new DialogDescriptor(goToPanel, "Go To Position", true, new Object[0], null, 0, null, null);
+                Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
+                goToPanel.setDialog(dialog);
+                dialog.setVisible(true);
+                if (goToPanel.getDialogOption() == JOptionPane.OK_OPTION) {
+                    codeArea.setCaretPosition(goToPanel.getGoToPosition());
+                }
+            }
+        };
+
         associateLookup(new AbstractLookup(content));
+    }
+
+    public void registerHexStatus(HexStatusApi hexStatusApi) {
+        this.hexStatus = hexStatusApi;
+        codeArea.addCaretMovedListener(new CaretMovedListener() {
+            @Override
+            public void caretMoved(CaretPosition caretPosition, Section section) {
+                String position = String.valueOf(caretPosition.getDataPosition());
+                position += ":" + caretPosition.getCodeOffset();
+                hexStatus.setCursorPosition(position);
+            }
+        });
+
+        codeArea.addEditationModeChangedListener(new EditationModeChangedListener() {
+            @Override
+            public void editationModeChanged(EditationMode mode) {
+                hexStatus.setEditationMode(mode);
+            }
+        });
+        hexStatus.setEditationMode(codeArea.getEditationMode());
+
+        hexStatus.setControlHandler(new HexStatusApi.StatusControlHandler() {
+            @Override
+            public void changeEditationMode(EditationMode editationMode) {
+                codeArea.setEditationMode(editationMode);
+            }
+
+            @Override
+            public void changeCursorPosition() {
+                if (goToLineAction != null) {
+                    goToLineAction.actionPerformed(null);
+                }
+            }
+
+            @Override
+            public void cycleEncodings() {
+                if (encodingsHandler != null) {
+                    encodingsHandler.cycleEncodings();
+                }
+            }
+
+            @Override
+            public void popupEncodingsMenu(MouseEvent mouseEvent) {
+                if (encodingsHandler != null) {
+                    encodingsHandler.popupEncodingsMenu(mouseEvent);
+                }
+            }
+        });
+    }
+
+    public void registerEncodingStatus(TextEncodingStatusApi encodingStatusApi) {
+        this.encodingStatus = encodingStatusApi;
+        setCharsetChangeListener(new CharsetChangeListener() {
+            @Override
+            public void charsetChanged() {
+                encodingStatus.setEncoding(codeArea.getCharset().name());
+            }
+        });
+    }
+
+    public void setCharsetChangeListener(CharsetChangeListener charsetChangeListener) {
+        this.charsetChangeListener = charsetChangeListener;
     }
 
     @Override
@@ -225,15 +345,59 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         node.openFile(dataObject);
         savable.setDataObject(dataObject);
         opened = true;
+        documentOriginalSize = codeArea.getDataSize();
+        updateCurrentDocumentSize();
+        updateCurrentMemoryMode();
 
         final Charset charset = Charset.forName(FileEncodingQuery.getEncoding(dataObject.getPrimaryFile()).name());
         encodingComboBox.setSelectedItem(charset.name());
         codeArea.setCharset(charset);
     }
 
+    public void saveDataObject(DataObject dataObject) throws IOException {
+        OutputStream stream = dataObject.getPrimaryFile().getOutputStream();
+        try {
+            codeArea.getData().saveToStream(stream);
+            stream.flush();
+            setModified(false);
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        } finally {
+            if (null != stream) {
+                stream.close();
+            }
+        }
+
+        documentOriginalSize = codeArea.getDataSize();
+        updateCurrentDocumentSize();
+        updateCurrentMemoryMode();
+    }
+
     @Override
     public UndoRedo getUndoRedo() {
         return undoRedo;
+    }
+
+    public void updatePosition() {
+        // hexSearchPanel.updatePosition(codeArea.getCaretPosition().getDataPosition(), codeArea.getDataSize());
+    }
+
+    private void updateCurrentDocumentSize() {
+        long dataSize = codeArea.getData().getDataSize();
+        long difference = dataSize - documentOriginalSize;
+        hexStatus.setCurrentDocumentSize(dataSize + " (" + (difference > 0 ? "+" + difference : difference) + ")");
+    }
+
+    private void updateCurrentMemoryMode() {
+        String memoryMode = "M";
+        if (codeArea.getEditationAllowed() == EditationAllowed.READ_ONLY) {
+            memoryMode = "R";
+        }
+//        else if (segmentsRepository != null) {
+//            memoryMode = "\u0394";
+//        }
+
+        hexStatus.setMemoryMode(memoryMode);
     }
 
     /**
@@ -461,5 +625,10 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         result.add(selectAllMenuItem);
 
         return result;
+    }
+
+    public static interface CharsetChangeListener {
+
+        public void charsetChanged();
     }
 }

@@ -1,5 +1,7 @@
 0.1.4
 - Fixed charset for clipboard copy/paste
+- Added status panel
+- Added go-to position dialog
 
 0.1.3 (2016-10-05)
 - Full cursor shape and cursor blinking
