@@ -37,8 +37,8 @@ import org.exbin.deltahex.CodeType;
 import org.exbin.deltahex.operation.swing.CodeCommandHandler;
 import org.exbin.deltahex.swing.CodeArea;
 import org.exbin.utils.binary_data.PagedData;
-import org.exbin.xbup.operation.Command;
-import org.exbin.xbup.operation.undo.XBUndoUpdateListener;
+import org.exbin.deltahex.operation.BinaryDataCommand;
+import org.exbin.deltahex.operation.undo.BinaryDataUndoUpdateListener;
 import org.netbeans.api.queries.FileEncodingQuery;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.UndoRedo;
@@ -54,7 +54,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.4 2016/12/19
+ * @version 0.1.4 2016/12/20
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)
@@ -115,14 +115,14 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 
         setActivatedNodes(new Node[]{node});
 
-        undoHandler.addUndoUpdateListener(new XBUndoUpdateListener() {
+        undoHandler.addUndoUpdateListener(new BinaryDataUndoUpdateListener() {
             @Override
             public void undoCommandPositionChanged() {
                 codeArea.repaint();
             }
 
             @Override
-            public void undoCommandAdded(final Command command) {
+            public void undoCommandAdded(final BinaryDataCommand command) {
                 setModified(true);
             }
         });

@@ -22,22 +22,23 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoableEdit;
 import org.exbin.deltahex.swing.CodeArea;
-import org.exbin.xbup.operation.Command;
-import org.exbin.xbup.operation.undo.XBUndoHandler;
-import org.exbin.xbup.operation.undo.XBUndoUpdateListener;
+import org.exbin.deltahex.operation.BinaryDataCommand;
+import org.exbin.deltahex.operation.BinaryDataOperationException;
+import org.exbin.deltahex.operation.undo.BinaryDataUndoHandler;
+import org.exbin.deltahex.operation.undo.BinaryDataUndoUpdateListener;
 import org.openide.awt.UndoRedo;
 import org.openide.util.Exceptions;
 
 /**
  * Undo handler for hexadecimal editor using Swing undo.
  *
- * @version 0.1.3 2016/08/31
+ * @version 0.1.4 2016/12/20
  * @author ExBin Project (http://exbin.org)
  */
-public class HexUndoSwingHandler implements XBUndoHandler {
+public class HexUndoSwingHandler implements BinaryDataUndoHandler {
 
     private final CodeArea codeArea;
-    private final List<XBUndoUpdateListener> listeners = new ArrayList<>();
+    private final List<BinaryDataUndoUpdateListener> listeners = new ArrayList<>();
     private final UndoRedo.Manager undoManager;
     private long commandPosition;
     private long syncPointPosition = -1;
@@ -63,28 +64,28 @@ public class HexUndoSwingHandler implements XBUndoHandler {
      * Adds new step into revert list.
      *
      * @param command command
-     * @throws java.lang.Exception if commands throws it
+     * @throws BinaryDataOperationException if commands throws it
      */
     @Override
-    public void execute(Command command) throws Exception {
+    public void execute(BinaryDataCommand command) throws BinaryDataOperationException {
         command.execute();
         commandAdded(command);
     }
 
     @Override
-    public void addCommand(Command command) {
+    public void addCommand(BinaryDataCommand command) {
         command.use();
         commandAdded(command);
     }
 
-    private void commandAdded(final Command command) {
+    private void commandAdded(final BinaryDataCommand command) {
         UndoableEdit edit = new UndoableEdit() {
             @Override
             public void undo() throws CannotUndoException {
                 commandPosition--;
                 try {
                     command.undo();
-                } catch (Exception ex) {
+                } catch (BinaryDataOperationException ex) {
                     Exceptions.printStackTrace(ex);
                 }
                 undoUpdated();
@@ -100,7 +101,7 @@ public class HexUndoSwingHandler implements XBUndoHandler {
                 commandPosition++;
                 try {
                     command.redo();
-                } catch (Exception ex) {
+                } catch (BinaryDataOperationException ex) {
                     Exceptions.printStackTrace(ex);
                 }
                 undoUpdated();
@@ -149,7 +150,7 @@ public class HexUndoSwingHandler implements XBUndoHandler {
 
         commandPosition++;
         undoUpdated();
-        for (XBUndoUpdateListener listener : listeners) {
+        for (BinaryDataUndoUpdateListener listener : listeners) {
             listener.undoCommandAdded(command);
         }
     }
@@ -157,30 +158,30 @@ public class HexUndoSwingHandler implements XBUndoHandler {
     /**
      * Performs single undo step.
      *
-     * @throws java.lang.Exception if commands throws it
+     * @throws BinaryDataOperationException if commands throws it
      */
     @Override
-    public void performUndo() throws Exception {
+    public void performUndo() throws BinaryDataOperationException {
         performUndoInt();
         undoUpdated();
     }
 
-    private void performUndoInt() throws Exception {
+    private void performUndoInt() throws BinaryDataOperationException {
         undoManager.undo();
     }
 
     /**
      * Performs single redo step.
      *
-     * @throws java.lang.Exception if commands throws it
+     * @throws BinaryDataOperationException if commands throws it
      */
     @Override
-    public void performRedo() throws Exception {
+    public void performRedo() throws BinaryDataOperationException {
         performRedoInt();
         undoUpdated();
     }
 
-    private void performRedoInt() throws Exception {
+    private void performRedoInt() throws BinaryDataOperationException {
         undoManager.redo();
     }
 
@@ -188,10 +189,10 @@ public class HexUndoSwingHandler implements XBUndoHandler {
      * Performs multiple undo step.
      *
      * @param count count of steps
-     * @throws Exception if commands throws it
+     * @throws BinaryDataOperationException if commands throws it
      */
     @Override
-    public void performUndo(int count) throws Exception {
+    public void performUndo(int count) throws BinaryDataOperationException {
         for (int i = 0; i < count; i++) {
             performUndo();
         }
@@ -201,10 +202,10 @@ public class HexUndoSwingHandler implements XBUndoHandler {
      * Performs multiple redo step.
      *
      * @param count count of steps
-     * @throws Exception if commands throws it
+     * @throws BinaryDataOperationException if commands throws it
      */
     @Override
-    public void performRedo(int count) throws Exception {
+    public void performRedo(int count) throws BinaryDataOperationException {
         for (int i = 0; i < count; i++) {
             performRedo();
         }
@@ -238,10 +239,10 @@ public class HexUndoSwingHandler implements XBUndoHandler {
     /**
      * Performs revert to sync point.
      *
-     * @throws java.lang.Exception if commands throws it
+     * @throws BinaryDataOperationException if commands throws it
      */
     @Override
-    public void doSync() throws Exception {
+    public void doSync() throws BinaryDataOperationException {
         setCommandPosition(syncPointPosition);
     }
 
@@ -279,7 +280,7 @@ public class HexUndoSwingHandler implements XBUndoHandler {
     }
 
     @Override
-    public List<Command> getCommandList() {
+    public List<BinaryDataCommand> getCommandList() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -287,10 +288,10 @@ public class HexUndoSwingHandler implements XBUndoHandler {
      * Performs undo or redo operation to reach given position.
      *
      * @param targetPosition desired position
-     * @throws java.lang.Exception if commands throws it
+     * @throws BinaryDataOperationException if commands throws it
      */
     @Override
-    public void setCommandPosition(long targetPosition) throws Exception {
+    public void setCommandPosition(long targetPosition) throws BinaryDataOperationException {
         if (targetPosition < commandPosition) {
             performUndo((int) (commandPosition - targetPosition));
         } else if (targetPosition > commandPosition) {
@@ -299,18 +300,18 @@ public class HexUndoSwingHandler implements XBUndoHandler {
     }
 
     private void undoUpdated() {
-        for (XBUndoUpdateListener listener : listeners) {
+        for (BinaryDataUndoUpdateListener listener : listeners) {
             listener.undoCommandPositionChanged();
         }
     }
 
     @Override
-    public void addUndoUpdateListener(XBUndoUpdateListener listener) {
+    public void addUndoUpdateListener(BinaryDataUndoUpdateListener listener) {
         listeners.add(listener);
     }
 
     @Override
-    public void removeUndoUpdateListener(XBUndoUpdateListener listener) {
+    public void removeUndoUpdateListener(BinaryDataUndoUpdateListener listener) {
         listeners.remove(listener);
     }
 }
