@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.deltahex.netbeans.panel;
+package org.exbin.framework.gui.utils.panel;
 
-import org.exbin.deltahex.netbeans.utils.LanguageUtils;
+import org.exbin.framework.gui.utils.LanguageUtils;
 
 /**
  * Default control panel for options dialogs.
  *
- * @version 0.1.4 2016/12/20
+ * @version 0.1.4 2016/12/22
  * @author ExBin Project (http://exbin.org)
  */
-public class DialogControlPanel extends javax.swing.JPanel {
+public class OptionsControlPanel extends javax.swing.JPanel {
 
-    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(DialogControlPanel.class);
+    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(OptionsControlPanel.class);
     private ControlPanelListener controlListener;
 
-    public DialogControlPanel() {
+    public OptionsControlPanel() {
         initComponents();
     }
 

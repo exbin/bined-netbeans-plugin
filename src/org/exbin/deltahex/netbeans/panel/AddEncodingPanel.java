@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import org.exbin.deltahex.netbeans.utils.LanguageUtils;
+import org.exbin.framework.gui.utils.LanguageUtils;
 
 /**
  * Encoding selection panel.

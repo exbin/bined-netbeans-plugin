@@ -21,7 +21,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseEvent;
 import org.exbin.deltahex.EditationMode;
 import org.exbin.deltahex.netbeans.panel.HexStatusApi.StatusControlHandler;
-import org.exbin.deltahex.netbeans.utils.LanguageUtils;
+import org.exbin.framework.gui.utils.LanguageUtils;
 
 /**
  * Hexadecimal editor status panel.

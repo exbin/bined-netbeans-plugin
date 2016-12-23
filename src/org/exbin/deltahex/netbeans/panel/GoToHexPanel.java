@@ -15,31 +15,27 @@
  */
 package org.exbin.deltahex.netbeans.panel;
 
-import java.awt.Dialog;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import javax.swing.JOptionPane;
+import java.text.ParseException;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
-import org.exbin.deltahex.netbeans.utils.LanguageUtils;
-import org.exbin.deltahex.netbeans.utils.WindowUtils;
+import org.exbin.framework.gui.utils.LanguageUtils;
 
 /**
  * Hexadecimal editor status panel.
  *
- * @version 0.1.4 2016/12/20
+ * @version 0.1.4 2016/12/21
  * @author ExBin Project (http://exbin.org)
  */
 public class GoToHexPanel extends javax.swing.JPanel {
 
-    private Dialog dialog;
+    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(GoToHexPanel.class);
     private long cursorPosition;
     private long maxPosition;
     private GoToMode goToMode = GoToMode.ABSOLUTE;
-    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(GoToHexPanel.class);
-    private int dialogOption = JOptionPane.CLOSED_OPTION;
 
     public GoToHexPanel() {
         initComponents();
@@ -101,7 +97,6 @@ public class GoToHexPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         positionTypeButtonGroup = new javax.swing.ButtonGroup();
-        mainPanel = new javax.swing.JPanel();
         currentPositionLabel = new javax.swing.JLabel();
         currentPositionTextField = new javax.swing.JTextField();
         targetPositionLabel = new javax.swing.JLabel();
@@ -111,26 +106,21 @@ public class GoToHexPanel extends javax.swing.JPanel {
         relativeRadioButton = new javax.swing.JRadioButton();
         decimalPositionLabel = new javax.swing.JLabel();
         positionSpinner = new javax.swing.JSpinner();
-        controlPanel = new javax.swing.JPanel();
-        jumpButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
 
-        setLayout(new java.awt.BorderLayout());
-
-        org.openide.awt.Mnemonics.setLocalizedText(currentPositionLabel, resourceBundle.getString("GoToHexPanel.currentPositionLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(currentPositionLabel, resourceBundle.getString("currentPositionLabel.text")); // NOI18N
 
         currentPositionTextField.setEditable(false);
 
-        org.openide.awt.Mnemonics.setLocalizedText(targetPositionLabel, resourceBundle.getString("GoToHexPanel.targetPositionLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(targetPositionLabel, resourceBundle.getString("targetPositionLabel.text")); // NOI18N
 
         targetPositionTextField.setEditable(false);
-        targetPositionTextField.setText(resourceBundle.getString("GoToHexPanel.targetPositionTextField.text")); // NOI18N
+        targetPositionTextField.setText("0");
 
-        goToPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceBundle.getString("GoToHexPanel.goToPanel.border.title"))); // NOI18N
+        goToPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceBundle.getString("goToPanel.border.title"))); // NOI18N
 
         positionTypeButtonGroup.add(absoluteRadioButton);
         absoluteRadioButton.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(absoluteRadioButton, resourceBundle.getString("GoToHexPanel.absoluteRadioButton.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(absoluteRadioButton, resourceBundle.getString("absoluteRadioButton.text")); // NOI18N
         absoluteRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 absoluteRadioButtonActionPerformed(evt);
@@ -138,14 +128,14 @@ public class GoToHexPanel extends javax.swing.JPanel {
         });
 
         positionTypeButtonGroup.add(relativeRadioButton);
-        org.openide.awt.Mnemonics.setLocalizedText(relativeRadioButton, resourceBundle.getString("GoToHexPanel.relativeRadioButton.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(relativeRadioButton, resourceBundle.getString("relativeRadioButton.text")); // NOI18N
         relativeRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 relativeRadioButtonActionPerformed(evt);
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(decimalPositionLabel, resourceBundle.getString("GoToHexPanel.decimalPositionLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(decimalPositionLabel, resourceBundle.getString("decimalPositionLabel.text")); // NOI18N
 
         positionSpinner.setModel(new javax.swing.SpinnerNumberModel(Long.valueOf(0L), Long.valueOf(0L), Long.valueOf(0L), Long.valueOf(1L)));
         positionSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -182,26 +172,26 @@ public class GoToHexPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
-        mainPanel.setLayout(mainPanelLayout);
-        mainPanelLayout.setHorizontalGroup(
-            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mainPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(currentPositionTextField)
                     .addComponent(goToPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(targetPositionTextField)
-                    .addGroup(mainPanelLayout.createSequentialGroup()
-                        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(currentPositionLabel)
                             .addComponent(targetPositionLabel))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
-        mainPanelLayout.setVerticalGroup(
-            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mainPanelLayout.createSequentialGroup()
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(currentPositionLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -212,47 +202,8 @@ public class GoToHexPanel extends javax.swing.JPanel {
                 .addComponent(targetPositionLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(targetPositionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        add(mainPanel, java.awt.BorderLayout.CENTER);
-
-        org.openide.awt.Mnemonics.setLocalizedText(jumpButton, resourceBundle.getString("GoToHexPanel.jumpButton.text")); // NOI18N
-        jumpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jumpButtonActionPerformed(evt);
-            }
-        });
-
-        org.openide.awt.Mnemonics.setLocalizedText(cancelButton, resourceBundle.getString("GoToHexPanel.cancelButton.text")); // NOI18N
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout controlPanelLayout = new javax.swing.GroupLayout(controlPanel);
-        controlPanel.setLayout(controlPanelLayout);
-        controlPanelLayout.setHorizontalGroup(
-            controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, controlPanelLayout.createSequentialGroup()
-                .addContainerGap(235, Short.MAX_VALUE)
-                .addComponent(jumpButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(cancelButton)
-                .addContainerGap())
-        );
-        controlPanelLayout.setVerticalGroup(
-            controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, controlPanelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton)
-                    .addComponent(jumpButton))
-                .addContainerGap())
-        );
-
-        add(controlPanel, java.awt.BorderLayout.PAGE_END);
     }// </editor-fold>//GEN-END:initComponents
 
     private void absoluteRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_absoluteRadioButtonActionPerformed
@@ -285,27 +236,13 @@ public class GoToHexPanel extends javax.swing.JPanel {
         updateTargetPosition();
     }//GEN-LAST:event_positionSpinnerStateChanged
 
-    private void jumpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jumpButtonActionPerformed
-        dialogOption = JOptionPane.OK_OPTION;
-        WindowUtils.closeWindow(dialog);
-    }//GEN-LAST:event_jumpButtonActionPerformed
-
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        dialogOption = JOptionPane.CANCEL_OPTION;
-        WindowUtils.closeWindow(dialog);
-    }//GEN-LAST:event_cancelButtonActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton absoluteRadioButton;
-    private javax.swing.JButton cancelButton;
-    private javax.swing.JPanel controlPanel;
     private javax.swing.JLabel currentPositionLabel;
     private javax.swing.JTextField currentPositionTextField;
     private javax.swing.JLabel decimalPositionLabel;
     private javax.swing.JPanel goToPanel;
-    private javax.swing.JButton jumpButton;
-    private javax.swing.JPanel mainPanel;
     private javax.swing.JSpinner positionSpinner;
     private javax.swing.ButtonGroup positionTypeButtonGroup;
     private javax.swing.JRadioButton relativeRadioButton;
@@ -317,15 +254,16 @@ public class GoToHexPanel extends javax.swing.JPanel {
         targetPositionTextField.setText(String.valueOf(getGoToPosition()));
     }
 
-    /**
-     * @return the dialogOption
-     */
-    public int getDialogOption() {
-        return dialogOption;
+    public void initFocus() {
+        ((JSpinner.DefaultEditor) positionSpinner.getEditor()).getTextField().requestFocusInWindow();
     }
 
-    public void setDialog(Dialog dialog) {
-        this.dialog = dialog;
+    public void acceptInput() {
+        try {
+            positionSpinner.commitEdit();
+        } catch (ParseException ex) {
+            // Ignore parse exception
+        }
     }
 
     public enum GoToMode {

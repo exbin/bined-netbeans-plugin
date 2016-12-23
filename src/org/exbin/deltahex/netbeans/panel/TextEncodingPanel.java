@@ -25,8 +25,8 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.exbin.deltahex.netbeans.utils.LanguageUtils;
-import org.exbin.deltahex.netbeans.utils.WindowUtils;
+import org.exbin.framework.gui.utils.LanguageUtils;
+import org.exbin.framework.gui.utils.WindowUtils;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 

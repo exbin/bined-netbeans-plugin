@@ -33,20 +33,20 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
-import org.exbin.deltahex.netbeans.panel.DialogControlPanel;
 import org.exbin.deltahex.netbeans.panel.TextEncodingPanel;
 import org.exbin.deltahex.netbeans.panel.TextEncodingPanelApi;
 import org.exbin.deltahex.netbeans.panel.TextEncodingStatusApi;
-import org.exbin.deltahex.netbeans.utils.ActionUtils;
-import org.exbin.deltahex.netbeans.utils.LanguageUtils;
-import org.exbin.deltahex.netbeans.utils.WindowUtils;
+import org.exbin.framework.gui.utils.ActionUtils;
+import org.exbin.framework.gui.utils.LanguageUtils;
+import org.exbin.framework.gui.utils.WindowUtils;
+import org.exbin.framework.gui.utils.panel.OptionsControlPanel;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 
 /**
  * Encodings handler.
  *
- * @version 0.1.4 2016/12/20
+ * @version 0.1.4 2016/12/23
  * @author ExBin Project (http://exbin.org)
  */
 public class EncodingsHandler implements TextEncodingPanelApi {
@@ -106,15 +106,15 @@ public class EncodingsHandler implements TextEncodingPanelApi {
             public void actionPerformed(ActionEvent e) {
                 final TextEncodingPanel textEncodingPanel = new TextEncodingPanel(EncodingsHandler.this);
                 textEncodingPanel.setEncodingList(encodings);
-                final DialogControlPanel controlPanel = new DialogControlPanel();
+                final OptionsControlPanel controlPanel = new OptionsControlPanel();
                 JPanel dialogPanel = WindowUtils.createDialogPanel(textEncodingPanel, controlPanel);
                 dialogPanel.setVisible(true);
                 DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Manage Encodings", true, new Object[0], null, 0, null, null);
                 final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
-                controlPanel.setControlListener(new DialogControlPanel.ControlPanelListener() {
+                controlPanel.setControlListener(new OptionsControlPanel.ControlPanelListener() {
                     @Override
-                    public void controlActionPerformed(DialogControlPanel.ControlActionType actionType) {
-                        if (actionType != DialogControlPanel.ControlActionType.CANCEL) {
+                    public void controlActionPerformed(OptionsControlPanel.ControlActionType actionType) {
+                        if (actionType != OptionsControlPanel.ControlActionType.CANCEL) {
                             encodings = textEncodingPanel.getEncodingList();
                             rebuildEncodings();
                         }

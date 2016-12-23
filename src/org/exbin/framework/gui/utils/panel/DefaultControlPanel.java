@@ -13,23 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.deltahex.netbeans.panel;
+package org.exbin.framework.gui.utils.panel;
 
 import org.exbin.framework.gui.utils.LanguageUtils;
+import org.exbin.framework.gui.utils.WindowUtils;
+import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
 
 /**
- * Encoding selection control panel.
+ * Basic default control panel.
  *
- * @version 0.1.4 2016/12/20
+ * @version 0.1.4 2016/12/22
  * @author ExBin Project (http://exbin.org)
  */
-public class AddEncodingControlPanel extends javax.swing.JPanel {
+public class DefaultControlPanel extends javax.swing.JPanel implements DefaultControlHandler.DefaultControlListener {
 
-    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(AddEncodingControlPanel.class);
-    private ControlPanelListener listener;
+    private final java.util.ResourceBundle resourceBundle;
+    private DefaultControlHandler handler;
 
-    public AddEncodingControlPanel() {
+    public DefaultControlPanel() {
+        this(LanguageUtils.getResourceBundleByClass(DefaultControlPanel.class));
+    }
+
+    public DefaultControlPanel(java.util.ResourceBundle resourceBundle) {
+        this.resourceBundle = resourceBundle;
         initComponents();
+    }
+
+    public void setHandler(DefaultControlHandler controlListener) {
+        this.handler = controlListener;
     }
 
     /**
@@ -41,13 +52,13 @@ public class AddEncodingControlPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        addButton = new javax.swing.JButton();
+        okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
-        addButton.setText(resourceBundle.getString("addButton.text")); // NOI18N
-        addButton.addActionListener(new java.awt.event.ActionListener() {
+        okButton.setText(resourceBundle.getString("okButton.text")); // NOI18N
+        okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButtonActionPerformed(evt);
+                okButtonActionPerformed(evt);
             }
         });
 
@@ -64,7 +75,7 @@ public class AddEncodingControlPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(addButton)
+                .addComponent(okButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(cancelButton)
                 .addContainerGap())
@@ -75,38 +86,30 @@ public class AddEncodingControlPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
-                    .addComponent(addButton))
+                    .addComponent(okButton))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        if (listener != null) {
-            listener.controlActionPerformed(ControlActionType.OK);
+    private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        if (handler != null) {
+            handler.controlActionPerformed(DefaultControlHandler.ControlActionType.OK);
         }
-    }//GEN-LAST:event_addButtonActionPerformed
+    }//GEN-LAST:event_okButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        if (listener != null) {
-            listener.controlActionPerformed(ControlActionType.CANCEL);
+        if (handler != null) {
+            handler.controlActionPerformed(DefaultControlHandler.ControlActionType.CANCEL);
         }
     }//GEN-LAST:event_cancelButtonActionPerformed
 
-    public void setListener(ControlPanelListener listener) {
-        this.listener = listener;
-    }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton addButton;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JButton okButton;
     // End of variables declaration//GEN-END:variables
 
-    public static interface ControlPanelListener {
-
-        void controlActionPerformed(ControlActionType actionType);
-    }
-
-    public static enum ControlActionType {
-        OK, CANCEL
+    @Override
+    public void performClick(DefaultControlHandler.ControlActionType actionType) {
+        WindowUtils.doButtonClick(actionType == DefaultControlHandler.ControlActionType.OK ? okButton : cancelButton);
     }
 }

@@ -15,21 +15,26 @@
  */
 package org.exbin.deltahex.netbeans.panel;
 
+import javax.swing.JButton;
 import org.exbin.framework.gui.utils.LanguageUtils;
 
 /**
- * Encoding selection control panel.
+ * Hexadecimal editor status panel.
  *
- * @version 0.1.4 2016/12/20
+ * @version 0.1.4 2016/12/21
  * @author ExBin Project (http://exbin.org)
  */
-public class AddEncodingControlPanel extends javax.swing.JPanel {
+public class GoToHexControlPanel extends javax.swing.JPanel {
 
-    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(AddEncodingControlPanel.class);
-    private ControlPanelListener listener;
+    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(GoToHexControlPanel.class);
+    private ControlPanelListener controlListener;
 
-    public AddEncodingControlPanel() {
+    public GoToHexControlPanel() {
         initComponents();
+    }
+
+    public void setControlListener(ControlPanelListener controlListener) {
+        this.controlListener = controlListener;
     }
 
     /**
@@ -41,17 +46,17 @@ public class AddEncodingControlPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        addButton = new javax.swing.JButton();
+        jumpButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
-        addButton.setText(resourceBundle.getString("addButton.text")); // NOI18N
-        addButton.addActionListener(new java.awt.event.ActionListener() {
+        org.openide.awt.Mnemonics.setLocalizedText(jumpButton, resourceBundle.getString("jumpButton.text")); // NOI18N
+        jumpButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButtonActionPerformed(evt);
+                jumpButtonActionPerformed(evt);
             }
         });
 
-        cancelButton.setText(resourceBundle.getString("cancelButton.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(cancelButton, resourceBundle.getString("cancelButton.text")); // NOI18N
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cancelButtonActionPerformed(evt);
@@ -64,7 +69,7 @@ public class AddEncodingControlPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(addButton)
+                .addComponent(jumpButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(cancelButton)
                 .addContainerGap())
@@ -75,30 +80,34 @@ public class AddEncodingControlPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
-                    .addComponent(addButton))
+                    .addComponent(jumpButton))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        if (listener != null) {
-            listener.controlActionPerformed(ControlActionType.OK);
+    private void jumpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jumpButtonActionPerformed
+        if (controlListener != null) {
+            controlListener.controlActionPerformed(ControlActionType.JUMP);
         }
-    }//GEN-LAST:event_addButtonActionPerformed
+    }//GEN-LAST:event_jumpButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        if (listener != null) {
-            listener.controlActionPerformed(ControlActionType.CANCEL);
+        if (controlListener != null) {
+            controlListener.controlActionPerformed(ControlActionType.CANCEL);
         }
     }//GEN-LAST:event_cancelButtonActionPerformed
 
-    public void setListener(ControlPanelListener listener) {
-        this.listener = listener;
+    public JButton getCancelButton() {
+        return cancelButton;
+    }
+
+    public JButton getJumpButton() {
+        return jumpButton;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton addButton;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JButton jumpButton;
     // End of variables declaration//GEN-END:variables
 
     public static interface ControlPanelListener {
@@ -107,6 +116,6 @@ public class AddEncodingControlPanel extends javax.swing.JPanel {
     }
 
     public static enum ControlActionType {
-        OK, CANCEL
+        JUMP, CANCEL
     }
 }
