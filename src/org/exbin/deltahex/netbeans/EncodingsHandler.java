@@ -113,7 +113,6 @@ public class EncodingsHandler implements TextEncodingPanelApi {
                 textEncodingPanel.setEncodingList(encodings);
                 final OptionsControlPanel controlPanel = new OptionsControlPanel();
                 JPanel dialogPanel = WindowUtils.createDialogPanel(textEncodingPanel, controlPanel);
-                dialogPanel.setVisible(true);
                 DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Manage Encodings", true, new Object[0], null, 0, null, null);
                 final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
                 controlPanel.setHandler(new OptionsControlHandler() {
