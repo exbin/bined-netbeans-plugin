@@ -14,28 +14,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along this application.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.exbin.framework.gui.utils.handler;
+package org.exbin.framework.deltahex;
 
-import org.exbin.framework.gui.utils.WindowUtils;
+import javax.swing.JPopupMenu;
+import org.exbin.deltahex.swing.CodeArea;
 
 /**
- * Handler for default control panel.
+ * Code area popup menu handler.
  *
- * @version 0.2.0 2016/12/27
+ * @version 0.2.0 2016/12/31
  * @author ExBin Project (http://exbin.org)
  */
-public interface DefaultControlHandler {
+public interface CodeAreaPopupMenuHandler {
 
-    void controlActionPerformed(ControlActionType actionType);
+    JPopupMenu createPopupMenu(CodeArea codeArea, String menuPostfix);
 
-    public interface DefaultControlListener {
-
-        void performClick(ControlActionType actionType);
-
-        WindowUtils.OkCancelListener createOkCancelListener();
-    }
-
-    public static enum ControlActionType {
-        OK, CANCEL
-    }
+    void dropPopupMenu(String menuPostfix);
 }

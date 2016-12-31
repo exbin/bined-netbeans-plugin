@@ -22,7 +22,7 @@ import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
 /**
  * Basic default control panel.
  *
- * @version 0.1.4 2016/12/22
+ * @version 0.2.0 2016/12/27
  * @author ExBin Project (http://exbin.org)
  */
 public class DefaultControlPanel extends javax.swing.JPanel implements DefaultControlHandler.DefaultControlListener {
@@ -39,8 +39,8 @@ public class DefaultControlPanel extends javax.swing.JPanel implements DefaultCo
         initComponents();
     }
 
-    public void setHandler(DefaultControlHandler controlListener) {
-        this.handler = controlListener;
+    public void setHandler(DefaultControlHandler handler) {
+        this.handler = handler;
     }
 
     /**
@@ -111,5 +111,20 @@ public class DefaultControlPanel extends javax.swing.JPanel implements DefaultCo
     @Override
     public void performClick(DefaultControlHandler.ControlActionType actionType) {
         WindowUtils.doButtonClick(actionType == DefaultControlHandler.ControlActionType.OK ? okButton : cancelButton);
+    }
+
+    @Override
+    public WindowUtils.OkCancelListener createOkCancelListener() {
+        return new WindowUtils.OkCancelListener() {
+            @Override
+            public void okEvent() {
+                performClick(DefaultControlHandler.ControlActionType.OK);
+            }
+
+            @Override
+            public void cancelEvent() {
+                performClick(DefaultControlHandler.ControlActionType.CANCEL);
+            }
+        };
     }
 }

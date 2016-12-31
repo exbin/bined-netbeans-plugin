@@ -22,7 +22,7 @@ import org.exbin.framework.gui.utils.handler.CloseControlHandler;
 /**
  * Basic close control panel.
  *
- * @version 0.1.4 2016/12/23
+ * @version 0.2.0 2016/12/27
  * @author ExBin Project (http://exbin.org)
  */
 public class CloseControlPanel extends javax.swing.JPanel implements CloseControlHandler.CloseControlListener {
@@ -39,8 +39,8 @@ public class CloseControlPanel extends javax.swing.JPanel implements CloseContro
         initComponents();
     }
 
-    public void setHandler(CloseControlHandler controlListener) {
-        this.handler = controlListener;
+    public void setHandler(CloseControlHandler handler) {
+        this.handler = handler;
     }
 
     /**
@@ -92,5 +92,20 @@ public class CloseControlPanel extends javax.swing.JPanel implements CloseContro
     @Override
     public void performCloseClick() {
         WindowUtils.doButtonClick(closeButton);
+    }
+
+    @Override
+    public WindowUtils.OkCancelListener createOkCancelListener() {
+        return new WindowUtils.OkCancelListener() {
+            @Override
+            public void okEvent() {
+                performCloseClick();
+            }
+
+            @Override
+            public void cancelEvent() {
+                performCloseClick();
+            }
+        };
     }
 }

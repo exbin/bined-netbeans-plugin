@@ -42,14 +42,14 @@ import org.exbin.deltahex.EditationAllowed;
 import org.exbin.deltahex.EditationMode;
 import org.exbin.deltahex.EditationModeChangedListener;
 import org.exbin.deltahex.Section;
-import org.exbin.deltahex.netbeans.panel.HexStatusApi;
-import org.exbin.deltahex.netbeans.panel.HexStatusPanel;
-import org.exbin.deltahex.netbeans.panel.TextEncodingStatusApi;
 import org.exbin.deltahex.operation.swing.CodeCommandHandler;
 import org.exbin.deltahex.swing.CodeArea;
 import org.exbin.utils.binary_data.PagedData;
 import org.exbin.deltahex.operation.BinaryDataCommand;
 import org.exbin.deltahex.operation.undo.BinaryDataUndoUpdateListener;
+import org.exbin.framework.deltahex.HexStatusApi;
+import org.exbin.framework.deltahex.panel.HexStatusPanel;
+import org.exbin.framework.editor.text.TextEncodingStatusApi;
 import org.netbeans.api.queries.FileEncodingQuery;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.UndoRedo;
@@ -65,7 +65,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.4 2016/12/21
+ * @version 0.1.4 2016/12/31
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)

@@ -16,20 +16,31 @@
 package org.exbin.framework.gui.utils.panel;
 
 import org.exbin.framework.gui.utils.LanguageUtils;
+import org.exbin.framework.gui.utils.WindowUtils;
+import org.exbin.framework.gui.utils.handler.OptionsControlHandler;
 
 /**
  * Default control panel for options dialogs.
  *
- * @version 0.1.4 2016/12/22
+ * @version 0.2.0 2016/12/30
  * @author ExBin Project (http://exbin.org)
  */
-public class OptionsControlPanel extends javax.swing.JPanel {
+public class OptionsControlPanel extends javax.swing.JPanel implements OptionsControlHandler.OptionsControlListener {
 
-    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(OptionsControlPanel.class);
-    private ControlPanelListener controlListener;
+    private final java.util.ResourceBundle resourceBundle;
+    private OptionsControlHandler handler;
 
     public OptionsControlPanel() {
+        this(LanguageUtils.getResourceBundleByClass(OptionsControlPanel.class));
+    }
+
+    public OptionsControlPanel(java.util.ResourceBundle resourceBundle) {
+        this.resourceBundle = resourceBundle;
         initComponents();
+    }
+
+    public void setHandler(OptionsControlHandler handler) {
+        this.handler = handler;
     }
 
     /**
@@ -92,27 +103,22 @@ public class OptionsControlPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        if (controlListener != null) {
-            controlListener.controlActionPerformed(ControlActionType.CANCEL);
+        if (handler != null) {
+            handler.controlActionPerformed(OptionsControlHandler.ControlActionType.CANCEL);
         }
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void setButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setButtonActionPerformed
-        if (controlListener != null) {
-            controlListener.controlActionPerformed(ControlActionType.SET);
+        if (handler != null) {
+            handler.controlActionPerformed(OptionsControlHandler.ControlActionType.SET);
         }
     }//GEN-LAST:event_setButtonActionPerformed
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        if (controlListener != null) {
-            controlListener.controlActionPerformed(ControlActionType.SAVE);
+        if (handler != null) {
+            handler.controlActionPerformed(OptionsControlHandler.ControlActionType.SAVE);
         }
     }//GEN-LAST:event_saveButtonActionPerformed
-
-    public void setControlListener(ControlPanelListener controlListener) {
-        this.controlListener = controlListener;
-    }
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
@@ -120,12 +126,36 @@ public class OptionsControlPanel extends javax.swing.JPanel {
     private javax.swing.JButton setButton;
     // End of variables declaration//GEN-END:variables
 
-    public static interface ControlPanelListener {
-
-        void controlActionPerformed(ControlActionType actionType);
+    @Override
+    public void performClick(OptionsControlHandler.ControlActionType actionType) {
+        switch (actionType) {
+            case SAVE: {
+                WindowUtils.doButtonClick(saveButton);
+                break;
+            }
+            case SET: {
+                WindowUtils.doButtonClick(setButton);
+                break;
+            }
+            case CANCEL: {
+                WindowUtils.doButtonClick(cancelButton);
+                break;
+            }
+        }
     }
 
-    public static enum ControlActionType {
-        CANCEL, SAVE, SET
+    @Override
+    public WindowUtils.OkCancelListener createOkCancelListener() {
+        return new WindowUtils.OkCancelListener() {
+            @Override
+            public void okEvent() {
+                performClick(OptionsControlHandler.ControlActionType.SAVE);
+            }
+
+            @Override
+            public void cancelEvent() {
+                performClick(OptionsControlHandler.ControlActionType.CANCEL);
+            }
+        };
     }
 }

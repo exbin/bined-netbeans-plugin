@@ -14,28 +14,29 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along this application.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.exbin.framework.gui.utils.handler;
+package org.exbin.framework.editor.text;
 
-import org.exbin.framework.gui.utils.WindowUtils;
+import java.nio.charset.Charset;
 
 /**
- * Handler for default control panel.
+ * Text encoding access interface.
  *
- * @version 0.2.0 2016/12/27
+ * @version 0.2.0 2016/05/18
  * @author ExBin Project (http://exbin.org)
  */
-public interface DefaultControlHandler {
+public interface TextCharsetApi {
 
-    void controlActionPerformed(ControlActionType actionType);
+    /**
+     * Returns encoding.
+     *
+     * @return charset
+     */
+    Charset getCharset();
 
-    public interface DefaultControlListener {
-
-        void performClick(ControlActionType actionType);
-
-        WindowUtils.OkCancelListener createOkCancelListener();
-    }
-
-    public static enum ControlActionType {
-        OK, CANCEL
-    }
+    /**
+     * Sets encoding.
+     *
+     * @param charset charset
+     */
+    void setCharset(Charset charset);
 }

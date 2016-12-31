@@ -33,12 +33,16 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
-import org.exbin.deltahex.netbeans.panel.TextEncodingPanel;
-import org.exbin.deltahex.netbeans.panel.TextEncodingPanelApi;
-import org.exbin.deltahex.netbeans.panel.TextEncodingStatusApi;
+import org.exbin.framework.editor.text.TextEncodingStatusApi;
+import org.exbin.framework.editor.text.panel.AddEncodingPanel;
+import org.exbin.framework.editor.text.panel.TextEncodingPanel;
+import org.exbin.framework.editor.text.panel.TextEncodingPanelApi;
 import org.exbin.framework.gui.utils.ActionUtils;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
+import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
+import org.exbin.framework.gui.utils.handler.OptionsControlHandler;
+import org.exbin.framework.gui.utils.panel.DefaultControlPanel;
 import org.exbin.framework.gui.utils.panel.OptionsControlPanel;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
@@ -46,7 +50,7 @@ import org.openide.DialogDisplayer;
 /**
  * Encodings handler.
  *
- * @version 0.1.4 2016/12/23
+ * @version 0.1.4 2016/12/31
  * @author ExBin Project (http://exbin.org)
  */
 public class EncodingsHandler implements TextEncodingPanelApi {
@@ -104,17 +108,18 @@ public class EncodingsHandler implements TextEncodingPanelApi {
         manageEncodingsAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                final TextEncodingPanel textEncodingPanel = new TextEncodingPanel(EncodingsHandler.this);
+                final TextEncodingPanel textEncodingPanel = new TextEncodingPanel();
+                textEncodingPanel.setHandler(EncodingsHandler.this);
                 textEncodingPanel.setEncodingList(encodings);
                 final OptionsControlPanel controlPanel = new OptionsControlPanel();
                 JPanel dialogPanel = WindowUtils.createDialogPanel(textEncodingPanel, controlPanel);
                 dialogPanel.setVisible(true);
                 DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Manage Encodings", true, new Object[0], null, 0, null, null);
                 final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
-                controlPanel.setControlListener(new OptionsControlPanel.ControlPanelListener() {
+                controlPanel.setHandler(new OptionsControlHandler() {
                     @Override
-                    public void controlActionPerformed(OptionsControlPanel.ControlActionType actionType) {
-                        if (actionType != OptionsControlPanel.ControlActionType.CANCEL) {
+                    public void controlActionPerformed(OptionsControlHandler.ControlActionType actionType) {
+                        if (actionType != OptionsControlHandler.ControlActionType.CANCEL) {
                             encodings = textEncodingPanel.getEncodingList();
                             rebuildEncodings();
                         }
@@ -122,21 +127,31 @@ public class EncodingsHandler implements TextEncodingPanelApi {
                         WindowUtils.closeWindow(dialog);
                     }
                 });
+                textEncodingPanel.setAddEncodingsOperation(new TextEncodingPanel.AddEncodingsOperation() {
+                    @Override
+                    public List<String> run(List<String> usedEncodings) {
+                        final List<String> result = new ArrayList<>();
+                        final AddEncodingPanel addEncodingPanel = new AddEncodingPanel();
+                        addEncodingPanel.setUsedEncodings(usedEncodings);
+                        DefaultControlPanel controlPanel = new DefaultControlPanel(addEncodingPanel.getResourceBundle());
+                        JPanel dialogPanel = WindowUtils.createDialogPanel(addEncodingPanel, controlPanel);
+                        DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Add Encodings", true, new Object[0], null, 0, null, null);
+                        final Dialog addEncodingDialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
+                        controlPanel.setHandler(new DefaultControlHandler() {
+                            @Override
+                            public void controlActionPerformed(DefaultControlHandler.ControlActionType actionType) {
+                                if (actionType == DefaultControlHandler.ControlActionType.OK) {
+                                    result.addAll(addEncodingPanel.getEncodings());
+                                }
+
+                                WindowUtils.closeWindow(addEncodingDialog);
+                            }
+                        });
+                        addEncodingDialog.setVisible(true);
+                        return result;
+                    }
+                });
                 dialog.setVisible(true);
-//                if (encodingPanel.getDialogOption() == JOptionPane.OK_OPTION) {
-//                    codeArea.setCaretPosition(encodingPanel.getGoToPosition());
-//                }
-//                GuiFrameModuleApi frameModule = application.getModuleRepository().getModuleByInterface(GuiFrameModuleApi.class);
-//                ManageEncodingsDialog dlg = new ManageEncodingsDialog(application, frameModule.getFrame(), EncodingsHandler.this, true);
-//                dlg.setIconImage(application.getApplicationIcon());
-//                TextEncodingPanel panel = dlg.getEncodingPanel();
-//                panel.setEncodingList(new ArrayList<>(encodings));
-//                dlg.setLocationRelativeTo(dlg.getParent());
-//                dlg.setVisible(true);
-//                if (dlg.getDialogOption() == JOptionPane.OK_OPTION) {
-//                    encodings = panel.getEncodingList();
-//                    encodingsRebuild();
-//                }
             }
         };
         ActionUtils.setupAction(manageEncodingsAction, resourceBundle, "manageEncodingsAction");

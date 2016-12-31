@@ -21,11 +21,12 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JPanel;
-import org.exbin.deltahex.netbeans.panel.GoToHexControlPanel;
-import org.exbin.deltahex.netbeans.panel.GoToHexPanel;
 import org.exbin.deltahex.swing.CodeArea;
+import org.exbin.framework.deltahex.panel.GoToHexPanel;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
+import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
+import org.exbin.framework.gui.utils.panel.DefaultControlPanel;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 
@@ -57,7 +58,7 @@ public class GoToHandler {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     final GoToHexPanel goToPanel = new GoToHexPanel();
-                    GoToHexControlPanel goToControlPanel = new GoToHexControlPanel();
+                    DefaultControlPanel goToControlPanel = new DefaultControlPanel(goToPanel.getResourceBundle());
                     goToPanel.setCursorPosition(codeArea.getCaretPosition().getDataPosition());
                     goToPanel.setMaxPosition(codeArea.getDataSize());
                     goToPanel.setVisible(true);
@@ -67,10 +68,10 @@ public class GoToHandler {
 
                     final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
                     goToPanel.initFocus();
-                    goToControlPanel.setControlListener(new GoToHexControlPanel.ControlPanelListener() {
+                    goToControlPanel.setHandler(new DefaultControlHandler() {
                         @Override
-                        public void controlActionPerformed(GoToHexControlPanel.ControlActionType actionType) {
-                            if (actionType == GoToHexControlPanel.ControlActionType.JUMP) {
+                        public void controlActionPerformed(DefaultControlHandler.ControlActionType actionType) {
+                            if (actionType == DefaultControlHandler.ControlActionType.OK) {
                                 goToPanel.acceptInput();
                                 codeArea.setCaretPosition(goToPanel.getGoToPosition());
                             }
@@ -78,7 +79,7 @@ public class GoToHandler {
                             WindowUtils.closeWindow(dialog);
                         }
                     });
-                    WindowUtils.assignGlobalKeyListener(dialog, goToControlPanel.getJumpButton(), goToControlPanel.getCancelButton());
+                    WindowUtils.assignGlobalKeyListener(dialog, goToControlPanel.createOkCancelListener());
                     dialog.setVisible(true);
                 }
             };

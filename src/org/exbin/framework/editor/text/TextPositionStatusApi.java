@@ -14,28 +14,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along this application.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.exbin.framework.gui.utils.handler;
-
-import org.exbin.framework.gui.utils.WindowUtils;
+package org.exbin.framework.editor.text;
 
 /**
- * Handler for default control panel.
+ * Text position status interface.
  *
- * @version 0.2.0 2016/12/27
+ * @version 0.2.0 2016/05/18
  * @author ExBin Project (http://exbin.org)
  */
-public interface DefaultControlHandler {
+public interface TextPositionStatusApi {
 
-    void controlActionPerformed(ControlActionType actionType);
-
-    public interface DefaultControlListener {
-
-        void performClick(ControlActionType actionType);
-
-        WindowUtils.OkCancelListener createOkCancelListener();
-    }
-
-    public static enum ControlActionType {
-        OK, CANCEL
-    }
+    /**
+     * Reports text position.
+     *
+     * @param textPosition text position
+     */
+    void setTextPosition(String textPosition);
 }

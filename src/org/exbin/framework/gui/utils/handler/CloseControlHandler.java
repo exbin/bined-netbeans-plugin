@@ -16,10 +16,12 @@
  */
 package org.exbin.framework.gui.utils.handler;
 
+import org.exbin.framework.gui.utils.WindowUtils;
+
 /**
  * Handler for close control panel.
  *
- * @version 0.2.0 2016/12/23
+ * @version 0.2.0 2016/12/27
  * @author ExBin Project (http://exbin.org)
  */
 public interface CloseControlHandler {
@@ -29,5 +31,7 @@ public interface CloseControlHandler {
     public interface CloseControlListener {
 
         void performCloseClick();
+
+        WindowUtils.OkCancelListener createOkCancelListener();
     }
 }

@@ -14,28 +14,44 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along this application.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.exbin.framework.gui.utils.handler;
+package org.exbin.framework.editor.text.panel;
 
-import org.exbin.framework.gui.utils.WindowUtils;
+import java.util.List;
 
 /**
- * Handler for default control panel.
+ * XB Text Editor Module.
  *
- * @version 0.2.0 2016/12/27
+ * @version 0.1.22 2013/03/17
  * @author ExBin Project (http://exbin.org)
  */
-public interface DefaultControlHandler {
+public interface TextEncodingPanelApi {
 
-    void controlActionPerformed(ControlActionType actionType);
+    /**
+     * Returns current encodings used in application frame.
+     *
+     * @return font
+     */
+    public List<String> getEncodings();
 
-    public interface DefaultControlListener {
+    /**
+     * Gets selected encoding.
+     *
+     * @return selected encoding
+     */
+    public String getSelectedEncoding();
 
-        void performClick(ControlActionType actionType);
+    /**
+     * Sets current encodings used in application frame.
+     *
+     * @param encodings list of encodings
+     */
+    public void setEncodings(List<String> encodings);
 
-        WindowUtils.OkCancelListener createOkCancelListener();
-    }
+    /**
+     * Sets selected encoding.
+     *
+     * @param encoding encoding
+     */
+    public void setSelectedEncoding(String encoding);
 
-    public static enum ControlActionType {
-        OK, CANCEL
-    }
 }
