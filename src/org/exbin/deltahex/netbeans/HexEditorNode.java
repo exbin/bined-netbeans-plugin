@@ -15,9 +15,16 @@
  */
 package org.exbin.deltahex.netbeans;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URI;
+import org.exbin.deltahex.delta.DeltaDocument;
+import org.exbin.deltahex.delta.FileDataSource;
+import org.exbin.deltahex.delta.SegmentsRepository;
 import org.exbin.deltahex.swing.CodeArea;
+import org.exbin.utils.binary_data.BinaryData;
 import org.exbin.utils.binary_data.EditableBinaryData;
 import org.openide.loaders.DataObject;
 import org.openide.nodes.AbstractNode;
@@ -27,32 +34,77 @@ import org.openide.util.Exceptions;
 /**
  * Hexadecimal editor node.
  *
- * @version 0.1.3 2016/08/31
+ * @version 0.1.4 2017/01/01
  * @author ExBin Project (http://exbin.org)
  */
 public class HexEditorNode extends AbstractNode {
 
-    private final CodeArea codeArea;
+    private final HexEditorTopComponent hexEditorTopComponent;
 
-    public HexEditorNode(CodeArea codeArea) {
+    public HexEditorNode(HexEditorTopComponent hexEditorTopComponent) {
         super(Children.LEAF);
-        this.codeArea = codeArea;
+        this.hexEditorTopComponent = hexEditorTopComponent;
     }
 
     public void openFile(DataObject dataObject) {
-        InputStream stream = null;
-        try {
-            stream = dataObject.getPrimaryFile().getInputStream();
-            if (stream != null) {
-                ((EditableBinaryData) codeArea.getData()).loadFromStream(stream);
-                codeArea.setEditable(dataObject.getPrimaryFile().canWrite());
-            }
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        } finally {
+        CodeArea codeArea = hexEditorTopComponent.getCodeArea();
+        SegmentsRepository segmentsRepository = HexEditorTopComponent.getSegmentsRepository();
+        URI fileUri = dataObject.getPrimaryFile().toURI();
+        if (fileUri == null) {
+            InputStream stream = null;
             try {
+                stream = dataObject.getPrimaryFile().getInputStream();
                 if (stream != null) {
-                    stream.close();
+                    ((EditableBinaryData) codeArea.getData()).loadFromStream(stream);
+                    codeArea.setEditable(dataObject.getPrimaryFile().canWrite());
+                }
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            } finally {
+                if (stream != null) {
+                    try {
+                        stream.close();
+                    } catch (IOException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                }
+            }
+        } else {
+            try {
+                File file = new File(fileUri);
+                FileDataSource fileSource = segmentsRepository.openFileSource(file);
+                DeltaDocument document = segmentsRepository.createDocument(fileSource);
+                codeArea.setData(document);
+                codeArea.setEditable(dataObject.getPrimaryFile().canWrite());
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+    }
+
+    public void saveFile(DataObject dataObject) {
+        CodeArea codeArea = hexEditorTopComponent.getCodeArea();
+        SegmentsRepository segmentsRepository = HexEditorTopComponent.getSegmentsRepository();
+        BinaryData data = codeArea.getData();
+        if (data instanceof DeltaDocument) {
+            try {
+                segmentsRepository.saveDocument((DeltaDocument) data);
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        } else {
+            OutputStream stream;
+            try {
+                stream = dataObject.getPrimaryFile().getOutputStream();
+                try {
+                    codeArea.getData().saveToStream(stream);
+                    stream.flush();
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
+                } finally {
+                    if (stream != null) {
+                        stream.close();
+                    }
                 }
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);

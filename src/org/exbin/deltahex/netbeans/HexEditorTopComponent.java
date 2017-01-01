@@ -24,7 +24,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
@@ -44,14 +43,16 @@ import org.exbin.deltahex.EditationAllowed;
 import org.exbin.deltahex.EditationMode;
 import org.exbin.deltahex.EditationModeChangedListener;
 import org.exbin.deltahex.Section;
+import org.exbin.deltahex.delta.DeltaDocument;
+import org.exbin.deltahex.delta.SegmentsRepository;
 import org.exbin.deltahex.highlight.swing.HighlightCodeAreaPainter;
 import org.exbin.deltahex.netbeans.panel.HexSearchPanel;
 import org.exbin.deltahex.netbeans.panel.HexSearchPanelApi;
 import org.exbin.deltahex.operation.swing.CodeCommandHandler;
 import org.exbin.deltahex.swing.CodeArea;
-import org.exbin.utils.binary_data.PagedData;
 import org.exbin.deltahex.operation.BinaryDataCommand;
 import org.exbin.deltahex.operation.undo.BinaryDataUndoUpdateListener;
+import org.exbin.framework.deltahex.CodeAreaPopupMenuHandler;
 import org.exbin.framework.deltahex.HexStatusApi;
 import org.exbin.framework.deltahex.panel.HexStatusPanel;
 import org.exbin.framework.deltahex.panel.ReplaceParameters;
@@ -60,6 +61,7 @@ import org.exbin.framework.deltahex.panel.SearchParameters;
 import org.exbin.framework.editor.text.TextEncodingStatusApi;
 import org.exbin.utils.binary_data.BinaryData;
 import org.exbin.utils.binary_data.EditableBinaryData;
+import org.exbin.utils.binary_data.PagedData;
 import org.netbeans.api.queries.FileEncodingQuery;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.UndoRedo;
@@ -75,7 +77,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.4 2016/12/31
+ * @version 0.1.4 2017/01/01
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)
@@ -86,6 +88,7 @@ import org.openide.windows.WindowManager;
 public final class HexEditorTopComponent extends TopComponent implements UndoRedo.Provider {
 
     private final HexEditorNode node;
+    private static SegmentsRepository segmentsRepository = null;
     private final CodeArea codeArea;
     private final UndoRedo.Manager undoRedo;
     private final HexUndoSwingHandler undoHandler;
@@ -99,7 +102,6 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     private CharsetChangeListener charsetChangeListener = null;
     private GoToHandler goToHandler;
     private EncodingsHandler encodingsHandler;
-    private SearchHandler searchHandler;
     private boolean findTextPanelVisible = false;
     private HexSearchPanel hexSearchPanel = null;
 
@@ -122,14 +124,13 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         codeArea.setData(new PagedData());
         CodeCommandHandler commandHandler = new CodeCommandHandler(codeArea, undoHandler);
         codeArea.setCommandHandler(commandHandler);
-        super.add(codeArea, BorderLayout.CENTER);
+        codeAreaPanel.add(codeArea, BorderLayout.CENTER);
         statusPanel = new HexStatusPanel();
         add(statusPanel, BorderLayout.SOUTH);
         registerHexStatus(statusPanel);
         registerEncodingStatus(statusPanel);
         goToHandler = new GoToHandler(codeArea);
         encodingsHandler = new EncodingsHandler(encodingStatus);
-        searchHandler = new SearchHandler();
 
         codeArea.addMouseListener(new MouseAdapter() {
             @Override
@@ -150,7 +151,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
             }
         });
 
-        node = new HexEditorNode(codeArea);
+        node = new HexEditorNode(this);
         content.add(node);
         savable = new Savable(this, codeArea);
 
@@ -349,19 +350,9 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     }
 
     public void saveDataObject(DataObject dataObject) throws IOException {
-        OutputStream stream = dataObject.getPrimaryFile().getOutputStream();
-        try {
-            codeArea.getData().saveToStream(stream);
-            stream.flush();
-            setModified(false);
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-        } finally {
-            if (null != stream) {
-                stream.close();
-            }
-        }
-
+        node.saveFile(dataObject);
+        undoHandler.clear();
+        setModified(false);
         documentOriginalSize = codeArea.getDataSize();
         updateCurrentDocumentSize();
         updateCurrentMemoryMode();
@@ -386,10 +377,9 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         String memoryMode = "M";
         if (codeArea.getEditationAllowed() == EditationAllowed.READ_ONLY) {
             memoryMode = "R";
+        } else if (codeArea.getData() instanceof DeltaDocument) {
+            memoryMode = "\u0394";
         }
-//        else if (segmentsRepository != null) {
-//            memoryMode = "\u0394";
-//        }
 
         hexStatus.setMemoryMode(memoryMode);
     }
@@ -412,10 +402,9 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         showUnprintablesToggleButton = new javax.swing.JToggleButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
         codeTypeComboBox = new javax.swing.JComboBox<>();
+        codeAreaPanel = new javax.swing.JPanel();
 
         setLayout(new java.awt.BorderLayout());
-
-        infoToolbar.setLayout(new java.awt.BorderLayout());
 
         controlToolBar.setBorder(null);
         controlToolBar.setFloatable(false);
@@ -449,9 +438,21 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         });
         controlToolBar.add(codeTypeComboBox);
 
-        infoToolbar.add(controlToolBar, java.awt.BorderLayout.CENTER);
+        javax.swing.GroupLayout infoToolbarLayout = new javax.swing.GroupLayout(infoToolbar);
+        infoToolbar.setLayout(infoToolbarLayout);
+        infoToolbarLayout.setHorizontalGroup(
+            infoToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(controlToolBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 648, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        infoToolbarLayout.setVerticalGroup(
+            infoToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(controlToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
 
         add(infoToolbar, java.awt.BorderLayout.NORTH);
+
+        codeAreaPanel.setLayout(new java.awt.BorderLayout());
+        add(codeAreaPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void lineWrappingToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lineWrappingToggleButtonActionPerformed
@@ -467,6 +468,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     }//GEN-LAST:event_codeTypeComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel codeAreaPanel;
     private javax.swing.JComboBox<String> codeTypeComboBox;
     private javax.swing.JToolBar controlToolBar;
     private javax.swing.JPanel infoToolbar;
@@ -485,6 +487,14 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         if (savable != null) {
             savable.deactivate();
         }
+    }
+
+    public static synchronized SegmentsRepository getSegmentsRepository() {
+        if (segmentsRepository == null) {
+            segmentsRepository = new SegmentsRepository();
+        }
+
+        return segmentsRepository;
     }
 
     public void writeProperties(java.util.Properties p) {
@@ -585,6 +595,16 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         result.add(selectAllMenuItem);
         result.addSeparator();
 
+        final JMenuItem goToMenuItem = new JMenuItem("Go To...");
+        goToMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, metaMask));
+        goToMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                goToHandler.getGoToLineAction().actionPerformed(null);
+            }
+        });
+        result.add(goToMenuItem);
+
         final JMenuItem findMenuItem = new JMenuItem("Find...");
         findMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, metaMask));
         findMenuItem.addActionListener(new ActionListener() {
@@ -604,16 +624,6 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
             }
         });
         result.add(replaceMenuItem);
-
-        final JMenuItem goToMenuItem = new JMenuItem("Go To...");
-        goToMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, metaMask));
-        goToMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                goToHandler.getGoToLineAction().actionPerformed(null);
-            }
-        });
-        result.add(goToMenuItem);
 
         return result;
     }
@@ -703,10 +713,27 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
                     painter.clearMatches();
                 }
             });
+            hexSearchPanel.setHexCodePopupMenuHandler(new CodeAreaPopupMenuHandler() {
+                @Override
+                public JPopupMenu createPopupMenu(CodeArea codeArea, String menuPostfix) {
+                    return createCodeAreaPopupMenu(codeArea, menuPostfix);
+                }
+
+                @Override
+                public void dropPopupMenu(String menuPostfix) {
+                }
+            });
+            hexSearchPanel.setClosePanelListener(new HexSearchPanel.ClosePanelListener() {
+                @Override
+                public void panelClosed() {
+                    hideSearchPanel();
+                }
+            });
         }
 
         if (!findTextPanelVisible) {
-            add(hexSearchPanel, BorderLayout.SOUTH);
+            codeAreaPanel.add(hexSearchPanel, BorderLayout.SOUTH);
+            codeAreaPanel.revalidate();
             revalidate();
             findTextPanelVisible = true;
             hexSearchPanel.requestSearchFocus();
@@ -718,10 +745,83 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         if (findTextPanelVisible) {
             hexSearchPanel.cancelSearch();
             hexSearchPanel.clearSearch();
-            remove(hexSearchPanel);
+            codeAreaPanel.remove(hexSearchPanel);
+            codeAreaPanel.revalidate();
             revalidate();
             findTextPanelVisible = false;
         }
+    }
+
+    private JPopupMenu createCodeAreaPopupMenu(final CodeArea codeArea, String menuPostfix) {
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        JMenuItem cutMenuItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                codeArea.cut();
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return codeArea.hasSelection();
+            }
+        });
+        cutMenuItem.setText("Cut");
+        cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, metaMask));
+        popupMenu.add(cutMenuItem);
+        JMenuItem copyMenuItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                codeArea.copy();
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return codeArea.hasSelection();
+            }
+        });
+        copyMenuItem.setText("Copy");
+        copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, metaMask));
+        popupMenu.add(copyMenuItem);
+        JMenuItem pasteMenuItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                codeArea.paste();
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return codeArea.canPaste();
+            }
+        });
+        pasteMenuItem.setText("Paste");
+        pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, metaMask));
+        popupMenu.add(pasteMenuItem);
+        JMenuItem deleteMenuItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                codeArea.delete();
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return codeArea.hasSelection();
+            }
+        });
+        deleteMenuItem.setText("Delete");
+        deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
+        popupMenu.add(deleteMenuItem);
+        JMenuItem selectAllMenuItem = new JMenuItem(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                codeArea.selectAll();
+            }
+        });
+        selectAllMenuItem.setText("Select All");
+        selectAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, metaMask));
+        popupMenu.add(selectAllMenuItem);
+
+        return popupMenu;
     }
 
     /**
@@ -862,6 +962,10 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         }
         hexSearchPanel.setStatus(foundMatches.size(), 0);
         codeArea.repaint();
+    }
+
+    public CodeArea getCodeArea() {
+        return codeArea;
     }
 
     public static interface CharsetChangeListener {

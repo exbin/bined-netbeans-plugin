@@ -16,12 +16,10 @@
 package org.exbin.deltahex.netbeans;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Objects;
 import org.exbin.deltahex.swing.CodeArea;
 import org.netbeans.spi.actions.AbstractSavable;
 import org.openide.loaders.DataObject;
-import org.openide.util.Exceptions;
 
 /**
  * Saving capability for hexadecimal editor.
