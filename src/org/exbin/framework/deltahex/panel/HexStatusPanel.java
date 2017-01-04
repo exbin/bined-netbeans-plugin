@@ -55,6 +55,10 @@ public class HexStatusPanel extends javax.swing.JPanel implements HexStatusApi, 
         positionGoToMenuItem = new javax.swing.JMenuItem();
         documentSizePopupMenu = new javax.swing.JPopupMenu();
         documentSizeCopyMenuItem = new javax.swing.JMenuItem();
+        memoryModePopupMenu = new javax.swing.JPopupMenu();
+        deltaMemoryModeRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        ramMemoryModeRadioButtonMenuItem1 = new javax.swing.JRadioButtonMenuItem();
+        memoryModeButtonGroup = new javax.swing.ButtonGroup();
         memoryModeLabel = new javax.swing.JLabel();
         documentSizeLabel = new javax.swing.JLabel();
         positionLabel = new javax.swing.JLabel();
@@ -92,12 +96,26 @@ public class HexStatusPanel extends javax.swing.JPanel implements HexStatusApi, 
         });
         documentSizePopupMenu.add(documentSizeCopyMenuItem);
 
+        memoryModePopupMenu.setName("memoryModePopupMenu"); // NOI18N
+
+        memoryModeButtonGroup.add(deltaMemoryModeRadioButtonMenuItem);
+        deltaMemoryModeRadioButtonMenuItem.setSelected(true);
+        deltaMemoryModeRadioButtonMenuItem.setText(resourceBundle.getString("HexStatusPanel.deltaMemoryModeRadioButtonMenuItem.text")); // NOI18N
+        deltaMemoryModeRadioButtonMenuItem.setName("deltaMemoryModeRadioButtonMenuItem"); // NOI18N
+        memoryModePopupMenu.add(deltaMemoryModeRadioButtonMenuItem);
+
+        memoryModeButtonGroup.add(ramMemoryModeRadioButtonMenuItem1);
+        ramMemoryModeRadioButtonMenuItem1.setText(resourceBundle.getString("HexStatusPanel.ramMemoryModeRadioButtonMenuItem1.text")); // NOI18N
+        ramMemoryModeRadioButtonMenuItem1.setName("ramMemoryModeRadioButtonMenuItem1"); // NOI18N
+        memoryModePopupMenu.add(ramMemoryModeRadioButtonMenuItem1);
+
         setName("Form"); // NOI18N
 
         memoryModeLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         memoryModeLabel.setText(resourceBundle.getString("memoryModeLabel.text")); // NOI18N
         memoryModeLabel.setToolTipText(resourceBundle.getString("memoryModeLabel.toolTipText")); // NOI18N
         memoryModeLabel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        memoryModeLabel.setComponentPopupMenu(memoryModePopupMenu);
         memoryModeLabel.setName("memoryModeLabel"); // NOI18N
 
         documentSizeLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -235,16 +253,20 @@ public class HexStatusPanel extends javax.swing.JPanel implements HexStatusApi, 
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JRadioButtonMenuItem deltaMemoryModeRadioButtonMenuItem;
     private javax.swing.JMenuItem documentSizeCopyMenuItem;
     private javax.swing.JLabel documentSizeLabel;
     private javax.swing.JPopupMenu documentSizePopupMenu;
     private javax.swing.JLabel editationModeLabel;
     private javax.swing.JLabel encodingLabel;
+    private javax.swing.ButtonGroup memoryModeButtonGroup;
     private javax.swing.JLabel memoryModeLabel;
+    private javax.swing.JPopupMenu memoryModePopupMenu;
     private javax.swing.JMenuItem positionCopyMenuItem;
     private javax.swing.JMenuItem positionGoToMenuItem;
     private javax.swing.JLabel positionLabel;
     private javax.swing.JPopupMenu positionPopupMenu;
+    private javax.swing.JRadioButtonMenuItem ramMemoryModeRadioButtonMenuItem1;
     // End of variables declaration//GEN-END:variables
 
     @Override

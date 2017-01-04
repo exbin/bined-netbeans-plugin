@@ -48,7 +48,7 @@ import org.exbin.deltahex.delta.SegmentsRepository;
 import org.exbin.deltahex.highlight.swing.HighlightCodeAreaPainter;
 import org.exbin.deltahex.netbeans.panel.HexSearchPanel;
 import org.exbin.deltahex.netbeans.panel.HexSearchPanelApi;
-import org.exbin.deltahex.operation.swing.CodeCommandHandler;
+import org.exbin.deltahex.operation.swing.CodeAreaOperationCommandHandler;
 import org.exbin.deltahex.swing.CodeArea;
 import org.exbin.deltahex.operation.BinaryDataCommand;
 import org.exbin.deltahex.operation.undo.BinaryDataUndoUpdateListener;
@@ -77,7 +77,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.4 2017/01/01
+ * @version 0.1.4 2017/01/04
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)
@@ -122,7 +122,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         undoHandler = new HexUndoSwingHandler(codeArea, undoRedo);
 
         codeArea.setData(new PagedData());
-        CodeCommandHandler commandHandler = new CodeCommandHandler(codeArea, undoHandler);
+        CodeAreaOperationCommandHandler commandHandler = new CodeAreaOperationCommandHandler(codeArea, undoHandler);
         codeArea.setCommandHandler(commandHandler);
         codeAreaPanel.add(codeArea, BorderLayout.CENTER);
         statusPanel = new HexStatusPanel();
