@@ -33,7 +33,7 @@ import org.exbin.framework.gui.utils.LanguageUtils;
 /**
  * Text encoding selection panel.
  *
- * @version 0.2.0 2016/12/30
+ * @version 0.2.0 2017/01/06
  * @author ExBin Project (http://exbin.org)
  */
 public class TextEncodingPanel extends javax.swing.JPanel implements OptionsPanel {
@@ -218,6 +218,7 @@ public class TextEncodingPanel extends javax.swing.JPanel implements OptionsPane
             List<String> encodings = addEncodingsOperation.run(((EncodingsListModel) encodingsList.getModel()).getCharsets());
             if (encodings != null) {
                 ((EncodingsListModel) encodingsList.getModel()).addAll(encodings, encodingsList.getSelectedIndex());
+                encodingsList.clearSelection();
                 wasModified();
             }
         }
@@ -349,7 +350,7 @@ public class TextEncodingPanel extends javax.swing.JPanel implements OptionsPane
     public void setAddEncodingsOperation(AddEncodingsOperation addEncodingsOperation) {
         this.addEncodingsOperation = addEncodingsOperation;
     }
-    
+
     public void addEncodings(List<String> encodings) {
         ((EncodingsListModel) encodingsList.getModel()).addAll(encodings, encodingsList.isSelectionEmpty() ? -1 : encodingsList.getSelectedIndex());
     }

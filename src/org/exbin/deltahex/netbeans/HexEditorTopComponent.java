@@ -20,6 +20,7 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -77,7 +78,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.4 2017/01/04
+ * @version 0.1.4 2017/01/06
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)
@@ -107,8 +108,10 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 
     private boolean opened = false;
     private boolean modified = false;
+    private boolean deltaMemoryMode = false;
     protected String displayName;
     private long documentOriginalSize;
+    private DataObject dataObject;
 
     public HexEditorTopComponent() {
         initComponents();
@@ -175,9 +178,9 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         codeArea.addDataChangedListener(new DataChangedListener() {
             @Override
             public void dataChanged() {
-//                if (hexSearchPanel.isVisible()) {
-//                    hexSearchPanel.dataChanged();
-//                }
+                if (hexSearchPanel != null && hexSearchPanel.isVisible()) {
+                    hexSearchPanel.dataChanged();
+                }
                 updateCurrentDocumentSize();
             }
         });
@@ -213,6 +216,25 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
             metaMaskValue = java.awt.Event.CTRL_MASK;
         }
         metaMask = metaMaskValue;
+
+        codeArea.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent keyEvent) {
+                if (keyEvent.getModifiers() == metaMask) {
+                    int keyCode = keyEvent.getKeyCode();
+                    switch (keyCode) {
+                        case KeyEvent.VK_F: {
+                            showSearchPanel(false);
+                            break;
+                        }
+                        case KeyEvent.VK_G: {
+                            goToHandler.getGoToLineAction().actionPerformed(null);
+                            break;
+                        }
+                    }
+                }
+            }
+        });
 
         associateLookup(new AbstractLookup(content));
     }
@@ -260,6 +282,47 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
                     encodingsHandler.popupEncodingsMenu(mouseEvent);
                 }
             }
+
+            @Override
+            public void changeMemoryMode(HexStatusApi.MemoryMode memoryMode) {
+                boolean newDeltaMode = memoryMode == HexStatusApi.MemoryMode.DELTA_MODE;
+                if (newDeltaMode != deltaMemoryMode) {
+                    // Switch memory mode
+                    if (dataObject != null) {
+                        // If document is connected to file, attempt to release first if modified and then simply reload
+                        if (isModified()) {
+                            if (releaseFile()) {
+                                deltaMemoryMode = newDeltaMode;
+                                openDataObject(dataObject);
+                                codeArea.clearSelection();
+                                codeArea.setCaretPosition(0);
+                            }
+                        } else {
+                            deltaMemoryMode = newDeltaMode;
+                            openDataObject(dataObject);
+                        }
+                    } else {
+                        // If document unsaved in memory, switch data in code area
+                        if (codeArea.getData() instanceof DeltaDocument) {
+                            PagedData data = new PagedData();
+                            data.insert(0, codeArea.getData());
+                            codeArea.setData(data);
+                            codeArea.getData().dispose();
+                        } else {
+                            BinaryData oldData = codeArea.getData();
+                            DeltaDocument document = segmentsRepository.createDocument();
+                            document.insert(0, oldData);
+                            codeArea.setData(document);
+                            oldData.dispose();
+                        }
+                        undoHandler.clear();
+                        codeArea.notifyDataChanged();
+                        updateCurrentMemoryMode();
+                        deltaMemoryMode = newDeltaMode;
+                    }
+                    deltaMemoryMode = newDeltaMode;
+                }
+            }
         });
     }
 
@@ -303,6 +366,10 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         return true;
     }
 
+    public boolean isModified() {
+        return undoHandler.getCommandPosition() != undoHandler.getSyncPoint();
+    }
+
     void setModified(boolean modified) {
         this.modified = modified;
         final String htmlDisplayName;
@@ -332,7 +399,48 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         }
     }
 
+    /**
+     * Attempts to release current file and warn if document was modified.
+     *
+     * @return true if successfull
+     */
+    private boolean releaseFile() {
+
+        if (dataObject == null) {
+            return true;
+        }
+
+        while (isModified()) {
+            Object[] options = {
+                "Save",
+                "Discard",
+                "Cancel"
+            };
+            int result = JOptionPane.showOptionDialog(this,
+                    "Document was modified! Do you wish to save it?",
+                    "Save File?",
+                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null, options, options[0]);
+            if (result == JOptionPane.NO_OPTION) {
+                return true;
+            }
+            if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
+                return false;
+            }
+
+            try {
+                saveDataObject(dataObject);
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+
+        return true;
+    }
+
     public void openDataObject(DataObject dataObject) {
+        this.dataObject = dataObject;
         displayName = dataObject.getPrimaryFile().getNameExt();
         setHtmlDisplayName(displayName);
         node.openFile(dataObject);
@@ -373,15 +481,25 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         hexStatus.setCurrentDocumentSize(dataSize + " (" + (difference > 0 ? "+" + difference : difference) + ")");
     }
 
+    public boolean isDeltaMemoryMode() {
+        return deltaMemoryMode;
+    }
+
+    public void setDeltaMemoryMode(boolean deltaMemoryMode) {
+        this.deltaMemoryMode = deltaMemoryMode;
+    }
+
     private void updateCurrentMemoryMode() {
-        String memoryMode = "M";
+        HexStatusApi.MemoryMode memoryMode = HexStatusApi.MemoryMode.RAM_MEMORY;
         if (codeArea.getEditationAllowed() == EditationAllowed.READ_ONLY) {
-            memoryMode = "R";
+            memoryMode = HexStatusApi.MemoryMode.READ_ONLY;
         } else if (codeArea.getData() instanceof DeltaDocument) {
-            memoryMode = "\u0394";
+            memoryMode = HexStatusApi.MemoryMode.DELTA_MODE;
         }
 
-        hexStatus.setMemoryMode(memoryMode);
+        if (hexStatus != null) {
+            hexStatus.setMemoryMode(memoryMode);
+        }
     }
 
     private void updateModified() {

@@ -21,7 +21,7 @@ import org.exbin.framework.gui.utils.WindowUtils;
 /**
  * Handler for options control panel.
  *
- * @version 0.2.0 2016/12/30
+ * @version 0.2.0 2016/12/31
  * @author ExBin Project (http://exbin.org)
  */
 public interface OptionsControlHandler {

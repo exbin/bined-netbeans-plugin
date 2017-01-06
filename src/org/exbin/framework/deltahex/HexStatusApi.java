@@ -17,12 +17,14 @@
 package org.exbin.framework.deltahex;
 
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
+import java.util.Map;
 import org.exbin.deltahex.EditationMode;
 
 /**
  * Hexadecimal editor status interface.
  *
- * @version 0.2.0 2016/12/20
+ * @version 0.2.0 2017/01/05
  * @author ExBin Project (http://exbin.org)
  */
 public interface HexStatusApi {
@@ -60,7 +62,7 @@ public interface HexStatusApi {
      *
      * @param memoryMode memory mode
      */
-    void setMemoryMode(String memoryMode);
+    void setMemoryMode(MemoryMode memoryMode);
 
     public static interface StatusControlHandler {
 
@@ -87,5 +89,45 @@ public interface HexStatusApi {
          * @param mouseEvent mouse event
          */
         void popupEncodingsMenu(MouseEvent mouseEvent);
+
+        /**
+         * Requests change of memory mode.
+         *
+         * @param memoryMode memory mode
+         */
+        void changeMemoryMode(MemoryMode memoryMode);
+    }
+
+    public static enum MemoryMode {
+
+        READ_ONLY("R", "read_only"),
+        RAM_MEMORY("M", "ram"),
+        DELTA_MODE("\u0394", "delta");
+
+        private final String displayChar;
+        private final String value;
+        private final static Map<String, MemoryMode> preferencesValueMap = new HashMap<>();
+
+        private MemoryMode(String displayChar, String preferencesValue) {
+            this.displayChar = displayChar;
+            this.value = preferencesValue;
+        }
+
+        public String getDisplayChar() {
+            return displayChar;
+        }
+
+        public String getPreferencesValue() {
+            return value;
+        }
+
+        public static MemoryMode findByPreferencesValue(String matchValue) {
+            for (MemoryMode value : values()) {
+                if (value.getPreferencesValue().equals(matchValue)) {
+                    return value;
+                }
+            }
+            return null;
+        }
     }
 }

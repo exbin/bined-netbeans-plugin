@@ -64,7 +64,7 @@ import org.exbin.utils.binary_data.PagedData;
 /**
  * Command handler for undo/redo aware hexadecimal editor editing.
  *
- * @version 0.1.2 2017/01/02
+ * @version 0.1.2 2017/01/05
  * @author ExBin Project (http://exbin.org)
  */
 public class CodeAreaOperationCommandHandler implements CodeAreaCommandHandler {
@@ -82,6 +82,7 @@ public class CodeAreaOperationCommandHandler implements CodeAreaCommandHandler {
     private Clipboard clipboard;
     private boolean canPaste = false;
     private DataFlavor deltahexDataFlavor;
+    private ClipboardData currentClipboardData = null;
 
     private final BinaryDataUndoHandler undoHandler;
     private EditDataCommand editCommand = null;
@@ -392,7 +393,7 @@ public class CodeAreaOperationCommandHandler implements CodeAreaCommandHandler {
     @Override
     public void keyTyped(KeyEvent keyEvent) {
         char keyValue = keyEvent.getKeyChar();
-        if (keyValue == 0xffff) {
+        if (keyValue == KeyEvent.CHAR_UNDEFINED) {
             return;
         }
         if (!codeArea.isEditable()) {
@@ -628,11 +629,7 @@ public class CodeAreaOperationCommandHandler implements CodeAreaCommandHandler {
             BinaryData copy = ((EditableBinaryData) codeArea.getData()).copy(first, last - first + 1);
 
             BinaryDataClipboardData binaryData = new BinaryDataClipboardData(copy);
-            try {
-                clipboard.setContents(binaryData, binaryData);
-            } catch (IllegalStateException ex) {
-                // Clipboard not available - ignore
-            }
+            setClipboardContent(binaryData);
         }
     }
 
@@ -646,11 +643,25 @@ public class CodeAreaOperationCommandHandler implements CodeAreaCommandHandler {
             BinaryData copy = ((EditableBinaryData) codeArea.getData()).copy(first, last - first + 1);
 
             CodeDataClipboardData binaryData = new CodeDataClipboardData(copy);
-            try {
-                clipboard.setContents(binaryData, binaryData);
-            } catch (IllegalStateException ex) {
-                // Clipboard not available - ignore
-            }
+            setClipboardContent(binaryData);
+        }
+    }
+
+    private void setClipboardContent(ClipboardData content) {
+        clearClipboardData();
+        try {
+            currentClipboardData = content;
+            clipboard.setContents(content, content);
+        } catch (IllegalStateException ex) {
+            // Clipboard not available - ignore and clear
+            clearClipboardData();
+        }
+    }
+
+    private void clearClipboardData() {
+        if (currentClipboardData != null) {
+            currentClipboardData.dispose();
+            currentClipboardData = null;
         }
     }
 
@@ -981,7 +992,7 @@ public class CodeAreaOperationCommandHandler implements CodeAreaCommandHandler {
         return canPaste;
     }
 
-    public class BinaryDataClipboardData implements Transferable, ClipboardOwner {
+    public class BinaryDataClipboardData implements ClipboardData {
 
         private final BinaryData data;
 
@@ -1018,9 +1029,14 @@ public class CodeAreaOperationCommandHandler implements CodeAreaCommandHandler {
         public void lostOwnership(Clipboard clipboard, Transferable contents) {
             // do nothing
         }
+
+        @Override
+        public void dispose() {
+            data.dispose();
+        }
     }
 
-    public class CodeDataClipboardData implements Transferable, ClipboardOwner {
+    public class CodeDataClipboardData implements ClipboardData {
 
         private final BinaryData data;
 
@@ -1062,6 +1078,11 @@ public class CodeAreaOperationCommandHandler implements CodeAreaCommandHandler {
         @Override
         public void lostOwnership(Clipboard clipboard, Transferable contents) {
             // do nothing
+        }
+
+        @Override
+        public void dispose() {
+            data.dispose();
         }
     }
 
@@ -1115,5 +1136,10 @@ public class CodeAreaOperationCommandHandler implements CodeAreaCommandHandler {
         public boolean canUndo() {
             return true;
         }
+    }
+
+    public static interface ClipboardData extends Transferable, ClipboardOwner {
+
+        void dispose();
     }
 }

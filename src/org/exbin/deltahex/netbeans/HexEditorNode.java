@@ -16,6 +16,7 @@
 package org.exbin.deltahex.netbeans;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -26,6 +27,7 @@ import org.exbin.deltahex.delta.SegmentsRepository;
 import org.exbin.deltahex.swing.CodeArea;
 import org.exbin.utils.binary_data.BinaryData;
 import org.exbin.utils.binary_data.EditableBinaryData;
+import org.exbin.utils.binary_data.PagedData;
 import org.openide.loaders.DataObject;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
@@ -34,7 +36,7 @@ import org.openide.util.Exceptions;
 /**
  * Hexadecimal editor node.
  *
- * @version 0.1.4 2017/01/01
+ * @version 0.1.4 2017/01/06
  * @author ExBin Project (http://exbin.org)
  */
 public class HexEditorNode extends AbstractNode {
@@ -71,10 +73,24 @@ public class HexEditorNode extends AbstractNode {
             }
         } else {
             try {
+                BinaryData oldData = codeArea.getData();
                 File file = new File(fileUri);
-                FileDataSource fileSource = segmentsRepository.openFileSource(file);
-                DeltaDocument document = segmentsRepository.createDocument(fileSource);
-                codeArea.setData(document);
+                if (hexEditorTopComponent.isDeltaMemoryMode()) {
+                    FileDataSource fileSource = segmentsRepository.openFileSource(file);
+                    DeltaDocument document = segmentsRepository.createDocument(fileSource);
+                    codeArea.setData(document);
+                    oldData.dispose();
+                } else {
+                    try (FileInputStream fileStream = new FileInputStream(file)) {
+                        BinaryData data = codeArea.getData();
+                        if (!(data instanceof PagedData)) {
+                            data = new PagedData();
+                            oldData.dispose();
+                        }
+                        ((EditableBinaryData) data).loadFromStream(fileStream);
+                        codeArea.setData(data);
+                    }
+                }
                 codeArea.setEditable(dataObject.getPrimaryFile().canWrite());
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
