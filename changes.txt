@@ -1,7 +1,11 @@
-0.1.4
+0.1.4 (2016-01-08)
 - Fixed charset for clipboard copy/paste
 - Added status panel
 - Added go-to position dialog
+- Added crude search panel
+- Adding charset now support basic filtering
+- Enabled delta mode, switchable to memory mode
+- Most settings are now persistent
 
 0.1.3 (2016-10-05)
 - Full cursor shape and cursor blinking

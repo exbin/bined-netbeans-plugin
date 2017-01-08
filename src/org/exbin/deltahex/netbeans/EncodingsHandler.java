@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
+import static org.exbin.deltahex.netbeans.HexEditorTopComponent.PREFERENCES_ENCODING_SELECTED;
 import org.exbin.framework.editor.text.TextEncodingStatusApi;
 import org.exbin.framework.editor.text.panel.AddEncodingPanel;
 import org.exbin.framework.editor.text.panel.TextEncodingPanel;
@@ -50,7 +51,7 @@ import org.openide.DialogDisplayer;
 /**
  * Encodings handler.
  *
- * @version 0.1.4 2016/12/31
+ * @version 0.1.4 2017/01/08
  * @author ExBin Project (http://exbin.org)
  */
 public class EncodingsHandler implements TextEncodingPanelApi {
@@ -66,17 +67,16 @@ public class EncodingsHandler implements TextEncodingPanelApi {
     private ActionListener utfEncodingActionListener;
 
     public static final String ENCODING_UTF8 = "UTF-8";
-    public static final String PREFERENCES_TEXT_ENCODING_PREFIX = "textEncoding.";
-    public static final String PREFERENCES_TEXT_ENCODING_DEFAULT = "textEncoding.default";
 
     public static final String UTF_ENCODING_TEXT = "UTF-8 (default)";
     public static final String UTF_ENCODING_TOOLTIP = "Set encoding UTF-8";
 
     private Action manageEncodingsAction;
+    private Preferences preferences;
 
-    public EncodingsHandler(TextEncodingStatusApi textStatus) {
+    public EncodingsHandler(TextEncodingStatusApi textEncodingStatus) {
         resourceBundle = LanguageUtils.getResourceBundleByClass(EncodingsHandler.class);
-        textEncodingStatus = textStatus;
+        this.textEncodingStatus = textEncodingStatus;
         init();
         EncodingsHandler.this.rebuildEncodings();
     }
@@ -121,6 +121,13 @@ public class EncodingsHandler implements TextEncodingPanelApi {
                         if (actionType != OptionsControlHandler.ControlActionType.CANCEL) {
                             encodings = textEncodingPanel.getEncodingList();
                             rebuildEncodings();
+                            if (actionType == OptionsControlHandler.ControlActionType.SAVE) {
+                                // Save encodings
+                                for (int i = 0; i < encodings.size(); i++) {
+                                    preferences.put(HexEditorTopComponent.PREFERENCES_ENCODING_PREFIX + Integer.toString(i), encodings.get(i));
+                                }
+                                preferences.remove(HexEditorTopComponent.PREFERENCES_ENCODING_PREFIX + Integer.toString(encodings.size()));
+                            }
                         }
 
                         WindowUtils.closeWindow(dialog);
@@ -232,12 +239,13 @@ public class EncodingsHandler implements TextEncodingPanelApi {
     }
 
     public void loadFromPreferences(Preferences preferences) {
-        setSelectedEncoding(preferences.get(PREFERENCES_TEXT_ENCODING_DEFAULT, ENCODING_UTF8));
+        this.preferences = preferences;
+        setSelectedEncoding(preferences.get(HexEditorTopComponent.PREFERENCES_ENCODING_SELECTED, ENCODING_UTF8));
         encodings.clear();
         String value;
         int i = 0;
         do {
-            value = preferences.get(PREFERENCES_TEXT_ENCODING_PREFIX + Integer.toString(i), null);
+            value = preferences.get(HexEditorTopComponent.PREFERENCES_ENCODING_PREFIX + Integer.toString(i), null);
             if (value != null) {
                 encodings.add(value);
                 i++;

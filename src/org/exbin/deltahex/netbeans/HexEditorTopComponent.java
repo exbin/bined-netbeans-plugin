@@ -30,6 +30,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -70,6 +71,7 @@ import org.openide.loaders.DataObject;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
+import org.openide.util.NbPreferences;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.windows.TopComponent;
@@ -78,7 +80,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.4 2017/01/06
+ * @version 0.1.4 2017/01/08
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)
@@ -88,6 +90,14 @@ import org.openide.windows.WindowManager;
 @TopComponent.OpenActionRegistration(displayName = "#CTL_HexEditorAction", preferredID = "HexEditorTopComponent")
 public final class HexEditorTopComponent extends TopComponent implements UndoRedo.Provider {
 
+    public static final String PREFERENCES_DELTA_MODE = "deltaMode";
+    public static final String PREFERENCES_CODE_TYPE = "codeType";
+    public static final String PREFERENCES_LINE_WRAPPING = "lineWrapping";
+    public static final String PREFERENCES_SHOW_NONPRINTABLES = "showNonpritables";
+    public static final String PREFERENCES_ENCODING_SELECTED = "selectedEncoding";
+    public static final String PREFERENCES_ENCODING_PREFIX = "textEncoding.";
+
+    private final Preferences preferences;
     private final HexEditorNode node;
     private static SegmentsRepository segmentsRepository = null;
     private final CodeArea codeArea;
@@ -116,24 +126,40 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     public HexEditorTopComponent() {
         initComponents();
 
+        preferences = NbPreferences.forModule(HexEditorTopComponent.class);
+
         codeArea = new CodeArea();
         codeArea.setPainter(new HighlightCodeAreaPainter(codeArea));
         codeArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         codeArea.getCaret().setBlinkRate(300);
+        statusPanel = new HexStatusPanel();
+        registerEncodingStatus(statusPanel);
+        encodingsHandler = new EncodingsHandler(new TextEncodingStatusApi() {
+            @Override
+            public String getEncoding() {
+                return encodingStatus.getEncoding();
+            }
+
+            @Override
+            public void setEncoding(String encodingName) {
+                codeArea.setCharset(Charset.forName(encodingName));
+                encodingStatus.setEncoding(encodingName);
+                preferences.put(PREFERENCES_ENCODING_SELECTED, encodingName);
+            }
+        });
+        loadFromPreferences();
 
         undoRedo = new UndoRedo.Manager();
         undoHandler = new HexUndoSwingHandler(codeArea, undoRedo);
 
-        codeArea.setData(new PagedData());
+        getSegmentsRepository();
+        setNewData();
         CodeAreaOperationCommandHandler commandHandler = new CodeAreaOperationCommandHandler(codeArea, undoHandler);
         codeArea.setCommandHandler(commandHandler);
         codeAreaPanel.add(codeArea, BorderLayout.CENTER);
-        statusPanel = new HexStatusPanel();
         add(statusPanel, BorderLayout.SOUTH);
         registerHexStatus(statusPanel);
-        registerEncodingStatus(statusPanel);
         goToHandler = new GoToHandler(codeArea);
-        encodingsHandler = new EncodingsHandler(encodingStatus);
 
         codeArea.addMouseListener(new MouseAdapter() {
             @Override
@@ -321,6 +347,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
                         deltaMemoryMode = newDeltaMode;
                     }
                     deltaMemoryMode = newDeltaMode;
+                    preferences.putBoolean(PREFERENCES_DELTA_MODE, deltaMemoryMode);
                 }
             }
         });
@@ -331,7 +358,8 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         setCharsetChangeListener(new CharsetChangeListener() {
             @Override
             public void charsetChanged() {
-                encodingStatus.setEncoding(codeArea.getCharset().name());
+                String selectedEncoding = codeArea.getCharset().name();
+                encodingStatus.setEncoding(selectedEncoding);
             }
         });
     }
@@ -399,6 +427,14 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         }
     }
 
+    private void setNewData() {
+        if (deltaMemoryMode) {
+            codeArea.setData(segmentsRepository.createDocument());
+        } else {
+            codeArea.setData(new PagedData());
+        }
+    }
+
     /**
      * Attempts to release current file and warn if document was modified.
      *
@@ -450,11 +486,11 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         updateCurrentDocumentSize();
         updateCurrentMemoryMode();
 
-        final Charset charset = Charset.forName(FileEncodingQuery.getEncoding(dataObject.getPrimaryFile()).name());
-        if (charsetChangeListener != null) {
-            charsetChangeListener.charsetChanged();
-        }
-        codeArea.setCharset(charset);
+//        final Charset charset = Charset.forName(FileEncodingQuery.getEncoding(dataObject.getPrimaryFile()).name());
+//        if (charsetChangeListener != null) {
+//            charsetChangeListener.charsetChanged();
+//        }
+//        codeArea.setCharset(charset);
     }
 
     public void saveDataObject(DataObject dataObject) throws IOException {
@@ -514,15 +550,17 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        codeAreaPanel = new javax.swing.JPanel();
         infoToolbar = new javax.swing.JPanel();
         controlToolBar = new javax.swing.JToolBar();
         lineWrappingToggleButton = new javax.swing.JToggleButton();
         showUnprintablesToggleButton = new javax.swing.JToggleButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
         codeTypeComboBox = new javax.swing.JComboBox<>();
-        codeAreaPanel = new javax.swing.JPanel();
 
         setLayout(new java.awt.BorderLayout());
+
+        codeAreaPanel.setLayout(new java.awt.BorderLayout());
 
         controlToolBar.setBorder(null);
         controlToolBar.setFloatable(false);
@@ -560,29 +598,34 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         infoToolbar.setLayout(infoToolbarLayout);
         infoToolbarLayout.setHorizontalGroup(
             infoToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(controlToolBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 648, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(infoToolbarLayout.createSequentialGroup()
+                .addComponent(controlToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 579, Short.MAX_VALUE))
         );
         infoToolbarLayout.setVerticalGroup(
             infoToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(controlToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
-        add(infoToolbar, java.awt.BorderLayout.NORTH);
+        codeAreaPanel.add(infoToolbar, java.awt.BorderLayout.PAGE_START);
 
-        codeAreaPanel.setLayout(new java.awt.BorderLayout());
         add(codeAreaPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void lineWrappingToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lineWrappingToggleButtonActionPerformed
         codeArea.setWrapMode(lineWrappingToggleButton.isSelected());
+        preferences.putBoolean(PREFERENCES_LINE_WRAPPING, lineWrappingToggleButton.isSelected());
     }//GEN-LAST:event_lineWrappingToggleButtonActionPerformed
 
     private void showUnprintablesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showUnprintablesToggleButtonActionPerformed
         codeArea.setShowUnprintableCharacters(showUnprintablesToggleButton.isSelected());
+        preferences.putBoolean(PREFERENCES_SHOW_NONPRINTABLES, lineWrappingToggleButton.isSelected());
     }//GEN-LAST:event_showUnprintablesToggleButtonActionPerformed
 
     private void codeTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_codeTypeComboBoxActionPerformed
-        codeArea.setCodeType(CodeType.values()[codeTypeComboBox.getSelectedIndex()]);
+        CodeType codeType = CodeType.values()[codeTypeComboBox.getSelectedIndex()];
+        codeArea.setCodeType(codeType);
+        preferences.put(PREFERENCES_CODE_TYPE, codeType.name());
     }//GEN-LAST:event_codeTypeComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1084,6 +1127,26 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 
     public CodeArea getCodeArea() {
         return codeArea;
+    }
+
+    private void loadFromPreferences() {
+        deltaMemoryMode = preferences.getBoolean(PREFERENCES_DELTA_MODE, true);
+        CodeType codeType = CodeType.valueOf(preferences.get(PREFERENCES_CODE_TYPE, "HEXADECIMAL"));
+        codeArea.setCodeType(codeType);
+        codeTypeComboBox.setSelectedIndex(codeType.ordinal());
+        String selectedEncoding = preferences.get(PREFERENCES_ENCODING_SELECTED, "UTF-8");
+        statusPanel.setEncoding(selectedEncoding);
+        codeArea.setCharset(Charset.forName(selectedEncoding));
+
+        boolean showNonprintables = preferences.getBoolean(PREFERENCES_SHOW_NONPRINTABLES, false);
+        showUnprintablesToggleButton.setSelected(showNonprintables);
+        codeArea.setShowUnprintableCharacters(showNonprintables);
+
+        boolean lineWrapping = preferences.getBoolean(PREFERENCES_LINE_WRAPPING, false);
+        codeArea.setWrapMode(lineWrapping);
+        lineWrappingToggleButton.setSelected(lineWrapping);
+
+        encodingsHandler.loadFromPreferences(preferences);
     }
 
     public static interface CharsetChangeListener {
