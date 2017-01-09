@@ -64,7 +64,6 @@ import org.exbin.framework.editor.text.TextEncodingStatusApi;
 import org.exbin.utils.binary_data.BinaryData;
 import org.exbin.utils.binary_data.EditableBinaryData;
 import org.exbin.utils.binary_data.PagedData;
-import org.netbeans.api.queries.FileEncodingQuery;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.UndoRedo;
 import org.openide.loaders.DataObject;
@@ -495,7 +494,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 
     public void saveDataObject(DataObject dataObject) throws IOException {
         node.saveFile(dataObject);
-        undoHandler.clear();
+        undoHandler.setSyncPoint();
         setModified(false);
         documentOriginalSize = codeArea.getDataSize();
         updateCurrentDocumentSize();
