@@ -115,10 +115,15 @@ public class HexSearchPanel extends javax.swing.JPanel {
 
         findComboBoxEditorComponent = new HexSearchComboBoxPanel();
         findComboBox.setRenderer(new ListCellRenderer<SearchCondition>() {
+            private JPanel panel = new JPanel();
             private final DefaultListCellRenderer listCellRenderer = new DefaultListCellRenderer();
 
             @Override
             public Component getListCellRendererComponent(JList<? extends SearchCondition> list, SearchCondition value, int index, boolean isSelected, boolean cellHasFocus) {
+                if (value == null) {
+                    return panel;
+                }
+
                 if (value.getSearchMode() == SearchCondition.SearchMode.TEXT) {
                     return listCellRenderer.getListCellRendererComponent(list, value.getSearchText(), index, isSelected, cellHasFocus);
                 } else {
@@ -195,10 +200,15 @@ public class HexSearchPanel extends javax.swing.JPanel {
 
         replaceComboBoxEditorComponent = new HexSearchComboBoxPanel();
         replaceComboBox.setRenderer(new ListCellRenderer<SearchCondition>() {
+            private JPanel panel = new JPanel();
             private final DefaultListCellRenderer listCellRenderer = new DefaultListCellRenderer();
 
             @Override
             public Component getListCellRendererComponent(JList<? extends SearchCondition> list, SearchCondition value, int index, boolean isSelected, boolean cellHasFocus) {
+                if (value == null) {
+                    return panel;
+                }
+
                 if (value.getSearchMode() == SearchCondition.SearchMode.TEXT) {
                     return listCellRenderer.getListCellRendererComponent(list, value.getSearchText(), index, isSelected, cellHasFocus);
                 } else {

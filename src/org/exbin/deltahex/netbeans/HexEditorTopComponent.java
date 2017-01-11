@@ -437,7 +437,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     /**
      * Attempts to release current file and warn if document was modified.
      *
-     * @return true if successfull
+     * @return true if successful
      */
     private boolean releaseFile() {
 
