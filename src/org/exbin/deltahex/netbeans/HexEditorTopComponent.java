@@ -48,6 +48,7 @@ import org.exbin.deltahex.Section;
 import org.exbin.deltahex.delta.DeltaDocument;
 import org.exbin.deltahex.delta.SegmentsRepository;
 import org.exbin.deltahex.highlight.swing.HighlightCodeAreaPainter;
+import org.exbin.deltahex.highlight.swing.HighlightNonAsciiCodeAreaPainter;
 import org.exbin.deltahex.netbeans.panel.HexSearchPanel;
 import org.exbin.deltahex.netbeans.panel.HexSearchPanelApi;
 import org.exbin.deltahex.operation.swing.CodeAreaOperationCommandHandler;
@@ -128,7 +129,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         preferences = NbPreferences.forModule(HexEditorTopComponent.class);
 
         codeArea = new CodeArea();
-        codeArea.setPainter(new HighlightCodeAreaPainter(codeArea));
+        codeArea.setPainter(new HighlightNonAsciiCodeAreaPainter(codeArea));
         codeArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         codeArea.getCaret().setBlinkRate(300);
         statusPanel = new HexStatusPanel();
