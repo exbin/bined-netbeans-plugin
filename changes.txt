@@ -1,3 +1,7 @@
+0.1.5
+- Color by byte values
+- Added File/Open File as Hex action
+
 0.1.4 (2017-01-08)
 - Fixed charset for clipboard copy/paste
 - Added status panel
