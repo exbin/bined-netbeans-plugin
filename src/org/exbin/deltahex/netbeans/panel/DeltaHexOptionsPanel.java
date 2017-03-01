@@ -17,15 +17,17 @@
 package org.exbin.deltahex.netbeans.panel;
 
 import java.util.prefs.Preferences;
+import org.exbin.deltahex.CodeAreaLineNumberLength;
 import org.exbin.deltahex.CodeType;
 import org.exbin.deltahex.netbeans.HexEditorTopComponent;
+import org.exbin.deltahex.swing.CodeAreaSpace;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.openide.util.NbPreferences;
 
 /**
  * Hexadecimal editor options panel.
  *
- * @version 0.1.5 2017/02/28
+ * @version 0.1.5 2017/03/01
  * @author ExBin Project (http://exbin.org)
  */
 final class DeltaHexOptionsPanel extends javax.swing.JPanel {
@@ -49,66 +51,289 @@ final class DeltaHexOptionsPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        tabbedPane = new javax.swing.JTabbedPane();
+        layoutPanel = new javax.swing.JPanel();
+        wrapLineModeCheckBox = new javax.swing.JCheckBox();
+        lineLengthLabel = new javax.swing.JLabel();
+        lineLengthSpinner = new javax.swing.JSpinner();
+        headerPanel = new javax.swing.JPanel();
+        showHeaderCheckBox = new javax.swing.JCheckBox();
+        headerSpaceLabel = new javax.swing.JLabel();
+        headerSpaceComboBox = new javax.swing.JComboBox<>();
+        headerSpaceSpinner = new javax.swing.JSpinner();
+        lineNumbersPanel = new javax.swing.JPanel();
+        showLineNumbersCheckBox = new javax.swing.JCheckBox();
+        lineNumberLengthLabel = new javax.swing.JLabel();
+        lineNumbersLengthComboBox = new javax.swing.JComboBox<>();
+        lineNumbersLengthSpinner = new javax.swing.JSpinner();
+        lineNumberSpaceLabel = new javax.swing.JLabel();
+        lineNumbersSpaceComboBox = new javax.swing.JComboBox<>();
+        lineNumbersSpaceSpinner = new javax.swing.JSpinner();
+        byteGroupSizeLabel = new javax.swing.JLabel();
+        byteGroupSizeSpinner = new javax.swing.JSpinner();
+        spaceGroupSizeSpinner = new javax.swing.JSpinner();
+        spaceGroupSizeLabel = new javax.swing.JLabel();
+        modePanel = new javax.swing.JPanel();
         codeTypeScrollModeLabel = new javax.swing.JLabel();
         codeTypeComboBox = new javax.swing.JComboBox<>();
+        decorationPanel = new javax.swing.JPanel();
+
+        setLayout(new java.awt.BorderLayout());
+
+        org.openide.awt.Mnemonics.setLocalizedText(wrapLineModeCheckBox, resourceBundle.getString("DeltaHexOptionsPanel.wrapLineModeCheckBox.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(lineLengthLabel, resourceBundle.getString("DeltaHexOptionsPanel.lineLengthLabel.text")); // NOI18N
+
+        lineLengthSpinner.setModel(new javax.swing.SpinnerNumberModel(16, 1, null, 1));
+
+        headerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceBundle.getString("DeltaHexOptionsPanel.headerPanel.border.title"))); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(showHeaderCheckBox, resourceBundle.getString("DeltaHexOptionsPanel.showHeaderCheckBox.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(headerSpaceLabel, resourceBundle.getString("DeltaHexOptionsPanel.headerSpaceLabel.text")); // NOI18N
+
+        headerSpaceComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NONE", "SPECIFIED", "QUARTER_UNIT", "HALF_UNIT", "ONE_UNIT", "ONE_AND_HALF_UNIT", "DOUBLE_UNIT" }));
+        headerSpaceComboBox.setSelectedIndex(2);
+
+        headerSpaceSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+
+        javax.swing.GroupLayout headerPanelLayout = new javax.swing.GroupLayout(headerPanel);
+        headerPanel.setLayout(headerPanelLayout);
+        headerPanelLayout.setHorizontalGroup(
+            headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(headerPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(headerPanelLayout.createSequentialGroup()
+                        .addComponent(headerSpaceComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(headerSpaceSpinner, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE))
+                    .addGroup(headerPanelLayout.createSequentialGroup()
+                        .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(showHeaderCheckBox)
+                            .addComponent(headerSpaceLabel))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        headerPanelLayout.setVerticalGroup(
+            headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(headerPanelLayout.createSequentialGroup()
+                .addComponent(showHeaderCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(headerSpaceLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(headerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(headerSpaceComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(headerSpaceSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        lineNumbersPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceBundle.getString("DeltaHexOptionsPanel.lineNumbersPanel.border.title"))); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(showLineNumbersCheckBox, resourceBundle.getString("DeltaHexOptionsPanel.showLineNumbersCheckBox.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(lineNumberLengthLabel, resourceBundle.getString("DeltaHexOptionsPanel.lineNumberLengthLabel.text")); // NOI18N
+
+        lineNumbersLengthComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "AUTO", "SPECIFIED" }));
+        lineNumbersLengthComboBox.setSelectedIndex(1);
+
+        lineNumbersLengthSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        lineNumbersLengthSpinner.setValue(8);
+
+        org.openide.awt.Mnemonics.setLocalizedText(lineNumberSpaceLabel, resourceBundle.getString("DeltaHexOptionsPanel.lineNumberSpaceLabel.text")); // NOI18N
+
+        lineNumbersSpaceComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NONE", "SPECIFIED", "QUARTER_UNIT", "HALF_UNIT", "ONE_UNIT", "ONE_AND_HALF_UNIT", "DOUBLE_UNIT" }));
+        lineNumbersSpaceComboBox.setSelectedIndex(4);
+
+        lineNumbersSpaceSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+
+        javax.swing.GroupLayout lineNumbersPanelLayout = new javax.swing.GroupLayout(lineNumbersPanel);
+        lineNumbersPanel.setLayout(lineNumbersPanelLayout);
+        lineNumbersPanelLayout.setHorizontalGroup(
+            lineNumbersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(lineNumbersPanelLayout.createSequentialGroup()
+                .addComponent(showLineNumbersCheckBox)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(lineNumbersPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(lineNumbersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(lineNumbersPanelLayout.createSequentialGroup()
+                        .addComponent(lineNumbersLengthComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lineNumbersLengthSpinner))
+                    .addGroup(lineNumbersPanelLayout.createSequentialGroup()
+                        .addGroup(lineNumbersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lineNumberLengthLabel)
+                            .addComponent(lineNumberSpaceLabel))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(lineNumbersPanelLayout.createSequentialGroup()
+                        .addComponent(lineNumbersSpaceComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lineNumbersSpaceSpinner)))
+                .addContainerGap())
+        );
+        lineNumbersPanelLayout.setVerticalGroup(
+            lineNumbersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(lineNumbersPanelLayout.createSequentialGroup()
+                .addComponent(showLineNumbersCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lineNumberLengthLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(lineNumbersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lineNumbersLengthComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lineNumbersLengthSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lineNumberSpaceLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(lineNumbersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lineNumbersSpaceComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lineNumbersSpaceSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        org.openide.awt.Mnemonics.setLocalizedText(byteGroupSizeLabel, resourceBundle.getString("DeltaHexOptionsPanel.byteGroupSizeLabel.text")); // NOI18N
+
+        byteGroupSizeSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+
+        spaceGroupSizeSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+
+        org.openide.awt.Mnemonics.setLocalizedText(spaceGroupSizeLabel, resourceBundle.getString("DeltaHexOptionsPanel.spaceGroupSizeLabel.text")); // NOI18N
+
+        javax.swing.GroupLayout layoutPanelLayout = new javax.swing.GroupLayout(layoutPanel);
+        layoutPanel.setLayout(layoutPanelLayout);
+        layoutPanelLayout.setHorizontalGroup(
+            layoutPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layoutPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layoutPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layoutPanelLayout.createSequentialGroup()
+                        .addGroup(layoutPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lineLengthLabel)
+                            .addComponent(wrapLineModeCheckBox))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layoutPanelLayout.createSequentialGroup()
+                        .addGroup(layoutPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(spaceGroupSizeSpinner, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(byteGroupSizeSpinner, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(headerPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(lineLengthSpinner, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lineNumbersPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layoutPanelLayout.createSequentialGroup()
+                                .addGroup(layoutPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(byteGroupSizeLabel, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(spaceGroupSizeLabel, javax.swing.GroupLayout.Alignment.LEADING))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addContainerGap())))
+        );
+        layoutPanelLayout.setVerticalGroup(
+            layoutPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layoutPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(wrapLineModeCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lineLengthLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lineLengthSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(headerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lineNumbersPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(byteGroupSizeLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(byteGroupSizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(spaceGroupSizeLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(spaceGroupSizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(12, Short.MAX_VALUE))
+        );
+
+        tabbedPane.addTab(resourceBundle.getString("DeltaHexOptionsPanel.layoutPanel.TabConstraints.tabTitle"), layoutPanel); // NOI18N
 
         org.openide.awt.Mnemonics.setLocalizedText(codeTypeScrollModeLabel, resourceBundle.getString("DeltaHexOptionsPanel.codeTypeScrollModeLabel.text")); // NOI18N
 
         codeTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "BINARY", "OCTAL", "DECIMAL", "HEXADECIMAL" }));
         codeTypeComboBox.setSelectedIndex(3);
-        codeTypeComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                codeTypeComboBoxActionPerformed(evt);
-            }
-        });
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        javax.swing.GroupLayout modePanelLayout = new javax.swing.GroupLayout(modePanel);
+        modePanel.setLayout(modePanelLayout);
+        modePanelLayout.setHorizontalGroup(
+            modePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(modePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(modePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(codeTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(codeTypeScrollModeLabel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(425, Short.MAX_VALUE))
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        modePanelLayout.setVerticalGroup(
+            modePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(modePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(codeTypeScrollModeLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(codeTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(109, Short.MAX_VALUE))
+                .addContainerGap(421, Short.MAX_VALUE))
         );
+
+        tabbedPane.addTab(resourceBundle.getString("DeltaHexOptionsPanel.modePanel.TabConstraints.tabTitle"), modePanel); // NOI18N
+
+        javax.swing.GroupLayout decorationPanelLayout = new javax.swing.GroupLayout(decorationPanel);
+        decorationPanel.setLayout(decorationPanelLayout);
+        decorationPanelLayout.setHorizontalGroup(
+            decorationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 613, Short.MAX_VALUE)
+        );
+        decorationPanelLayout.setVerticalGroup(
+            decorationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 473, Short.MAX_VALUE)
+        );
+
+        tabbedPane.addTab(resourceBundle.getString("DeltaHexOptionsPanel.decorationPanel.TabConstraints.tabTitle"), decorationPanel); // NOI18N
+
+        add(tabbedPane, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void codeTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_codeTypeComboBoxActionPerformed
-        // codeArea.setCodeType(CodeType.values()[codeTypeComboBox.getSelectedIndex()]);
-    }//GEN-LAST:event_codeTypeComboBoxActionPerformed
-
     void load() {
+        // Layout
+        wrapLineModeCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_LINE_WRAPPING, false));
+        lineLengthSpinner.setValue(preferences.getInt(HexEditorTopComponent.PREFERENCES_BYTES_PER_LINE, 16));
+        showHeaderCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_HEADER, true));
+        String headerSpaceTypeName = preferences.get(HexEditorTopComponent.PREFERENCES_HEADER_SPACE_TYPE, CodeAreaSpace.SpaceType.HALF_UNIT.name());
+        CodeAreaSpace.SpaceType headerSpaceType = CodeAreaSpace.SpaceType.valueOf(headerSpaceTypeName);
+        headerSpaceComboBox.setSelectedIndex(headerSpaceType.ordinal());
+        headerSpaceSpinner.setValue(preferences.getInt(HexEditorTopComponent.PREFERENCES_HEADER_SPACE, 0));
+        showLineNumbersCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_LINE_NUMBERS, true));
+        String lineNumbersSpaceTypeName = preferences.get(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE_TYPE, CodeAreaSpace.SpaceType.ONE_UNIT.name());
+        CodeAreaSpace.SpaceType lineNumbersSpaceType = CodeAreaSpace.SpaceType.valueOf(lineNumbersSpaceTypeName);
+        lineNumbersSpaceComboBox.setSelectedIndex(lineNumbersSpaceType.ordinal());
+        lineNumbersSpaceSpinner.setValue(preferences.getInt(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE, 8));
+        String lineNumbersLengthTypeName = preferences.get(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH_TYPE, CodeAreaLineNumberLength.LineNumberType.SPECIFIED.name());
+        CodeAreaLineNumberLength.LineNumberType lineNumbersLengthType = CodeAreaLineNumberLength.LineNumberType.valueOf(lineNumbersLengthTypeName);
+        lineNumbersLengthComboBox.setSelectedIndex(lineNumbersLengthType.ordinal());
+        lineNumbersLengthSpinner.setValue(preferences.getInt(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH, 8));
+
+        // Mode
         CodeType codeType = CodeType.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_CODE_TYPE, "HEXADECIMAL"));
         codeTypeComboBox.setSelectedIndex(codeType.ordinal());
-        // TODO read settings and initialize GUI
-        // Example:        
-        // someCheckBox.setSelected(Preferences.userNodeForPackage(DeltaHexPanel.class).getBoolean("someFlag", false));
-        // or for org.openide.util with API spec. version >= 7.4:
-        // someCheckBox.setSelected(NbPreferences.forModule(DeltaHexPanel.class).getBoolean("someFlag", false));
-        // or:
-        // someTextField.setText(SomeSystemOption.getDefault().getSomeStringProperty());
     }
 
     void store() {
+        // Layout
+        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_LINE_WRAPPING, wrapLineModeCheckBox.isSelected());
+        preferences.putInt(HexEditorTopComponent.PREFERENCES_BYTES_PER_LINE, (Integer) lineLengthSpinner.getValue());
+        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_SHOW_HEADER, showHeaderCheckBox.isSelected());
+        preferences.put(HexEditorTopComponent.PREFERENCES_HEADER_SPACE_TYPE, CodeAreaSpace.SpaceType.values()[headerSpaceComboBox.getSelectedIndex()].name());
+        preferences.putInt(HexEditorTopComponent.PREFERENCES_HEADER_SPACE, (Integer) headerSpaceSpinner.getValue());
+        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_SHOW_LINE_NUMBERS, showLineNumbersCheckBox.isSelected());
+        preferences.put(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE_TYPE, CodeAreaSpace.SpaceType.values()[lineNumbersSpaceComboBox.getSelectedIndex()].name());
+        preferences.putInt(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE, (Integer) lineNumbersSpaceSpinner.getValue());
+        preferences.put(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH_TYPE, CodeAreaLineNumberLength.LineNumberType.values()[lineNumbersLengthComboBox.getSelectedIndex()].name());
+        preferences.putInt(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH, (Integer) lineNumbersLengthSpinner.getValue());
+
+        // Mode
         preferences.put(HexEditorTopComponent.PREFERENCES_CODE_TYPE, CodeType.values()[codeTypeComboBox.getSelectedIndex()].name());
-        // TODO store modified settings
-        // Example:
-        // Preferences.userNodeForPackage(DeltaHexPanel.class).putBoolean("someFlag", someCheckBox.isSelected());
-        // or for org.openide.util with API spec. version >= 7.4:
-        // NbPreferences.forModule(DeltaHexPanel.class).putBoolean("someFlag", someCheckBox.isSelected());
-        // or:
-        // SomeSystemOption.getDefault().setSomeStringProperty(someTextField.getText());
     }
 
     boolean valid() {
@@ -117,7 +342,31 @@ final class DeltaHexOptionsPanel extends javax.swing.JPanel {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel byteGroupSizeLabel;
+    private javax.swing.JSpinner byteGroupSizeSpinner;
     private javax.swing.JComboBox<String> codeTypeComboBox;
     private javax.swing.JLabel codeTypeScrollModeLabel;
+    private javax.swing.JPanel decorationPanel;
+    private javax.swing.JPanel headerPanel;
+    private javax.swing.JComboBox<String> headerSpaceComboBox;
+    private javax.swing.JLabel headerSpaceLabel;
+    private javax.swing.JSpinner headerSpaceSpinner;
+    private javax.swing.JPanel layoutPanel;
+    private javax.swing.JLabel lineLengthLabel;
+    private javax.swing.JSpinner lineLengthSpinner;
+    private javax.swing.JLabel lineNumberLengthLabel;
+    private javax.swing.JLabel lineNumberSpaceLabel;
+    private javax.swing.JComboBox<String> lineNumbersLengthComboBox;
+    private javax.swing.JSpinner lineNumbersLengthSpinner;
+    private javax.swing.JPanel lineNumbersPanel;
+    private javax.swing.JComboBox<String> lineNumbersSpaceComboBox;
+    private javax.swing.JSpinner lineNumbersSpaceSpinner;
+    private javax.swing.JPanel modePanel;
+    private javax.swing.JCheckBox showHeaderCheckBox;
+    private javax.swing.JCheckBox showLineNumbersCheckBox;
+    private javax.swing.JLabel spaceGroupSizeLabel;
+    private javax.swing.JSpinner spaceGroupSizeSpinner;
+    private javax.swing.JTabbedPane tabbedPane;
+    private javax.swing.JCheckBox wrapLineModeCheckBox;
     // End of variables declaration//GEN-END:variables
 }

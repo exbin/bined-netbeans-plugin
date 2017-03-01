@@ -80,7 +80,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.4 2017/01/08
+ * @version 0.1.5 2017/03/01
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)
@@ -96,6 +96,15 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     public static final String PREFERENCES_SHOW_NONPRINTABLES = "showNonpritables";
     public static final String PREFERENCES_ENCODING_SELECTED = "selectedEncoding";
     public static final String PREFERENCES_ENCODING_PREFIX = "textEncoding.";
+    public static final String PREFERENCES_BYTES_PER_LINE = "bytesPerLine";
+    public static final String PREFERENCES_SHOW_HEADER = "showHeader";
+    public static final String PREFERENCES_HEADER_SPACE_TYPE = "headerSpaceType";
+    public static final String PREFERENCES_HEADER_SPACE = "headerSpace";
+    public static final String PREFERENCES_SHOW_LINE_NUMBERS = "showLineNumbers";
+    public static final String PREFERENCES_LINE_NUMBERS_LENGTH_TYPE = "lineNumbersLengthType";
+    public static final String PREFERENCES_LINE_NUMBERS_LENGTH = "lineNumbersLength";
+    public static final String PREFERENCES_LINE_NUMBERS_SPACE_TYPE = "lineNumbersSpaceType";
+    public static final String PREFERENCES_LINE_NUMBERS_SPACE = "lineNumbersSpace";
 
     private final Preferences preferences;
     private final HexEditorNode node;
@@ -1137,6 +1146,8 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         String selectedEncoding = preferences.get(PREFERENCES_ENCODING_SELECTED, "UTF-8");
         statusPanel.setEncoding(selectedEncoding);
         codeArea.setCharset(Charset.forName(selectedEncoding));
+        int bytesPerLine = preferences.getInt(PREFERENCES_BYTES_PER_LINE, 16);
+        codeArea.setLineLength(bytesPerLine);
 
         boolean showNonprintables = preferences.getBoolean(PREFERENCES_SHOW_NONPRINTABLES, false);
         showUnprintablesToggleButton.setSelected(showNonprintables);
