@@ -80,7 +80,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.5 2017/03/01
+ * @version 0.1.5 2017/03/03
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)
@@ -105,6 +105,11 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     public static final String PREFERENCES_LINE_NUMBERS_LENGTH = "lineNumbersLength";
     public static final String PREFERENCES_LINE_NUMBERS_SPACE_TYPE = "lineNumbersSpaceType";
     public static final String PREFERENCES_LINE_NUMBERS_SPACE = "lineNumbersSpace";
+    public static final String PREFERENCES_VIEW_MODE = "viewMode";
+    public static final String PREFERENCES_BACKGROUND_MODE = "backgroundMode";
+    public static final String PREFERENCES_SHOW_LINE_NUMBERS_BACKGROUND = "showLineNumbersBackground";
+    public static final String PREFERENCES_POSITION_CODE_TYPE = "positionCodeType";
+    public static final String PREFERENCES_HEX_CHARACTERS_CASE = "hexCharactersCase";
 
     private final Preferences preferences;
     private final HexEditorNode node;
