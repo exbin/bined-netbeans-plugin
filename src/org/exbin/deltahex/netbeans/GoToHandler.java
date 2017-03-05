@@ -40,7 +40,7 @@ public class GoToHandler {
 
     private final ResourceBundle resourceBundle;
 
-    private CodeArea codeArea;
+    private final CodeArea codeArea;
     private Action goToLineAction;
 
     public GoToHandler(CodeArea codeArea) {

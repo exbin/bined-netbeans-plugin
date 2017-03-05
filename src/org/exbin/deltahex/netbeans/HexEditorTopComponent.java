@@ -17,6 +17,7 @@ package org.exbin.deltahex.netbeans;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dialog;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,6 +35,7 @@ import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -49,6 +51,7 @@ import org.exbin.deltahex.delta.DeltaDocument;
 import org.exbin.deltahex.delta.SegmentsRepository;
 import org.exbin.deltahex.highlight.swing.HighlightCodeAreaPainter;
 import org.exbin.deltahex.highlight.swing.HighlightNonAsciiCodeAreaPainter;
+import org.exbin.deltahex.netbeans.panel.DeltaHexOptionsPanel;
 import org.exbin.deltahex.netbeans.panel.HexSearchPanel;
 import org.exbin.deltahex.netbeans.panel.HexSearchPanelApi;
 import org.exbin.deltahex.operation.swing.CodeAreaOperationCommandHandler;
@@ -62,10 +65,15 @@ import org.exbin.framework.deltahex.panel.ReplaceParameters;
 import org.exbin.framework.deltahex.panel.SearchCondition;
 import org.exbin.framework.deltahex.panel.SearchParameters;
 import org.exbin.framework.editor.text.TextEncodingStatusApi;
+import org.exbin.framework.gui.utils.WindowUtils;
+import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
+import org.exbin.framework.gui.utils.panel.DefaultControlPanel;
 import org.exbin.utils.binary_data.BinaryData;
 import org.exbin.utils.binary_data.EditableBinaryData;
 import org.exbin.utils.binary_data.PagedData;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
 import org.openide.awt.UndoRedo;
 import org.openide.loaders.DataObject;
 import org.openide.nodes.Node;
@@ -80,7 +88,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.5 2017/03/03
+ * @version 0.1.5 2017/03/05
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)
@@ -110,6 +118,10 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     public static final String PREFERENCES_SHOW_LINE_NUMBERS_BACKGROUND = "showLineNumbersBackground";
     public static final String PREFERENCES_POSITION_CODE_TYPE = "positionCodeType";
     public static final String PREFERENCES_HEX_CHARACTERS_CASE = "hexCharactersCase";
+    public static final String PREFERENCES_DECORATION_HEADER_LINE = "decorationHeaderLine";
+    public static final String PREFERENCES_DECORATION_PREVIEW_LINE = "decorationPreviewLine";
+    public static final String PREFERENCES_DECORATION_BOX = "decorationBox";
+    public static final String PREFERENCES_DECORATION_LINENUM_LINE = "decorationLineNumLine";
 
     private final Preferences preferences;
     private final HexEditorNode node;
@@ -799,6 +811,35 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
             }
         });
         result.add(replaceMenuItem);
+        result.addSeparator();
+        final JMenuItem optionsMenuItem = new JMenuItem("Options...");
+        optionsMenuItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final DeltaHexOptionsPanel optionsPanel = new DeltaHexOptionsPanel();
+                optionsPanel.setFromCodeArea(codeArea);
+                DefaultControlPanel optionsControlPanel = new DefaultControlPanel();
+                optionsPanel.setVisible(true);
+                JPanel dialogPanel = WindowUtils.createDialogPanel(optionsPanel, optionsControlPanel);
+                dialogPanel.setVisible(true);
+                DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Options", true, new Object[0], null, 0, null, null);
+
+                final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
+                optionsControlPanel.setHandler(new DefaultControlHandler() {
+                    @Override
+                    public void controlActionPerformed(DefaultControlHandler.ControlActionType actionType) {
+                        if (actionType == DefaultControlHandler.ControlActionType.OK) {
+                            optionsPanel.applyToCodeArea(codeArea);
+                        }
+
+                        WindowUtils.closeWindow(dialog);
+                    }
+                });
+                WindowUtils.assignGlobalKeyListener(dialog, optionsControlPanel.createOkCancelListener());
+                dialog.setVisible(true);
+            }
+        });
+        result.add(optionsMenuItem);
 
         return result;
     }

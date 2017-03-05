@@ -27,14 +27,14 @@ import org.openide.util.Lookup;
 /**
  * Hexadecimal editor options panel.
  *
- * @version 0.1.5 2017/02/28
+ * @version 0.1.5 2017/03/05
  * @author ExBin Project (http://exbin.org)
  */
 @OptionsPanelController.SubRegistration(
-        location = "Editor",
+        location = "Advanced",
         displayName = "#AdvancedOption_DisplayName_DeltaHex",
         keywords = "#AdvancedOption_Keywords_DeltaHex",
-        keywordsCategory = "Editor/DeltaHex"
+        keywordsCategory = "Advanced/DeltaHex"
 )
 @org.openide.util.NbBundle.Messages({"AdvancedOption_DisplayName_DeltaHex=DeltaHex", "AdvancedOption_Keywords_DeltaHex=deltahex hexadecimal"})
 public final class DeltaHexOptionsPanelController extends OptionsPanelController {
