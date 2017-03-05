@@ -51,7 +51,7 @@ import org.exbin.deltahex.delta.DeltaDocument;
 import org.exbin.deltahex.delta.SegmentsRepository;
 import org.exbin.deltahex.highlight.swing.HighlightCodeAreaPainter;
 import org.exbin.deltahex.highlight.swing.HighlightNonAsciiCodeAreaPainter;
-import org.exbin.deltahex.netbeans.panel.DeltaHexOptionsPanel;
+import org.exbin.deltahex.netbeans.panel.DeltaHexOptionsPanelBorder;
 import org.exbin.deltahex.netbeans.panel.HexSearchPanel;
 import org.exbin.deltahex.netbeans.panel.HexSearchPanelApi;
 import org.exbin.deltahex.operation.swing.CodeAreaOperationCommandHandler;
@@ -67,7 +67,8 @@ import org.exbin.framework.deltahex.panel.SearchParameters;
 import org.exbin.framework.editor.text.TextEncodingStatusApi;
 import org.exbin.framework.gui.utils.WindowUtils;
 import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
-import org.exbin.framework.gui.utils.panel.DefaultControlPanel;
+import org.exbin.framework.gui.utils.handler.OptionsControlHandler;
+import org.exbin.framework.gui.utils.panel.OptionsControlPanel;
 import org.exbin.utils.binary_data.BinaryData;
 import org.exbin.utils.binary_data.EditableBinaryData;
 import org.exbin.utils.binary_data.PagedData;
@@ -816,20 +817,23 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         optionsMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                final DeltaHexOptionsPanel optionsPanel = new DeltaHexOptionsPanel();
+                final DeltaHexOptionsPanelBorder optionsPanel = new DeltaHexOptionsPanelBorder();
                 optionsPanel.setFromCodeArea(codeArea);
-                DefaultControlPanel optionsControlPanel = new DefaultControlPanel();
+                OptionsControlPanel optionsControlPanel = new OptionsControlPanel();
                 optionsPanel.setVisible(true);
                 JPanel dialogPanel = WindowUtils.createDialogPanel(optionsPanel, optionsControlPanel);
                 dialogPanel.setVisible(true);
                 DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Options", true, new Object[0], null, 0, null, null);
 
                 final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
-                optionsControlPanel.setHandler(new DefaultControlHandler() {
+                optionsControlPanel.setHandler(new OptionsControlHandler() {
                     @Override
-                    public void controlActionPerformed(DefaultControlHandler.ControlActionType actionType) {
-                        if (actionType == DefaultControlHandler.ControlActionType.OK) {
+                    public void controlActionPerformed(OptionsControlHandler.ControlActionType actionType) {
+                        if (actionType == OptionsControlHandler.ControlActionType.SAVE) {
                             optionsPanel.applyToCodeArea(codeArea);
+                        }
+                        if (actionType != OptionsControlHandler.ControlActionType.CANCEL) {
+                            optionsPanel.store();
                         }
 
                         WindowUtils.closeWindow(dialog);
