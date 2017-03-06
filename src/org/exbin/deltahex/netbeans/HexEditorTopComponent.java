@@ -41,12 +41,16 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import org.exbin.deltahex.CaretMovedListener;
 import org.exbin.deltahex.CaretPosition;
+import org.exbin.deltahex.CodeAreaLineNumberLength;
 import org.exbin.deltahex.CodeType;
 import org.exbin.deltahex.DataChangedListener;
 import org.exbin.deltahex.EditationAllowed;
 import org.exbin.deltahex.EditationMode;
 import org.exbin.deltahex.EditationModeChangedListener;
+import org.exbin.deltahex.HexCharactersCase;
+import org.exbin.deltahex.PositionCodeType;
 import org.exbin.deltahex.Section;
+import org.exbin.deltahex.ViewMode;
 import org.exbin.deltahex.delta.DeltaDocument;
 import org.exbin.deltahex.delta.SegmentsRepository;
 import org.exbin.deltahex.highlight.swing.HighlightCodeAreaPainter;
@@ -58,6 +62,7 @@ import org.exbin.deltahex.operation.swing.CodeAreaOperationCommandHandler;
 import org.exbin.deltahex.swing.CodeArea;
 import org.exbin.deltahex.operation.BinaryDataCommand;
 import org.exbin.deltahex.operation.undo.BinaryDataUndoUpdateListener;
+import org.exbin.deltahex.swing.CodeAreaSpace;
 import org.exbin.framework.deltahex.CodeAreaPopupMenuHandler;
 import org.exbin.framework.deltahex.HexStatusApi;
 import org.exbin.framework.deltahex.panel.HexStatusPanel;
@@ -66,7 +71,6 @@ import org.exbin.framework.deltahex.panel.SearchCondition;
 import org.exbin.framework.deltahex.panel.SearchParameters;
 import org.exbin.framework.editor.text.TextEncodingStatusApi;
 import org.exbin.framework.gui.utils.WindowUtils;
-import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
 import org.exbin.framework.gui.utils.handler.OptionsControlHandler;
 import org.exbin.framework.gui.utils.panel.OptionsControlPanel;
 import org.exbin.utils.binary_data.BinaryData;
@@ -89,7 +93,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.5 2017/03/05
+ * @version 0.1.5 2017/03/06
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)
@@ -99,10 +103,10 @@ import org.openide.windows.WindowManager;
 @TopComponent.OpenActionRegistration(displayName = "#CTL_HexEditorAction", preferredID = "HexEditorTopComponent")
 public final class HexEditorTopComponent extends TopComponent implements UndoRedo.Provider {
 
-    public static final String PREFERENCES_DELTA_MODE = "deltaMode";
+    public static final String PREFERENCES_MEMORY_DELTA_MODE = "deltaMode";
     public static final String PREFERENCES_CODE_TYPE = "codeType";
     public static final String PREFERENCES_LINE_WRAPPING = "lineWrapping";
-    public static final String PREFERENCES_SHOW_NONPRINTABLES = "showNonpritables";
+    public static final String PREFERENCES_SHOW_UNPRINTABLES = "showNonpritables";
     public static final String PREFERENCES_ENCODING_SELECTED = "selectedEncoding";
     public static final String PREFERENCES_ENCODING_PREFIX = "textEncoding.";
     public static final String PREFERENCES_BYTES_PER_LINE = "bytesPerLine";
@@ -123,6 +127,9 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     public static final String PREFERENCES_DECORATION_PREVIEW_LINE = "decorationPreviewLine";
     public static final String PREFERENCES_DECORATION_BOX = "decorationBox";
     public static final String PREFERENCES_DECORATION_LINENUM_LINE = "decorationLineNumLine";
+    public static final String PREFERENCES_BYTE_GROUP_SIZE = "byteGroupSize";
+    public static final String PREFERENCES_SPACE_GROUP_SIZE = "spaceGroupSize";
+    public static final String PREFERENCES_CODE_COLORIZATION = "codeColorization";
 
     private final Preferences preferences;
     private final HexEditorNode node;
@@ -241,7 +248,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         setName(NbBundle.getMessage(HexEditorTopComponent.class, "CTL_HexEditorTopComponent"));
         setToolTipText(NbBundle.getMessage(HexEditorTopComponent.class, "HINT_HexEditorTopComponent"));
 
-        codeTypeComboBox.setSelectedIndex(codeArea.getCodeType().ordinal());
+        applyFromCodeArea();
 
         getActionMap().put("copy-to-clipboard", new AbstractAction() {
             @Override
@@ -292,6 +299,12 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         associateLookup(new AbstractLookup(content));
     }
 
+    private void applyFromCodeArea() {
+        codeTypeComboBox.setSelectedIndex(codeArea.getCodeType().ordinal());
+        showUnprintablesToggleButton.setSelected(codeArea.isShowUnprintableCharacters());
+        lineWrappingToggleButton.setSelected(codeArea.isWrapMode());
+    }
+
     public void registerHexStatus(HexStatusApi hexStatusApi) {
         this.hexStatus = hexStatusApi;
         codeArea.addCaretMovedListener(new CaretMovedListener() {
@@ -340,44 +353,50 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
             public void changeMemoryMode(HexStatusApi.MemoryMode memoryMode) {
                 boolean newDeltaMode = memoryMode == HexStatusApi.MemoryMode.DELTA_MODE;
                 if (newDeltaMode != deltaMemoryMode) {
-                    // Switch memory mode
-                    if (dataObject != null) {
-                        // If document is connected to file, attempt to release first if modified and then simply reload
-                        if (isModified()) {
-                            if (releaseFile()) {
-                                deltaMemoryMode = newDeltaMode;
-                                openDataObject(dataObject);
-                                codeArea.clearSelection();
-                                codeArea.setCaretPosition(0);
-                            }
-                        } else {
-                            deltaMemoryMode = newDeltaMode;
-                            openDataObject(dataObject);
-                        }
-                    } else {
-                        // If document unsaved in memory, switch data in code area
-                        if (codeArea.getData() instanceof DeltaDocument) {
-                            PagedData data = new PagedData();
-                            data.insert(0, codeArea.getData());
-                            codeArea.setData(data);
-                            codeArea.getData().dispose();
-                        } else {
-                            BinaryData oldData = codeArea.getData();
-                            DeltaDocument document = segmentsRepository.createDocument();
-                            document.insert(0, oldData);
-                            codeArea.setData(document);
-                            oldData.dispose();
-                        }
-                        undoHandler.clear();
-                        codeArea.notifyDataChanged();
-                        updateCurrentMemoryMode();
-                        deltaMemoryMode = newDeltaMode;
-                    }
-                    deltaMemoryMode = newDeltaMode;
-                    preferences.putBoolean(PREFERENCES_DELTA_MODE, deltaMemoryMode);
+                    switchDeltaMemoryMode(newDeltaMode);
+                    preferences.putBoolean(PREFERENCES_MEMORY_DELTA_MODE, deltaMemoryMode);
                 }
             }
         });
+    }
+
+    private void switchDeltaMemoryMode(boolean newDeltaMode) {
+        if (newDeltaMode != deltaMemoryMode) {
+            // Switch memory mode
+            if (dataObject != null) {
+                // If document is connected to file, attempt to release first if modified and then simply reload
+                if (isModified()) {
+                    if (releaseFile()) {
+                        deltaMemoryMode = newDeltaMode;
+                        openDataObject(dataObject);
+                        codeArea.clearSelection();
+                        codeArea.setCaretPosition(0);
+                    }
+                } else {
+                    deltaMemoryMode = newDeltaMode;
+                    openDataObject(dataObject);
+                }
+            } else {
+                // If document unsaved in memory, switch data in code area
+                if (codeArea.getData() instanceof DeltaDocument) {
+                    PagedData data = new PagedData();
+                    data.insert(0, codeArea.getData());
+                    codeArea.setData(data);
+                    codeArea.getData().dispose();
+                } else {
+                    BinaryData oldData = codeArea.getData();
+                    DeltaDocument document = segmentsRepository.createDocument();
+                    document.insert(0, oldData);
+                    codeArea.setData(document);
+                    oldData.dispose();
+                }
+                undoHandler.clear();
+                codeArea.notifyDataChanged();
+                updateCurrentMemoryMode();
+                deltaMemoryMode = newDeltaMode;
+            }
+            deltaMemoryMode = newDeltaMode;
+        }
     }
 
     public void registerEncodingStatus(TextEncodingStatusApi encodingStatusApi) {
@@ -582,7 +601,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         controlToolBar = new javax.swing.JToolBar();
         lineWrappingToggleButton = new javax.swing.JToggleButton();
         showUnprintablesToggleButton = new javax.swing.JToggleButton();
-        jSeparator1 = new javax.swing.JToolBar.Separator();
+        separator1 = new javax.swing.JToolBar.Separator();
         codeTypeComboBox = new javax.swing.JComboBox<>();
 
         setLayout(new java.awt.BorderLayout());
@@ -610,7 +629,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
             }
         });
         controlToolBar.add(showUnprintablesToggleButton);
-        controlToolBar.add(jSeparator1);
+        controlToolBar.add(separator1);
 
         codeTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "BIN", "OCT", "DEC", "HEX" }));
         codeTypeComboBox.setMaximumSize(new java.awt.Dimension(58, 25));
@@ -646,7 +665,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 
     private void showUnprintablesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showUnprintablesToggleButtonActionPerformed
         codeArea.setShowUnprintableCharacters(showUnprintablesToggleButton.isSelected());
-        preferences.putBoolean(PREFERENCES_SHOW_NONPRINTABLES, lineWrappingToggleButton.isSelected());
+        preferences.putBoolean(PREFERENCES_SHOW_UNPRINTABLES, lineWrappingToggleButton.isSelected());
     }//GEN-LAST:event_showUnprintablesToggleButtonActionPerformed
 
     private void codeTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_codeTypeComboBoxActionPerformed
@@ -660,8 +679,8 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     private javax.swing.JComboBox<String> codeTypeComboBox;
     private javax.swing.JToolBar controlToolBar;
     private javax.swing.JPanel infoToolbar;
-    private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToggleButton lineWrappingToggleButton;
+    private javax.swing.JToolBar.Separator separator1;
     private javax.swing.JToggleButton showUnprintablesToggleButton;
     // End of variables declaration//GEN-END:variables
 
@@ -830,10 +849,13 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
                     @Override
                     public void controlActionPerformed(OptionsControlHandler.ControlActionType actionType) {
                         if (actionType == OptionsControlHandler.ControlActionType.SAVE) {
-                            optionsPanel.applyToCodeArea(codeArea);
+                            optionsPanel.store();
                         }
                         if (actionType != OptionsControlHandler.ControlActionType.CANCEL) {
-                            optionsPanel.store();
+                            optionsPanel.applyToCodeArea(codeArea);
+                            applyFromCodeArea();
+                            switchDeltaMemoryMode(optionsPanel.isDeltaMemoryMode());
+                            codeArea.repaint();
                         }
 
                         WindowUtils.closeWindow(dialog);
@@ -1189,7 +1211,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     }
 
     private void loadFromPreferences() {
-        deltaMemoryMode = preferences.getBoolean(PREFERENCES_DELTA_MODE, true);
+        deltaMemoryMode = preferences.getBoolean(PREFERENCES_MEMORY_DELTA_MODE, true);
         CodeType codeType = CodeType.valueOf(preferences.get(PREFERENCES_CODE_TYPE, "HEXADECIMAL"));
         codeArea.setCodeType(codeType);
         codeTypeComboBox.setSelectedIndex(codeType.ordinal());
@@ -1199,7 +1221,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         int bytesPerLine = preferences.getInt(PREFERENCES_BYTES_PER_LINE, 16);
         codeArea.setLineLength(bytesPerLine);
 
-        boolean showNonprintables = preferences.getBoolean(PREFERENCES_SHOW_NONPRINTABLES, false);
+        boolean showNonprintables = preferences.getBoolean(PREFERENCES_SHOW_UNPRINTABLES, false);
         showUnprintablesToggleButton.setSelected(showNonprintables);
         codeArea.setShowUnprintableCharacters(showNonprintables);
 
@@ -1208,6 +1230,38 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         lineWrappingToggleButton.setSelected(lineWrapping);
 
         encodingsHandler.loadFromPreferences(preferences);
+
+        // Layout
+        codeArea.setShowHeader(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_HEADER, true));
+        String headerSpaceTypeName = preferences.get(HexEditorTopComponent.PREFERENCES_HEADER_SPACE_TYPE, CodeAreaSpace.SpaceType.HALF_UNIT.name());
+        codeArea.setHeaderSpaceType(CodeAreaSpace.SpaceType.valueOf(headerSpaceTypeName));
+        codeArea.setHeaderSpaceSize(preferences.getInt(HexEditorTopComponent.PREFERENCES_HEADER_SPACE, 0));
+        codeArea.setShowLineNumbers(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_LINE_NUMBERS, true));
+        String lineNumbersSpaceTypeName = preferences.get(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE_TYPE, CodeAreaSpace.SpaceType.ONE_UNIT.name());
+        codeArea.setLineNumberSpaceType(CodeAreaSpace.SpaceType.valueOf(lineNumbersSpaceTypeName));
+        codeArea.setLineNumberSpaceSize(preferences.getInt(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE, 8));
+        String lineNumbersLengthTypeName = preferences.get(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH_TYPE, CodeAreaLineNumberLength.LineNumberType.SPECIFIED.name());
+        codeArea.setLineNumberType(CodeAreaLineNumberLength.LineNumberType.valueOf(lineNumbersLengthTypeName));
+        codeArea.setLineNumberSpecifiedLength(preferences.getInt(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH, 8));
+        codeArea.setByteGroupSize(preferences.getInt(HexEditorTopComponent.PREFERENCES_BYTE_GROUP_SIZE, 1));
+        codeArea.setSpaceGroupSize(preferences.getInt(HexEditorTopComponent.PREFERENCES_SPACE_GROUP_SIZE, 0));
+
+        // Mode
+        codeArea.setViewMode(ViewMode.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_VIEW_MODE, ViewMode.DUAL.name())));
+        codeArea.setCodeType(CodeType.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_CODE_TYPE, CodeType.HEXADECIMAL.name())));
+        ((HighlightNonAsciiCodeAreaPainter) codeArea.getPainter()).setNonAsciiHighlightingEnabled(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_CODE_COLORIZATION, true));
+        // Memory mode handled from outside by isDeltaMemoryMode() method, worth fixing?
+
+        // Decoration
+        codeArea.setBackgroundMode(CodeArea.BackgroundMode.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_BACKGROUND_MODE, CodeArea.BackgroundMode.STRIPPED.name())));
+        codeArea.setShowLineNumbers(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_LINE_NUMBERS_BACKGROUND, true));
+        int decorationMode = (preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_HEADER_LINE, true) ? CodeArea.DECORATION_HEADER_LINE : 0)
+                + (preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_PREVIEW_LINE, true) ? CodeArea.DECORATION_PREVIEW_LINE : 0)
+                + (preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_BOX, false) ? CodeArea.DECORATION_BOX : 0)
+                + (preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_LINENUM_LINE, true) ? CodeArea.DECORATION_LINENUM_LINE : 0);
+        codeArea.setDecorationMode(decorationMode);
+        codeArea.setHexCharactersCase(HexCharactersCase.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_HEX_CHARACTERS_CASE, HexCharactersCase.UPPER.name())));
+        codeArea.setPositionCodeType(PositionCodeType.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_POSITION_CODE_TYPE, PositionCodeType.HEXADECIMAL.name())));
     }
 
     public static interface CharsetChangeListener {

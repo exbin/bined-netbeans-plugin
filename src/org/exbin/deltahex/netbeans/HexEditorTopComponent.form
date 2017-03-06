@@ -85,7 +85,7 @@
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="showUnprintablesToggleButtonActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JToolBar$Separator" name="jSeparator1">
+                <Component class="javax.swing.JToolBar$Separator" name="separator1">
                 </Component>
                 <Component class="javax.swing.JComboBox" name="codeTypeComboBox">
                   <Properties>

@@ -16,26 +16,21 @@
  */
 package org.exbin.deltahex.netbeans.panel;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.util.prefs.Preferences;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.plaf.basic.BasicBorders;
 import org.exbin.deltahex.CodeAreaLineNumberLength;
 import org.exbin.deltahex.CodeType;
 import org.exbin.deltahex.HexCharactersCase;
 import org.exbin.deltahex.PositionCodeType;
 import org.exbin.deltahex.ViewMode;
+import org.exbin.deltahex.delta.DeltaDocument;
+import org.exbin.deltahex.highlight.swing.HighlightNonAsciiCodeAreaPainter;
 import org.exbin.deltahex.netbeans.HexEditorTopComponent;
 import org.exbin.deltahex.swing.CodeArea;
 import org.exbin.deltahex.swing.CodeAreaSpace;
@@ -45,7 +40,7 @@ import org.openide.util.NbPreferences;
 /**
  * Hexadecimal editor options panel.
  *
- * @version 0.1.5 2017/03/05
+ * @version 0.1.5 2017/03/06
  * @author ExBin Project (http://exbin.org)
  */
 public class DeltaHexOptionsPanel extends javax.swing.JPanel {
@@ -132,9 +127,10 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         viewModeComboBox = new javax.swing.JComboBox<>();
         showNonprintableCharactersCheckBox = new javax.swing.JCheckBox();
         viewModeScrollModeLabel = new javax.swing.JLabel();
+        codeColorizationCheckBox = new javax.swing.JCheckBox();
+        memoryModeLabel = new javax.swing.JLabel();
+        memoryModeComboBox = new javax.swing.JComboBox<>();
         decorationPanel = new javax.swing.JPanel();
-        borderTypeLabel = new javax.swing.JLabel();
-        borderTypeComboBox = new javax.swing.JComboBox<>();
         hexCharactersModeLabel = new javax.swing.JLabel();
         backgroundModeLabel = new javax.swing.JLabel();
         hexCharactersModeComboBox = new javax.swing.JComboBox<>();
@@ -326,17 +322,26 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
 
         org.openide.awt.Mnemonics.setLocalizedText(viewModeScrollModeLabel, resourceBundle.getString("DeltaHexOptionsPanel.viewModeScrollModeLabel.text")); // NOI18N
 
+        org.openide.awt.Mnemonics.setLocalizedText(codeColorizationCheckBox, resourceBundle.getString("DeltaHexOptionsPanel.codeColorizationCheckBox.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(memoryModeLabel, resourceBundle.getString("DeltaHexOptionsPanel.memoryModeLabel.text")); // NOI18N
+
+        memoryModeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "DELTA", "MEMORY" }));
+
         javax.swing.GroupLayout modePanelLayout = new javax.swing.GroupLayout(modePanel);
         modePanel.setLayout(modePanelLayout);
         modePanelLayout.setHorizontalGroup(
             modePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(viewModeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(showNonprintableCharactersCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(showNonprintableCharactersCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
             .addComponent(codeTypeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(codeColorizationCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(memoryModeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(modePanelLayout.createSequentialGroup()
                 .addGroup(modePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(viewModeScrollModeLabel)
                     .addComponent(codeTypeScrollModeLabel)
-                    .addComponent(viewModeScrollModeLabel))
+                    .addComponent(memoryModeLabel))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         modePanelLayout.setVerticalGroup(
@@ -346,16 +351,18 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(viewModeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(showNonprintableCharactersCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(codeTypeScrollModeLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(codeTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(codeTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(showNonprintableCharactersCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(codeColorizationCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(memoryModeLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(memoryModeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
-
-        org.openide.awt.Mnemonics.setLocalizedText(borderTypeLabel, resourceBundle.getString("DeltaHexOptionsPanel.borderTypeLabel.text")); // NOI18N
-
-        borderTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NONE", "EMPTY BORDER", "MARGIN BORDER", "BEVEL BORDER - RAISED", "BEVEL BORDER - LOWERED", "ETCHED BORDER - RAISED", "ETCHED BORDER - LOWERED", "LINE BORDER" }));
 
         org.openide.awt.Mnemonics.setLocalizedText(hexCharactersModeLabel, resourceBundle.getString("DeltaHexOptionsPanel.hexCharactersModeLabel.text")); // NOI18N
 
@@ -419,11 +426,9 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
                 .addGap(126, 126, 126))
             .addGroup(decorationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(backgroundModeLabel)
-                .addComponent(borderTypeLabel)
                 .addComponent(lineNumbersBackgroundCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(backgroundModeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(linesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(borderTypeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(hexCharactersModeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(positionCodeTypeComboBox, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -438,17 +443,14 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(linesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(borderTypeLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(borderTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(hexCharactersModeLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(hexCharactersModeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(positionCodeTypeLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(positionCodeTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(positionCodeTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
 
         javax.swing.GroupLayout fontsAndColorPanelLayout = new javax.swing.GroupLayout(fontsAndColorPanel);
@@ -510,26 +512,30 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         CodeAreaLineNumberLength.LineNumberType lineNumbersLengthType = CodeAreaLineNumberLength.LineNumberType.valueOf(lineNumbersLengthTypeName);
         lineNumbersLengthComboBox.setSelectedIndex(lineNumbersLengthType.ordinal());
         lineNumbersLengthSpinner.setValue(preferences.getInt(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH, 8));
+        byteGroupSizeSpinner.setValue(preferences.getInt(HexEditorTopComponent.PREFERENCES_BYTE_GROUP_SIZE, 1));
+        spaceGroupSizeSpinner.setValue(preferences.getInt(HexEditorTopComponent.PREFERENCES_SPACE_GROUP_SIZE, 0));
 
         // Mode
         ViewMode viewMode = ViewMode.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_VIEW_MODE, ViewMode.DUAL.name()));
         viewModeComboBox.setSelectedIndex(viewMode.ordinal());
         CodeType codeType = CodeType.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_CODE_TYPE, CodeType.HEXADECIMAL.name()));
         codeTypeComboBox.setSelectedIndex(codeType.ordinal());
-        showNonprintableCharactersCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_NONPRINTABLES, true));
+        showNonprintableCharactersCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_UNPRINTABLES, true));
+        codeColorizationCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_CODE_COLORIZATION, true));
+        memoryModeComboBox.setSelectedIndex(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_MEMORY_DELTA_MODE, true) ? 0 : 1);
 
         // Decoration
         CodeArea.BackgroundMode backgroundMode = CodeArea.BackgroundMode.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_BACKGROUND_MODE, CodeArea.BackgroundMode.STRIPPED.name()));
         backgroundModeComboBox.setSelectedIndex(backgroundMode.ordinal());
-        showLineNumbersCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_LINE_NUMBERS_BACKGROUND, false));
-        PositionCodeType positionCodeType = PositionCodeType.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_POSITION_CODE_TYPE, PositionCodeType.HEXADECIMAL.name()));
-        positionCodeTypeComboBox.setSelectedIndex(positionCodeType.ordinal());
-        HexCharactersCase hexCharactersCase = HexCharactersCase.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_HEX_CHARACTERS_CASE, HexCharactersCase.UPPER.name()));
-        hexCharactersModeComboBox.setSelectedIndex(hexCharactersCase.ordinal());
+        showLineNumbersCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_LINE_NUMBERS_BACKGROUND, true));
         decoratorHeaderLineCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_HEADER_LINE, true));
         decoratorPreviewLineCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_PREVIEW_LINE, true));
         decoratorBoxCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_BOX, false));
         decoratorLineNumLineCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_LINENUM_LINE, true));
+        HexCharactersCase hexCharactersCase = HexCharactersCase.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_HEX_CHARACTERS_CASE, HexCharactersCase.UPPER.name()));
+        hexCharactersModeComboBox.setSelectedIndex(hexCharactersCase.ordinal());
+        PositionCodeType positionCodeType = PositionCodeType.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_POSITION_CODE_TYPE, PositionCodeType.HEXADECIMAL.name()));
+        positionCodeTypeComboBox.setSelectedIndex(positionCodeType.ordinal());
     }
 
     public void store() {
@@ -544,60 +550,85 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         preferences.putInt(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE, (Integer) lineNumbersSpaceSpinner.getValue());
         preferences.put(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH_TYPE, CodeAreaLineNumberLength.LineNumberType.values()[lineNumbersLengthComboBox.getSelectedIndex()].name());
         preferences.putInt(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH, (Integer) lineNumbersLengthSpinner.getValue());
+        preferences.putInt(HexEditorTopComponent.PREFERENCES_BYTE_GROUP_SIZE, (Integer) byteGroupSizeSpinner.getValue());
+        preferences.putInt(HexEditorTopComponent.PREFERENCES_SPACE_GROUP_SIZE, (Integer) spaceGroupSizeSpinner.getValue());
 
         // Mode
         preferences.put(HexEditorTopComponent.PREFERENCES_VIEW_MODE, ViewMode.values()[viewModeComboBox.getSelectedIndex()].name());
         preferences.put(HexEditorTopComponent.PREFERENCES_CODE_TYPE, CodeType.values()[codeTypeComboBox.getSelectedIndex()].name());
-        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_SHOW_NONPRINTABLES, showNonprintableCharactersCheckBox.isSelected());
+        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_SHOW_UNPRINTABLES, showNonprintableCharactersCheckBox.isSelected());
+        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_CODE_COLORIZATION, codeColorizationCheckBox.isSelected());
+        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_MEMORY_DELTA_MODE, isDeltaMemoryMode());
 
         // Decoration
         preferences.put(HexEditorTopComponent.PREFERENCES_BACKGROUND_MODE, CodeArea.BackgroundMode.values()[backgroundModeComboBox.getSelectedIndex()].name());
         preferences.putBoolean(HexEditorTopComponent.PREFERENCES_SHOW_LINE_NUMBERS_BACKGROUND, showLineNumbersCheckBox.isSelected());
-        preferences.put(HexEditorTopComponent.PREFERENCES_POSITION_CODE_TYPE, PositionCodeType.values()[positionCodeTypeComboBox.getSelectedIndex()].name());
-        preferences.put(HexEditorTopComponent.PREFERENCES_HEX_CHARACTERS_CASE, HexCharactersCase.values()[hexCharactersModeComboBox.getSelectedIndex()].name());
         preferences.putBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_HEADER_LINE, decoratorHeaderLineCheckBox.isSelected());
         preferences.putBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_PREVIEW_LINE, decoratorPreviewLineCheckBox.isSelected());
         preferences.putBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_BOX, decoratorBoxCheckBox.isSelected());
         preferences.putBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_LINENUM_LINE, decoratorLineNumLineCheckBox.isSelected());
+        preferences.put(HexEditorTopComponent.PREFERENCES_HEX_CHARACTERS_CASE, HexCharactersCase.values()[hexCharactersModeComboBox.getSelectedIndex()].name());
+        preferences.put(HexEditorTopComponent.PREFERENCES_POSITION_CODE_TYPE, PositionCodeType.values()[positionCodeTypeComboBox.getSelectedIndex()].name());
     }
 
     public void setFromCodeArea(CodeArea codeArea) {
-        // TODO
+        // Layout
+        wrapLineModeCheckBox.setSelected(codeArea.isWrapMode());
+        lineLengthSpinner.setValue(codeArea.getLineLength());
+        showHeaderCheckBox.setSelected(codeArea.isShowHeader());
+        headerSpaceComboBox.setSelectedIndex(codeArea.getHeaderSpaceType().ordinal());
+        headerSpaceSpinner.setValue(codeArea.getHeaderSpaceSize());
+        showLineNumbersCheckBox.setSelected(codeArea.isShowLineNumbers());
+        lineNumbersSpaceComboBox.setSelectedIndex(codeArea.getLineNumberSpaceType().ordinal());
+        lineNumbersSpaceSpinner.setValue(codeArea.getLineNumberSpaceSize());
+        lineNumbersLengthComboBox.setSelectedIndex(codeArea.getLineNumberType().ordinal());
+        lineNumbersLengthSpinner.setValue(codeArea.getLineNumberSpecifiedLength());
+        byteGroupSizeSpinner.setValue(codeArea.getByteGroupSize());
+        spaceGroupSizeSpinner.setValue(codeArea.getSpaceGroupSize());
+
+        // Mode
+        viewModeComboBox.setSelectedIndex(codeArea.getViewMode().ordinal());
+        codeTypeComboBox.setSelectedIndex(codeArea.getCodeType().ordinal());
+        showNonprintableCharactersCheckBox.setSelected(codeArea.isShowUnprintableCharacters());
+        codeColorizationCheckBox.setSelected(((HighlightNonAsciiCodeAreaPainter) codeArea.getPainter()).isNonAsciiHighlightingEnabled());
+        memoryModeComboBox.setSelectedIndex(codeArea.getData() instanceof DeltaDocument ? 0 : 1);
+
+        // Decoration
+        backgroundModeComboBox.setSelectedIndex(codeArea.getBackgroundMode().ordinal());
+        showLineNumbersCheckBox.setSelected(codeArea.isShowLineNumbers());
+        setDecorationMode(codeArea.getDecorationMode());
+        hexCharactersModeComboBox.setSelectedIndex(codeArea.getHexCharactersCase().ordinal());
+        positionCodeTypeComboBox.setSelectedIndex(codeArea.getPositionCodeType().ordinal());
     }
 
     public void applyToCodeArea(CodeArea codeArea) {
-        // TODO
-    }
+        // Layout
+        codeArea.setWrapMode(wrapLineModeCheckBox.isSelected());
+        codeArea.setLineLength((Integer) lineLengthSpinner.getValue());
+        codeArea.setShowHeader(showHeaderCheckBox.isSelected());
+        codeArea.setHeaderSpaceType(CodeAreaSpace.SpaceType.values()[headerSpaceComboBox.getSelectedIndex()]);
+        codeArea.setHeaderSpaceSize((Integer) headerSpaceSpinner.getValue());
+        codeArea.setShowLineNumbers(showLineNumbersCheckBox.isSelected());
+        codeArea.setLineNumberSpaceType(CodeAreaSpace.SpaceType.values()[lineNumbersSpaceComboBox.getSelectedIndex()]);
+        codeArea.setLineNumberSpaceSize((Integer) lineNumbersSpaceSpinner.getValue());
+        codeArea.setLineNumberType(CodeAreaLineNumberLength.LineNumberType.values()[lineNumbersLengthComboBox.getSelectedIndex()]);
+        codeArea.setLineNumberSpecifiedLength((Integer) lineNumbersLengthSpinner.getValue());
+        codeArea.setByteGroupSize((Integer) byteGroupSizeSpinner.getValue());
+        codeArea.setSpaceGroupSize((Integer) spaceGroupSizeSpinner.getValue());
 
-    private Border getBorderByType(int borderTypeIndex) {
-        switch (borderTypeIndex) {
-            case 0: {
-                return null;
-            }
-            case 1: {
-                return new EmptyBorder(5, 5, 5, 5);
-            }
-            case 2: {
-                return new BasicBorders.MarginBorder();
-            }
-            case 3: {
-                return new BevelBorder(BevelBorder.RAISED);
-            }
-            case 4: {
-                return new BevelBorder(BevelBorder.LOWERED);
-            }
-            case 5: {
-                return new EtchedBorder(EtchedBorder.RAISED);
-            }
-            case 6: {
-                return new EtchedBorder(EtchedBorder.LOWERED);
-            }
-            case 7: {
-                return new LineBorder(Color.BLACK);
-            }
-        }
+        // Mode
+        codeArea.setViewMode(ViewMode.values()[viewModeComboBox.getSelectedIndex()]);
+        codeArea.setCodeType(CodeType.values()[codeTypeComboBox.getSelectedIndex()]);
+        codeArea.setShowUnprintableCharacters(showNonprintableCharactersCheckBox.isSelected());
+        ((HighlightNonAsciiCodeAreaPainter) codeArea.getPainter()).setNonAsciiHighlightingEnabled(codeColorizationCheckBox.isSelected());
+        // Memory mode handled from outside by isDeltaMemoryMode() method, worth fixing?
 
-        return null;
+        // Decoration
+        codeArea.setBackgroundMode(CodeArea.BackgroundMode.values()[backgroundModeComboBox.getSelectedIndex()]);
+        codeArea.setShowLineNumbers(showLineNumbersCheckBox.isSelected());
+        codeArea.setDecorationMode(getDecorationMode());
+        codeArea.setHexCharactersCase(HexCharactersCase.values()[hexCharactersModeComboBox.getSelectedIndex()]);
+        codeArea.setPositionCodeType(PositionCodeType.values()[positionCodeTypeComboBox.getSelectedIndex()]);
     }
 
     private int getDecorationMode() {
@@ -614,6 +645,10 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         decoratorBoxCheckBox.setSelected((decorationMode & CodeArea.DECORATION_BOX) > 0);
     }
 
+    public boolean isDeltaMemoryMode() {
+        return memoryModeComboBox.getSelectedIndex() == 0;
+    }
+
     boolean valid() {
         // TODO check whether form is consistent and complete
         return true;
@@ -622,13 +657,12 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> backgroundModeComboBox;
     private javax.swing.JLabel backgroundModeLabel;
-    private javax.swing.JComboBox<String> borderTypeComboBox;
-    private javax.swing.JLabel borderTypeLabel;
     private javax.swing.JLabel byteGroupSizeLabel;
     private javax.swing.JSpinner byteGroupSizeSpinner;
     private javax.swing.JLabel categoriesLabel;
     private javax.swing.JList<CategoryItem> categoriesList;
     private javax.swing.JScrollPane categoriesScrollPane;
+    private javax.swing.JCheckBox codeColorizationCheckBox;
     private javax.swing.JComboBox<String> codeTypeComboBox;
     private javax.swing.JLabel codeTypeScrollModeLabel;
     private javax.swing.JPanel decorationPanel;
@@ -656,6 +690,8 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
     private javax.swing.JSpinner lineNumbersSpaceSpinner;
     private javax.swing.JPanel linesPanel;
     private javax.swing.JPanel mainPanel;
+    private javax.swing.JComboBox<String> memoryModeComboBox;
+    private javax.swing.JLabel memoryModeLabel;
     private javax.swing.JPanel modePanel;
     private javax.swing.JComboBox<String> positionCodeTypeComboBox;
     private javax.swing.JLabel positionCodeTypeLabel;

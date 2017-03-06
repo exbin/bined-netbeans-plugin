@@ -21,7 +21,7 @@ import org.exbin.deltahex.swing.CodeArea;
 /**
  * Hexadecimal editor options panel with border.
  *
- * @version 0.1.5 2017/03/05
+ * @version 0.1.5 2017/03/06
  * @author ExBin Project (http://exbin.org)
  */
 public class DeltaHexOptionsPanelBorder extends javax.swing.JPanel {
@@ -39,29 +39,43 @@ public class DeltaHexOptionsPanelBorder extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        scrollPane = new javax.swing.JScrollPane();
+        panel = new javax.swing.JPanel();
         optionsPanel = new org.exbin.deltahex.netbeans.panel.DeltaHexOptionsPanel();
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(optionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 538, Short.MAX_VALUE)
-                .addContainerGap())
+        setLayout(new java.awt.BorderLayout());
+
+        javax.swing.GroupLayout panelLayout = new javax.swing.GroupLayout(panel);
+        panel.setLayout(panelLayout);
+        panelLayout.setHorizontalGroup(
+            panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 648, Short.MAX_VALUE)
+            .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(optionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 636, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(optionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
-                .addContainerGap())
+        panelLayout.setVerticalGroup(
+            panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 446, Short.MAX_VALUE)
+            .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(panelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(optionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 434, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
+
+        scrollPane.setViewportView(panel);
+
+        add(scrollPane, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private org.exbin.deltahex.netbeans.panel.DeltaHexOptionsPanel optionsPanel;
+    private javax.swing.JPanel panel;
+    private javax.swing.JScrollPane scrollPane;
     // End of variables declaration//GEN-END:variables
 
     public void setFromCodeArea(CodeArea codeArea) {
@@ -70,9 +84,14 @@ public class DeltaHexOptionsPanelBorder extends javax.swing.JPanel {
 
     public void applyToCodeArea(CodeArea codeArea) {
         optionsPanel.applyToCodeArea(codeArea);
+        codeArea.repaint();
     }
 
     public void store() {
         optionsPanel.store();
+    }
+
+    public boolean isDeltaMemoryMode() {
+        return optionsPanel.isDeltaMemoryMode();
     }
 }
