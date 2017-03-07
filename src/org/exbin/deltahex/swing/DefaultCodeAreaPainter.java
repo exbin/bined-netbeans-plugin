@@ -687,9 +687,6 @@ public class DefaultCodeAreaPainter implements CodeAreaPainter {
      */
     protected void drawCenteredChar(Graphics g, char[] drawnChars, int charOffset, int charWidthSpace, int startX, int positionY) {
         FontMetrics fontMetrics = codeArea.getFontMetrics();
-        if (charOffset < 0 || charOffset >= drawnChars.length) {
-            System.out.println("Error");
-        }
         int charWidth = fontMetrics.charWidth(drawnChars[charOffset]);
         drawShiftedChar(g, drawnChars, charOffset, charWidthSpace, startX, positionY, (charWidthSpace + 1 - charWidth) >> 1);
     }
