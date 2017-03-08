@@ -17,6 +17,11 @@
 package org.exbin.deltahex.netbeans.panel;
 
 import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.Font;
+import java.awt.font.TextAttribute;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.prefs.Preferences;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -34,13 +39,20 @@ import org.exbin.deltahex.highlight.swing.HighlightNonAsciiCodeAreaPainter;
 import org.exbin.deltahex.netbeans.HexEditorTopComponent;
 import org.exbin.deltahex.swing.CodeArea;
 import org.exbin.deltahex.swing.CodeAreaSpace;
+import org.exbin.framework.editor.text.panel.TextFontOptionsPanel;
+import org.exbin.framework.editor.text.panel.TextFontPanel;
 import org.exbin.framework.gui.utils.LanguageUtils;
+import org.exbin.framework.gui.utils.WindowUtils;
+import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
+import org.exbin.framework.gui.utils.panel.DefaultControlPanel;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
 import org.openide.util.NbPreferences;
 
 /**
  * Hexadecimal editor options panel.
  *
- * @version 0.1.5 2017/03/06
+ * @version 0.1.5 2017/03/08
  * @author ExBin Project (http://exbin.org)
  */
 public class DeltaHexOptionsPanel extends javax.swing.JPanel {
@@ -52,8 +64,12 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
     private DefaultListModel<CategoryItem> categoryModel = new DefaultListModel<>();
     private JPanel currentCategoryPanel = null;
 
+    private Font deltaHexDefaultFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
+    private Font deltaHexFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
+
     public DeltaHexOptionsPanel() {
         this(null);
+        updateFontTextField();
     }
 
     public DeltaHexOptionsPanel(DeltaHexOptionsPanelController controller) {
@@ -85,7 +101,6 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 Component component = super.getListCellRendererComponent(list, ((CategoryItem) value).categoryName, index, isSelected, cellHasFocus);
-                component.setEnabled(!"Fonts & Colors".equals(((CategoryItem) value).categoryName));
                 return component;
             }
         });
@@ -144,6 +159,10 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         decoratorBoxCheckBox = new javax.swing.JCheckBox();
         decoratorHeaderLineCheckBox = new javax.swing.JCheckBox();
         fontsAndColorPanel = new javax.swing.JPanel();
+        fontLabel = new javax.swing.JLabel();
+        fontTextField = new javax.swing.JTextField();
+        selectFontButton = new javax.swing.JButton();
+        useDefaultFontCheckBox = new javax.swing.JCheckBox();
         categoriesLabel = new javax.swing.JLabel();
         categoriesScrollPane = new javax.swing.JScrollPane();
         categoriesList = new javax.swing.JList<>();
@@ -453,15 +472,50 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
                 .addGap(0, 0, 0))
         );
 
+        org.openide.awt.Mnemonics.setLocalizedText(fontLabel, resourceBundle.getString("DeltaHexOptionsPanel.fontLabel.text")); // NOI18N
+
+        fontTextField.setEditable(false);
+        fontTextField.setText(resourceBundle.getString("DeltaHexOptionsPanel.fontTextField.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(selectFontButton, resourceBundle.getString("DeltaHexOptionsPanel.selectFontButton.text")); // NOI18N
+        selectFontButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectFontButtonActionPerformed(evt);
+            }
+        });
+
+        org.openide.awt.Mnemonics.setLocalizedText(useDefaultFontCheckBox, resourceBundle.getString("DeltaHexOptionsPanel.useDefaultFontCheckBox.text")); // NOI18N
+
         javax.swing.GroupLayout fontsAndColorPanelLayout = new javax.swing.GroupLayout(fontsAndColorPanel);
         fontsAndColorPanel.setLayout(fontsAndColorPanelLayout);
         fontsAndColorPanelLayout.setHorizontalGroup(
             fontsAndColorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
+            .addGroup(fontsAndColorPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(fontsAndColorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(fontsAndColorPanelLayout.createSequentialGroup()
+                        .addComponent(fontTextField)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(selectFontButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(fontsAndColorPanelLayout.createSequentialGroup()
+                        .addGroup(fontsAndColorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(fontLabel)
+                            .addComponent(useDefaultFontCheckBox))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         fontsAndColorPanelLayout.setVerticalGroup(
             fontsAndColorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fontsAndColorPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(useDefaultFontCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(fontLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(fontsAndColorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(fontTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(selectFontButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         org.openide.awt.Mnemonics.setLocalizedText(categoriesLabel, "Categories:");
@@ -493,6 +547,31 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
                     .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void selectFontButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectFontButtonActionPerformed
+        final TextFontPanel textFontPanel = new TextFontPanel();
+
+        DefaultControlPanel textFontControlPanel = new DefaultControlPanel();
+        textFontPanel.setStoredFont(deltaHexFont);
+        textFontPanel.setVisible(true);
+        JPanel dialogPanel = WindowUtils.createDialogPanel(textFontPanel, textFontControlPanel);
+        DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Select Font", true, new Object[0], null, 0, null, null);
+
+        final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
+        textFontControlPanel.setHandler(new DefaultControlHandler() {
+            @Override
+            public void controlActionPerformed(DefaultControlHandler.ControlActionType actionType) {
+                if (actionType == DefaultControlHandler.ControlActionType.OK) {
+                    deltaHexFont = textFontPanel.getStoredFont();
+                    updateFontTextField();
+                }
+
+                WindowUtils.closeWindow(dialog);
+            }
+        });
+        WindowUtils.assignGlobalKeyListener(dialog, textFontControlPanel.createOkCancelListener());
+        dialog.setVisible(true);
+    }//GEN-LAST:event_selectFontButtonActionPerformed
 
     public void load() {
         // Layout
@@ -536,6 +615,44 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         hexCharactersModeComboBox.setSelectedIndex(hexCharactersCase.ordinal());
         PositionCodeType positionCodeType = PositionCodeType.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_POSITION_CODE_TYPE, PositionCodeType.HEXADECIMAL.name()));
         positionCodeTypeComboBox.setSelectedIndex(positionCodeType.ordinal());
+
+        // Font
+        Boolean defaultColor = Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_DEFAULT, Boolean.toString(true)));
+        useDefaultFontCheckBox.setSelected(defaultColor);
+
+        String value;
+        Map<TextAttribute, Object> attribs = new HashMap<>();
+        value = preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_FAMILY, null);
+        if (value != null) {
+            attribs.put(TextAttribute.FAMILY, value);
+        }
+        value = preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SIZE, null);
+        if (value != null) {
+            attribs.put(TextAttribute.SIZE, new Integer(value).floatValue());
+        }
+        if (Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_UNDERLINE, null))) {
+            attribs.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_LOW_ONE_PIXEL);
+        }
+        if (Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_STRIKETHROUGH, null))) {
+            attribs.put(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
+        }
+        if (Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_STRONG, null))) {
+            attribs.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
+        }
+        if (Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_ITALIC, null))) {
+            attribs.put(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
+        }
+        if (Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SUBSCRIPT, null))) {
+            attribs.put(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB);
+        }
+        if (Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SUPERSCRIPT, null))) {
+            attribs.put(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUPER);
+        }
+        Font derivedFont = deltaHexFont.deriveFont(attribs);
+        if (derivedFont != null) {
+            deltaHexFont = derivedFont;
+        }
+        updateFontTextField();
     }
 
     public void store() {
@@ -569,6 +686,29 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         preferences.putBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_LINENUM_LINE, decoratorLineNumLineCheckBox.isSelected());
         preferences.put(HexEditorTopComponent.PREFERENCES_HEX_CHARACTERS_CASE, HexCharactersCase.values()[hexCharactersModeComboBox.getSelectedIndex()].name());
         preferences.put(HexEditorTopComponent.PREFERENCES_POSITION_CODE_TYPE, PositionCodeType.values()[positionCodeTypeComboBox.getSelectedIndex()].name());
+
+        // Font
+        preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_DEFAULT, Boolean.toString(useDefaultFontCheckBox.isSelected()));
+
+        Map<TextAttribute, ?> attribs = deltaHexFont.getAttributes();
+        String value = (String) attribs.get(TextAttribute.FAMILY);
+        if (value != null) {
+            preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_FAMILY, value);
+        } else {
+            preferences.remove(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_FAMILY);
+        }
+        Float fontSize = (Float) attribs.get(TextAttribute.SIZE);
+        if (fontSize != null) {
+            preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SIZE, Integer.toString((int) (float) fontSize));
+        } else {
+            preferences.remove(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SIZE);
+        }
+        preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_UNDERLINE, Boolean.toString(TextAttribute.UNDERLINE_LOW_ONE_PIXEL.equals(attribs.get(TextAttribute.UNDERLINE))));
+        preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_STRIKETHROUGH, Boolean.toString(TextAttribute.STRIKETHROUGH_ON.equals(attribs.get(TextAttribute.STRIKETHROUGH))));
+        preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_STRONG, Boolean.toString(TextAttribute.WEIGHT_BOLD.equals(attribs.get(TextAttribute.WEIGHT))));
+        preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_ITALIC, Boolean.toString(TextAttribute.POSTURE_OBLIQUE.equals(attribs.get(TextAttribute.POSTURE))));
+        preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SUBSCRIPT, Boolean.toString(TextAttribute.SUPERSCRIPT_SUB.equals(attribs.get(TextAttribute.SUPERSCRIPT))));
+        preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SUPERSCRIPT, Boolean.toString(TextAttribute.SUPERSCRIPT_SUPER.equals(attribs.get(TextAttribute.SUPERSCRIPT))));
     }
 
     public void setFromCodeArea(CodeArea codeArea) {
@@ -599,6 +739,10 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         setDecorationMode(codeArea.getDecorationMode());
         hexCharactersModeComboBox.setSelectedIndex(codeArea.getHexCharactersCase().ordinal());
         positionCodeTypeComboBox.setSelectedIndex(codeArea.getPositionCodeType().ordinal());
+
+        // Font
+        deltaHexFont = codeArea.getFont();
+        useDefaultFontCheckBox.setSelected(deltaHexFont.equals(deltaHexDefaultFont));
     }
 
     public void applyToCodeArea(CodeArea codeArea) {
@@ -629,6 +773,13 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         codeArea.setDecorationMode(getDecorationMode());
         codeArea.setHexCharactersCase(HexCharactersCase.values()[hexCharactersModeComboBox.getSelectedIndex()]);
         codeArea.setPositionCodeType(PositionCodeType.values()[positionCodeTypeComboBox.getSelectedIndex()]);
+
+        // Font
+        if (useDefaultFontCheckBox.isSelected()) {
+            codeArea.setFont(deltaHexDefaultFont);
+        } else {
+            codeArea.setFont(deltaHexFont);
+        }
     }
 
     private int getDecorationMode() {
@@ -654,6 +805,21 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         return true;
     }
 
+    private void updateFontTextField() {
+        int fontStyle = deltaHexFont.getStyle();
+        String fontStyleName;
+        if ((fontStyle & (Font.BOLD + Font.ITALIC)) == Font.BOLD + Font.ITALIC) {
+            fontStyleName = "Bold Italic";
+        } else if ((fontStyle & Font.BOLD) > 0) {
+            fontStyleName = "Bold";
+        } else if ((fontStyle & Font.ITALIC) > 0) {
+            fontStyleName = "Italic";
+        } else {
+            fontStyleName = "Plain";
+        }
+        fontTextField.setText(deltaHexFont.getFamily() + " " + String.valueOf(deltaHexFont.getSize()) + " " + fontStyleName);
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> backgroundModeComboBox;
     private javax.swing.JLabel backgroundModeLabel;
@@ -670,6 +836,8 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
     private javax.swing.JCheckBox decoratorHeaderLineCheckBox;
     private javax.swing.JCheckBox decoratorLineNumLineCheckBox;
     private javax.swing.JCheckBox decoratorPreviewLineCheckBox;
+    private javax.swing.JLabel fontLabel;
+    private javax.swing.JTextField fontTextField;
     private javax.swing.JPanel fontsAndColorPanel;
     private javax.swing.JPanel headerPanel;
     private javax.swing.JComboBox<String> headerSpaceComboBox;
@@ -695,11 +863,13 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
     private javax.swing.JPanel modePanel;
     private javax.swing.JComboBox<String> positionCodeTypeComboBox;
     private javax.swing.JLabel positionCodeTypeLabel;
+    private javax.swing.JButton selectFontButton;
     private javax.swing.JCheckBox showHeaderCheckBox;
     private javax.swing.JCheckBox showLineNumbersCheckBox;
     private javax.swing.JCheckBox showNonprintableCharactersCheckBox;
     private javax.swing.JLabel spaceGroupSizeLabel;
     private javax.swing.JSpinner spaceGroupSizeSpinner;
+    private javax.swing.JCheckBox useDefaultFontCheckBox;
     private javax.swing.JComboBox<String> viewModeComboBox;
     private javax.swing.JLabel viewModeScrollModeLabel;
     private javax.swing.JCheckBox wrapLineModeCheckBox;
