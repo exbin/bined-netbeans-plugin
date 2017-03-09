@@ -25,12 +25,15 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.font.TextAttribute;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
@@ -70,6 +73,7 @@ import org.exbin.framework.deltahex.panel.ReplaceParameters;
 import org.exbin.framework.deltahex.panel.SearchCondition;
 import org.exbin.framework.deltahex.panel.SearchParameters;
 import org.exbin.framework.editor.text.TextEncodingStatusApi;
+import org.exbin.framework.editor.text.panel.TextFontOptionsPanel;
 import org.exbin.framework.gui.utils.WindowUtils;
 import org.exbin.framework.gui.utils.handler.OptionsControlHandler;
 import org.exbin.framework.gui.utils.panel.OptionsControlPanel;
@@ -93,7 +97,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.5 2017/03/06
+ * @version 0.1.5 2017/03/09
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)
@@ -120,7 +124,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     public static final String PREFERENCES_LINE_NUMBERS_SPACE = "lineNumbersSpace";
     public static final String PREFERENCES_VIEW_MODE = "viewMode";
     public static final String PREFERENCES_BACKGROUND_MODE = "backgroundMode";
-    public static final String PREFERENCES_SHOW_LINE_NUMBERS_BACKGROUND = "showLineNumbersBackground";
+    public static final String PREFERENCES_PAINT_LINE_NUMBERS_BACKGROUND = "showLineNumbersBackground";
     public static final String PREFERENCES_POSITION_CODE_TYPE = "positionCodeType";
     public static final String PREFERENCES_HEX_CHARACTERS_CASE = "hexCharactersCase";
     public static final String PREFERENCES_DECORATION_HEADER_LINE = "decorationHeaderLine";
@@ -1254,7 +1258,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 
         // Decoration
         codeArea.setBackgroundMode(CodeArea.BackgroundMode.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_BACKGROUND_MODE, CodeArea.BackgroundMode.STRIPPED.name())));
-        codeArea.setShowLineNumbers(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_LINE_NUMBERS_BACKGROUND, true));
+        codeArea.setLineNumberBackground(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_PAINT_LINE_NUMBERS_BACKGROUND, true));
         int decorationMode = (preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_HEADER_LINE, true) ? CodeArea.DECORATION_HEADER_LINE : 0)
                 + (preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_PREVIEW_LINE, true) ? CodeArea.DECORATION_PREVIEW_LINE : 0)
                 + (preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_BOX, false) ? CodeArea.DECORATION_BOX : 0)
@@ -1262,6 +1266,42 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         codeArea.setDecorationMode(decorationMode);
         codeArea.setHexCharactersCase(HexCharactersCase.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_HEX_CHARACTERS_CASE, HexCharactersCase.UPPER.name())));
         codeArea.setPositionCodeType(PositionCodeType.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_POSITION_CODE_TYPE, PositionCodeType.HEXADECIMAL.name())));
+
+        // Font
+        Boolean usedefaultColor = Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_DEFAULT, Boolean.toString(true)));
+
+        if (!usedefaultColor) {
+            String value;
+            Map<TextAttribute, Object> attribs = new HashMap<>();
+            value = preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_FAMILY, null);
+            if (value != null) {
+                attribs.put(TextAttribute.FAMILY, value);
+            }
+            value = preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SIZE, null);
+            if (value != null) {
+                attribs.put(TextAttribute.SIZE, new Integer(value).floatValue());
+            }
+            if (Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_UNDERLINE, null))) {
+                attribs.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_LOW_ONE_PIXEL);
+            }
+            if (Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_STRIKETHROUGH, null))) {
+                attribs.put(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
+            }
+            if (Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_STRONG, null))) {
+                attribs.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
+            }
+            if (Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_ITALIC, null))) {
+                attribs.put(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
+            }
+            if (Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SUBSCRIPT, null))) {
+                attribs.put(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB);
+            }
+            if (Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SUPERSCRIPT, null))) {
+                attribs.put(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUPER);
+            }
+            Font derivedFont = codeArea.getFont().deriveFont(attribs);
+            codeArea.setFont(derivedFont);
+        }
     }
 
     public static interface CharsetChangeListener {

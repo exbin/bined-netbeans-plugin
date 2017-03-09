@@ -52,7 +52,7 @@ import org.openide.util.NbPreferences;
 /**
  * Hexadecimal editor options panel.
  *
- * @version 0.1.5 2017/03/08
+ * @version 0.1.5 2017/03/09
  * @author ExBin Project (http://exbin.org)
  */
 public class DeltaHexOptionsPanel extends javax.swing.JPanel {
@@ -163,6 +163,7 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         fontTextField = new javax.swing.JTextField();
         selectFontButton = new javax.swing.JButton();
         useDefaultFontCheckBox = new javax.swing.JCheckBox();
+        colorsLabel = new javax.swing.JLabel();
         categoriesLabel = new javax.swing.JLabel();
         categoriesScrollPane = new javax.swing.JScrollPane();
         categoriesList = new javax.swing.JList<>();
@@ -486,28 +487,26 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
 
         org.openide.awt.Mnemonics.setLocalizedText(useDefaultFontCheckBox, resourceBundle.getString("DeltaHexOptionsPanel.useDefaultFontCheckBox.text")); // NOI18N
 
+        org.openide.awt.Mnemonics.setLocalizedText(colorsLabel, resourceBundle.getString("DeltaHexOptionsPanel.colorsLabel.text")); // NOI18N
+
         javax.swing.GroupLayout fontsAndColorPanelLayout = new javax.swing.GroupLayout(fontsAndColorPanel);
         fontsAndColorPanel.setLayout(fontsAndColorPanelLayout);
         fontsAndColorPanelLayout.setHorizontalGroup(
             fontsAndColorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fontsAndColorPanelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addComponent(fontTextField)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(selectFontButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(fontsAndColorPanelLayout.createSequentialGroup()
                 .addGroup(fontsAndColorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(fontsAndColorPanelLayout.createSequentialGroup()
-                        .addComponent(fontTextField)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(selectFontButton, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(fontsAndColorPanelLayout.createSequentialGroup()
-                        .addGroup(fontsAndColorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(fontLabel)
-                            .addComponent(useDefaultFontCheckBox))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                    .addComponent(fontLabel)
+                    .addComponent(useDefaultFontCheckBox)
+                    .addComponent(colorsLabel))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         fontsAndColorPanelLayout.setVerticalGroup(
             fontsAndColorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fontsAndColorPanelLayout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(fontsAndColorPanelLayout.createSequentialGroup()
                 .addComponent(useDefaultFontCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(fontLabel)
@@ -515,7 +514,8 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
                 .addGroup(fontsAndColorPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(fontTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(selectFontButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(colorsLabel))
         );
 
         org.openide.awt.Mnemonics.setLocalizedText(categoriesLabel, "Categories:");
@@ -606,7 +606,7 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         // Decoration
         CodeArea.BackgroundMode backgroundMode = CodeArea.BackgroundMode.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_BACKGROUND_MODE, CodeArea.BackgroundMode.STRIPPED.name()));
         backgroundModeComboBox.setSelectedIndex(backgroundMode.ordinal());
-        showLineNumbersCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_LINE_NUMBERS_BACKGROUND, true));
+        lineNumbersBackgroundCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_PAINT_LINE_NUMBERS_BACKGROUND, true));
         decoratorHeaderLineCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_HEADER_LINE, true));
         decoratorPreviewLineCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_PREVIEW_LINE, true));
         decoratorBoxCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_BOX, false));
@@ -617,8 +617,8 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         positionCodeTypeComboBox.setSelectedIndex(positionCodeType.ordinal());
 
         // Font
-        Boolean defaultColor = Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_DEFAULT, Boolean.toString(true)));
-        useDefaultFontCheckBox.setSelected(defaultColor);
+        Boolean useDefaultFont = Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_DEFAULT, Boolean.toString(true)));
+        useDefaultFontCheckBox.setSelected(useDefaultFont);
 
         String value;
         Map<TextAttribute, Object> attribs = new HashMap<>();
@@ -679,7 +679,7 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
 
         // Decoration
         preferences.put(HexEditorTopComponent.PREFERENCES_BACKGROUND_MODE, CodeArea.BackgroundMode.values()[backgroundModeComboBox.getSelectedIndex()].name());
-        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_SHOW_LINE_NUMBERS_BACKGROUND, showLineNumbersCheckBox.isSelected());
+        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_PAINT_LINE_NUMBERS_BACKGROUND, lineNumbersBackgroundCheckBox.isSelected());
         preferences.putBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_HEADER_LINE, decoratorHeaderLineCheckBox.isSelected());
         preferences.putBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_PREVIEW_LINE, decoratorPreviewLineCheckBox.isSelected());
         preferences.putBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_BOX, decoratorBoxCheckBox.isSelected());
@@ -735,13 +735,14 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
 
         // Decoration
         backgroundModeComboBox.setSelectedIndex(codeArea.getBackgroundMode().ordinal());
-        showLineNumbersCheckBox.setSelected(codeArea.isShowLineNumbers());
+        lineNumbersBackgroundCheckBox.setSelected(codeArea.isLineNumberBackground());
         setDecorationMode(codeArea.getDecorationMode());
         hexCharactersModeComboBox.setSelectedIndex(codeArea.getHexCharactersCase().ordinal());
         positionCodeTypeComboBox.setSelectedIndex(codeArea.getPositionCodeType().ordinal());
 
         // Font
         deltaHexFont = codeArea.getFont();
+        updateFontTextField();
         useDefaultFontCheckBox.setSelected(deltaHexFont.equals(deltaHexDefaultFont));
     }
 
@@ -769,7 +770,7 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
 
         // Decoration
         codeArea.setBackgroundMode(CodeArea.BackgroundMode.values()[backgroundModeComboBox.getSelectedIndex()]);
-        codeArea.setShowLineNumbers(showLineNumbersCheckBox.isSelected());
+        codeArea.setLineNumberBackground(lineNumbersBackgroundCheckBox.isSelected());
         codeArea.setDecorationMode(getDecorationMode());
         codeArea.setHexCharactersCase(HexCharactersCase.values()[hexCharactersModeComboBox.getSelectedIndex()]);
         codeArea.setPositionCodeType(PositionCodeType.values()[positionCodeTypeComboBox.getSelectedIndex()]);
@@ -831,6 +832,7 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
     private javax.swing.JCheckBox codeColorizationCheckBox;
     private javax.swing.JComboBox<String> codeTypeComboBox;
     private javax.swing.JLabel codeTypeScrollModeLabel;
+    private javax.swing.JLabel colorsLabel;
     private javax.swing.JPanel decorationPanel;
     private javax.swing.JCheckBox decoratorBoxCheckBox;
     private javax.swing.JCheckBox decoratorHeaderLineCheckBox;
