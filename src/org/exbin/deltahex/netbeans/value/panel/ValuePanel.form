@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+  <NonVisualComponents>
+    <Component class="javax.swing.ButtonGroup" name="endianButtonGroup">
+    </Component>
+    <Component class="javax.swing.ButtonGroup" name="integerSignButtonGroup">
+    </Component>
+  </NonVisualComponents>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="byteTextField" max="32767" attributes="0"/>
+                  <Component id="wordTextField" alignment="0" max="32767" attributes="0"/>
+                  <Component id="intTextField" alignment="0" max="32767" attributes="0"/>
+                  <Component id="longTextField" alignment="0" max="32767" attributes="0"/>
+                  <Component id="floatTextField" alignment="0" max="32767" attributes="0"/>
+                  <Component id="doubleTextField" alignment="0" max="32767" attributes="0"/>
+                  <Component id="dateTextField" alignment="0" max="32767" attributes="0"/>
+                  <Component id="characterTextField" alignment="0" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="byteLabel" min="-2" max="-2" attributes="0"/>
+                          <Component id="wordLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="intLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="longLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="binaryLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="binaryCheckBox0" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="binaryCheckBox1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="binaryCheckBox2" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="binaryCheckBox3" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="binaryCheckBox4" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="binaryCheckBox5" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="binaryCheckBox6" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="binaryCheckBox7" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="floatLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="doubleLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="dateLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="characterLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="littleEndianRadioButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="bigEndianRadioButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jSeparator1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="signedRadioButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="signedRadioButton1" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="binaryLabel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="binaryCheckBox0" min="-2" max="-2" attributes="0"/>
+                  <Component id="binaryCheckBox1" min="-2" max="-2" attributes="0"/>
+                  <Component id="binaryCheckBox2" min="-2" max="-2" attributes="0"/>
+                  <Component id="binaryCheckBox3" min="-2" max="-2" attributes="0"/>
+                  <Component id="binaryCheckBox4" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="binaryCheckBox5" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="binaryCheckBox6" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Component id="binaryCheckBox7" alignment="1" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="byteLabel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="byteTextField" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="wordLabel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="wordTextField" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="intLabel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="intTextField" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="longLabel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="longTextField" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="floatLabel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="floatTextField" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="doubleLabel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="doubleTextField" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="dateLabel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="dateTextField" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="characterLabel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="characterTextField" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                      <Component id="littleEndianRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="bigEndianRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Component id="jSeparator1" alignment="1" min="-2" pref="28" max="-2" attributes="0"/>
+                  <Group type="103" alignment="1" groupAlignment="3" attributes="0">
+                      <Component id="signedRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="signedRadioButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+              <EmptySpace max="32767" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Component class="javax.swing.JLabel" name="binaryLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Binary"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="binaryCheckBox0">
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="binaryCheckBox1">
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="binaryCheckBox2">
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="binaryCheckBox3">
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="binaryCheckBox4">
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="binaryCheckBox5">
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="binaryCheckBox6">
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="binaryCheckBox7">
+    </Component>
+    <Component class="javax.swing.JLabel" name="byteLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Byte"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="byteTextField">
+    </Component>
+    <Component class="javax.swing.JLabel" name="wordLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Word"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="wordTextField">
+    </Component>
+    <Component class="javax.swing.JLabel" name="intLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Integer"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="intTextField">
+    </Component>
+    <Component class="javax.swing.JLabel" name="longLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Long"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="longTextField">
+    </Component>
+    <Component class="javax.swing.JLabel" name="floatLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Float"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="floatTextField">
+    </Component>
+    <Component class="javax.swing.JLabel" name="doubleLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Double"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="doubleTextField">
+    </Component>
+    <Component class="javax.swing.JLabel" name="dateLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Date"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="dateTextField">
+    </Component>
+    <Component class="javax.swing.JLabel" name="characterLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Character"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="characterTextField">
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="littleEndianRadioButton">
+      <Properties>
+        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+          <ComponentRef name="endianButtonGroup"/>
+        </Property>
+        <Property name="selected" type="boolean" value="true"/>
+        <Property name="text" type="java.lang.String" value="LE"/>
+        <Property name="toolTipText" type="java.lang.String" value="Little Endian"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="bigEndianRadioButton">
+      <Properties>
+        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+          <ComponentRef name="endianButtonGroup"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="BE"/>
+        <Property name="toolTipText" type="java.lang.String" value="Big Endian"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JSeparator" name="jSeparator1">
+      <Properties>
+        <Property name="orientation" type="int" value="1"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="signedRadioButton">
+      <Properties>
+        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+          <ComponentRef name="integerSignButtonGroup"/>
+        </Property>
+        <Property name="selected" type="boolean" value="true"/>
+        <Property name="text" type="java.lang.String" value="Sig"/>
+        <Property name="toolTipText" type="java.lang.String" value="Signed Integers"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="signedRadioButton1">
+      <Properties>
+        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+          <ComponentRef name="integerSignButtonGroup"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Uns"/>
+        <Property name="toolTipText" type="java.lang.String" value="Unsigned Integers"/>
+      </Properties>
+    </Component>
+  </SubComponents>
+</Form>
