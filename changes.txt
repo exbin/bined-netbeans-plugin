@@ -1,7 +1,8 @@
 0.1.5
-- Code colorization by byte value
-- Added File/Open File as Hex action
 - Added options panel / dialog
+- Added value side panel
+- Added File/Open File as Hex action
+- Code colorization by byte value
 
 0.1.4 (2017-01-08)
 - Fixed charset for clipboard copy/paste

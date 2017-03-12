@@ -14,17 +14,27 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along this application.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.exbin.deltahex.netbeans.value.panel;
+package org.exbin.deltahex.netbeans.panel;
+
+import java.util.Arrays;
+import org.exbin.deltahex.CaretMovedListener;
+import org.exbin.deltahex.CaretPosition;
+import org.exbin.deltahex.DataChangedListener;
+import org.exbin.deltahex.Section;
+import org.exbin.deltahex.swing.CodeArea;
 
 /**
- * Value side panel.
+ * Values side panel.
  *
- * @version 0.1.5 2017/03/11
+ * @version 0.1.5 2017/03/12
  * @author ExBin Project (http://exbin.org)
  */
-public class ValuePanel extends javax.swing.JPanel {
+public class ValuesPanel extends javax.swing.JPanel {
 
-    public ValuePanel() {
+    private CodeArea codeArea;
+    private final byte[] valuesCache = new byte[8];
+
+    public ValuesPanel() {
         initComponents();
     }
 
@@ -92,10 +102,20 @@ public class ValuePanel extends javax.swing.JPanel {
         littleEndianRadioButton.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(littleEndianRadioButton, "LE");
         littleEndianRadioButton.setToolTipText("Little Endian");
+        littleEndianRadioButton.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                littleEndianRadioButtonStateChanged(evt);
+            }
+        });
 
         endianButtonGroup.add(bigEndianRadioButton);
         org.openide.awt.Mnemonics.setLocalizedText(bigEndianRadioButton, "BE");
         bigEndianRadioButton.setToolTipText("Big Endian");
+        bigEndianRadioButton.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                bigEndianRadioButtonStateChanged(evt);
+            }
+        });
 
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
@@ -103,10 +123,20 @@ public class ValuePanel extends javax.swing.JPanel {
         signedRadioButton.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(signedRadioButton, "Sig");
         signedRadioButton.setToolTipText("Signed Integers");
+        signedRadioButton.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                signedRadioButtonStateChanged(evt);
+            }
+        });
 
         integerSignButtonGroup.add(signedRadioButton1);
         org.openide.awt.Mnemonics.setLocalizedText(signedRadioButton1, "Uns");
         signedRadioButton1.setToolTipText("Unsigned Integers");
+        signedRadioButton1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                signedRadioButton1StateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -115,14 +145,6 @@ public class ValuePanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(byteTextField)
-                    .addComponent(wordTextField)
-                    .addComponent(intTextField)
-                    .addComponent(longTextField)
-                    .addComponent(floatTextField)
-                    .addComponent(doubleTextField)
-                    .addComponent(dateTextField)
-                    .addComponent(characterTextField)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(byteLabel)
@@ -160,8 +182,18 @@ public class ValuePanel extends javax.swing.JPanel {
                                 .addComponent(signedRadioButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(signedRadioButton1)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(byteTextField, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(wordTextField, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(intTextField, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(longTextField, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(floatTextField, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(doubleTextField, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(dateTextField, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(characterTextField))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -212,17 +244,33 @@ public class ValuePanel extends javax.swing.JPanel {
                 .addComponent(characterTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(littleEndianRadioButton)
+                            .addComponent(bigEndianRadioButton))
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(littleEndianRadioButton)
-                        .addComponent(bigEndianRadioButton))
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(signedRadioButton)
                         .addComponent(signedRadioButton1)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void littleEndianRadioButtonStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_littleEndianRadioButtonStateChanged
+        updateValues();
+    }//GEN-LAST:event_littleEndianRadioButtonStateChanged
+
+    private void bigEndianRadioButtonStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_bigEndianRadioButtonStateChanged
+        updateValues();
+    }//GEN-LAST:event_bigEndianRadioButtonStateChanged
+
+    private void signedRadioButtonStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_signedRadioButtonStateChanged
+        updateValues();
+    }//GEN-LAST:event_signedRadioButtonStateChanged
+
+    private void signedRadioButton1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_signedRadioButton1StateChanged
+        updateValues();
+    }//GEN-LAST:event_signedRadioButton1StateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton bigEndianRadioButton;
@@ -258,4 +306,73 @@ public class ValuePanel extends javax.swing.JPanel {
     private javax.swing.JLabel wordLabel;
     private javax.swing.JTextField wordTextField;
     // End of variables declaration//GEN-END:variables
+
+    public void setCodeArea(CodeArea codeArea) {
+        this.codeArea = codeArea;
+        codeArea.addDataChangedListener(new DataChangedListener() {
+            @Override
+            public void dataChanged() {
+                updateValues();
+            }
+        });
+        codeArea.addCaretMovedListener(new CaretMovedListener() {
+            @Override
+            public void caretMoved(CaretPosition caretPosition, Section section) {
+                updateValues();
+            }
+        });
+    }
+
+    private void updateValues() {
+        CaretPosition caretPosition = codeArea.getCaretPosition();
+        long dataPosition = caretPosition.getDataPosition();
+        long dataSize = codeArea.getDataSize();
+        if (dataPosition < dataSize) {
+            int availableData = dataSize - dataPosition > 7 ? 8 : (int) (dataSize - dataPosition);
+            codeArea.getData().copyToArray(dataPosition, valuesCache, 0, availableData);
+            if (availableData < 8) {
+                Arrays.fill(valuesCache, availableData, 8, (byte) 0);
+            }
+            populateValues();
+        } else {
+            clearValues();
+        }
+    }
+
+    private void populateValues() {
+        boolean signed = signedRadioButton.isSelected();
+        boolean littleEndian = littleEndianRadioButton.isSelected();
+        binaryCheckBox0.setSelected((valuesCache[0] & 0x80) > 0);
+        binaryCheckBox1.setSelected((valuesCache[0] & 0x40) > 0);
+        binaryCheckBox2.setSelected((valuesCache[0] & 0x20) > 0);
+        binaryCheckBox3.setSelected((valuesCache[0] & 0x10) > 0);
+        binaryCheckBox4.setSelected((valuesCache[0] & 0x8) > 0);
+        binaryCheckBox5.setSelected((valuesCache[0] & 0x4) > 0);
+        binaryCheckBox6.setSelected((valuesCache[0] & 0x2) > 0);
+        binaryCheckBox7.setSelected((valuesCache[0] & 0x1) > 0);
+        byteTextField.setText(String.valueOf(signed ? valuesCache[0] : valuesCache[0] & 0xff));
+        wordTextField.setText(String.valueOf(signed
+                ? (littleEndian ? (valuesCache[0] & 0xff) | (valuesCache[1] << 8) : (valuesCache[1] & 0xff) | (valuesCache[0] << 8))
+                : (littleEndian ? (valuesCache[0] & 0xff) | ((valuesCache[1] & 0xff) << 8) : (valuesCache[1] & 0xff) | ((valuesCache[0] & 0xff) << 8))
+        ));
+    }
+
+    private void clearValues() {
+        binaryCheckBox0.setSelected(false);
+        binaryCheckBox1.setSelected(false);
+        binaryCheckBox2.setSelected(false);
+        binaryCheckBox3.setSelected(false);
+        binaryCheckBox4.setSelected(false);
+        binaryCheckBox5.setSelected(false);
+        binaryCheckBox6.setSelected(false);
+        binaryCheckBox7.setSelected(false);
+        byteTextField.setText("");
+        wordTextField.setText("");
+        intTextField.setText("");
+        longTextField.setText("");
+        floatTextField.setText("");
+        doubleTextField.setText("");
+        dateTextField.setText("");
+        characterTextField.setText("");
+    }
 }

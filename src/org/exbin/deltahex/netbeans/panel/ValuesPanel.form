@@ -22,17 +22,9 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="byteTextField" max="32767" attributes="0"/>
-                  <Component id="wordTextField" alignment="0" max="32767" attributes="0"/>
-                  <Component id="intTextField" alignment="0" max="32767" attributes="0"/>
-                  <Component id="longTextField" alignment="0" max="32767" attributes="0"/>
-                  <Component id="floatTextField" alignment="0" max="32767" attributes="0"/>
-                  <Component id="doubleTextField" alignment="0" max="32767" attributes="0"/>
-                  <Component id="dateTextField" alignment="0" max="32767" attributes="0"/>
-                  <Component id="characterTextField" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="byteLabel" min="-2" max="-2" attributes="0"/>
@@ -75,8 +67,20 @@
                       </Group>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="byteTextField" alignment="0" max="32767" attributes="0"/>
+                          <Component id="wordTextField" alignment="0" max="32767" attributes="0"/>
+                          <Component id="intTextField" alignment="0" max="32767" attributes="0"/>
+                          <Component id="longTextField" alignment="0" max="32767" attributes="0"/>
+                          <Component id="floatTextField" alignment="0" max="32767" attributes="0"/>
+                          <Component id="doubleTextField" alignment="0" max="32767" attributes="0"/>
+                          <Component id="dateTextField" alignment="0" max="32767" attributes="0"/>
+                          <Component id="characterTextField" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -130,12 +134,14 @@
               <Component id="characterTextField" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                      <Component id="littleEndianRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="bigEndianRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                          <Component id="littleEndianRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="bigEndianRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Component id="jSeparator1" alignment="1" min="-2" pref="28" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jSeparator1" alignment="1" min="-2" pref="28" max="-2" attributes="0"/>
-                  <Group type="103" alignment="1" groupAlignment="3" attributes="0">
+                  <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="signedRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="signedRadioButton1" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -232,6 +238,9 @@
         <Property name="text" type="java.lang.String" value="LE"/>
         <Property name="toolTipText" type="java.lang.String" value="Little Endian"/>
       </Properties>
+      <Events>
+        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="littleEndianRadioButtonStateChanged"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JRadioButton" name="bigEndianRadioButton">
       <Properties>
@@ -241,6 +250,9 @@
         <Property name="text" type="java.lang.String" value="BE"/>
         <Property name="toolTipText" type="java.lang.String" value="Big Endian"/>
       </Properties>
+      <Events>
+        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="bigEndianRadioButtonStateChanged"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JSeparator" name="jSeparator1">
       <Properties>
@@ -256,6 +268,9 @@
         <Property name="text" type="java.lang.String" value="Sig"/>
         <Property name="toolTipText" type="java.lang.String" value="Signed Integers"/>
       </Properties>
+      <Events>
+        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="signedRadioButtonStateChanged"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JRadioButton" name="signedRadioButton1">
       <Properties>
@@ -265,6 +280,9 @@
         <Property name="text" type="java.lang.String" value="Uns"/>
         <Property name="toolTipText" type="java.lang.String" value="Unsigned Integers"/>
       </Properties>
+      <Events>
+        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="signedRadioButton1StateChanged"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

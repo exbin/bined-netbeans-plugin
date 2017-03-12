@@ -61,6 +61,7 @@ import org.exbin.deltahex.highlight.swing.HighlightNonAsciiCodeAreaPainter;
 import org.exbin.deltahex.netbeans.panel.DeltaHexOptionsPanelBorder;
 import org.exbin.deltahex.netbeans.panel.HexSearchPanel;
 import org.exbin.deltahex.netbeans.panel.HexSearchPanelApi;
+import org.exbin.deltahex.netbeans.panel.ValuesPanel;
 import org.exbin.deltahex.operation.swing.CodeAreaOperationCommandHandler;
 import org.exbin.deltahex.swing.CodeArea;
 import org.exbin.deltahex.operation.BinaryDataCommand;
@@ -97,7 +98,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.5 2017/03/09
+ * @version 0.1.5 2017/03/12
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)
@@ -134,6 +135,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     public static final String PREFERENCES_BYTE_GROUP_SIZE = "byteGroupSize";
     public static final String PREFERENCES_SPACE_GROUP_SIZE = "spaceGroupSize";
     public static final String PREFERENCES_CODE_COLORIZATION = "codeColorization";
+    public static final String PREFERENCES_SHOW_VALUES_PANEL = "valuesPanel";
 
     private final Preferences preferences;
     private final HexEditorNode node;
@@ -153,6 +155,8 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     private EncodingsHandler encodingsHandler;
     private boolean findTextPanelVisible = false;
     private HexSearchPanel hexSearchPanel = null;
+    private ValuesPanel valuesPanel = null;
+    private boolean valuesPanelVisible = false;
 
     private boolean opened = false;
     private boolean modified = false;
@@ -998,6 +1002,28 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         }
     }
 
+    public void showValuesPanel() {
+        if (!valuesPanelVisible) {
+            valuesPanelVisible = true;
+            if (valuesPanel == null) {
+                valuesPanel = new ValuesPanel();
+                valuesPanel.setCodeArea(codeArea);
+            }
+            codeAreaPanel.add(valuesPanel, BorderLayout.EAST);
+            codeAreaPanel.revalidate();
+            revalidate();
+        }
+    }
+
+    public void hideValuesPanel() {
+        if (valuesPanelVisible) {
+            valuesPanelVisible = true;
+            codeAreaPanel.remove(valuesPanel);
+            codeAreaPanel.revalidate();
+            revalidate();
+        }
+    }
+
     private JPopupMenu createCodeAreaPopupMenu(final CodeArea codeArea, String menuPostfix) {
         JPopupMenu popupMenu = new JPopupMenu();
 
@@ -1301,6 +1327,10 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
             }
             Font derivedFont = codeArea.getFont().deriveFont(attribs);
             codeArea.setFont(derivedFont);
+        }
+        boolean showValuesPanel = preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_VALUES_PANEL, true);
+        if (showValuesPanel) {
+            showValuesPanel();
         }
     }
 
