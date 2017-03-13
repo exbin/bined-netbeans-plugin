@@ -16,6 +16,8 @@
  */
 package org.exbin.deltahex.netbeans.panel;
 
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import org.exbin.deltahex.CaretMovedListener;
 import org.exbin.deltahex.CaretPosition;
@@ -26,7 +28,7 @@ import org.exbin.deltahex.swing.CodeArea;
 /**
  * Values side panel.
  *
- * @version 0.1.5 2017/03/12
+ * @version 0.1.5 2017/03/13
  * @author ExBin Project (http://exbin.org)
  */
 public class ValuesPanel extends javax.swing.JPanel {
@@ -74,11 +76,11 @@ public class ValuesPanel extends javax.swing.JPanel {
         dateTextField = new javax.swing.JTextField();
         characterLabel = new javax.swing.JLabel();
         characterTextField = new javax.swing.JTextField();
-        littleEndianRadioButton = new javax.swing.JRadioButton();
         bigEndianRadioButton = new javax.swing.JRadioButton();
         jSeparator1 = new javax.swing.JSeparator();
         signedRadioButton = new javax.swing.JRadioButton();
         signedRadioButton1 = new javax.swing.JRadioButton();
+        littleEndianRadioButton = new javax.swing.JRadioButton();
 
         org.openide.awt.Mnemonics.setLocalizedText(binaryLabel, "Binary");
 
@@ -98,17 +100,8 @@ public class ValuesPanel extends javax.swing.JPanel {
 
         org.openide.awt.Mnemonics.setLocalizedText(characterLabel, "Character");
 
-        endianButtonGroup.add(littleEndianRadioButton);
-        littleEndianRadioButton.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(littleEndianRadioButton, "LE");
-        littleEndianRadioButton.setToolTipText("Little Endian");
-        littleEndianRadioButton.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                littleEndianRadioButtonStateChanged(evt);
-            }
-        });
-
         endianButtonGroup.add(bigEndianRadioButton);
+        bigEndianRadioButton.setSelected(true);
         org.openide.awt.Mnemonics.setLocalizedText(bigEndianRadioButton, "BE");
         bigEndianRadioButton.setToolTipText("Big Endian");
         bigEndianRadioButton.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -138,6 +131,15 @@ public class ValuesPanel extends javax.swing.JPanel {
             }
         });
 
+        endianButtonGroup.add(littleEndianRadioButton);
+        org.openide.awt.Mnemonics.setLocalizedText(littleEndianRadioButton, "LE");
+        littleEndianRadioButton.setToolTipText("Little Endian");
+        littleEndianRadioButton.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                littleEndianRadioButtonStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -147,42 +149,45 @@ public class ValuesPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(byteLabel)
-                            .addComponent(wordLabel)
-                            .addComponent(intLabel)
-                            .addComponent(longLabel)
-                            .addComponent(binaryLabel)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(binaryCheckBox0)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(binaryCheckBox1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(binaryCheckBox2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(binaryCheckBox3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(binaryCheckBox4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(binaryCheckBox5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(binaryCheckBox6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(binaryCheckBox7))
-                            .addComponent(floatLabel)
-                            .addComponent(doubleLabel)
-                            .addComponent(dateLabel)
-                            .addComponent(characterLabel)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(littleEndianRadioButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(bigEndianRadioButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(littleEndianRadioButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(signedRadioButton)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(signedRadioButton1)))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                                .addComponent(signedRadioButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(byteLabel)
+                                    .addComponent(wordLabel)
+                                    .addComponent(intLabel)
+                                    .addComponent(longLabel)
+                                    .addComponent(binaryLabel)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(binaryCheckBox0)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(binaryCheckBox1)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(binaryCheckBox2)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(binaryCheckBox3)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(binaryCheckBox4)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(binaryCheckBox5)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(binaryCheckBox6)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(binaryCheckBox7))
+                                    .addComponent(floatLabel)
+                                    .addComponent(doubleLabel)
+                                    .addComponent(dateLabel)
+                                    .addComponent(characterLabel))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(6, 6, 6))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(byteTextField, javax.swing.GroupLayout.Alignment.LEADING)
@@ -239,16 +244,17 @@ public class ValuesPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(dateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(characterLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(characterTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(littleEndianRadioButton)
-                            .addComponent(bigEndianRadioButton))
-                        .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(characterLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(characterTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(bigEndianRadioButton)
+                                .addComponent(littleEndianRadioButton))
+                            .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(signedRadioButton)
                         .addComponent(signedRadioButton1)))
@@ -351,10 +357,47 @@ public class ValuesPanel extends javax.swing.JPanel {
         binaryCheckBox6.setSelected((valuesCache[0] & 0x2) > 0);
         binaryCheckBox7.setSelected((valuesCache[0] & 0x1) > 0);
         byteTextField.setText(String.valueOf(signed ? valuesCache[0] : valuesCache[0] & 0xff));
-        wordTextField.setText(String.valueOf(signed
-                ? (littleEndian ? (valuesCache[0] & 0xff) | (valuesCache[1] << 8) : (valuesCache[1] & 0xff) | (valuesCache[0] << 8))
-                : (littleEndian ? (valuesCache[0] & 0xff) | ((valuesCache[1] & 0xff) << 8) : (valuesCache[1] & 0xff) | ((valuesCache[0] & 0xff) << 8))
-        ));
+        int wordValue = signed
+                ? (littleEndian
+                        ? (valuesCache[0] & 0xff) | (valuesCache[1] << 8)
+                        : (valuesCache[1] & 0xff) | (valuesCache[0] << 8))
+                : (littleEndian
+                        ? (valuesCache[0] & 0xff) | ((valuesCache[1] & 0xff) << 8)
+                        : (valuesCache[1] & 0xff) | ((valuesCache[0] & 0xff) << 8));
+        wordTextField.setText(String.valueOf(wordValue));
+        long intValue = signed
+                ? (littleEndian
+                        ? (valuesCache[0] & 0xffl) | ((valuesCache[1] & 0xffl) << 8) | ((valuesCache[2] & 0xffl) << 16) | (valuesCache[3] << 24)
+                        : (valuesCache[3] & 0xffl) | ((valuesCache[2] & 0xffl) << 8) | ((valuesCache[1] & 0xffl) << 16) | (valuesCache[0] << 24))
+                : (littleEndian
+                        ? (valuesCache[0] & 0xffl) | ((valuesCache[1] & 0xffl) << 8) | ((valuesCache[2] & 0xffl) << 16) | ((valuesCache[3] & 0xffl) << 24)
+                        : (valuesCache[3] & 0xffl) | ((valuesCache[2] & 0xffl) << 8) | ((valuesCache[1] & 0xffl) << 16) | ((valuesCache[0] & 0xffl) << 24));
+        intTextField.setText(String.valueOf(intValue));
+
+        // TODO: Fix
+        long longValue = signed
+                ? (littleEndian
+                        ? (valuesCache[0] & 0xffl) | ((valuesCache[1] & 0xffl) << 8) | ((valuesCache[2] & 0xffl) << 16) | ((valuesCache[3] & 0xffl) << 24)
+                        | ((valuesCache[4] & 0xffl) << 32) | ((valuesCache[5] & 0xffl) << 40) | ((valuesCache[6] & 0xffl) << 48) | (valuesCache[7] << 56)
+                        : (valuesCache[7] & 0xffl) | ((valuesCache[6] & 0xffl) << 8) | ((valuesCache[5] & 0xffl) << 16) | ((valuesCache[4] & 0xffl) << 24)
+                        | ((valuesCache[3] & 0xffl) << 32) | ((valuesCache[2] & 0xffl) << 40) | ((valuesCache[1] & 0xffl) << 48) | (valuesCache[0] << 56))
+                : (littleEndian
+                        ? (valuesCache[0] & 0xffl) | ((valuesCache[1] & 0xffl) << 8) | ((valuesCache[2] & 0xffl) << 16) | ((valuesCache[3] & 0xffl) << 24)
+                        | ((valuesCache[4] & 0xffl) << 32) | ((valuesCache[5] & 0xffl) << 40) | ((valuesCache[6] & 0xffl) << 48)
+                        : (valuesCache[7] & 0xffl) | ((valuesCache[6] & 0xffl) << 8) | ((valuesCache[5] & 0xffl) << 16) | ((valuesCache[4] & 0xffl) << 24)
+                        | ((valuesCache[3] & 0xffl) << 32) | ((valuesCache[2] & 0xffl) << 40) | ((valuesCache[1] & 0xffl) << 48));
+        if (!signed) {
+            BigInteger bigInt1 = BigInteger.valueOf(valuesCache[littleEndian ? 7 : 0] & 0xff);
+            BigInteger bigInt2 = bigInt1.shiftLeft(56);
+            BigInteger bigInt3 = bigInt2.add(BigInteger.valueOf(longValue));
+            longTextField.setText(bigInt3.toString());
+        } else {
+            longTextField.setText(String.valueOf(longValue));
+        }
+        ByteBuffer buffer = ByteBuffer.wrap(valuesCache);
+        floatTextField.setText(String.valueOf(buffer.getFloat()));
+        buffer.rewind();
+        doubleTextField.setText(String.valueOf(buffer.getDouble()));
     }
 
     private void clearValues() {
