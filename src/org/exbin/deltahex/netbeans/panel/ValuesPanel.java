@@ -23,18 +23,32 @@ import org.exbin.deltahex.CaretMovedListener;
 import org.exbin.deltahex.CaretPosition;
 import org.exbin.deltahex.DataChangedListener;
 import org.exbin.deltahex.Section;
+import org.exbin.deltahex.netbeans.HexUndoSwingHandler;
+import org.exbin.deltahex.operation.BinaryDataCommand;
+import org.exbin.deltahex.operation.BinaryDataOperationException;
+import org.exbin.deltahex.operation.swing.command.ModifyDataCommand;
+import org.exbin.deltahex.operation.undo.BinaryDataUndoUpdateListener;
 import org.exbin.deltahex.swing.CodeArea;
+import org.exbin.utils.binary_data.ByteArrayEditableData;
+import org.openide.util.Exceptions;
 
 /**
  * Values side panel.
  *
- * @version 0.1.5 2017/03/13
+ * @version 0.1.5 2017/03/14
  * @author ExBin Project (http://exbin.org)
  */
 public class ValuesPanel extends javax.swing.JPanel {
 
-    private CodeArea codeArea;
     private final byte[] valuesCache = new byte[8];
+
+    private CodeArea codeArea;
+    private HexUndoSwingHandler undoHandler;
+    private long dataPosition;
+    private boolean updateInProgress = false;
+    private DataChangedListener dataChangedListener;
+    private CaretMovedListener caretMovedListener;
+    private BinaryDataUndoUpdateListener undoUpdateListener;
 
     public ValuesPanel() {
         initComponents();
@@ -72,8 +86,6 @@ public class ValuesPanel extends javax.swing.JPanel {
         floatTextField = new javax.swing.JTextField();
         doubleLabel = new javax.swing.JLabel();
         doubleTextField = new javax.swing.JTextField();
-        dateLabel = new javax.swing.JLabel();
-        dateTextField = new javax.swing.JTextField();
         characterLabel = new javax.swing.JLabel();
         characterTextField = new javax.swing.JTextField();
         bigEndianRadioButton = new javax.swing.JRadioButton();
@@ -84,21 +96,81 @@ public class ValuesPanel extends javax.swing.JPanel {
 
         org.openide.awt.Mnemonics.setLocalizedText(binaryLabel, "Binary");
 
+        binaryCheckBox0.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                binaryCheckBox0ActionPerformed(evt);
+            }
+        });
+
+        binaryCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                binaryCheckBox1ActionPerformed(evt);
+            }
+        });
+
+        binaryCheckBox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                binaryCheckBox2ActionPerformed(evt);
+            }
+        });
+
+        binaryCheckBox3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                binaryCheckBox3ActionPerformed(evt);
+            }
+        });
+
+        binaryCheckBox4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                binaryCheckBox4ActionPerformed(evt);
+            }
+        });
+
+        binaryCheckBox5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                binaryCheckBox5ActionPerformed(evt);
+            }
+        });
+
+        binaryCheckBox6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                binaryCheckBox6ActionPerformed(evt);
+            }
+        });
+
+        binaryCheckBox7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                binaryCheckBox7ActionPerformed(evt);
+            }
+        });
+
         org.openide.awt.Mnemonics.setLocalizedText(byteLabel, "Byte");
+
+        byteTextField.setEditable(false);
 
         org.openide.awt.Mnemonics.setLocalizedText(wordLabel, "Word");
 
+        wordTextField.setEditable(false);
+
         org.openide.awt.Mnemonics.setLocalizedText(intLabel, "Integer");
+
+        intTextField.setEditable(false);
 
         org.openide.awt.Mnemonics.setLocalizedText(longLabel, "Long");
 
+        longTextField.setEditable(false);
+
         org.openide.awt.Mnemonics.setLocalizedText(floatLabel, "Float");
+
+        floatTextField.setEditable(false);
 
         org.openide.awt.Mnemonics.setLocalizedText(doubleLabel, "Double");
 
-        org.openide.awt.Mnemonics.setLocalizedText(dateLabel, "Date");
+        doubleTextField.setEditable(false);
 
         org.openide.awt.Mnemonics.setLocalizedText(characterLabel, "Character");
+
+        characterTextField.setEditable(false);
 
         endianButtonGroup.add(bigEndianRadioButton);
         bigEndianRadioButton.setSelected(true);
@@ -148,18 +220,22 @@ public class ValuesPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(bigEndianRadioButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(littleEndianRadioButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(signedRadioButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(signedRadioButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
+                        .addComponent(bigEndianRadioButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(littleEndianRadioButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(signedRadioButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(signedRadioButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(characterLabel)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(characterTextField, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(byteLabel)
                                     .addComponent(wordLabel)
@@ -183,21 +259,14 @@ public class ValuesPanel extends javax.swing.JPanel {
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(binaryCheckBox7))
                                     .addComponent(floatLabel)
-                                    .addComponent(doubleLabel)
-                                    .addComponent(dateLabel)
-                                    .addComponent(characterLabel))
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addGap(6, 6, 6))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(doubleLabel))
+                                .addGap(0, 2, Short.MAX_VALUE))
                             .addComponent(byteTextField, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(wordTextField, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(intTextField, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(longTextField, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(floatTextField, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(doubleTextField, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(dateTextField, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(characterTextField))
+                            .addComponent(doubleTextField, javax.swing.GroupLayout.Alignment.LEADING))
                         .addContainerGap())))
         );
         layout.setVerticalGroup(
@@ -240,10 +309,6 @@ public class ValuesPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(doubleTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(dateLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(dateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(characterLabel)
@@ -278,6 +343,62 @@ public class ValuesPanel extends javax.swing.JPanel {
         updateValues();
     }//GEN-LAST:event_signedRadioButton1StateChanged
 
+    private void binaryCheckBox0ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_binaryCheckBox0ActionPerformed
+        if (!updateInProgress && ((valuesCache[0] & 0x80) > 0 != binaryCheckBox0.isSelected())) {
+            valuesCache[0] = (byte) (valuesCache[0] ^ 0x80);
+            modifyValues(1);
+        }
+    }//GEN-LAST:event_binaryCheckBox0ActionPerformed
+
+    private void binaryCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_binaryCheckBox1ActionPerformed
+        if (!updateInProgress && ((valuesCache[0] & 0x40) > 0 != binaryCheckBox1.isSelected())) {
+            valuesCache[0] = (byte) (valuesCache[0] ^ 0x40);
+            modifyValues(1);
+        }
+    }//GEN-LAST:event_binaryCheckBox1ActionPerformed
+
+    private void binaryCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_binaryCheckBox2ActionPerformed
+        if (!updateInProgress && ((valuesCache[0] & 0x20) > 0 != binaryCheckBox2.isSelected())) {
+            valuesCache[0] = (byte) (valuesCache[0] ^ 0x20);
+            modifyValues(1);
+        }
+    }//GEN-LAST:event_binaryCheckBox2ActionPerformed
+
+    private void binaryCheckBox3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_binaryCheckBox3ActionPerformed
+        if (!updateInProgress && ((valuesCache[0] & 0x10) > 0 != binaryCheckBox3.isSelected())) {
+            valuesCache[0] = (byte) (valuesCache[0] ^ 0x10);
+            modifyValues(1);
+        }
+    }//GEN-LAST:event_binaryCheckBox3ActionPerformed
+
+    private void binaryCheckBox4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_binaryCheckBox4ActionPerformed
+        if (!updateInProgress && ((valuesCache[0] & 0x8) > 0 != binaryCheckBox4.isSelected())) {
+            valuesCache[0] = (byte) (valuesCache[0] ^ 0x8);
+            modifyValues(1);
+        }
+    }//GEN-LAST:event_binaryCheckBox4ActionPerformed
+
+    private void binaryCheckBox5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_binaryCheckBox5ActionPerformed
+        if (!updateInProgress && ((valuesCache[0] & 0x4) > 0 != binaryCheckBox5.isSelected())) {
+            valuesCache[0] = (byte) (valuesCache[0] ^ 0x4);
+            modifyValues(1);
+        }
+    }//GEN-LAST:event_binaryCheckBox5ActionPerformed
+
+    private void binaryCheckBox6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_binaryCheckBox6ActionPerformed
+        if (!updateInProgress && ((valuesCache[0] & 0x2) > 0 != binaryCheckBox6.isSelected())) {
+            valuesCache[0] = (byte) (valuesCache[0] ^ 0x2);
+            modifyValues(1);
+        }
+    }//GEN-LAST:event_binaryCheckBox6ActionPerformed
+
+    private void binaryCheckBox7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_binaryCheckBox7ActionPerformed
+        if (!updateInProgress && ((valuesCache[0] & 0x1) > 0 != binaryCheckBox7.isSelected())) {
+            valuesCache[0] = (byte) (valuesCache[0] ^ 0x1);
+            modifyValues(1);
+        }
+    }//GEN-LAST:event_binaryCheckBox7ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton bigEndianRadioButton;
     private javax.swing.JCheckBox binaryCheckBox0;
@@ -293,8 +414,6 @@ public class ValuesPanel extends javax.swing.JPanel {
     private javax.swing.JTextField byteTextField;
     private javax.swing.JLabel characterLabel;
     private javax.swing.JTextField characterTextField;
-    private javax.swing.JLabel dateLabel;
-    private javax.swing.JTextField dateTextField;
     private javax.swing.JLabel doubleLabel;
     private javax.swing.JTextField doubleTextField;
     private javax.swing.ButtonGroup endianButtonGroup;
@@ -313,91 +432,162 @@ public class ValuesPanel extends javax.swing.JPanel {
     private javax.swing.JTextField wordTextField;
     // End of variables declaration//GEN-END:variables
 
-    public void setCodeArea(CodeArea codeArea) {
+    public void setCodeArea(CodeArea codeArea, HexUndoSwingHandler undoHandler) {
         this.codeArea = codeArea;
-        codeArea.addDataChangedListener(new DataChangedListener() {
+        this.undoHandler = undoHandler;
+    }
+
+    public void enableUpdate() {
+        dataChangedListener = new DataChangedListener() {
             @Override
             public void dataChanged() {
                 updateValues();
             }
-        });
-        codeArea.addCaretMovedListener(new CaretMovedListener() {
+        };
+        codeArea.addDataChangedListener(dataChangedListener);
+        caretMovedListener = new CaretMovedListener() {
             @Override
             public void caretMoved(CaretPosition caretPosition, Section section) {
                 updateValues();
             }
-        });
+        };
+        codeArea.addCaretMovedListener(caretMovedListener);
+        undoUpdateListener = new BinaryDataUndoUpdateListener() {
+            @Override
+            public void undoCommandPositionChanged() {
+                updateValues();
+            }
+
+            @Override
+            public void undoCommandAdded(BinaryDataCommand command) {
+                updateValues();
+            }
+        };
+        undoHandler.addUndoUpdateListener(undoUpdateListener);
+    }
+
+    public void disableUpdate() {
+        codeArea.removeDataChangedListener(dataChangedListener);
+        codeArea.removeCaretMovedListener(caretMovedListener);
+        undoHandler.addUndoUpdateListener(undoUpdateListener);
     }
 
     private void updateValues() {
         CaretPosition caretPosition = codeArea.getCaretPosition();
-        long dataPosition = caretPosition.getDataPosition();
+        dataPosition = caretPosition.getDataPosition();
         long dataSize = codeArea.getDataSize();
+
+        updateInProgress = true;
         if (dataPosition < dataSize) {
             int availableData = dataSize - dataPosition > 7 ? 8 : (int) (dataSize - dataPosition);
             codeArea.getData().copyToArray(dataPosition, valuesCache, 0, availableData);
             if (availableData < 8) {
                 Arrays.fill(valuesCache, availableData, 8, (byte) 0);
             }
-            populateValues();
+            populateValues(null);
         } else {
             clearValues();
         }
+        updateInProgress = false;
     }
 
-    private void populateValues() {
+    private void modifyValues(int bytesCount) {
+        // ((EditableBinaryData) codeArea.getData()).replace(dataPosition, valuesCache, 0, bytesCount);
+        ByteArrayEditableData byteArrayData = new ByteArrayEditableData();
+        byteArrayData.insert(0, valuesCache, 0, bytesCount);
+        ModifyDataCommand modifyCommand = new ModifyDataCommand(codeArea, dataPosition, byteArrayData);
+        long oldDataPosition = dataPosition;
+        try {
+            undoHandler.execute(modifyCommand);
+            codeArea.setCaretPosition(oldDataPosition);
+        } catch (BinaryDataOperationException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        codeArea.repaint();
+    }
+
+    private void populateValues(ValueType skipType) {
         boolean signed = signedRadioButton.isSelected();
         boolean littleEndian = littleEndianRadioButton.isSelected();
-        binaryCheckBox0.setSelected((valuesCache[0] & 0x80) > 0);
-        binaryCheckBox1.setSelected((valuesCache[0] & 0x40) > 0);
-        binaryCheckBox2.setSelected((valuesCache[0] & 0x20) > 0);
-        binaryCheckBox3.setSelected((valuesCache[0] & 0x10) > 0);
-        binaryCheckBox4.setSelected((valuesCache[0] & 0x8) > 0);
-        binaryCheckBox5.setSelected((valuesCache[0] & 0x4) > 0);
-        binaryCheckBox6.setSelected((valuesCache[0] & 0x2) > 0);
-        binaryCheckBox7.setSelected((valuesCache[0] & 0x1) > 0);
-        byteTextField.setText(String.valueOf(signed ? valuesCache[0] : valuesCache[0] & 0xff));
-        int wordValue = signed
-                ? (littleEndian
-                        ? (valuesCache[0] & 0xff) | (valuesCache[1] << 8)
-                        : (valuesCache[1] & 0xff) | (valuesCache[0] << 8))
-                : (littleEndian
-                        ? (valuesCache[0] & 0xff) | ((valuesCache[1] & 0xff) << 8)
-                        : (valuesCache[1] & 0xff) | ((valuesCache[0] & 0xff) << 8));
-        wordTextField.setText(String.valueOf(wordValue));
-        long intValue = signed
-                ? (littleEndian
-                        ? (valuesCache[0] & 0xffl) | ((valuesCache[1] & 0xffl) << 8) | ((valuesCache[2] & 0xffl) << 16) | (valuesCache[3] << 24)
-                        : (valuesCache[3] & 0xffl) | ((valuesCache[2] & 0xffl) << 8) | ((valuesCache[1] & 0xffl) << 16) | (valuesCache[0] << 24))
-                : (littleEndian
-                        ? (valuesCache[0] & 0xffl) | ((valuesCache[1] & 0xffl) << 8) | ((valuesCache[2] & 0xffl) << 16) | ((valuesCache[3] & 0xffl) << 24)
-                        : (valuesCache[3] & 0xffl) | ((valuesCache[2] & 0xffl) << 8) | ((valuesCache[1] & 0xffl) << 16) | ((valuesCache[0] & 0xffl) << 24));
-        intTextField.setText(String.valueOf(intValue));
 
-        // TODO: Fix
-        long longValue = signed
-                ? (littleEndian
-                        ? (valuesCache[0] & 0xffl) | ((valuesCache[1] & 0xffl) << 8) | ((valuesCache[2] & 0xffl) << 16) | ((valuesCache[3] & 0xffl) << 24)
-                        | ((valuesCache[4] & 0xffl) << 32) | ((valuesCache[5] & 0xffl) << 40) | ((valuesCache[6] & 0xffl) << 48) | (valuesCache[7] << 56)
-                        : (valuesCache[7] & 0xffl) | ((valuesCache[6] & 0xffl) << 8) | ((valuesCache[5] & 0xffl) << 16) | ((valuesCache[4] & 0xffl) << 24)
-                        | ((valuesCache[3] & 0xffl) << 32) | ((valuesCache[2] & 0xffl) << 40) | ((valuesCache[1] & 0xffl) << 48) | (valuesCache[0] << 56))
-                : (littleEndian
-                        ? (valuesCache[0] & 0xffl) | ((valuesCache[1] & 0xffl) << 8) | ((valuesCache[2] & 0xffl) << 16) | ((valuesCache[3] & 0xffl) << 24)
-                        | ((valuesCache[4] & 0xffl) << 32) | ((valuesCache[5] & 0xffl) << 40) | ((valuesCache[6] & 0xffl) << 48)
-                        : (valuesCache[7] & 0xffl) | ((valuesCache[6] & 0xffl) << 8) | ((valuesCache[5] & 0xffl) << 16) | ((valuesCache[4] & 0xffl) << 24)
-                        | ((valuesCache[3] & 0xffl) << 32) | ((valuesCache[2] & 0xffl) << 40) | ((valuesCache[1] & 0xffl) << 48));
-        if (!signed) {
-            BigInteger bigInt1 = BigInteger.valueOf(valuesCache[littleEndian ? 7 : 0] & 0xff);
-            BigInteger bigInt2 = bigInt1.shiftLeft(56);
-            BigInteger bigInt3 = bigInt2.add(BigInteger.valueOf(longValue));
-            longTextField.setText(bigInt3.toString());
-        } else {
-            longTextField.setText(String.valueOf(longValue));
+        if (skipType != ValueType.BINARY) {
+            binaryCheckBox0.setSelected((valuesCache[0] & 0x80) > 0);
+            binaryCheckBox1.setSelected((valuesCache[0] & 0x40) > 0);
+            binaryCheckBox2.setSelected((valuesCache[0] & 0x20) > 0);
+            binaryCheckBox3.setSelected((valuesCache[0] & 0x10) > 0);
+            binaryCheckBox4.setSelected((valuesCache[0] & 0x8) > 0);
+            binaryCheckBox5.setSelected((valuesCache[0] & 0x4) > 0);
+            binaryCheckBox6.setSelected((valuesCache[0] & 0x2) > 0);
+            binaryCheckBox7.setSelected((valuesCache[0] & 0x1) > 0);
         }
+
+        if (skipType != ValueType.BYTE) {
+            byteTextField.setText(String.valueOf(signed ? valuesCache[0] : valuesCache[0] & 0xff));
+        }
+
+        if (skipType != ValueType.WORD) {
+            int wordValue = signed
+                    ? (littleEndian
+                            ? (valuesCache[0] & 0xff) | (valuesCache[1] << 8)
+                            : (valuesCache[1] & 0xff) | (valuesCache[0] << 8))
+                    : (littleEndian
+                            ? (valuesCache[0] & 0xff) | ((valuesCache[1] & 0xff) << 8)
+                            : (valuesCache[1] & 0xff) | ((valuesCache[0] & 0xff) << 8));
+            wordTextField.setText(String.valueOf(wordValue));
+        }
+
+        if (skipType != ValueType.INTEGER) {
+            long intValue = signed
+                    ? (littleEndian
+                            ? (valuesCache[0] & 0xffl) | ((valuesCache[1] & 0xffl) << 8) | ((valuesCache[2] & 0xffl) << 16) | (valuesCache[3] << 24)
+                            : (valuesCache[3] & 0xffl) | ((valuesCache[2] & 0xffl) << 8) | ((valuesCache[1] & 0xffl) << 16) | (valuesCache[0] << 24))
+                    : (littleEndian
+                            ? (valuesCache[0] & 0xffl) | ((valuesCache[1] & 0xffl) << 8) | ((valuesCache[2] & 0xffl) << 16) | ((valuesCache[3] & 0xffl) << 24)
+                            : (valuesCache[3] & 0xffl) | ((valuesCache[2] & 0xffl) << 8) | ((valuesCache[1] & 0xffl) << 16) | ((valuesCache[0] & 0xffl) << 24));
+            intTextField.setText(String.valueOf(intValue));
+        }
+
+        if (skipType != ValueType.LONG) {
+            // TODO: Fix unsigned long max value
+            long longValue = signed
+                    ? (littleEndian
+                            ? (valuesCache[0] & 0xffl) | ((valuesCache[1] & 0xffl) << 8) | ((valuesCache[2] & 0xffl) << 16) | ((valuesCache[3] & 0xffl) << 24)
+                            | ((valuesCache[4] & 0xffl) << 32) | ((valuesCache[5] & 0xffl) << 40) | ((valuesCache[6] & 0xffl) << 48) | (valuesCache[7] << 56)
+                            : (valuesCache[7] & 0xffl) | ((valuesCache[6] & 0xffl) << 8) | ((valuesCache[5] & 0xffl) << 16) | ((valuesCache[4] & 0xffl) << 24)
+                            | ((valuesCache[3] & 0xffl) << 32) | ((valuesCache[2] & 0xffl) << 40) | ((valuesCache[1] & 0xffl) << 48) | (valuesCache[0] << 56))
+                    : (littleEndian
+                            ? (valuesCache[0] & 0xffl) | ((valuesCache[1] & 0xffl) << 8) | ((valuesCache[2] & 0xffl) << 16) | ((valuesCache[3] & 0xffl) << 24)
+                            | ((valuesCache[4] & 0xffl) << 32) | ((valuesCache[5] & 0xffl) << 40) | ((valuesCache[6] & 0xffl) << 48)
+                            : (valuesCache[7] & 0xffl) | ((valuesCache[6] & 0xffl) << 8) | ((valuesCache[5] & 0xffl) << 16) | ((valuesCache[4] & 0xffl) << 24)
+                            | ((valuesCache[3] & 0xffl) << 32) | ((valuesCache[2] & 0xffl) << 40) | ((valuesCache[1] & 0xffl) << 48));
+            if (!signed) {
+                BigInteger bigInt1 = BigInteger.valueOf(valuesCache[littleEndian ? 7 : 0] & 0xff);
+                BigInteger bigInt2 = bigInt1.shiftLeft(56);
+                BigInteger bigInt3 = bigInt2.add(BigInteger.valueOf(longValue));
+                longTextField.setText(bigInt3.toString());
+            } else {
+                longTextField.setText(String.valueOf(longValue));
+            }
+        }
+
         ByteBuffer buffer = ByteBuffer.wrap(valuesCache);
-        floatTextField.setText(String.valueOf(buffer.getFloat()));
-        buffer.rewind();
-        doubleTextField.setText(String.valueOf(buffer.getDouble()));
+        if (skipType != ValueType.FLOAT) {
+            floatTextField.setText(String.valueOf(buffer.getFloat()));
+        }
+
+        if (skipType != ValueType.DOUBLE) {
+            buffer.rewind();
+            doubleTextField.setText(String.valueOf(buffer.getDouble()));
+        }
+
+        if (skipType != ValueType.CHARACTER) {
+            String strValue = new String(valuesCache, codeArea.getCharset());
+            if (strValue.length() > 0) {
+                characterTextField.setText(strValue.substring(0, 1));
+            } else {
+                characterTextField.setText("");
+            }
+        }
     }
 
     private void clearValues() {
@@ -415,7 +605,17 @@ public class ValuesPanel extends javax.swing.JPanel {
         longTextField.setText("");
         floatTextField.setText("");
         doubleTextField.setText("");
-        dateTextField.setText("");
         characterTextField.setText("");
+    }
+
+    public static enum ValueType {
+        BINARY,
+        BYTE,
+        WORD,
+        INTEGER,
+        LONG,
+        FLOAT,
+        DOUBLE,
+        CHARACTER
     }
 }

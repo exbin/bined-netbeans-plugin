@@ -22,23 +22,28 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="bigEndianRadioButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="littleEndianRadioButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jSeparator1" min="-2" pref="2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="signedRadioButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="signedRadioButton1" max="32767" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="characterLabel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="characterTextField" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="bigEndianRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="littleEndianRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jSeparator1" min="-2" pref="2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="signedRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="signedRadioButton1" max="32767" attributes="0"/>
-                          </Group>
-                          <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="byteLabel" min="-2" max="-2" attributes="0"/>
                                   <Component id="wordLabel" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -64,24 +69,15 @@
                                   </Group>
                                   <Component id="floatLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="doubleLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="dateLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="characterLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="2" max="32767" attributes="0"/>
                           </Group>
-                      </Group>
-                      <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="1" attributes="0">
-                      <Group type="103" groupAlignment="1" attributes="0">
                           <Component id="byteTextField" alignment="0" max="32767" attributes="0"/>
                           <Component id="wordTextField" alignment="0" max="32767" attributes="0"/>
                           <Component id="intTextField" alignment="0" max="32767" attributes="0"/>
                           <Component id="longTextField" alignment="0" max="32767" attributes="0"/>
                           <Component id="floatTextField" alignment="0" max="32767" attributes="0"/>
                           <Component id="doubleTextField" alignment="0" max="32767" attributes="0"/>
-                          <Component id="dateTextField" alignment="0" max="32767" attributes="0"/>
-                          <Component id="characterTextField" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -130,12 +126,8 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="doubleTextField" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="dateLabel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="dateTextField" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
                       <Component id="characterLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="characterTextField" min="-2" max="-2" attributes="0"/>
@@ -148,7 +140,7 @@
                           <Component id="jSeparator1" alignment="1" min="-2" pref="28" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <Group type="103" groupAlignment="3" attributes="0">
+                  <Group type="103" alignment="1" groupAlignment="3" attributes="0">
                       <Component id="signedRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="signedRadioButton1" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -165,20 +157,44 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JCheckBox" name="binaryCheckBox0">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="binaryCheckBox0ActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="binaryCheckBox1">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="binaryCheckBox1ActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="binaryCheckBox2">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="binaryCheckBox2ActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="binaryCheckBox3">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="binaryCheckBox3ActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="binaryCheckBox4">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="binaryCheckBox4ActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="binaryCheckBox5">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="binaryCheckBox5ActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="binaryCheckBox6">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="binaryCheckBox6ActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="binaryCheckBox7">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="binaryCheckBox7ActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="byteLabel">
       <Properties>
@@ -186,6 +202,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="byteTextField">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="wordLabel">
       <Properties>
@@ -193,6 +212,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="wordTextField">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="intLabel">
       <Properties>
@@ -200,6 +222,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="intTextField">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="longLabel">
       <Properties>
@@ -207,6 +232,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="longTextField">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="floatLabel">
       <Properties>
@@ -214,6 +242,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="floatTextField">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="doubleLabel">
       <Properties>
@@ -221,13 +252,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="doubleTextField">
-    </Component>
-    <Component class="javax.swing.JLabel" name="dateLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Date"/>
+        <Property name="editable" type="boolean" value="false"/>
       </Properties>
-    </Component>
-    <Component class="javax.swing.JTextField" name="dateTextField">
     </Component>
     <Component class="javax.swing.JLabel" name="characterLabel">
       <Properties>
@@ -235,6 +262,9 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JTextField" name="characterTextField">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+      </Properties>
     </Component>
     <Component class="javax.swing.JRadioButton" name="bigEndianRadioButton">
       <Properties>

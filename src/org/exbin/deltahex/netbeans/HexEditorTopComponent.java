@@ -98,7 +98,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.5 2017/03/12
+ * @version 0.1.5 2017/03/14
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)
@@ -189,10 +189,11 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
                 preferences.put(PREFERENCES_ENCODING_SELECTED, encodingName);
             }
         });
-        loadFromPreferences();
 
         undoRedo = new UndoRedo.Manager();
         undoHandler = new HexUndoSwingHandler(codeArea, undoRedo);
+
+        loadFromPreferences();
 
         getSegmentsRepository();
         setNewData();
@@ -1007,9 +1008,10 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
             valuesPanelVisible = true;
             if (valuesPanel == null) {
                 valuesPanel = new ValuesPanel();
-                valuesPanel.setCodeArea(codeArea);
+                valuesPanel.setCodeArea(codeArea, undoHandler);
             }
             codeAreaPanel.add(valuesPanel, BorderLayout.EAST);
+            valuesPanel.enableUpdate();
             codeAreaPanel.revalidate();
             revalidate();
         }
@@ -1018,6 +1020,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     public void hideValuesPanel() {
         if (valuesPanelVisible) {
             valuesPanelVisible = true;
+            valuesPanel.disableUpdate();
             codeAreaPanel.remove(valuesPanel);
             codeAreaPanel.revalidate();
             revalidate();
