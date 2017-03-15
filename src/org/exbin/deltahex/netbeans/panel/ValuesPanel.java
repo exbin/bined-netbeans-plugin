@@ -26,6 +26,7 @@ import org.exbin.deltahex.Section;
 import org.exbin.deltahex.netbeans.HexUndoSwingHandler;
 import org.exbin.deltahex.operation.BinaryDataCommand;
 import org.exbin.deltahex.operation.BinaryDataOperationException;
+import org.exbin.deltahex.operation.swing.command.InsertDataCommand;
 import org.exbin.deltahex.operation.swing.command.ModifyDataCommand;
 import org.exbin.deltahex.operation.undo.BinaryDataUndoUpdateListener;
 import org.exbin.deltahex.swing.CodeArea;
@@ -35,7 +36,7 @@ import org.openide.util.Exceptions;
 /**
  * Values side panel.
  *
- * @version 0.1.5 2017/03/14
+ * @version 0.1.5 2017/03/15
  * @author ExBin Project (http://exbin.org)
  */
 public class ValuesPanel extends javax.swing.JPanel {
@@ -472,7 +473,7 @@ public class ValuesPanel extends javax.swing.JPanel {
         undoHandler.addUndoUpdateListener(undoUpdateListener);
     }
 
-    private void updateValues() {
+    public void updateValues() {
         CaretPosition caretPosition = codeArea.getCaretPosition();
         dataPosition = caretPosition.getDataPosition();
         long dataSize = codeArea.getDataSize();
@@ -484,6 +485,7 @@ public class ValuesPanel extends javax.swing.JPanel {
             if (availableData < 8) {
                 Arrays.fill(valuesCache, availableData, 8, (byte) 0);
             }
+            // TODO: perform in separated thread to not hinder performance
             populateValues(null);
         } else {
             clearValues();
@@ -495,14 +497,23 @@ public class ValuesPanel extends javax.swing.JPanel {
         // ((EditableBinaryData) codeArea.getData()).replace(dataPosition, valuesCache, 0, bytesCount);
         ByteArrayEditableData byteArrayData = new ByteArrayEditableData();
         byteArrayData.insert(0, valuesCache, 0, bytesCount);
-        ModifyDataCommand modifyCommand = new ModifyDataCommand(codeArea, dataPosition, byteArrayData);
         long oldDataPosition = dataPosition;
-        try {
-            undoHandler.execute(modifyCommand);
-            codeArea.setCaretPosition(oldDataPosition);
-        } catch (BinaryDataOperationException ex) {
-            Exceptions.printStackTrace(ex);
+        if (dataPosition == codeArea.getDataSize()) {
+            InsertDataCommand insertCommand = new InsertDataCommand(codeArea, dataPosition, byteArrayData);
+            try {
+                undoHandler.execute(insertCommand);
+            } catch (BinaryDataOperationException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        } else {
+            ModifyDataCommand modifyCommand = new ModifyDataCommand(codeArea, dataPosition, byteArrayData);
+            try {
+                undoHandler.execute(modifyCommand);
+            } catch (BinaryDataOperationException ex) {
+                Exceptions.printStackTrace(ex);
+            }
         }
+        codeArea.setCaretPosition(oldDataPosition);
         codeArea.repaint();
     }
 
@@ -548,7 +559,6 @@ public class ValuesPanel extends javax.swing.JPanel {
         }
 
         if (skipType != ValueType.LONG) {
-            // TODO: Fix unsigned long max value
             long longValue = signed
                     ? (littleEndian
                             ? (valuesCache[0] & 0xffl) | ((valuesCache[1] & 0xffl) << 8) | ((valuesCache[2] & 0xffl) << 16) | ((valuesCache[3] & 0xffl) << 24)
@@ -561,7 +571,7 @@ public class ValuesPanel extends javax.swing.JPanel {
                             : (valuesCache[7] & 0xffl) | ((valuesCache[6] & 0xffl) << 8) | ((valuesCache[5] & 0xffl) << 16) | ((valuesCache[4] & 0xffl) << 24)
                             | ((valuesCache[3] & 0xffl) << 32) | ((valuesCache[2] & 0xffl) << 40) | ((valuesCache[1] & 0xffl) << 48));
             if (!signed) {
-                BigInteger bigInt1 = BigInteger.valueOf(valuesCache[littleEndian ? 7 : 0] & 0xff);
+                BigInteger bigInt1 = BigInteger.valueOf(valuesCache[littleEndian ? 7 : 0] & 0xffl);
                 BigInteger bigInt2 = bigInt1.shiftLeft(56);
                 BigInteger bigInt3 = bigInt2.add(BigInteger.valueOf(longValue));
                 longTextField.setText(bigInt3.toString());

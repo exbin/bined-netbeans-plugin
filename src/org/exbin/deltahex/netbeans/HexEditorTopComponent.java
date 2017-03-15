@@ -98,7 +98,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.5 2017/03/14
+ * @version 0.1.5 2017/03/15
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)
@@ -847,6 +847,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
             public void actionPerformed(ActionEvent e) {
                 final DeltaHexOptionsPanelBorder optionsPanel = new DeltaHexOptionsPanelBorder();
                 optionsPanel.setFromCodeArea(codeArea);
+                optionsPanel.setShowValuesPanel(valuesPanelVisible);
                 OptionsControlPanel optionsControlPanel = new OptionsControlPanel();
                 optionsPanel.setVisible(true);
                 JPanel dialogPanel = WindowUtils.createDialogPanel(optionsPanel, optionsControlPanel);
@@ -862,6 +863,12 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
                         }
                         if (actionType != OptionsControlHandler.ControlActionType.CANCEL) {
                             optionsPanel.applyToCodeArea(codeArea);
+                            boolean applyShowValuesPanel = optionsPanel.isShowValuesPanel();
+                            if (applyShowValuesPanel) {
+                                showValuesPanel();
+                            } else {
+                                hideValuesPanel();
+                            }
                             applyFromCodeArea();
                             switchDeltaMemoryMode(optionsPanel.isDeltaMemoryMode());
                             codeArea.repaint();
@@ -1012,6 +1019,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
             }
             codeAreaPanel.add(valuesPanel, BorderLayout.EAST);
             valuesPanel.enableUpdate();
+            valuesPanel.updateValues();
             codeAreaPanel.revalidate();
             revalidate();
         }
@@ -1019,7 +1027,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 
     public void hideValuesPanel() {
         if (valuesPanelVisible) {
-            valuesPanelVisible = true;
+            valuesPanelVisible = false;
             valuesPanel.disableUpdate();
             codeAreaPanel.remove(valuesPanel);
             codeAreaPanel.revalidate();

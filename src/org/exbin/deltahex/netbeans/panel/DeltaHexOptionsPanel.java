@@ -52,7 +52,7 @@ import org.openide.util.NbPreferences;
 /**
  * Hexadecimal editor options panel.
  *
- * @version 0.1.5 2017/03/09
+ * @version 0.1.5 2017/03/15
  * @author ExBin Project (http://exbin.org)
  */
 public class DeltaHexOptionsPanel extends javax.swing.JPanel {
@@ -145,6 +145,7 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         codeColorizationCheckBox = new javax.swing.JCheckBox();
         memoryModeLabel = new javax.swing.JLabel();
         memoryModeComboBox = new javax.swing.JComboBox<>();
+        showValuesPanelCheckBox = new javax.swing.JCheckBox();
         decorationPanel = new javax.swing.JPanel();
         hexCharactersModeLabel = new javax.swing.JLabel();
         backgroundModeLabel = new javax.swing.JLabel();
@@ -348,6 +349,8 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
 
         memoryModeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "DELTA", "MEMORY" }));
 
+        org.openide.awt.Mnemonics.setLocalizedText(showValuesPanelCheckBox, resourceBundle.getString("DeltaHexOptionsPanel.showValuesPanelCheckBox.text")); // NOI18N
+
         javax.swing.GroupLayout modePanelLayout = new javax.swing.GroupLayout(modePanel);
         modePanel.setLayout(modePanelLayout);
         modePanelLayout.setHorizontalGroup(
@@ -356,13 +359,16 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
             .addComponent(showNonprintableCharactersCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
             .addComponent(codeTypeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(codeColorizationCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(memoryModeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(modePanelLayout.createSequentialGroup()
                 .addGroup(modePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(viewModeScrollModeLabel)
-                    .addComponent(codeTypeScrollModeLabel)
-                    .addComponent(memoryModeLabel))
-                .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(codeTypeScrollModeLabel))
+                .addGap(0, 181, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, modePanelLayout.createSequentialGroup()
+                .addComponent(memoryModeLabel)
+                .addContainerGap(159, Short.MAX_VALUE))
+            .addComponent(memoryModeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(showValuesPanelCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         modePanelLayout.setVerticalGroup(
             modePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -379,9 +385,12 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(codeColorizationCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(showValuesPanelCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(memoryModeLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(memoryModeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(memoryModeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(150, Short.MAX_VALUE))
         );
 
         org.openide.awt.Mnemonics.setLocalizedText(hexCharactersModeLabel, resourceBundle.getString("DeltaHexOptionsPanel.hexCharactersModeLabel.text")); // NOI18N
@@ -601,6 +610,7 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         codeTypeComboBox.setSelectedIndex(codeType.ordinal());
         showNonprintableCharactersCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_UNPRINTABLES, true));
         codeColorizationCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_CODE_COLORIZATION, true));
+        showValuesPanelCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_VALUES_PANEL, true));
         memoryModeComboBox.setSelectedIndex(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_MEMORY_DELTA_MODE, true) ? 0 : 1);
 
         // Decoration
@@ -675,6 +685,7 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         preferences.put(HexEditorTopComponent.PREFERENCES_CODE_TYPE, CodeType.values()[codeTypeComboBox.getSelectedIndex()].name());
         preferences.putBoolean(HexEditorTopComponent.PREFERENCES_SHOW_UNPRINTABLES, showNonprintableCharactersCheckBox.isSelected());
         preferences.putBoolean(HexEditorTopComponent.PREFERENCES_CODE_COLORIZATION, codeColorizationCheckBox.isSelected());
+        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_SHOW_VALUES_PANEL, showValuesPanelCheckBox.isSelected());
         preferences.putBoolean(HexEditorTopComponent.PREFERENCES_MEMORY_DELTA_MODE, isDeltaMemoryMode());
 
         // Decoration
@@ -745,7 +756,7 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         updateFontTextField();
         useDefaultFontCheckBox.setSelected(deltaHexFont.equals(deltaHexDefaultFont));
     }
-
+    
     public void applyToCodeArea(CodeArea codeArea) {
         // Layout
         codeArea.setWrapMode(wrapLineModeCheckBox.isSelected());
@@ -781,6 +792,14 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         } else {
             codeArea.setFont(deltaHexFont);
         }
+    }
+    
+    public boolean isShowValuesPanel() {
+        return showValuesPanelCheckBox.isSelected();
+    }
+    
+    public void setShowValuesPanel(boolean flag) {
+        showValuesPanelCheckBox.setSelected(flag);
     }
 
     private int getDecorationMode() {
@@ -869,6 +888,7 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
     private javax.swing.JCheckBox showHeaderCheckBox;
     private javax.swing.JCheckBox showLineNumbersCheckBox;
     private javax.swing.JCheckBox showNonprintableCharactersCheckBox;
+    private javax.swing.JCheckBox showValuesPanelCheckBox;
     private javax.swing.JLabel spaceGroupSizeLabel;
     private javax.swing.JSpinner spaceGroupSizeSpinner;
     private javax.swing.JCheckBox useDefaultFontCheckBox;

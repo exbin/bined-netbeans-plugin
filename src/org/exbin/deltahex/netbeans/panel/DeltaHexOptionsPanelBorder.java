@@ -87,6 +87,14 @@ public class DeltaHexOptionsPanelBorder extends javax.swing.JPanel {
         codeArea.repaint();
     }
 
+    public boolean isShowValuesPanel() {
+        return optionsPanel.isShowValuesPanel();
+    }
+    
+    public void setShowValuesPanel(boolean flag) {
+        optionsPanel.setShowValuesPanel(flag);
+    }
+    
     public void store() {
         optionsPanel.store();
     }
