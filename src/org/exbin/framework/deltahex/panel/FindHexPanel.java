@@ -39,7 +39,7 @@ import org.exbin.utils.binary_data.ByteArrayEditableData;
 /**
  * Find text/hexadecimal data panel.
  *
- * @version 0.2.0 2016/12/27
+ * @version 0.2.0 2017/03/16
  * @author ExBin Project (http://exbin.org)
  */
 public class FindHexPanel extends javax.swing.JPanel {
@@ -76,7 +76,7 @@ public class FindHexPanel extends javax.swing.JPanel {
 
         findComboBoxEditorComponent = new HexSearchComboBoxPanel();
         findComboBox.setRenderer(new ListCellRenderer<SearchCondition>() {
-            private JPanel emptyPanel = new JPanel();
+            private final JPanel emptyPanel = new JPanel();
             private final DefaultListCellRenderer listCellRenderer = new DefaultListCellRenderer();
 
             @Override
@@ -96,7 +96,7 @@ public class FindHexPanel extends javax.swing.JPanel {
                     } else {
                         backgroundColor = list.getBackground();
                     }
-                    ColorsGroup mainColors = findHexadecimalRenderer.getMainColors();
+                    ColorsGroup mainColors = new ColorsGroup(findHexadecimalRenderer.getMainColors());
                     mainColors.setBothBackgroundColors(backgroundColor);
                     findHexadecimalRenderer.setMainColors(mainColors);
                     return findHexadecimalRenderer;
@@ -147,7 +147,7 @@ public class FindHexPanel extends javax.swing.JPanel {
 
         replaceComboBoxEditorComponent = new HexSearchComboBoxPanel();
         replaceComboBox.setRenderer(new ListCellRenderer<SearchCondition>() {
-            private JPanel emptyPanel = new JPanel();
+            private final JPanel emptyPanel = new JPanel();
             private final DefaultListCellRenderer listCellRenderer = new DefaultListCellRenderer();
 
             @Override
@@ -167,7 +167,7 @@ public class FindHexPanel extends javax.swing.JPanel {
                     } else {
                         backgroundColor = list.getBackground();
                     }
-                    ColorsGroup mainColors = replaceHexadecimalRenderer.getMainColors();
+                    ColorsGroup mainColors = new ColorsGroup(replaceHexadecimalRenderer.getMainColors());
                     mainColors.setBothBackgroundColors(backgroundColor);
                     replaceHexadecimalRenderer.setMainColors(mainColors);
                     return replaceHexadecimalRenderer;
