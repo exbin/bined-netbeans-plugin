@@ -52,7 +52,7 @@ import org.openide.util.NbPreferences;
 /**
  * Hexadecimal editor options panel.
  *
- * @version 0.1.5 2017/03/15
+ * @version 0.1.5 2017/03/18
  * @author ExBin Project (http://exbin.org)
  */
 public class DeltaHexOptionsPanel extends javax.swing.JPanel {
@@ -93,7 +93,8 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
                 }
                 currentCategoryPanel = categoryItem.getCategoryPanel();
                 mainPanel.add(currentCategoryPanel);
-                mainPanel.revalidate();
+                mainPanel.invalidate();
+                revalidate();
                 mainPanel.repaint();
             }
         });
@@ -756,7 +757,7 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         updateFontTextField();
         useDefaultFontCheckBox.setSelected(deltaHexFont.equals(deltaHexDefaultFont));
     }
-    
+
     public void applyToCodeArea(CodeArea codeArea) {
         // Layout
         codeArea.setWrapMode(wrapLineModeCheckBox.isSelected());
@@ -793,11 +794,11 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
             codeArea.setFont(deltaHexFont);
         }
     }
-    
+
     public boolean isShowValuesPanel() {
         return showValuesPanelCheckBox.isSelected();
     }
-    
+
     public void setShowValuesPanel(boolean flag) {
         showValuesPanelCheckBox.setSelected(flag);
     }
