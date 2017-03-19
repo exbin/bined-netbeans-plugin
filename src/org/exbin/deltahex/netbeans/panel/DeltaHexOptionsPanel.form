@@ -58,14 +58,14 @@
         <Component class="javax.swing.JCheckBox" name="wrapLineModeCheckBox">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.wrapLineModeCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="wrapLineModeCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="lineLengthLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.lineLengthLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="lineLengthLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -81,7 +81,7 @@
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                 <TitledBorder title="Header">
-                  <ResourceString PropertyName="titleX" bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.headerPanel.border.title" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString PropertyName="titleX" bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="headerPanel.border.title" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </TitledBorder>
               </Border>
             </Property>
@@ -130,14 +130,14 @@
             <Component class="javax.swing.JCheckBox" name="showHeaderCheckBox">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.showHeaderCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="showHeaderCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="headerSpaceLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.headerSpaceLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="headerSpaceLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
@@ -174,7 +174,7 @@
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                 <TitledBorder title="Line Numbers">
-                  <ResourceString PropertyName="titleX" bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.lineNumbersPanel.border.title" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString PropertyName="titleX" bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="lineNumbersPanel.border.title" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </TitledBorder>
               </Border>
             </Property>
@@ -239,14 +239,14 @@
             <Component class="javax.swing.JCheckBox" name="showLineNumbersCheckBox">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.showLineNumbersCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="showLineNumbersCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="lineNumberLengthLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.lineNumberLengthLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="lineNumberLengthLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
@@ -277,7 +277,7 @@
             <Component class="javax.swing.JLabel" name="lineNumberSpaceLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.lineNumberSpaceLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="lineNumberSpaceLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
@@ -312,7 +312,7 @@
         <Component class="javax.swing.JLabel" name="byteGroupSizeLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.byteGroupSizeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="byteGroupSizeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -333,7 +333,7 @@
         <Component class="javax.swing.JLabel" name="spaceGroupSizeLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.spaceGroupSizeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="spaceGroupSizeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -383,7 +383,6 @@
                   <Component id="memoryModeLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="memoryModeComboBox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="150" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -392,7 +391,7 @@
         <Component class="javax.swing.JLabel" name="codeTypeScrollModeLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.codeTypeScrollModeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="codeTypeScrollModeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -429,28 +428,28 @@
         <Component class="javax.swing.JCheckBox" name="showNonprintableCharactersCheckBox">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.showNonprintableCharactersCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="showNonprintableCharactersCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="viewModeScrollModeLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.viewModeScrollModeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="viewModeScrollModeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="codeColorizationCheckBox">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.codeColorizationCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="codeColorizationCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="memoryModeLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.memoryModeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="memoryModeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -470,7 +469,7 @@
         <Component class="javax.swing.JCheckBox" name="showValuesPanelCheckBox">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.showValuesPanelCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="showValuesPanelCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -525,14 +524,14 @@
         <Component class="javax.swing.JLabel" name="hexCharactersModeLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.hexCharactersModeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="hexCharactersModeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="backgroundModeLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.backgroundModeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="backgroundModeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -568,14 +567,14 @@
         <Component class="javax.swing.JLabel" name="positionCodeTypeLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.positionCodeTypeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="positionCodeTypeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="lineNumbersBackgroundCheckBox">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.lineNumbersBackgroundCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="lineNumbersBackgroundCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -599,7 +598,7 @@
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                 <TitledBorder title="Lines">
-                  <ResourceString PropertyName="titleX" bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.linesPanel.border.title" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString PropertyName="titleX" bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="linesPanel.border.title" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </TitledBorder>
               </Border>
             </Property>
@@ -638,28 +637,28 @@
             <Component class="javax.swing.JCheckBox" name="decoratorLineNumLineCheckBox">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.decoratorLineNumLineCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="decoratorLineNumLineCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="decoratorPreviewLineCheckBox">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.decoratorPreviewLineCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="decoratorPreviewLineCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="decoratorBoxCheckBox">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.decoratorBoxCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="decoratorBoxCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="decoratorHeaderLineCheckBox">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.decoratorHeaderLineCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="decoratorHeaderLineCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
@@ -708,7 +707,7 @@
         <Component class="javax.swing.JLabel" name="fontLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.fontLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="fontLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
@@ -716,14 +715,14 @@
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.fontTextField.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="fontTextField.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="selectFontButton">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.selectFontButton.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="selectFontButton.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
           <Events>
@@ -733,14 +732,14 @@
         <Component class="javax.swing.JCheckBox" name="useDefaultFontCheckBox">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.useDefaultFontCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="useDefaultFontCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="colorsLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="DeltaHexOptionsPanel.colorsLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/deltahex/netbeans/panel/resources/DeltaHexOptionsPanel.properties" key="colorsLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
           </Properties>
         </Component>

@@ -171,17 +171,17 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         categoriesList = new javax.swing.JList<>();
         mainPanel = new javax.swing.JPanel();
 
-        org.openide.awt.Mnemonics.setLocalizedText(wrapLineModeCheckBox, resourceBundle.getString("DeltaHexOptionsPanel.wrapLineModeCheckBox.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(wrapLineModeCheckBox, resourceBundle.getString("wrapLineModeCheckBox.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(lineLengthLabel, resourceBundle.getString("DeltaHexOptionsPanel.lineLengthLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(lineLengthLabel, resourceBundle.getString("lineLengthLabel.text")); // NOI18N
 
         lineLengthSpinner.setModel(new javax.swing.SpinnerNumberModel(16, 1, null, 1));
 
-        headerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceBundle.getString("DeltaHexOptionsPanel.headerPanel.border.title"))); // NOI18N
+        headerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceBundle.getString("headerPanel.border.title"))); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(showHeaderCheckBox, resourceBundle.getString("DeltaHexOptionsPanel.showHeaderCheckBox.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(showHeaderCheckBox, resourceBundle.getString("showHeaderCheckBox.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(headerSpaceLabel, resourceBundle.getString("DeltaHexOptionsPanel.headerSpaceLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(headerSpaceLabel, resourceBundle.getString("headerSpaceLabel.text")); // NOI18N
 
         headerSpaceComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NONE", "SPECIFIED", "QUARTER_UNIT", "HALF_UNIT", "ONE_UNIT", "ONE_AND_HALF_UNIT", "DOUBLE_UNIT" }));
         headerSpaceComboBox.setSelectedIndex(2);
@@ -219,11 +219,11 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        lineNumbersPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceBundle.getString("DeltaHexOptionsPanel.lineNumbersPanel.border.title"))); // NOI18N
+        lineNumbersPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceBundle.getString("lineNumbersPanel.border.title"))); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(showLineNumbersCheckBox, resourceBundle.getString("DeltaHexOptionsPanel.showLineNumbersCheckBox.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(showLineNumbersCheckBox, resourceBundle.getString("showLineNumbersCheckBox.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(lineNumberLengthLabel, resourceBundle.getString("DeltaHexOptionsPanel.lineNumberLengthLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(lineNumberLengthLabel, resourceBundle.getString("lineNumberLengthLabel.text")); // NOI18N
 
         lineNumbersLengthComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "AUTO", "SPECIFIED" }));
         lineNumbersLengthComboBox.setSelectedIndex(1);
@@ -231,7 +231,7 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
         lineNumbersLengthSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         lineNumbersLengthSpinner.setValue(8);
 
-        org.openide.awt.Mnemonics.setLocalizedText(lineNumberSpaceLabel, resourceBundle.getString("DeltaHexOptionsPanel.lineNumberSpaceLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(lineNumberSpaceLabel, resourceBundle.getString("lineNumberSpaceLabel.text")); // NOI18N
 
         lineNumbersSpaceComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NONE", "SPECIFIED", "QUARTER_UNIT", "HALF_UNIT", "ONE_UNIT", "ONE_AND_HALF_UNIT", "DOUBLE_UNIT" }));
         lineNumbersSpaceComboBox.setSelectedIndex(4);
@@ -282,13 +282,13 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        org.openide.awt.Mnemonics.setLocalizedText(byteGroupSizeLabel, resourceBundle.getString("DeltaHexOptionsPanel.byteGroupSizeLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(byteGroupSizeLabel, resourceBundle.getString("byteGroupSizeLabel.text")); // NOI18N
 
         byteGroupSizeSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
 
         spaceGroupSizeSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
 
-        org.openide.awt.Mnemonics.setLocalizedText(spaceGroupSizeLabel, resourceBundle.getString("DeltaHexOptionsPanel.spaceGroupSizeLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(spaceGroupSizeLabel, resourceBundle.getString("spaceGroupSizeLabel.text")); // NOI18N
 
         javax.swing.GroupLayout layoutPanelLayout = new javax.swing.GroupLayout(layoutPanel);
         layoutPanel.setLayout(layoutPanelLayout);
@@ -333,24 +333,24 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
                 .addComponent(spaceGroupSizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        org.openide.awt.Mnemonics.setLocalizedText(codeTypeScrollModeLabel, resourceBundle.getString("DeltaHexOptionsPanel.codeTypeScrollModeLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(codeTypeScrollModeLabel, resourceBundle.getString("codeTypeScrollModeLabel.text")); // NOI18N
 
         codeTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "BINARY", "OCTAL", "DECIMAL", "HEXADECIMAL" }));
         codeTypeComboBox.setSelectedIndex(3);
 
         viewModeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "DUAL", "HEXADECIMAL", "PREVIEW" }));
 
-        org.openide.awt.Mnemonics.setLocalizedText(showNonprintableCharactersCheckBox, resourceBundle.getString("DeltaHexOptionsPanel.showNonprintableCharactersCheckBox.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(showNonprintableCharactersCheckBox, resourceBundle.getString("showNonprintableCharactersCheckBox.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(viewModeScrollModeLabel, resourceBundle.getString("DeltaHexOptionsPanel.viewModeScrollModeLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(viewModeScrollModeLabel, resourceBundle.getString("viewModeScrollModeLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(codeColorizationCheckBox, resourceBundle.getString("DeltaHexOptionsPanel.codeColorizationCheckBox.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(codeColorizationCheckBox, resourceBundle.getString("codeColorizationCheckBox.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(memoryModeLabel, resourceBundle.getString("DeltaHexOptionsPanel.memoryModeLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(memoryModeLabel, resourceBundle.getString("memoryModeLabel.text")); // NOI18N
 
         memoryModeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "DELTA", "MEMORY" }));
 
-        org.openide.awt.Mnemonics.setLocalizedText(showValuesPanelCheckBox, resourceBundle.getString("DeltaHexOptionsPanel.showValuesPanelCheckBox.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(showValuesPanelCheckBox, resourceBundle.getString("showValuesPanelCheckBox.text")); // NOI18N
 
         javax.swing.GroupLayout modePanelLayout = new javax.swing.GroupLayout(modePanel);
         modePanel.setLayout(modePanelLayout);
@@ -390,35 +390,34 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(memoryModeLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(memoryModeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(150, Short.MAX_VALUE))
+                .addComponent(memoryModeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        org.openide.awt.Mnemonics.setLocalizedText(hexCharactersModeLabel, resourceBundle.getString("DeltaHexOptionsPanel.hexCharactersModeLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(hexCharactersModeLabel, resourceBundle.getString("hexCharactersModeLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(backgroundModeLabel, resourceBundle.getString("DeltaHexOptionsPanel.backgroundModeLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(backgroundModeLabel, resourceBundle.getString("backgroundModeLabel.text")); // NOI18N
 
         hexCharactersModeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "LOWER", "UPPER" }));
 
         backgroundModeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NONE", "PLAIN", "STRIPPED", "GRIDDED" }));
         backgroundModeComboBox.setSelectedIndex(2);
 
-        org.openide.awt.Mnemonics.setLocalizedText(positionCodeTypeLabel, resourceBundle.getString("DeltaHexOptionsPanel.positionCodeTypeLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(positionCodeTypeLabel, resourceBundle.getString("positionCodeTypeLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(lineNumbersBackgroundCheckBox, resourceBundle.getString("DeltaHexOptionsPanel.lineNumbersBackgroundCheckBox.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(lineNumbersBackgroundCheckBox, resourceBundle.getString("lineNumbersBackgroundCheckBox.text")); // NOI18N
 
         positionCodeTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "OCTAL", "DECIMAL", "HEXADECIMAL" }));
         positionCodeTypeComboBox.setSelectedIndex(2);
 
-        linesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceBundle.getString("DeltaHexOptionsPanel.linesPanel.border.title"))); // NOI18N
+        linesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceBundle.getString("linesPanel.border.title"))); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(decoratorLineNumLineCheckBox, resourceBundle.getString("DeltaHexOptionsPanel.decoratorLineNumLineCheckBox.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(decoratorLineNumLineCheckBox, resourceBundle.getString("decoratorLineNumLineCheckBox.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(decoratorPreviewLineCheckBox, resourceBundle.getString("DeltaHexOptionsPanel.decoratorPreviewLineCheckBox.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(decoratorPreviewLineCheckBox, resourceBundle.getString("decoratorPreviewLineCheckBox.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(decoratorBoxCheckBox, resourceBundle.getString("DeltaHexOptionsPanel.decoratorBoxCheckBox.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(decoratorBoxCheckBox, resourceBundle.getString("decoratorBoxCheckBox.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(decoratorHeaderLineCheckBox, resourceBundle.getString("DeltaHexOptionsPanel.decoratorHeaderLineCheckBox.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(decoratorHeaderLineCheckBox, resourceBundle.getString("decoratorHeaderLineCheckBox.text")); // NOI18N
 
         javax.swing.GroupLayout linesPanelLayout = new javax.swing.GroupLayout(linesPanel);
         linesPanel.setLayout(linesPanelLayout);
@@ -483,21 +482,21 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
                 .addGap(0, 0, 0))
         );
 
-        org.openide.awt.Mnemonics.setLocalizedText(fontLabel, resourceBundle.getString("DeltaHexOptionsPanel.fontLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(fontLabel, resourceBundle.getString("fontLabel.text")); // NOI18N
 
         fontTextField.setEditable(false);
-        fontTextField.setText(resourceBundle.getString("DeltaHexOptionsPanel.fontTextField.text")); // NOI18N
+        fontTextField.setText(resourceBundle.getString("fontTextField.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(selectFontButton, resourceBundle.getString("DeltaHexOptionsPanel.selectFontButton.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(selectFontButton, resourceBundle.getString("selectFontButton.text")); // NOI18N
         selectFontButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 selectFontButtonActionPerformed(evt);
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(useDefaultFontCheckBox, resourceBundle.getString("DeltaHexOptionsPanel.useDefaultFontCheckBox.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(useDefaultFontCheckBox, resourceBundle.getString("useDefaultFontCheckBox.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(colorsLabel, resourceBundle.getString("DeltaHexOptionsPanel.colorsLabel.text")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(colorsLabel, resourceBundle.getString("colorsLabel.text")); // NOI18N
 
         javax.swing.GroupLayout fontsAndColorPanelLayout = new javax.swing.GroupLayout(fontsAndColorPanel);
         fontsAndColorPanel.setLayout(fontsAndColorPanelLayout);

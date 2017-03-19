@@ -849,9 +849,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
                 optionsPanel.setFromCodeArea(codeArea);
                 optionsPanel.setShowValuesPanel(valuesPanelVisible);
                 OptionsControlPanel optionsControlPanel = new OptionsControlPanel();
-                optionsPanel.setVisible(true);
                 JPanel dialogPanel = WindowUtils.createDialogPanel(optionsPanel, optionsControlPanel);
-                dialogPanel.setVisible(true);
                 DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Options", true, new Object[0], null, 0, null, null);
 
                 final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
@@ -878,6 +876,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
                     }
                 });
                 WindowUtils.assignGlobalKeyListener(dialog, optionsControlPanel.createOkCancelListener());
+                dialog.setSize(650, 460);
                 dialog.setVisible(true);
             }
         });
