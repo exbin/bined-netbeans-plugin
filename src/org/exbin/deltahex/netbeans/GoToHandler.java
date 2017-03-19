@@ -62,7 +62,6 @@ public class GoToHandler {
                     goToPanel.setCursorPosition(codeArea.getCaretPosition().getDataPosition());
                     goToPanel.setMaxPosition(codeArea.getDataSize());
                     JPanel dialogPanel = WindowUtils.createDialogPanel(goToPanel, goToControlPanel);
-                    dialogPanel.setVisible(true);
                     DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Go To Position", true, new Object[0], null, 0, null, null);
 
                     final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
