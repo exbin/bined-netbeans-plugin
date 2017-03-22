@@ -76,55 +76,57 @@ public class Installer extends ModuleInstall {
 
         @Override
         protected void handleFileType(FileObject fileType) {
-            try {
-                final FileObject actionsFolder = FileUtil.createFolder(fileType, "Actions");
+            if (fileType.isFolder()) {
+                try {
+                    final FileObject actionsFolder = FileUtil.createFolder(fileType, "Actions");
 
-                /**
-                 * Attempt to establish correct position in context menu for
-                 * different mime types.
-                 *
-                 * TODO: check on different platforms and collisions with other
-                 * modules / modes
-                 */
-                int actionPosition = 175;
-                final FileObject openAction = actionsFolder.getFileObject(OPEN_ACTION_STRING);
-                final FileObject openIdeOpenAction = actionsFolder.getFileObject(OPENIDE_OPEN_ACTION_STRING);
-                final FileObject cutAction = actionsFolder.getFileObject(CUT_TO_CLIPBOARD_ACTION_STRING);
-                if (cutAction != null) {
-                    Object position = cutAction.getAttribute("position");
-                    if (position instanceof Integer) {
-                        if ((Integer) position < actionPosition) {
-                            actionPosition = (Integer) position - 25;
+                    /**
+                     * Attempt to establish correct position in context menu for
+                     * different mime types.
+                     *
+                     * TODO: check on different platforms and collisions with
+                     * other modules / modes
+                     */
+                    int actionPosition = 175;
+                    final FileObject openAction = actionsFolder.getFileObject(OPEN_ACTION_STRING);
+                    final FileObject openIdeOpenAction = actionsFolder.getFileObject(OPENIDE_OPEN_ACTION_STRING);
+                    final FileObject cutAction = actionsFolder.getFileObject(CUT_TO_CLIPBOARD_ACTION_STRING);
+                    if (cutAction != null) {
+                        Object position = cutAction.getAttribute("position");
+                        if (position instanceof Integer) {
+                            if ((Integer) position < actionPosition) {
+                                actionPosition = (Integer) position - 25;
+                            }
                         }
                     }
-                }
-                if (openAction != null) {
-                    Object position = openAction.getAttribute("position");
-                    if (position instanceof Integer) {
-                        if ((Integer) position + 25 > actionPosition) {
-                            actionPosition = (Integer) position + 25;
+                    if (openAction != null) {
+                        Object position = openAction.getAttribute("position");
+                        if (position instanceof Integer) {
+                            if ((Integer) position + 25 > actionPosition) {
+                                actionPosition = (Integer) position + 25;
+                            }
                         }
                     }
-                }
-                if (openIdeOpenAction != null) {
-                    Object position = openIdeOpenAction.getAttribute("position");
-                    if (position instanceof Integer) {
-                        if ((Integer) position + 25 > actionPosition) {
-                            actionPosition = (Integer) position + 25;
+                    if (openIdeOpenAction != null) {
+                        Object position = openIdeOpenAction.getAttribute("position");
+                        if (position instanceof Integer) {
+                            if ((Integer) position + 25 > actionPosition) {
+                                actionPosition = (Integer) position + 25;
+                            }
                         }
                     }
-                }
 
-                final FileObject openAsHexAction = actionsFolder.getFileObject(OPEN_AS_HEX_ACTION_STRING);
-                if (openAsHexAction == null) {
-                    final FileObject action = actionsFolder.createData(OPEN_AS_HEX_ACTION_STRING);
-                    action.setAttribute("originalFile", "Actions/File/org-exbin-deltahex-OpenAsHexAction.instance");
-                    action.setAttribute("position", actionPosition);
-                } else {
-                    openAsHexAction.setAttribute("position", actionPosition);
+                    final FileObject openAsHexAction = actionsFolder.getFileObject(OPEN_AS_HEX_ACTION_STRING);
+                    if (openAsHexAction == null) {
+                        final FileObject action = actionsFolder.createData(OPEN_AS_HEX_ACTION_STRING);
+                        action.setAttribute("originalFile", "Actions/File/org-exbin-deltahex-OpenAsHexAction.instance");
+                        action.setAttribute("position", actionPosition);
+                    } else {
+                        openAsHexAction.setAttribute("position", actionPosition);
+                    }
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
                 }
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
             }
         }
     }
@@ -136,14 +138,16 @@ public class Installer extends ModuleInstall {
 
         @Override
         protected void handleFileType(FileObject fileType) {
-            try {
-                final FileObject actionsFolder = FileUtil.createFolder(fileType, "Actions");
-                final FileObject openAsHexAction = actionsFolder.getFileObject(OPEN_AS_HEX_ACTION_STRING);
-                if (openAsHexAction != null) {
-                    openAsHexAction.delete();
+            if (fileType.isFolder()) {
+                try {
+                    final FileObject actionsFolder = FileUtil.createFolder(fileType, "Actions");
+                    final FileObject openAsHexAction = actionsFolder.getFileObject(OPEN_AS_HEX_ACTION_STRING);
+                    if (openAsHexAction != null) {
+                        openAsHexAction.delete();
+                    }
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
                 }
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
             }
         }
     }
