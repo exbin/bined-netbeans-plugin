@@ -52,7 +52,7 @@ import org.openide.util.NbPreferences;
 /**
  * Hexadecimal editor options panel.
  *
- * @version 0.1.5 2017/03/18
+ * @version 0.1.6 2017/03/24
  * @author ExBin Project (http://exbin.org)
  */
 public class DeltaHexOptionsPanel extends javax.swing.JPanel {
@@ -573,6 +573,7 @@ public class DeltaHexOptionsPanel extends javax.swing.JPanel {
                 if (actionType == DefaultControlHandler.ControlActionType.OK) {
                     deltaHexFont = textFontPanel.getStoredFont();
                     updateFontTextField();
+                    useDefaultFontCheckBox.setSelected(false);
                 }
 
                 WindowUtils.closeWindow(dialog);
