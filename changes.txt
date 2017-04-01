@@ -1,7 +1,8 @@
-0.1.6
+0.1.6 (2017-04-01)
 - Fixed behavior for high precision wheel scrolling
+- Fixed opening of read-only files
 
-0.1.5 (2014-03-22)
+0.1.5 (2017-03-22)
 - Added options panel / dialog
 - Added values side panel
 - Added "File/Open File as Hex" action

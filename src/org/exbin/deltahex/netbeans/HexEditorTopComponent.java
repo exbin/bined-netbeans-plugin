@@ -726,7 +726,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 
         final JMenuItem cutMenuItem = new JMenuItem("Cut");
         cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, metaMask));
-        cutMenuItem.setEnabled(codeArea.hasSelection());
+        cutMenuItem.setEnabled(codeArea.hasSelection() && codeArea.isEditable());
         cutMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -761,7 +761,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 
         final JMenuItem pasteMenuItem = new JMenuItem("Paste");
         pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, metaMask));
-        pasteMenuItem.setEnabled(codeArea.canPaste());
+        pasteMenuItem.setEnabled(codeArea.canPaste() && codeArea.isEditable());
         pasteMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -772,7 +772,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         result.add(pasteMenuItem);
 
         final JMenuItem pasteFromCodeMenuItem = new JMenuItem("Paste from Code");
-        pasteFromCodeMenuItem.setEnabled(codeArea.canPaste());
+        pasteFromCodeMenuItem.setEnabled(codeArea.canPaste() && codeArea.isEditable());
         pasteFromCodeMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -788,7 +788,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 
         final JMenuItem deleteMenuItem = new JMenuItem("Delete");
         deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
-        deleteMenuItem.setEnabled(codeArea.hasSelection());
+        deleteMenuItem.setEnabled(codeArea.hasSelection() && codeArea.isEditable());
         deleteMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -833,6 +833,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 
         final JMenuItem replaceMenuItem = new JMenuItem("Replace...");
         replaceMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, metaMask));
+        replaceMenuItem.setEnabled(codeArea.isEditable());
         replaceMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

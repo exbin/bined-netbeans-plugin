@@ -50,6 +50,7 @@ public class HexEditorNode extends AbstractNode {
 
     public void openFile(DataObject dataObject) {
         CodeArea codeArea = hexEditorTopComponent.getCodeArea();
+        boolean editable = dataObject.getPrimaryFile().canWrite();
         SegmentsRepository segmentsRepository = HexEditorTopComponent.getSegmentsRepository();
         URI fileUri = dataObject.getPrimaryFile().toURI();
         if (fileUri == null) {
@@ -58,7 +59,7 @@ public class HexEditorNode extends AbstractNode {
                 stream = dataObject.getPrimaryFile().getInputStream();
                 if (stream != null) {
                     ((EditableBinaryData) codeArea.getData()).loadFromStream(stream);
-                    codeArea.setEditable(dataObject.getPrimaryFile().canWrite());
+                    codeArea.setEditable(editable);
                 }
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
@@ -74,9 +75,10 @@ public class HexEditorNode extends AbstractNode {
         } else {
             try {
                 BinaryData oldData = codeArea.getData();
+                codeArea.setEditable(editable);
                 File file = new File(fileUri);
                 if (hexEditorTopComponent.isDeltaMemoryMode()) {
-                    FileDataSource fileSource = segmentsRepository.openFileSource(file);
+                    FileDataSource fileSource = segmentsRepository.openFileSource(file, editable ? FileDataSource.EditationMode.READ_WRITE : FileDataSource.EditationMode.READ_ONLY);
                     DeltaDocument document = segmentsRepository.createDocument(fileSource);
                     codeArea.setData(document);
                     oldData.dispose();
@@ -91,7 +93,6 @@ public class HexEditorNode extends AbstractNode {
                         codeArea.setData(data);
                     }
                 }
-                codeArea.setEditable(dataObject.getPrimaryFile().canWrite());
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }

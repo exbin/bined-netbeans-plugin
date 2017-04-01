@@ -22,6 +22,7 @@ import java.util.Arrays;
 import org.exbin.deltahex.CaretMovedListener;
 import org.exbin.deltahex.CaretPosition;
 import org.exbin.deltahex.DataChangedListener;
+import org.exbin.deltahex.EditationAllowed;
 import org.exbin.deltahex.Section;
 import org.exbin.deltahex.netbeans.HexUndoSwingHandler;
 import org.exbin.deltahex.operation.BinaryDataCommand;
@@ -442,6 +443,7 @@ public class ValuesPanel extends javax.swing.JPanel {
         dataChangedListener = new DataChangedListener() {
             @Override
             public void dataChanged() {
+                updateEditationMode();
                 updateValues();
             }
         };
@@ -491,6 +493,18 @@ public class ValuesPanel extends javax.swing.JPanel {
             clearValues();
         }
         updateInProgress = false;
+    }
+
+    public void updateEditationMode() {
+        boolean editable = codeArea.getEditationAllowed() == EditationAllowed.ALLOWED;
+        binaryCheckBox0.setEnabled(editable);
+        binaryCheckBox1.setEnabled(editable);
+        binaryCheckBox2.setEnabled(editable);
+        binaryCheckBox3.setEnabled(editable);
+        binaryCheckBox4.setEnabled(editable);
+        binaryCheckBox5.setEnabled(editable);
+        binaryCheckBox6.setEnabled(editable);
+        binaryCheckBox7.setEnabled(editable);
     }
 
     private void modifyValues(int bytesCount) {
