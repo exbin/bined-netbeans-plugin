@@ -19,7 +19,6 @@ package org.exbin.deltahex.netbeans.panel;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicBoolean;
 import org.exbin.deltahex.CaretMovedListener;
 import org.exbin.deltahex.CaretPosition;
 import org.exbin.deltahex.DataChangedListener;
@@ -51,11 +50,11 @@ public class ValuesPanel extends javax.swing.JPanel {
     private CaretMovedListener caretMovedListener;
     private BinaryDataUndoUpdateListener undoUpdateListener;
 
-    private Thread updateThread = null;
-    private final Object monitor = new Object();
+// TODO    private Thread updateThread = null;
+//    private final Object monitor = new Object();
     private boolean clearValues = true;
     private final byte[] valuesCache = new byte[8];
-    private final AtomicBoolean valuesUpdateNeeded = new AtomicBoolean(false);
+//    private final AtomicBoolean valuesUpdateNeeded = new AtomicBoolean(false);
 
     public ValuesPanel() {
         initComponents();
@@ -497,18 +496,25 @@ public class ValuesPanel extends javax.swing.JPanel {
             clearValues = true;
         }
 
-        if (updateThread == null) {
-            updateThread = new Thread(new UpdateThread());
-            updateThread.start();
+        byte[] values = valuesCache;
+        if (clearValues) {
+            clearValues();
+        } else {
+            populateValues(null, values);
         }
+        
+//        if (updateThread == null) {
+//            updateThread = new Thread(new UpdateThread());
+//            updateThread.start();
+//        }
 
-        boolean wasNeeded = valuesUpdateNeeded.getAndSet(true);
-        if (!wasNeeded) {
-            synchronized (monitor) {
-                monitor.notify();
-            }
-        }
-
+//        boolean wasNeeded = valuesUpdateNeeded.getAndSet(true);
+//        if (!wasNeeded) {
+//            synchronized (monitor) {
+//                monitor.notify();
+//            }
+//        }
+//
         updateInProgress = false;
     }
 
@@ -660,29 +666,29 @@ public class ValuesPanel extends javax.swing.JPanel {
         CHARACTER
     }
 
-    private class UpdateThread implements Runnable {
-
-        @Override
-        public void run() {
-            do {
-                boolean updateNeeded = valuesUpdateNeeded.getAndSet(false);
-                if (updateNeeded) {
-                    byte[] values = valuesCache;
-                    if (clearValues) {
-                        clearValues();
-                    } else {
-                        populateValues(null, values);
-                    }
-                } else {
-                    synchronized (monitor) {
-                        try {
-                            monitor.wait();
-                        } catch (InterruptedException e) {
-                            // Ignore, will be checked below
-                        }
-                    }
-                }
-            } while (!Thread.interrupted());
-        }
-    }
+//    private class UpdateThread implements Runnable {
+//
+//        @Override
+//        public void run() {
+//            do {
+//                boolean updateNeeded = valuesUpdateNeeded.getAndSet(false);
+//                if (updateNeeded) {
+//                    byte[] values = valuesCache;
+//                    if (clearValues) {
+//                        clearValues();
+//                    } else {
+//                        populateValues(null, values);
+//                    }
+//                } else {
+//                    synchronized (monitor) {
+//                        try {
+//                            monitor.wait();
+//                        } catch (InterruptedException e) {
+//                            // Ignore, will be checked below
+//                        }
+//                    }
+//                }
+//            } while (!Thread.interrupted());
+//        }
+//    }
 }

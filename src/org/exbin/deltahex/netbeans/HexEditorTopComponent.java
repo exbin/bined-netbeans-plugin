@@ -55,6 +55,7 @@ import org.exbin.deltahex.PositionCodeType;
 import org.exbin.deltahex.Section;
 import org.exbin.deltahex.ViewMode;
 import org.exbin.deltahex.delta.DeltaDocument;
+import org.exbin.deltahex.delta.FileDataSource;
 import org.exbin.deltahex.delta.SegmentsRepository;
 import org.exbin.deltahex.highlight.swing.HighlightCodeAreaPainter;
 import org.exbin.deltahex.highlight.swing.HighlightNonAsciiCodeAreaPainter;
@@ -79,6 +80,7 @@ import org.exbin.framework.gui.utils.WindowUtils;
 import org.exbin.framework.gui.utils.handler.OptionsControlHandler;
 import org.exbin.framework.gui.utils.panel.OptionsControlPanel;
 import org.exbin.utils.binary_data.BinaryData;
+import org.exbin.utils.binary_data.ByteArrayData;
 import org.exbin.utils.binary_data.EditableBinaryData;
 import org.exbin.utils.binary_data.PagedData;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -388,10 +390,11 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
             } else {
                 // If document unsaved in memory, switch data in code area
                 if (codeArea.getData() instanceof DeltaDocument) {
+                    BinaryData oldData = codeArea.getData();
                     PagedData data = new PagedData();
                     data.insert(0, codeArea.getData());
                     codeArea.setData(data);
-                    codeArea.getData().dispose();
+                    oldData.dispose();
                 } else {
                     BinaryData oldData = codeArea.getData();
                     DeltaDocument document = segmentsRepository.createDocument();
@@ -695,6 +698,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
 
     @Override
     public void componentOpened() {
+        super.componentOpened();
         codeArea.requestFocus();
     }
 
@@ -702,6 +706,21 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     public void componentClosed() {
         if (savable != null) {
             savable.deactivate();
+        }
+        closeData();
+        super.componentClosed();
+    }
+    
+    private void closeData() {
+        BinaryData data = codeArea.getData();
+        codeArea.setData(new ByteArrayData());
+        if (data instanceof DeltaDocument) {
+            FileDataSource fileSource = ((DeltaDocument) data).getFileSource();
+            data.dispose();
+            segmentsRepository.detachFileSource(fileSource);
+            segmentsRepository.closeFileSource(fileSource);
+        } else {
+            data.dispose();
         }
     }
 
