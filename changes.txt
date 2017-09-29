@@ -1,6 +1,7 @@
 0.1.7
 - Added thread for values panel updating
 - Fixed files closing on window closing
+- Byte order support for floating point numbers in values panel
 
 0.1.6 (2017-04-01)
 - Fixed behavior for high precision wheel scrolling
