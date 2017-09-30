@@ -8,40 +8,45 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="lineLengthLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="wrapLineModeCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace min="-2" pref="67" max="-2" attributes="0"/>
-              </Group>
-              <Group type="103" alignment="1" groupAlignment="1" attributes="0">
-                  <Component id="spaceGroupSizeSpinner" alignment="0" max="32767" attributes="0"/>
-                  <Component id="byteGroupSizeSpinner" alignment="0" max="32767" attributes="0"/>
-                  <Component id="headerPanel" alignment="0" max="32767" attributes="0"/>
-                  <Component id="lineLengthSpinner" alignment="0" max="32767" attributes="0"/>
-                  <Component id="lineNumbersPanel" alignment="0" max="32767" attributes="0"/>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="byteGroupSizeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="spaceGroupSizeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="lineLengthLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="wrapLineModeCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="67" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      <Component id="spaceGroupSizeSpinner" alignment="0" max="32767" attributes="0"/>
+                      <Component id="byteGroupSizeSpinner" alignment="0" max="32767" attributes="0"/>
+                      <Component id="headerPanel" alignment="0" max="32767" attributes="0"/>
+                      <Component id="lineLengthSpinner" alignment="0" max="32767" attributes="0"/>
+                      <Component id="lineNumbersPanel" alignment="0" max="32767" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="byteGroupSizeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="spaceGroupSizeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
                   </Group>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="wrapLineModeCheckBox" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="lineLengthLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="lineLengthSpinner" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="headerPanel" min="-2" pref="104" max="-2" attributes="0"/>
+                  <Component id="headerPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="lineNumbersPanel" min="-2" pref="156" max="-2" attributes="0"/>
+                  <Component id="lineNumbersPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="byteGroupSizeLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -50,6 +55,7 @@
                   <Component id="spaceGroupSizeLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="spaceGroupSizeSpinner" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -344,28 +350,32 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="viewModeComboBox" alignment="0" max="32767" attributes="0"/>
-              <Component id="showNonprintableCharactersCheckBox" alignment="0" pref="258" max="32767" attributes="0"/>
-              <Component id="codeTypeComboBox" max="32767" attributes="0"/>
-              <Component id="codeColorizationCheckBox" alignment="0" max="32767" attributes="0"/>
-              <Group type="102" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="viewModeScrollModeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="codeTypeScrollModeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="memoryModeComboBox" max="32767" attributes="0"/>
+                      <Component id="viewModeComboBox" alignment="0" max="32767" attributes="0"/>
+                      <Component id="showNonprintableCharactersCheckBox" alignment="0" max="32767" attributes="0"/>
+                      <Component id="codeTypeComboBox" max="32767" attributes="0"/>
+                      <Component id="codeColorizationCheckBox" alignment="0" max="32767" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="viewModeScrollModeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="codeTypeScrollModeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="memoryModeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
+                      <Component id="showValuesPanelCheckBox" alignment="0" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace min="0" pref="181" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
-              <Group type="102" alignment="1" attributes="0">
-                  <Component id="memoryModeLabel" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="159" max="32767" attributes="0"/>
-              </Group>
-              <Component id="memoryModeComboBox" alignment="0" max="32767" attributes="0"/>
-              <Component id="showValuesPanelCheckBox" alignment="0" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="viewModeScrollModeLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="viewModeComboBox" min="-2" max="-2" attributes="0"/>
@@ -383,6 +393,7 @@
                   <Component id="memoryModeLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="memoryModeComboBox" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -480,26 +491,38 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
+              <Group type="102" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="hexCharactersModeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="positionCodeTypeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="backgroundModeLabel" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="hexCharactersModeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="positionCodeTypeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="138" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="1" attributes="0">
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="positionCodeTypeComboBox" alignment="0" max="32767" attributes="0"/>
+                              <Component id="hexCharactersModeComboBox" alignment="0" max="32767" attributes="0"/>
+                              <Component id="backgroundModeComboBox" alignment="0" max="32767" attributes="0"/>
+                              <Component id="lineNumbersBackgroundCheckBox" alignment="0" max="32767" attributes="0"/>
+                              <Component id="linesPanel" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
                   </Group>
-                  <EmptySpace min="-2" pref="126" max="-2" attributes="0"/>
-              </Group>
-              <Group type="103" alignment="0" groupAlignment="0" attributes="0">
-                  <Component id="backgroundModeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="lineNumbersBackgroundCheckBox" alignment="0" max="32767" attributes="0"/>
-                  <Component id="backgroundModeComboBox" alignment="0" max="32767" attributes="0"/>
-                  <Component id="linesPanel" alignment="0" max="32767" attributes="0"/>
-                  <Component id="hexCharactersModeComboBox" alignment="0" max="32767" attributes="0"/>
-                  <Component id="positionCodeTypeComboBox" alignment="1" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="backgroundModeLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="backgroundModeComboBox" min="-2" max="-2" attributes="0"/>
@@ -515,7 +538,7 @@
                   <Component id="positionCodeTypeLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="positionCodeTypeComboBox" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -671,24 +694,31 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <Component id="fontTextField" max="32767" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="selectFontButton" min="-2" pref="31" max="-2" attributes="0"/>
-              </Group>
               <Group type="102" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="fontLabel" min="-2" max="-2" attributes="0"/>
-                      <Component id="useDefaultFontCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Component id="colorsLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="fontTextField" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="selectFontButton" min="-2" pref="31" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="useDefaultFontCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="fontLabel" min="-2" max="-2" attributes="0"/>
+                              <Component id="colorsLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      </Group>
                   </Group>
-                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
                   <Component id="useDefaultFontCheckBox" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="fontLabel" min="-2" max="-2" attributes="0"/>
@@ -699,6 +729,7 @@
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="colorsLabel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -764,12 +795,12 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
               <Component id="categoriesLabel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
           <Group type="102" attributes="0">
               <Component id="categoriesScrollPane" min="-2" pref="169" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="mainPanel" max="32767" attributes="0"/>
+              <Component id="mainPane" pref="20" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -780,7 +811,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="categoriesScrollPane" max="32767" attributes="0"/>
-                  <Component id="mainPanel" max="32767" attributes="0"/>
+                  <Component id="mainPane" max="32767" attributes="0"/>
               </Group>
           </Group>
       </Group>
@@ -809,9 +840,9 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JPanel" name="mainPanel">
+    <Container class="javax.swing.JScrollPane" name="mainPane">
 
-      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
     </Container>
   </SubComponents>
 </Form>
