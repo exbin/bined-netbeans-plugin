@@ -44,7 +44,7 @@ import org.openide.util.Exceptions;
 /**
  * Values side panel.
  *
- * @version 0.1.7 2017/10/02
+ * @version 0.1.7 2017/10/03
  * @author ExBin Project (http://exbin.org)
  */
 public class ValuesPanel extends javax.swing.JPanel {
@@ -454,7 +454,7 @@ public class ValuesPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_binaryCheckBox7ActionPerformed
 
     private void byteTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_byteTextFieldKeyReleased
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER && isEditable()) {
             try {
                 Integer intValue = Integer.valueOf(byteTextField.getText());
                 if (isSigned()) {
@@ -477,7 +477,7 @@ public class ValuesPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_byteTextFieldKeyReleased
 
     private void wordTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_wordTextFieldKeyReleased
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER && isEditable()) {
             try {
                 Integer intValue = Integer.valueOf(wordTextField.getText());
                 if (isSigned()) {
@@ -506,7 +506,7 @@ public class ValuesPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_wordTextFieldKeyReleased
 
     private void intTextFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_intTextFieldKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER && isEditable()) {
             try {
                 Long longValue = Long.valueOf(intTextField.getText());
                 if (isSigned()) {
@@ -539,7 +539,7 @@ public class ValuesPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_intTextFieldKeyPressed
 
     private void longTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_longTextFieldKeyReleased
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER && isEditable()) {
             try {
                 ByteOrder byteOrder = getByteOrder();
                 if (isSigned()) {
@@ -582,7 +582,7 @@ public class ValuesPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_longTextFieldKeyReleased
 
     private void floatTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_floatTextFieldKeyReleased
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER && isEditable()) {
             try {
                 ByteOrder byteOrder = getByteOrder();
                 Float floatValue = Float.valueOf(floatTextField.getText());
@@ -603,7 +603,7 @@ public class ValuesPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_floatTextFieldKeyReleased
 
     private void doubleTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_doubleTextFieldKeyReleased
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER && isEditable()) {
             try {
                 ByteOrder byteOrder = getByteOrder();
                 Double doubleValue = Double.valueOf(doubleTextField.getText());
@@ -624,7 +624,7 @@ public class ValuesPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_doubleTextFieldKeyReleased
 
     private void characterTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_characterTextFieldKeyReleased
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER && isEditable()) {
             try {
                 String characterText = characterTextField.getText();
                 if (characterText.length() == 0) {
@@ -721,7 +721,7 @@ public class ValuesPanel extends javax.swing.JPanel {
     }
 
     public void updateEditationMode() {
-        boolean editable = codeArea.getEditationAllowed() == EditationAllowed.ALLOWED;
+        boolean editable = isEditable();
         binaryCheckBox0.setEnabled(editable);
         binaryCheckBox1.setEnabled(editable);
         binaryCheckBox2.setEnabled(editable);
@@ -788,6 +788,10 @@ public class ValuesPanel extends javax.swing.JPanel {
         }
         codeArea.setCaretPosition(oldDataPosition);
         codeArea.repaint();
+    }
+
+    private boolean isEditable() {
+        return codeArea.getEditationAllowed() == EditationAllowed.ALLOWED;
     }
 
     private boolean isSigned() {

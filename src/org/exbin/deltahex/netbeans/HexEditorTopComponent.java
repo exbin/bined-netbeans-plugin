@@ -40,6 +40,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import org.exbin.deltahex.CaretMovedListener;
@@ -158,6 +159,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
     private boolean findTextPanelVisible = false;
     private HexSearchPanel hexSearchPanel = null;
     private ValuesPanel valuesPanel = null;
+    private JScrollPane valuesPanelScrollPane = null;
     private boolean valuesPanelVisible = false;
 
     private boolean opened = false;
@@ -1035,8 +1037,10 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
             if (valuesPanel == null) {
                 valuesPanel = new ValuesPanel();
                 valuesPanel.setCodeArea(codeArea, undoHandler);
+                valuesPanelScrollPane = new JScrollPane(valuesPanel);
+                valuesPanelScrollPane.setBorder(null);
             }
-            codeAreaPanel.add(valuesPanel, BorderLayout.EAST);
+            codeAreaPanel.add(valuesPanelScrollPane, BorderLayout.EAST);
             valuesPanel.enableUpdate();
             valuesPanel.updateValues();
             codeAreaPanel.revalidate();
@@ -1048,7 +1052,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         if (valuesPanelVisible) {
             valuesPanelVisible = false;
             valuesPanel.disableUpdate();
-            codeAreaPanel.remove(valuesPanel);
+            codeAreaPanel.remove(valuesPanelScrollPane);
             codeAreaPanel.revalidate();
             revalidate();
         }
