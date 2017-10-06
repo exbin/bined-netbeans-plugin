@@ -1018,7 +1018,8 @@ public class CodeAreaOperationCommandHandler implements CodeAreaCommandHandler {
                 DataFlavor textPlainUnicodeFlavor = DataFlavor.getTextPlainUnicodeFlavor();
                 if (flavor.equals(textPlainUnicodeFlavor)) {
                     String charsetName = textPlainUnicodeFlavor.getParameter(MIME_CHARSET);
-                    return new CharsetStreamTranslator(codeArea.getCharset(), Charset.forName(charsetName), data.getDataInputStream());
+                    Charset charset = Charset.forName(charsetName);
+                    return new CharsetStreamTranslator(codeArea.getCharset(), charset, data.getDataInputStream());
                 } else {
                     throw new IllegalStateException("Unexpected clipboard flavor");
                 }
