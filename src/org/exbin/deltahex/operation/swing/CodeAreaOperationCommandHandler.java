@@ -1015,14 +1015,9 @@ public class CodeAreaOperationCommandHandler implements CodeAreaCommandHandler {
             if (flavor.equals(deltahexDataFlavor)) {
                 return data;
             } else {
-                DataFlavor textPlainUnicodeFlavor = DataFlavor.getTextPlainUnicodeFlavor();
-                if (flavor.equals(textPlainUnicodeFlavor)) {
-                    String charsetName = textPlainUnicodeFlavor.getParameter(MIME_CHARSET);
-                    Charset charset = Charset.forName(charsetName);
-                    return new CharsetStreamTranslator(codeArea.getCharset(), charset, data.getDataInputStream());
-                } else {
-                    throw new IllegalStateException("Unexpected clipboard flavor");
-                }
+                String clipboardCharsetName = DataFlavor.getTextPlainUnicodeFlavor().getParameter(MIME_CHARSET);
+                Charset clipboardCharset = Charset.forName(clipboardCharsetName);
+                return new CharsetStreamTranslator(codeArea.getCharset(), clipboardCharset, data.getDataInputStream());
             }
         }
 

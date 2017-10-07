@@ -315,7 +315,7 @@ public class HexStatusPanel extends javax.swing.JPanel implements HexStatusApi, 
 
     @Override
     public void setEncoding(String encodingName) {
-        encodingLabel.setText(encodingName + " \u25BE");
+        encodingLabel.setText(encodingName + " ^");
     }
 
     @Override

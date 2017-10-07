@@ -23,6 +23,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CoderResult;
+import java.nio.charset.CodingErrorAction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,7 +31,7 @@ import java.util.logging.Logger;
  * Input stream translation class which converts from input charset to target
  * charset.
  *
- * @version 0.1.7 2017/10/06
+ * @version 0.1.7 2017/10/07
  * @author ExBin Project (http://exbin.org)
  */
 public class CharsetStreamTranslator extends InputStream {
@@ -52,7 +53,9 @@ public class CharsetStreamTranslator extends InputStream {
     public CharsetStreamTranslator(Charset inputCharset, Charset outputCharset, InputStream source, int bufferSize) {
         this.source = source;
         decoder = inputCharset.newDecoder();
+        decoder.onUnmappableCharacter(CodingErrorAction.REPLACE);
         encoder = outputCharset.newEncoder();
+        encoder.onUnmappableCharacter(CodingErrorAction.REPLACE);
         maxInputCharSize = (int) decoder.maxCharsPerByte();
         if (maxInputCharSize < 0) {
             maxInputCharSize = 1;
@@ -93,63 +96,80 @@ public class CharsetStreamTranslator extends InputStream {
         return byteData;
     }
 
-//    @Override
-//    public int read(byte[] buffer, int offset, int length) throws IOException {
-//        int processed = 0;
-//        
-//        while (processed < length) {
-//            int remaining = outputBuffer.remaining();
-//            if (remaining == 0) {
-//                if (endOfInput) {
-//                    return processed > 0 ? processed : -1;
-//                } else {
-//                    processNext();
-//                    if (outputBuffer.remaining() == 0) {
-//                        return processed > 0 ? processed : -1;
-//                    }
-//                }
-//            }
-//
-//            
-//            int toProcess = length > remaining ? remaining : length;
-//            outputBuffer.get(buffer, offset, toProcess);
-//            offset += toProcess;
-//            length -= toProcess;
-//        }
-//        
-//        return processed;
-//    }
-    public void processNext() {
-        loadFromInput();
+    @Override
+    public int read(byte[] buffer, int offset, int length) throws IOException {
+        int processed = 0;
 
-        decoder.reset();
-        charBuffer.rewind();
-        CoderResult decodeResult = decoder.decode(inputBuffer, charBuffer, endOfInput);
-        // TODO process errors?
-        if (decodeResult.isOverflow()) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        } else if (decodeResult.isError()) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        } else if (decodeResult.isMalformed()) {
-            throw new UnsupportedOperationException("Not supported yet.");
+        while (processed < length) {
+            int remaining = outputBuffer.remaining();
+            if (remaining == 0) {
+                if (endOfInput) {
+                    return processed > 0 ? processed : -1;
+                } else {
+                    processNext();
+                    remaining = outputBuffer.remaining();
+                    if (remaining == 0) {
+                        return processed > 0 ? processed : -1;
+                    }
+                }
+            }
+
+            int toProcess = length > remaining ? remaining : length;
+            outputBuffer.get(buffer, offset, toProcess);
+            offset += toProcess;
+            length -= toProcess;
+            processed += toProcess;
         }
+
+        return processed;
+    }
+
+    public void processNext() {
+        charBuffer.rewind();
+        charBuffer.limit(charBuffer.capacity());
+        
+        do {
+            loadFromInput();
+            if (inputBuffer.remaining() == 0) {
+                return;
+            }
+
+            decoder.reset();
+            CoderResult decodeResult = decoder.decode(inputBuffer, charBuffer, endOfInput);
+            // TODO process errors?
+            if (decodeResult.isOverflow()) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            } else if (decodeResult.isError()) {
+                // Skip byte
+                if (charBuffer.position() == 0 && inputBuffer.remaining() > 0) {
+                    inputBuffer.position(inputBuffer.position() + 1);
+                }
+            } else if (decodeResult.isUnmappable()) {
+                throw new IllegalStateException("Unmappable character should be handled automatically");
+            } else if (decodeResult.isMalformed()) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        } while (charBuffer.position() == 0);
 
         int chars = charBuffer.position();
         charBuffer.rewind();
         charBuffer.limit(chars);
 
-        encoder.reset();
         outputBuffer.limit(outputBuffer.capacity());
         outputBuffer.clear();
-        CoderResult encodeResult = encoder.encode(charBuffer, outputBuffer, endOfInput);
-        if (encodeResult.isOverflow()) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        } else if (decodeResult.isError()) {
-            throw new UnsupportedOperationException("Not supported yet.");
-        } else if (decodeResult.isMalformed()) {
-            throw new UnsupportedOperationException("Not supported yet.");
+        while (charBuffer.remaining() > 0) {
+            encoder.reset();
+            CoderResult encodeResult = encoder.encode(charBuffer, outputBuffer, endOfInput);
+            if (encodeResult.isOverflow()) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            } else if (encodeResult.isUnmappable()) {
+                throw new IllegalStateException("Unmappable character should be handled automatically");
+            } else if (encodeResult.isError()) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            } else if (encodeResult.isMalformed()) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
         }
-        // TODO process errors?
 
         int length = outputBuffer.position();
         outputBuffer.rewind();
@@ -157,6 +177,7 @@ public class CharsetStreamTranslator extends InputStream {
     }
 
     @Override
+
     public int available() throws IOException {
         int remaining = outputBuffer.remaining();
         if (remaining > 0) {
