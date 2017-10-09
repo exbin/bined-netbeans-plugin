@@ -44,7 +44,7 @@ import org.openide.util.Exceptions;
 /**
  * Values side panel.
  *
- * @version 0.1.7 2017/10/03
+ * @version 0.1.7 2017/10/09
  * @author ExBin Project (http://exbin.org)
  */
 public class ValuesPanel extends javax.swing.JPanel {
@@ -551,7 +551,6 @@ public class ValuesPanel extends javax.swing.JPanel {
                     }
 
                     byteBuffer.putLong(longValue);
-
                 } else {
                     BigInteger bigInteger = new BigInteger(longTextField.getText());
                     if (bigInteger.compareTo(BigInteger.ZERO) == -1 || bigInteger.compareTo(ULONG_MAX_VALUE) == 1) {
@@ -955,24 +954,23 @@ public class ValuesPanel extends javax.swing.JPanel {
                     break;
                 }
                 case LONG: {
-                    long longValue = signed
-                            ? (byteOrder == ByteOrder.LITTLE_ENDIAN
-                                    ? (values[0] & 0xffl) | ((values[1] & 0xffl) << 8) | ((values[2] & 0xffl) << 16) | ((values[3] & 0xffl) << 24)
-                                    | ((values[4] & 0xffl) << 32) | ((values[5] & 0xffl) << 40) | ((values[6] & 0xffl) << 48) | (values[7] << 56)
-                                    : (values[7] & 0xffl) | ((values[6] & 0xffl) << 8) | ((values[5] & 0xffl) << 16) | ((values[4] & 0xffl) << 24)
-                                    | ((values[3] & 0xffl) << 32) | ((values[2] & 0xffl) << 40) | ((values[1] & 0xffl) << 48) | (values[0] << 56))
-                            : (byteOrder == ByteOrder.LITTLE_ENDIAN
-                                    ? (values[0] & 0xffl) | ((values[1] & 0xffl) << 8) | ((values[2] & 0xffl) << 16) | ((values[3] & 0xffl) << 24)
-                                    | ((values[4] & 0xffl) << 32) | ((values[5] & 0xffl) << 40) | ((values[6] & 0xffl) << 48)
-                                    : (values[7] & 0xffl) | ((values[6] & 0xffl) << 8) | ((values[5] & 0xffl) << 16) | ((values[4] & 0xffl) << 24)
-                                    | ((values[3] & 0xffl) << 32) | ((values[2] & 0xffl) << 40) | ((values[1] & 0xffl) << 48));
-                    if (!signed) {
+                    if (signed) {
+                        byteBuffer.rewind();
+                        if (byteBuffer.order() != byteOrder) {
+                            byteBuffer.order(byteOrder);
+                        }
+
+                        longTextField.setText(String.valueOf(byteBuffer.getLong()));
+                    } else {
+                        long longValue = byteOrder == ByteOrder.LITTLE_ENDIAN
+                                ? (values[0] & 0xffl) | ((values[1] & 0xffl) << 8) | ((values[2] & 0xffl) << 16) | ((values[3] & 0xffl) << 24)
+                                | ((values[4] & 0xffl) << 32) | ((values[5] & 0xffl) << 40) | ((values[6] & 0xffl) << 48)
+                                : (values[7] & 0xffl) | ((values[6] & 0xffl) << 8) | ((values[5] & 0xffl) << 16) | ((values[4] & 0xffl) << 24)
+                                | ((values[3] & 0xffl) << 32) | ((values[2] & 0xffl) << 40) | ((values[1] & 0xffl) << 48);
                         BigInteger bigInt1 = BigInteger.valueOf(values[byteOrder == ByteOrder.LITTLE_ENDIAN ? 7 : 0] & 0xffl);
                         BigInteger bigInt2 = bigInt1.shiftLeft(56);
                         BigInteger bigInt3 = bigInt2.add(BigInteger.valueOf(longValue));
                         longTextField.setText(bigInt3.toString());
-                    } else {
-                        longTextField.setText(String.valueOf(longValue));
                     }
                     break;
                 }
