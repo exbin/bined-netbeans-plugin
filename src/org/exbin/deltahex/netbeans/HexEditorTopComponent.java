@@ -27,6 +27,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
@@ -36,11 +37,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.prefs.Preferences;
 import javax.swing.AbstractAction;
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import org.exbin.deltahex.CaretMovedListener;
@@ -85,6 +88,9 @@ import org.exbin.utils.binary_data.ByteArrayData;
 import org.exbin.utils.binary_data.EditableBinaryData;
 import org.exbin.utils.binary_data.PagedData;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.netbeans.core.spi.multiview.CloseOperationState;
+import org.netbeans.core.spi.multiview.MultiViewElement;
+import org.netbeans.core.spi.multiview.MultiViewElementCallback;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.awt.UndoRedo;
@@ -101,7 +107,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.1.5 2017/03/19
+ * @version 0.1.8 2017/10/12
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.deltahex//HexEditor//EN", autostore = false)
@@ -109,7 +115,7 @@ import org.openide.windows.WindowManager;
         persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @TopComponent.OpenActionRegistration(displayName = "#CTL_HexEditorAction", preferredID = "HexEditorTopComponent")
-public final class HexEditorTopComponent extends TopComponent implements UndoRedo.Provider {
+public final class HexEditorTopComponent extends TopComponent implements MultiViewElement, Serializable, UndoRedo.Provider {
 
     public static final String PREFERENCES_MEMORY_DELTA_MODE = "deltaMode";
     public static final String PREFERENCES_CODE_TYPE = "codeType";
@@ -712,7 +718,7 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         closeData();
         super.componentClosed();
     }
-    
+
     private void closeData() {
         BinaryData data = codeArea.getData();
         codeArea.setData(new ByteArrayData());
@@ -1366,6 +1372,50 @@ public final class HexEditorTopComponent extends TopComponent implements UndoRed
         if (showValuesPanel) {
             showValuesPanel();
         }
+    }
+
+    @Override
+    public JComponent getVisualRepresentation() {
+        return this;
+    }
+
+    @Override
+    public JComponent getToolbarRepresentation() {
+        return new JToolBar();
+    }
+
+    @Override
+    public void setMultiViewCallback(MultiViewElementCallback callback) {
+//        this.callback = callback;
+    }
+
+    @Override
+    public CloseOperationState canCloseElement() {
+//        if (entry.getDataObject().isModified()) {
+//            return this.cos;
+//        } else {
+            return CloseOperationState.STATE_OK;
+//        }
+    }
+
+    @Override
+    public void componentActivated() {
+        super.componentActivated();
+    }
+
+    @Override
+    public void componentHidden() {
+        super.componentHidden();
+    }
+
+    @Override
+    public void componentShowing() {
+        super.componentShowing();
+    }
+
+    @Override
+    public void componentDeactivated() {
+        super.componentDeactivated();
     }
 
     public static interface CharsetChangeListener {
