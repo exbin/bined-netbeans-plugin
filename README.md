@@ -1,39 +1,34 @@
-DeltaHex Editor - NetBeans Plugin
+BinEd - Binary Editor NetBeans Plugin
 =================================
 
 Hexadecimal viewer/editor plugin module for NetBeans platform.
 
-Homepage: http://deltahex.exbin.org  
+Homepage: https://bined.exbin.org/netbeans-plugin  
 
 Published as: http://plugins.netbeans.org/plugin/67898/deltahexeditor  
-
-Derived from: http://plugins.netbeans.org/plugin/40174/hexeditor  
 
 Screenshot
 ----------
 
-![DeltaHex-Editor Screenshot](images/netbeans-screenshot.png?raw=true)
+![BinEd-Editor Screenshot](images/bined-screenshot.png?raw=true)
 
 Features
 --------
 
-- Data as hexadecimal codes and text preview
-- Insert and overwrite edit modes
-- Support for selection and clipboard
-- Support for undo/redo
-- Support for encoding selection
-- Support for showing unprintable/whitespace characters
-- Codes can be also binary, octal or decimal
-- Searching for text / hexadecimal code with matching highlighting
-- Delta mode - Changes are stored only in memory till save
-- Support for huge files
+ - Visualize data as numerical (hexadecimal) codes and text representation
+ - Codes can be also binary, octal or decimal
+ - Support for Unicode, UTF-8 and other charsets
+ - Insert and overwrite edit modes
+ - Searching for text / hexadecimal code with matching highlighting
+ - Support for undo/redo
+ - Support for files with size up to exabytes
 
 Compiling
 ---------
 
-Java Development Kit (JDK) version 7 or later is required to build this project.
+Java Development Kit (JDK) version 8 or later is required to build this project.
 
-NetBeans platform is necessary for build of this plugin. See. http://netbeans.org  
+NetBeans platform is necessary for build of this plugin. See. http://netbeans.apache.org  
 
 License
 -------
