@@ -1,11 +1,11 @@
 BinEd - Binary Editor NetBeans Plugin
-=================================
+=====================================
 
 Hexadecimal viewer/editor plugin module for NetBeans platform.
 
 Homepage: https://bined.exbin.org/netbeans-plugin  
 
-Published as: http://plugins.netbeans.org/plugin/67898/deltahexeditor  
+Published as: http://plugins.netbeans.org/plugin/67898/  
 
 Screenshot
 ----------

@@ -131,11 +131,7 @@
                     </run-dependency>
                 </dependency>
             </module-dependencies>
-            <public-packages>
-                <package>org.exbin.bined</package>
-                <package>org.exbin.deltahex</package>
-                <package>org.exbin.utils.binary_data</package>
-            </public-packages>
+            <public-packages/>
             <class-path-extension>
                 <runtime-relative-path>ext/bined-operation-swing-0.2.0-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/bined-operation-swing-0.2.0-SNAPSHOT.jar</binary-origin>
