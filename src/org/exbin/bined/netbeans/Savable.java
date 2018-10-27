@@ -17,7 +17,7 @@ package org.exbin.bined.netbeans;
 
 import java.io.IOException;
 import java.util.Objects;
-import org.exbin.bined.swing.basic.CodeArea;
+import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.netbeans.spi.actions.AbstractSavable;
 import org.openide.loaders.DataObject;
 
@@ -31,9 +31,9 @@ class Savable extends AbstractSavable {
 
     private DataObject dataObject;
     private final HexEditorTopComponent component;
-    private final CodeArea codeArea;
+    private final ExtCodeArea codeArea;
 
-    public Savable(HexEditorTopComponent component, CodeArea codeArea) {
+    public Savable(HexEditorTopComponent component, ExtCodeArea codeArea) {
         this.component = component;
         this.codeArea = codeArea;
     }

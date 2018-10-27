@@ -27,7 +27,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.exbin.bined.ScrollBarVisibility;
 import org.exbin.bined.basic.BasicBackgroundPaintMode;
-import org.exbin.bined.swing.basic.CodeArea;
+import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.CodeAreaPopupMenuHandler;
 import org.exbin.utils.binary_data.ByteArrayEditableData;
 import org.exbin.utils.binary_data.EditableBinaryData;
@@ -35,7 +35,7 @@ import org.exbin.utils.binary_data.EditableBinaryData;
 /**
  * Combo box panel supporting both binary and text values.
  *
- * @version 0.2.1 2018/08/12
+ * @version 0.2.1 2018/10/27
  * @author ExBin Project (http://exbin.org)
  */
 public class HexSearchComboBoxPanel extends JPanel {
@@ -44,7 +44,7 @@ public class HexSearchComboBoxPanel extends JPanel {
     public static final String BINARY_MODE = "binary";
 
     private final JTextField textField;
-    private final CodeArea hexadecimalEditor = new CodeArea();
+    private final ExtCodeArea hexadecimalEditor = new ExtCodeArea();
 
     private final SearchCondition item = new SearchCondition();
 

@@ -17,17 +17,17 @@
 package org.exbin.framework.bined;
 
 import javax.swing.JPopupMenu;
-import org.exbin.bined.swing.basic.CodeArea;
+import org.exbin.bined.swing.extended.ExtCodeArea;
 
 /**
  * Code area popup menu handler.
  *
- * @version 0.2.0 2016/12/31
+ * @version 0.2.0 2018/10/27
  * @author ExBin Project (http://exbin.org)
  */
 public interface CodeAreaPopupMenuHandler {
 
-    JPopupMenu createPopupMenu(CodeArea codeArea, String menuPostfix);
+    JPopupMenu createPopupMenu(ExtCodeArea codeArea, String menuPostfix);
 
     void dropPopupMenu(String menuPostfix);
 }

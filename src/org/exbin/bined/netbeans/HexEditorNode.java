@@ -25,7 +25,7 @@ import org.exbin.bined.EditationMode;
 import org.exbin.bined.delta.DeltaDocument;
 import org.exbin.bined.delta.FileDataSource;
 import org.exbin.bined.delta.SegmentsRepository;
-import org.exbin.bined.swing.basic.CodeArea;
+import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.utils.binary_data.BinaryData;
 import org.exbin.utils.binary_data.EditableBinaryData;
 import org.exbin.utils.binary_data.PagedData;
@@ -50,7 +50,7 @@ public class HexEditorNode extends AbstractNode {
     }
 
     public void openFile(DataObject dataObject) {
-        CodeArea codeArea = hexEditorTopComponent.getCodeArea();
+        ExtCodeArea codeArea = hexEditorTopComponent.getCodeArea();
         boolean editable = dataObject.getPrimaryFile().canWrite();
         SegmentsRepository segmentsRepository = HexEditorTopComponent.getSegmentsRepository();
         URI fileUri = dataObject.getPrimaryFile().toURI();
@@ -101,7 +101,7 @@ public class HexEditorNode extends AbstractNode {
     }
 
     public void saveFile(DataObject dataObject) {
-        CodeArea codeArea = hexEditorTopComponent.getCodeArea();
+        ExtCodeArea codeArea = hexEditorTopComponent.getCodeArea();
         SegmentsRepository segmentsRepository = HexEditorTopComponent.getSegmentsRepository();
         BinaryData data = codeArea.getContentData();
         if (data instanceof DeltaDocument) {

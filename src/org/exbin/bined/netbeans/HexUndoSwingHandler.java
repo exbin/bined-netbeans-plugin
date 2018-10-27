@@ -21,11 +21,11 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoableEdit;
-import org.exbin.bined.swing.basic.CodeArea;
 import org.exbin.bined.operation.BinaryDataCommand;
 import org.exbin.bined.operation.BinaryDataOperationException;
 import org.exbin.bined.operation.undo.BinaryDataUndoHandler;
 import org.exbin.bined.operation.undo.BinaryDataUndoUpdateListener;
+import org.exbin.bined.swing.CodeAreaCore;
 import org.openide.awt.UndoRedo;
 import org.openide.util.Exceptions;
 
@@ -37,7 +37,7 @@ import org.openide.util.Exceptions;
  */
 public class HexUndoSwingHandler implements BinaryDataUndoHandler {
 
-    private final CodeArea codeArea;
+    private final CodeAreaCore codeArea;
     private final List<BinaryDataUndoUpdateListener> listeners = new ArrayList<>();
     private final UndoRedo.Manager undoManager;
     private long commandPosition;
@@ -49,7 +49,7 @@ public class HexUndoSwingHandler implements BinaryDataUndoHandler {
      * @param codeArea hexadecimal component
      * @param undoManager undo manager
      */
-    public HexUndoSwingHandler(CodeArea codeArea, UndoRedo.Manager undoManager) {
+    public HexUndoSwingHandler(CodeAreaCore codeArea, UndoRedo.Manager undoManager) {
         this.codeArea = codeArea;
         this.undoManager = undoManager;
         init();

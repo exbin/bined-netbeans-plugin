@@ -18,10 +18,11 @@ package org.exbin.bined.netbeans;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
+import javax.annotation.Nonnull;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JPanel;
-import org.exbin.bined.swing.basic.CodeArea;
+import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.panel.GoToHexPanel;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
@@ -33,17 +34,17 @@ import org.openide.DialogDisplayer;
 /**
  * Encodings handler.
  *
- * @version 0.2.0 2018/09/10
+ * @version 0.2.0 2018/10/27
  * @author ExBin Project (http://exbin.org)
  */
 public class GoToHandler {
 
     private final ResourceBundle resourceBundle;
 
-    private final CodeArea codeArea;
+    private final ExtCodeArea codeArea;
     private Action goToLineAction;
 
-    public GoToHandler(CodeArea codeArea) {
+    public GoToHandler(@Nonnull ExtCodeArea codeArea) {
         this.codeArea = codeArea;
         resourceBundle = LanguageUtils.getResourceBundleByClass(GoToHandler.class);
         init();

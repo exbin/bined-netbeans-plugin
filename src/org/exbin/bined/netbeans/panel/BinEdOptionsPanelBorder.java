@@ -16,12 +16,12 @@
  */
 package org.exbin.bined.netbeans.panel;
 
-import org.exbin.bined.swing.basic.CodeArea;
+import org.exbin.bined.swing.extended.ExtCodeArea;
 
 /**
  * Hexadecimal editor options panel with border.
  *
- * @version 0.2.0 2018/09/10
+ * @version 0.2.0 2018/10/27
  * @author ExBin Project (http://exbin.org)
  */
 public class BinEdOptionsPanelBorder extends javax.swing.JPanel {
@@ -52,11 +52,11 @@ public class BinEdOptionsPanelBorder extends javax.swing.JPanel {
     private org.exbin.bined.netbeans.panel.BinEdOptionsPanel optionsPanel;
     // End of variables declaration//GEN-END:variables
 
-    public void setFromCodeArea(CodeArea codeArea) {
+    public void setFromCodeArea(ExtCodeArea codeArea) {
         optionsPanel.setFromCodeArea(codeArea);
     }
 
-    public void applyToCodeArea(CodeArea codeArea) {
+    public void applyToCodeArea(ExtCodeArea codeArea) {
         optionsPanel.applyToCodeArea(codeArea);
         codeArea.repaint();
     }

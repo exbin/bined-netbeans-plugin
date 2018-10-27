@@ -38,7 +38,7 @@ import org.exbin.bined.capability.RowWrappingCapable;
 import org.exbin.bined.delta.DeltaDocument;
 import org.exbin.bined.highlight.swing.HighlightNonAsciiCodeAreaPainter;
 import org.exbin.bined.netbeans.HexEditorTopComponent;
-import org.exbin.bined.swing.basic.CodeArea;
+import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.editor.text.panel.TextFontOptionsPanel;
 import org.exbin.framework.editor.text.panel.TextFontPanel;
 import org.exbin.framework.gui.utils.LanguageUtils;
@@ -52,7 +52,7 @@ import org.openide.util.NbPreferences;
 /**
  * Hexadecimal editor options panel.
  *
- * @version 0.2.0 2018/09/10
+ * @version 0.2.0 2018/10/27
  * @author ExBin Project (http://exbin.org)
  */
 public class BinEdOptionsPanel extends javax.swing.JPanel {
@@ -743,7 +743,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SUPERSCRIPT, Boolean.toString(TextAttribute.SUPERSCRIPT_SUPER.equals(attribs.get(TextAttribute.SUPERSCRIPT))));
     }
 
-    public void setFromCodeArea(CodeArea codeArea) {
+    public void setFromCodeArea(ExtCodeArea codeArea) {
         // Layout
         wrapLineModeCheckBox.setSelected(codeArea.getRowWrapping() == RowWrappingCapable.RowWrappingMode.WRAPPING);
 // TODO        lineLengthSpinner.setValue(codeArea.getLineLength());
@@ -761,7 +761,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         // Mode
         viewModeComboBox.setSelectedIndex(codeArea.getViewMode().ordinal());
         codeTypeComboBox.setSelectedIndex(codeArea.getCodeType().ordinal());
-// TODO        showNonprintableCharactersCheckBox.setSelected(codeArea.isShowUnprintableCharacters());
+        showNonprintableCharactersCheckBox.setSelected(codeArea.isShowUnprintables());
         codeColorizationCheckBox.setSelected(((HighlightNonAsciiCodeAreaPainter) codeArea.getPainter()).isNonAsciiHighlightingEnabled());
         memoryModeComboBox.setSelectedIndex(codeArea.getContentData() instanceof DeltaDocument ? 0 : 1);
 
@@ -778,7 +778,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         useDefaultFontCheckBox.setSelected(binEdFont.equals(binEdDefaultFont));
     }
 
-    public void applyToCodeArea(CodeArea codeArea) {
+    public void applyToCodeArea(ExtCodeArea codeArea) {
         // Layout
         codeArea.setRowWrapping(wrapLineModeCheckBox.isSelected() ? RowWrappingCapable.RowWrappingMode.WRAPPING : RowWrappingCapable.RowWrappingMode.NO_WRAPPING);
 // TODO        codeArea.setLineLength((Integer) lineLengthSpinner.getValue());
@@ -796,7 +796,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         // Mode
         codeArea.setViewMode(CodeAreaViewMode.values()[viewModeComboBox.getSelectedIndex()]);
         codeArea.setCodeType(CodeType.values()[codeTypeComboBox.getSelectedIndex()]);
-// TODO        codeArea.setShowUnprintableCharacters(showNonprintableCharactersCheckBox.isSelected());
+        codeArea.setShowUnprintables(showNonprintableCharactersCheckBox.isSelected());
         ((HighlightNonAsciiCodeAreaPainter) codeArea.getPainter()).setNonAsciiHighlightingEnabled(codeColorizationCheckBox.isSelected());
         // Memory mode handled from outside by isDeltaMemoryMode() method, worth fixing?
 

@@ -145,16 +145,20 @@
                 <binary-origin>release/modules/ext/jsr305-3.0.2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/bined-highlight-swing-0.2.0-SNAPSHOT.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/bined-highlight-swing-0.2.0-SNAPSHOT.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/exbin-binary_data-0.1.3-20180725.210253-9.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/exbin-binary_data-0.1.3-20180725.210253-9.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/bined-highlight-swing-0.2.0-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/bined-highlight-swing-0.2.0-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/bined-delta-0.2.0-SNAPSHOT.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/bined-delta-0.2.0-SNAPSHOT.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/bined-swing-extended-0.2.0-SNAPSHOT.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/bined-swing-extended-0.2.0-SNAPSHOT.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/bined-operation-0.2.0-SNAPSHOT.jar</runtime-relative-path>

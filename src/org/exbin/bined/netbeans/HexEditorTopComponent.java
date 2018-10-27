@@ -68,9 +68,9 @@ import org.exbin.bined.netbeans.panel.HexSearchPanel;
 import org.exbin.bined.netbeans.panel.HexSearchPanelApi;
 import org.exbin.bined.netbeans.panel.ValuesPanel;
 import org.exbin.bined.operation.swing.CodeAreaOperationCommandHandler;
-import org.exbin.bined.swing.basic.CodeArea;
 import org.exbin.bined.operation.BinaryDataCommand;
 import org.exbin.bined.operation.undo.BinaryDataUndoUpdateListener;
+import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.CodeAreaPopupMenuHandler;
 import org.exbin.framework.bined.HexStatusApi;
 import org.exbin.framework.bined.panel.HexStatusPanel;
@@ -106,7 +106,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.2.0 2018/09/10
+ * @version 0.2.0 2018/10/27
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.bined//HexEditor//EN", autostore = false)
@@ -148,7 +148,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
     private final Preferences preferences;
     private final HexEditorNode node;
     private static SegmentsRepository segmentsRepository = null;
-    private final CodeArea codeArea;
+    private final ExtCodeArea codeArea;
     private final UndoRedo.Manager undoRedo;
     private final HexUndoSwingHandler undoHandler;
     private final Savable savable;
@@ -179,7 +179,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
 
         preferences = NbPreferences.forModule(HexEditorTopComponent.class);
 
-        codeArea = new CodeArea();
+        codeArea = new ExtCodeArea();
         codeArea.setPainter(new HighlightNonAsciiCodeAreaPainter(codeArea));
         codeArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         codeArea.getCaret().setBlinkRate(300);
@@ -319,7 +319,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
 
     private void applyFromCodeArea() {
         codeTypeComboBox.setSelectedIndex(codeArea.getCodeType().ordinal());
-// TODO        showUnprintablesToggleButton.setSelected(codeArea.isShowUnprintableCharacters());
+        showUnprintablesToggleButton.setSelected(codeArea.isShowUnprintables());
         lineWrappingToggleButton.setSelected(codeArea.getRowWrapping() == RowWrappingCapable.RowWrappingMode.WRAPPING);
     }
 
@@ -683,7 +683,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
     }//GEN-LAST:event_lineWrappingToggleButtonActionPerformed
 
     private void showUnprintablesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showUnprintablesToggleButtonActionPerformed
-// TODO        codeArea.setShowUnprintableCharacters(showUnprintablesToggleButton.isSelected());
+        codeArea.setShowUnprintables(showUnprintablesToggleButton.isSelected());
         preferences.putBoolean(HexEditorTopComponent.PREFERENCES_SHOW_UNPRINTABLES, lineWrappingToggleButton.isSelected());
     }//GEN-LAST:event_showUnprintablesToggleButtonActionPerformed
 
@@ -999,7 +999,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
             });
             hexSearchPanel.setHexCodePopupMenuHandler(new CodeAreaPopupMenuHandler() {
                 @Override
-                public JPopupMenu createPopupMenu(CodeArea codeArea, String menuPostfix) {
+                public JPopupMenu createPopupMenu(ExtCodeArea codeArea, String menuPostfix) {
                     return createCodeAreaPopupMenu(codeArea, menuPostfix);
                 }
 
@@ -1063,7 +1063,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
         }
     }
 
-    private JPopupMenu createCodeAreaPopupMenu(final CodeArea codeArea, String menuPostfix) {
+    private JPopupMenu createCodeAreaPopupMenu(final ExtCodeArea codeArea, String menuPostfix) {
         JPopupMenu popupMenu = new JPopupMenu();
 
         JMenuItem cutMenuItem = new JMenuItem(new AbstractAction() {
@@ -1275,7 +1275,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
         codeArea.repaint();
     }
 
-    public CodeArea getCodeArea() {
+    public ExtCodeArea getCodeArea() {
         return codeArea;
     }
 
@@ -1292,7 +1292,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
 
         boolean showNonprintables = preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_UNPRINTABLES, false);
         showUnprintablesToggleButton.setSelected(showNonprintables);
-// TODO        codeArea.setShowUnprintableCharacters(showNonprintables);
+        codeArea.setShowUnprintables(showNonprintables);
 
         boolean lineWrapping = preferences.getBoolean(HexEditorTopComponent.PREFERENCES_LINE_WRAPPING, false);
         codeArea.setRowWrapping(lineWrapping ? RowWrappingMode.WRAPPING : RowWrappingMode.NO_WRAPPING);
@@ -1314,7 +1314,6 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
 //        codeArea.setLineNumberSpecifiedLength(preferences.getInt(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH, 8));
 //        codeArea.setByteGroupSize(preferences.getInt(HexEditorTopComponent.PREFERENCES_BYTE_GROUP_SIZE, 1));
 //        codeArea.setSpaceGroupSize(preferences.getInt(HexEditorTopComponent.PREFERENCES_SPACE_GROUP_SIZE, 0));
-
         // Mode
         codeArea.setViewMode(CodeAreaViewMode.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_VIEW_MODE, CodeAreaViewMode.DUAL.name())));
         codeArea.setCodeType(CodeType.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_CODE_TYPE, CodeType.HEXADECIMAL.name())));
@@ -1393,7 +1392,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
 //        if (entry.getDataObject().isModified()) {
 //            return this.cos;
 //        } else {
-            return CloseOperationState.STATE_OK;
+        return CloseOperationState.STATE_OK;
 //        }
     }
 
@@ -1418,8 +1417,9 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
     }
 
     private BasicBackgroundPaintMode convertBackgroundPaintMode(String value) {
-        if ("STRIPPED".equals(value))
+        if ("STRIPPED".equals(value)) {
             return BasicBackgroundPaintMode.STRIPED;
+        }
         return BasicBackgroundPaintMode.valueOf(value);
     }
 

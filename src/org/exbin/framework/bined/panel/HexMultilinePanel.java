@@ -20,7 +20,7 @@ import java.awt.BorderLayout;
 import java.util.ResourceBundle;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import org.exbin.bined.swing.basic.CodeArea;
+import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.CodeAreaPopupMenuHandler;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.utils.binary_data.EditableBinaryData;
@@ -28,7 +28,7 @@ import org.exbin.utils.binary_data.EditableBinaryData;
 /**
  * Multiline search condition editor panel.
  *
- * @version 0.2.0 2016/12/27
+ * @version 0.2.0 2018/10/27
  * @author ExBin Project (http://exbin.org)
  */
 public class HexMultilinePanel extends javax.swing.JPanel {
@@ -40,7 +40,7 @@ public class HexMultilinePanel extends javax.swing.JPanel {
 
     private JTextArea textArea;
     private JScrollPane scrollPane;
-    private CodeArea codeArea;
+    private ExtCodeArea codeArea;
     private CodeAreaPopupMenuHandler hexCodePopupMenuHandler;
 
     public HexMultilinePanel() {
@@ -90,7 +90,7 @@ public class HexMultilinePanel extends javax.swing.JPanel {
             textArea.setText(condition.getSearchText());
             add(scrollPane, BorderLayout.CENTER);
         } else {
-            codeArea = new CodeArea();
+            codeArea = new ExtCodeArea();
             codeArea.setContentData(condition.getBinaryData());
             add(codeArea, BorderLayout.CENTER);
             if (hexCodePopupMenuHandler != null) {
