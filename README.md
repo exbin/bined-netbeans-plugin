@@ -1,5 +1,5 @@
-BinEd - Binary Editor NetBeans Plugin
-=====================================
+BinEd - Binary/Hexadecimal Editor - NetBeans Plugin
+===================================================
 
 Hexadecimal viewer/editor plugin module for NetBeans platform.
 

@@ -29,13 +29,15 @@ import org.exbin.framework.gui.utils.WindowUtils;
 /**
  * Hexadecimal editor status panel.
  *
- * @version 0.2.0 2017/09/30
+ * @version 0.2.0 2018/09/11
  * @author ExBin Project (http://exbin.org)
  */
 public class HexStatusPanel extends javax.swing.JPanel implements HexStatusApi, TextEncodingStatusApi {
 
     public static final String INSERT_EDITATION_MODE_LABEL = "INS";
     public static final String OVERWRITE_EDITATION_MODE_LABEL = "OVR";
+    public static final String READONLY_EDITATION_MODE_LABEL = "RO";
+    public static final String INPLACE_EDITATION_MODE_LABEL = "INP";
 
     private EditationMode editationMode;
     private StatusControlHandler statusControlHandle;
@@ -339,6 +341,14 @@ public class HexStatusPanel extends javax.swing.JPanel implements HexStatusApi, 
             }
             case OVERWRITE: {
                 editationModeLabel.setText(OVERWRITE_EDITATION_MODE_LABEL);
+                break;
+            }
+            case READ_ONLY: {
+                editationModeLabel.setText(READONLY_EDITATION_MODE_LABEL);
+                break;
+            }
+            case INPLACE: {
+                editationModeLabel.setText(INPLACE_EDITATION_MODE_LABEL);
                 break;
             }
             default:

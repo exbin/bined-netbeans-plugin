@@ -1,5 +1,5 @@
 0.2.0
-- 
+- Updated to newer version of library
 
 0.1.7 (2017-10-10)
 - Values panel made editable
