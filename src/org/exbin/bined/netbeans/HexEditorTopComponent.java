@@ -23,7 +23,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.io.IOException;
@@ -61,14 +60,14 @@ import org.exbin.bined.capability.RowWrappingCapable.RowWrappingMode;
 import org.exbin.bined.delta.DeltaDocument;
 import org.exbin.bined.delta.FileDataSource;
 import org.exbin.bined.delta.SegmentsRepository;
-import org.exbin.bined.highlight.swing.HighlightCodeAreaPainter;
-import org.exbin.bined.highlight.swing.HighlightNonAsciiCodeAreaPainter;
+import org.exbin.bined.highlight.swing.extended.ExtendedHighlightCodeAreaPainter;
+import org.exbin.bined.highlight.swing.extended.ExtendedHighlightNonAsciiCodeAreaPainter;
 import org.exbin.bined.netbeans.panel.BinEdOptionsPanelBorder;
 import org.exbin.bined.netbeans.panel.HexSearchPanel;
 import org.exbin.bined.netbeans.panel.HexSearchPanelApi;
 import org.exbin.bined.netbeans.panel.ValuesPanel;
-import org.exbin.bined.operation.swing.CodeAreaOperationCommandHandler;
 import org.exbin.bined.operation.BinaryDataCommand;
+import org.exbin.bined.operation.swing.CodeAreaOperationCommandHandler;
 import org.exbin.bined.operation.undo.BinaryDataUndoUpdateListener;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.CodeAreaPopupMenuHandler;
@@ -106,7 +105,7 @@ import org.openide.windows.WindowManager;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.2.0 2018/10/27
+ * @version 0.2.0 2018/11/26
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.bined//HexEditor//EN", autostore = false)
@@ -180,8 +179,8 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
         preferences = NbPreferences.forModule(HexEditorTopComponent.class);
 
         codeArea = new ExtCodeArea();
-        codeArea.setPainter(new HighlightNonAsciiCodeAreaPainter(codeArea));
-        codeArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        codeArea.setPainter(new ExtendedHighlightNonAsciiCodeAreaPainter(codeArea));
+        codeArea.setCodeFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         codeArea.getCaret().setBlinkRate(300);
         statusPanel = new HexStatusPanel();
         registerEncodingStatus(statusPanel);
@@ -213,22 +212,11 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
         registerHexStatus(statusPanel);
         goToHandler = new GoToHandler(codeArea);
 
-        codeArea.addMouseListener(new MouseAdapter() {
+        codeArea.setComponentPopupMenu(new JPopupMenu() {
             @Override
-            public void mousePressed(MouseEvent e) {
-                maybeShowPopup(e);
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                maybeShowPopup(e);
-            }
-
-            private void maybeShowPopup(MouseEvent e) {
-                if (e.isPopupTrigger()) {
-                    JPopupMenu popupMenu = createContextMenu();
-                    popupMenu.show(e.getComponent(), e.getX(), e.getY());
-                }
+            public void show(Component invoker, int x, int y) {
+                JPopupMenu popupMenu = createContextMenu();
+                popupMenu.show(invoker, x, y);
             }
         });
 
@@ -917,7 +905,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
             hexSearchPanel = new HexSearchPanel(new HexSearchPanelApi() {
                 @Override
                 public void performFind(SearchParameters searchParameters) {
-                    HighlightCodeAreaPainter painter = (HighlightCodeAreaPainter) codeArea.getPainter();
+                    ExtendedHighlightCodeAreaPainter painter = (ExtendedHighlightCodeAreaPainter) codeArea.getPainter();
                     SearchCondition condition = searchParameters.getCondition();
                     hexSearchPanel.clearStatus();
                     if (condition.isEmpty()) {
@@ -961,9 +949,9 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
 
                 @Override
                 public void setMatchPosition(int matchPosition) {
-                    HighlightCodeAreaPainter painter = (HighlightCodeAreaPainter) codeArea.getPainter();
+                    ExtendedHighlightCodeAreaPainter painter = (ExtendedHighlightCodeAreaPainter) codeArea.getPainter();
                     painter.setCurrentMatchIndex(matchPosition);
-                    HighlightCodeAreaPainter.SearchMatch currentMatch = painter.getCurrentMatch();
+                    ExtendedHighlightCodeAreaPainter.SearchMatch currentMatch = painter.getCurrentMatch();
                     codeArea.revealPosition(new CodeAreaCaretPosition(currentMatch.getPosition(), 0, codeArea.getActiveSection()));
                     codeArea.repaint();
                 }
@@ -976,8 +964,8 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
                 @Override
                 public void performReplace(SearchParameters searchParameters, ReplaceParameters replaceParameters) {
                     SearchCondition replaceCondition = replaceParameters.getCondition();
-                    HighlightCodeAreaPainter painter = (HighlightCodeAreaPainter) codeArea.getPainter();
-                    HighlightCodeAreaPainter.SearchMatch currentMatch = painter.getCurrentMatch();
+                    ExtendedHighlightCodeAreaPainter painter = (ExtendedHighlightCodeAreaPainter) codeArea.getPainter();
+                    ExtendedHighlightCodeAreaPainter.SearchMatch currentMatch = painter.getCurrentMatch();
                     if (currentMatch != null) {
                         EditableBinaryData editableData = ((EditableBinaryData) codeArea.getContentData());
                         editableData.remove(currentMatch.getPosition(), currentMatch.getLength());
@@ -993,7 +981,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
 
                 @Override
                 public void clearMatches() {
-                    HighlightCodeAreaPainter painter = (HighlightCodeAreaPainter) codeArea.getPainter();
+                    ExtendedHighlightCodeAreaPainter painter = (ExtendedHighlightCodeAreaPainter) codeArea.getPainter();
                     painter.clearMatches();
                 }
             });
@@ -1139,7 +1127,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
      * Performs search by text/characters.
      */
     private void searchForText(SearchParameters searchParameters) {
-        HighlightCodeAreaPainter painter = (HighlightCodeAreaPainter) codeArea.getPainter();
+        ExtendedHighlightCodeAreaPainter painter = (ExtendedHighlightCodeAreaPainter) codeArea.getPainter();
         SearchCondition condition = searchParameters.getCondition();
 
         long position = searchParameters.getStartPosition();
@@ -1151,7 +1139,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
         }
         BinaryData data = codeArea.getContentData();
 
-        List<HighlightCodeAreaPainter.SearchMatch> foundMatches = new ArrayList<>();
+        List<ExtendedHighlightCodeAreaPainter.SearchMatch> foundMatches = new ArrayList<>();
 
         Charset charset = codeArea.getCharset();
         CharsetEncoder encoder = charset.newEncoder();
@@ -1184,7 +1172,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
             }
 
             if (matchCharLength == findText.length()) {
-                HighlightCodeAreaPainter.SearchMatch match = new HighlightCodeAreaPainter.SearchMatch();
+                ExtendedHighlightCodeAreaPainter.SearchMatch match = new ExtendedHighlightCodeAreaPainter.SearchMatch();
                 match.setPosition(position);
                 match.setLength(matchLength);
                 foundMatches.add(match);
@@ -1211,7 +1199,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
         painter.setMatches(foundMatches);
         if (foundMatches.size() > 0) {
             painter.setCurrentMatchIndex(0);
-            HighlightCodeAreaPainter.SearchMatch firstMatch = painter.getCurrentMatch();
+            ExtendedHighlightCodeAreaPainter.SearchMatch firstMatch = painter.getCurrentMatch();
             codeArea.revealPosition(new CodeAreaCaretPosition(firstMatch.getPosition(), 0, codeArea.getActiveSection()));
         }
         hexSearchPanel.setStatus(foundMatches.size(), 0);
@@ -1222,10 +1210,10 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
      * Performs search by binary data.
      */
     private void searchForBinaryData(SearchParameters searchParameters) {
-        HighlightCodeAreaPainter painter = (HighlightCodeAreaPainter) codeArea.getPainter();
+        ExtendedHighlightCodeAreaPainter painter = (ExtendedHighlightCodeAreaPainter) codeArea.getPainter();
         SearchCondition condition = searchParameters.getCondition();
         long position = codeArea.getCaretPosition().getDataPosition();
-        HighlightCodeAreaPainter.SearchMatch currentMatch = painter.getCurrentMatch();
+        ExtendedHighlightCodeAreaPainter.SearchMatch currentMatch = painter.getCurrentMatch();
 
         if (currentMatch != null) {
             if (currentMatch.getPosition() == position) {
@@ -1239,7 +1227,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
         BinaryData searchData = condition.getBinaryData();
         BinaryData data = codeArea.getContentData();
 
-        List<HighlightCodeAreaPainter.SearchMatch> foundMatches = new ArrayList<>();
+        List<ExtendedHighlightCodeAreaPainter.SearchMatch> foundMatches = new ArrayList<>();
 
         long dataSize = data.getDataSize();
         while (position < dataSize - searchData.getDataSize()) {
@@ -1252,7 +1240,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
             }
 
             if (matchLength == searchData.getDataSize()) {
-                HighlightCodeAreaPainter.SearchMatch match = new HighlightCodeAreaPainter.SearchMatch();
+                ExtendedHighlightCodeAreaPainter.SearchMatch match = new ExtendedHighlightCodeAreaPainter.SearchMatch();
                 match.setPosition(position);
                 match.setLength(searchData.getDataSize());
                 foundMatches.add(match);
@@ -1268,7 +1256,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
         painter.setMatches(foundMatches);
         if (foundMatches.size() > 0) {
             painter.setCurrentMatchIndex(0);
-            HighlightCodeAreaPainter.SearchMatch firstMatch = painter.getCurrentMatch();
+            ExtendedHighlightCodeAreaPainter.SearchMatch firstMatch = painter.getCurrentMatch();
             codeArea.revealPosition(new CodeAreaCaretPosition(firstMatch.getPosition(), 0, codeArea.getActiveSection()));
         }
         hexSearchPanel.setStatus(foundMatches.size(), 0);
@@ -1317,7 +1305,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
         // Mode
         codeArea.setViewMode(CodeAreaViewMode.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_VIEW_MODE, CodeAreaViewMode.DUAL.name())));
         codeArea.setCodeType(CodeType.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_CODE_TYPE, CodeType.HEXADECIMAL.name())));
-        ((HighlightNonAsciiCodeAreaPainter) codeArea.getPainter()).setNonAsciiHighlightingEnabled(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_CODE_COLORIZATION, true));
+        ((ExtendedHighlightNonAsciiCodeAreaPainter) codeArea.getPainter()).setNonAsciiHighlightingEnabled(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_CODE_COLORIZATION, true));
         // Memory mode handled from outside by isDeltaMemoryMode() method, worth fixing?
 
         // Decoration
@@ -1363,8 +1351,8 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
             if (Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SUPERSCRIPT, null))) {
                 attribs.put(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUPER);
             }
-            Font derivedFont = codeArea.getFont().deriveFont(attribs);
-            codeArea.setFont(derivedFont);
+            Font derivedFont = codeArea.getCodeFont().deriveFont(attribs);
+            codeArea.setCodeFont(derivedFont);
         }
         boolean showValuesPanel = preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_VALUES_PANEL, true);
         if (showValuesPanel) {

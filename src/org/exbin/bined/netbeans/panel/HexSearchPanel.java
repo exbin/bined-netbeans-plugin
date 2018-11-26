@@ -35,7 +35,6 @@ import org.exbin.bined.ScrollBarVisibility;
 import org.exbin.bined.basic.BasicBackgroundPaintMode;
 import org.exbin.bined.capability.RowWrappingCapable;
 import org.exbin.bined.swing.basic.CodeArea;
-import org.exbin.bined.swing.capability.BackgroundPaintCapable;
 import org.exbin.framework.bined.CodeAreaPopupMenuHandler;
 import org.exbin.framework.bined.panel.FindHexPanel;
 import org.exbin.framework.bined.panel.HexMultilinePanel;
