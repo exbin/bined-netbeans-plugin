@@ -54,7 +54,7 @@ import org.exbin.bined.CodeType;
 import org.exbin.bined.DataChangedListener;
 import org.exbin.bined.EditationMode;
 import org.exbin.bined.EditationModeChangedListener;
-import org.exbin.bined.basic.BasicBackgroundPaintMode;
+import org.exbin.bined.PositionCodeType;
 import org.exbin.bined.capability.RowWrappingCapable;
 import org.exbin.bined.capability.RowWrappingCapable.RowWrappingMode;
 import org.exbin.bined.delta.DeltaDocument;
@@ -70,6 +70,7 @@ import org.exbin.bined.operation.BinaryDataCommand;
 import org.exbin.bined.operation.swing.CodeAreaOperationCommandHandler;
 import org.exbin.bined.operation.undo.BinaryDataUndoUpdateListener;
 import org.exbin.bined.swing.extended.ExtCodeArea;
+import org.exbin.bined.swing.extended.ExtendedBackgroundPaintMode;
 import org.exbin.framework.bined.CodeAreaPopupMenuHandler;
 import org.exbin.framework.bined.HexStatusApi;
 import org.exbin.framework.bined.panel.HexStatusPanel;
@@ -1289,7 +1290,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
         encodingsHandler.loadFromPreferences(preferences);
 
         // Layout
-// TODO        codeArea.setShowHeader(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_HEADER, true));
+        codeArea.setShowHeader(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_HEADER, true));
 //        String headerSpaceTypeName = preferences.get(HexEditorTopComponent.PREFERENCES_HEADER_SPACE_TYPE, CodeAreaSpace.SpaceType.HALF_UNIT.name());
 //        codeArea.setHeaderSpaceType(CodeAreaSpace.SpaceType.valueOf(headerSpaceTypeName));
 //        codeArea.setHeaderSpaceSize(preferences.getInt(HexEditorTopComponent.PREFERENCES_HEADER_SPACE, 0));
@@ -1309,7 +1310,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
         // Memory mode handled from outside by isDeltaMemoryMode() method, worth fixing?
 
         // Decoration
-        codeArea.setBackgroundPaintMode(convertBackgroundPaintMode(preferences.get(HexEditorTopComponent.PREFERENCES_BACKGROUND_MODE, BasicBackgroundPaintMode.STRIPED.name())));
+        codeArea.setBackgroundPaintMode(convertBackgroundPaintMode(preferences.get(HexEditorTopComponent.PREFERENCES_BACKGROUND_MODE, ExtendedBackgroundPaintMode.STRIPED.name())));
 // TODO        codeArea.setLineNumberBackground(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_PAINT_LINE_NUMBERS_BACKGROUND, true));
 // TODO        int decorationMode = (preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_HEADER_LINE, true) ? CodeArea.DECORATION_HEADER_LINE : 0)
 // TODO                + (preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_PREVIEW_LINE, true) ? CodeArea.DECORATION_PREVIEW_LINE : 0)
@@ -1317,7 +1318,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
 // TODO                + (preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_LINENUM_LINE, true) ? CodeArea.DECORATION_LINENUM_LINE : 0);
 // TODO        codeArea.setDecorationMode(decorationMode);
         codeArea.setCodeCharactersCase(CodeCharactersCase.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_HEX_CHARACTERS_CASE, CodeCharactersCase.UPPER.name())));
-// TODO        codeArea.setPositionCodeType(PositionCodeType.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_POSITION_CODE_TYPE, PositionCodeType.HEXADECIMAL.name())));
+        codeArea.setPositionCodeType(PositionCodeType.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_POSITION_CODE_TYPE, PositionCodeType.HEXADECIMAL.name())));
 
         // Font
         Boolean useDefaultColor = Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_DEFAULT, Boolean.toString(true)));
@@ -1404,11 +1405,11 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
         super.componentDeactivated();
     }
 
-    private BasicBackgroundPaintMode convertBackgroundPaintMode(String value) {
+    private ExtendedBackgroundPaintMode convertBackgroundPaintMode(String value) {
         if ("STRIPPED".equals(value)) {
-            return BasicBackgroundPaintMode.STRIPED;
+            return ExtendedBackgroundPaintMode.STRIPED;
         }
-        return BasicBackgroundPaintMode.valueOf(value);
+        return ExtendedBackgroundPaintMode.valueOf(value);
     }
 
     public static interface CharsetChangeListener {

@@ -32,9 +32,9 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import org.exbin.bined.ScrollBarVisibility;
-import org.exbin.bined.basic.BasicBackgroundPaintMode;
 import org.exbin.bined.capability.RowWrappingCapable;
-import org.exbin.bined.swing.basic.CodeArea;
+import org.exbin.bined.swing.extended.ExtCodeArea;
+import org.exbin.bined.swing.extended.ExtendedBackgroundPaintMode;
 import org.exbin.framework.bined.CodeAreaPopupMenuHandler;
 import org.exbin.framework.bined.panel.FindHexPanel;
 import org.exbin.framework.bined.panel.HexMultilinePanel;
@@ -56,7 +56,7 @@ import org.openide.DialogDisplayer;
 /**
  * Hexadecimal editor search panel.
  *
- * @version 0.2.0 2018/09/10
+ * @version 0.2.0 2018/12/05
  * @author ExBin Project (http://exbin.org)
  */
 public class HexSearchPanel extends javax.swing.JPanel {
@@ -70,7 +70,7 @@ public class HexSearchPanel extends javax.swing.JPanel {
     private final HexSearchPanelApi hexSearchPanelApi;
     private int matchesCount;
     private int matchPosition;
-    private final CodeArea hexadecimalRenderer = new CodeArea();
+    private final ExtCodeArea hexadecimalRenderer = new ExtCodeArea();
 
     private boolean replaceMode = true;
     private ComboBoxEditor findComboBoxEditor;
@@ -91,10 +91,11 @@ public class HexSearchPanel extends javax.swing.JPanel {
     }
 
     private void init() {
-        // TODO hexadecimalRenderer.setShowHeader(false);
-        // TODO hexadecimalRenderer.setShowLineNumbers(false);
+        hexadecimalRenderer.setShowHeader(false);
+        hexadecimalRenderer.setShowRowPosition(false);
         hexadecimalRenderer.setRowWrapping(RowWrappingCapable.RowWrappingMode.WRAPPING);
-        hexadecimalRenderer.setBackgroundPaintMode(BasicBackgroundPaintMode.PLAIN);
+        hexadecimalRenderer.setWrappingBytesGroupSize(0);
+        hexadecimalRenderer.setBackgroundPaintMode(ExtendedBackgroundPaintMode.PLAIN);
         hexadecimalRenderer.setVerticalScrollBarVisibility(ScrollBarVisibility.NEVER);
         hexadecimalRenderer.setHorizontalScrollBarVisibility(ScrollBarVisibility.NEVER);
         hexadecimalRenderer.setContentData(new ByteArrayEditableData(new byte[]{1, 2, 3}));

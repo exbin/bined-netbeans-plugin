@@ -39,6 +39,7 @@ import org.exbin.bined.delta.DeltaDocument;
 import org.exbin.bined.highlight.swing.extended.ExtendedHighlightNonAsciiCodeAreaPainter;
 import org.exbin.bined.netbeans.HexEditorTopComponent;
 import org.exbin.bined.swing.extended.ExtCodeArea;
+import org.exbin.bined.swing.extended.ExtendedBackgroundPaintMode;
 import org.exbin.framework.editor.text.panel.TextFontOptionsPanel;
 import org.exbin.framework.editor.text.panel.TextFontPanel;
 import org.exbin.framework.gui.utils.LanguageUtils;
@@ -635,7 +636,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         memoryModeComboBox.setSelectedIndex(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_MEMORY_DELTA_MODE, true) ? 0 : 1);
 
         // Decoration
-        BasicBackgroundPaintMode backgroundMode = convertBackgroundPaintMode(preferences.get(HexEditorTopComponent.PREFERENCES_BACKGROUND_MODE, BasicBackgroundPaintMode.STRIPED.name()));
+        ExtendedBackgroundPaintMode backgroundMode = convertBackgroundPaintMode(preferences.get(HexEditorTopComponent.PREFERENCES_BACKGROUND_MODE, ExtendedBackgroundPaintMode.STRIPED.name()));
         backgroundModeComboBox.setSelectedIndex(backgroundMode.ordinal());
         lineNumbersBackgroundCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_PAINT_LINE_NUMBERS_BACKGROUND, true));
         decoratorHeaderLineCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_HEADER_LINE, true));
@@ -770,7 +771,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 // TODO        lineNumbersBackgroundCheckBox.setSelected(codeArea.isLineNumberBackground());
 // TODO        setDecorationMode(codeArea.getDecorationMode());
         hexCharactersModeComboBox.setSelectedIndex(codeArea.getCodeCharactersCase().ordinal());
-// TODO        positionCodeTypeComboBox.setSelectedIndex(codeArea.getPositionCodeType().ordinal());
+        positionCodeTypeComboBox.setSelectedIndex(codeArea.getPositionCodeType().ordinal());
 
         // Font
         binEdFont = codeArea.getCodeFont();
@@ -782,7 +783,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         // Layout
         codeArea.setRowWrapping(wrapLineModeCheckBox.isSelected() ? RowWrappingCapable.RowWrappingMode.WRAPPING : RowWrappingCapable.RowWrappingMode.NO_WRAPPING);
 // TODO        codeArea.setLineLength((Integer) lineLengthSpinner.getValue());
-//        codeArea.setShowHeader(showHeaderCheckBox.isSelected());
+        codeArea.setShowHeader(showHeaderCheckBox.isSelected());
 //        codeArea.setHeaderSpaceType(CodeAreaSpace.SpaceType.values()[headerSpaceComboBox.getSelectedIndex()]);
 //        codeArea.setHeaderSpaceSize((Integer) headerSpaceSpinner.getValue());
 //        codeArea.setShowLineNumbers(showLineNumbersCheckBox.isSelected());
@@ -801,11 +802,11 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         // Memory mode handled from outside by isDeltaMemoryMode() method, worth fixing?
 
         // Decoration
-        codeArea.setBackgroundPaintMode(BasicBackgroundPaintMode.values()[backgroundModeComboBox.getSelectedIndex()]);
+        codeArea.setBackgroundPaintMode(ExtendedBackgroundPaintMode.values()[backgroundModeComboBox.getSelectedIndex()]);
 // TODO        codeArea.setLineNumberBackground(lineNumbersBackgroundCheckBox.isSelected());
 // TODO        codeArea.setDecorationMode(getDecorationMode());
         codeArea.setCodeCharactersCase(CodeCharactersCase.values()[hexCharactersModeComboBox.getSelectedIndex()]);
-// TODO        codeArea.setPositionCodeType(PositionCodeType.values()[positionCodeTypeComboBox.getSelectedIndex()]);
+        codeArea.setPositionCodeType(PositionCodeType.values()[positionCodeTypeComboBox.getSelectedIndex()]);
 
         // Font
         if (useDefaultFontCheckBox.isSelected()) {
@@ -837,7 +838,6 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 //        decoratorPreviewLineCheckBox.setSelected((decorationMode & CodeArea.DECORATION_PREVIEW_LINE) > 0);
 //        decoratorBoxCheckBox.setSelected((decorationMode & CodeArea.DECORATION_BOX) > 0);
 //    }
-
     public boolean isDeltaMemoryMode() {
         return memoryModeComboBox.getSelectedIndex() == 0;
     }
@@ -861,11 +861,12 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         }
         fontTextField.setText(binEdFont.getFamily() + " " + String.valueOf(binEdFont.getSize()) + " " + fontStyleName);
     }
-    
-    private BasicBackgroundPaintMode convertBackgroundPaintMode(String value) {
-        if ("STRIPPED".equals(value))
-            return BasicBackgroundPaintMode.STRIPED;
-        return BasicBackgroundPaintMode.valueOf(value);
+
+    private ExtendedBackgroundPaintMode convertBackgroundPaintMode(String value) {
+        if ("STRIPPED".equals(value)) {
+            return ExtendedBackgroundPaintMode.STRIPED;
+        }
+        return ExtendedBackgroundPaintMode.valueOf(value);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

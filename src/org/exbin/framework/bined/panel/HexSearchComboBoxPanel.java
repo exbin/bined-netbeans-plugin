@@ -26,8 +26,9 @@ import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.exbin.bined.ScrollBarVisibility;
-import org.exbin.bined.basic.BasicBackgroundPaintMode;
+import org.exbin.bined.capability.RowWrappingCapable;
 import org.exbin.bined.swing.extended.ExtCodeArea;
+import org.exbin.bined.swing.extended.ExtendedBackgroundPaintMode;
 import org.exbin.framework.bined.CodeAreaPopupMenuHandler;
 import org.exbin.utils.binary_data.ByteArrayEditableData;
 import org.exbin.utils.binary_data.EditableBinaryData;
@@ -75,10 +76,11 @@ public class HexSearchComboBoxPanel extends JPanel {
 
         super.add(textField, TEXT_MODE);
 
-// TODO        hexadecimalEditor.setShowHeader(false);
-//        hexadecimalEditor.setShowLineNumbers(false);
-//        hexadecimalEditor.setWrapMode(true);
-        hexadecimalEditor.setBackgroundPaintMode(BasicBackgroundPaintMode.PLAIN);
+        hexadecimalEditor.setShowHeader(false);
+        hexadecimalEditor.setShowRowPosition(false);
+        hexadecimalEditor.setRowWrapping(RowWrappingCapable.RowWrappingMode.WRAPPING);
+        hexadecimalEditor.setWrappingBytesGroupSize(0);
+        hexadecimalEditor.setBackgroundPaintMode(ExtendedBackgroundPaintMode.PLAIN);
         hexadecimalEditor.setVerticalScrollBarVisibility(ScrollBarVisibility.NEVER);
         hexadecimalEditor.setHorizontalScrollBarVisibility(ScrollBarVisibility.NEVER);
         hexadecimalEditor.setContentData(new ByteArrayEditableData());

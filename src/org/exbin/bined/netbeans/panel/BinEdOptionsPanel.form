@@ -86,7 +86,7 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="&lt;headerPanel.border.title&gt;">
+                <TitledBorder title="Header">
                   <ResourceString PropertyName="titleX" bundle="org/exbin/bined/netbeans/panel/resources/BinEdOptionsPanel.properties" key="headerPanel.border.title" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </TitledBorder>
               </Border>
@@ -179,7 +179,7 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="&lt;lineNumbersPanel.border.title&gt;">
+                <TitledBorder title="Line Numbers">
                   <ResourceString PropertyName="titleX" bundle="org/exbin/bined/netbeans/panel/resources/BinEdOptionsPanel.properties" key="lineNumbersPanel.border.title" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </TitledBorder>
               </Border>
@@ -620,7 +620,7 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="&lt;linesPanel.border.title&gt;">
+                <TitledBorder title="Lines">
                   <ResourceString PropertyName="titleX" bundle="org/exbin/bined/netbeans/panel/resources/BinEdOptionsPanel.properties" key="linesPanel.border.title" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </TitledBorder>
               </Border>

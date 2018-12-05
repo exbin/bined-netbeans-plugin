@@ -29,8 +29,9 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import org.exbin.bined.ScrollBarVisibility;
-import org.exbin.bined.basic.BasicBackgroundPaintMode;
-import org.exbin.bined.swing.basic.CodeArea;
+import org.exbin.bined.capability.RowWrappingCapable;
+import org.exbin.bined.swing.extended.ExtCodeArea;
+import org.exbin.bined.swing.extended.ExtendedBackgroundPaintMode;
 import org.exbin.framework.bined.CodeAreaPopupMenuHandler;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
@@ -47,12 +48,12 @@ public class FindHexPanel extends javax.swing.JPanel {
     private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(FindHexPanel.class);
     public static final String POPUP_MENU_POSTFIX = ".searchFindHexPanel";
 
-    private final CodeArea findHexadecimalRenderer = new CodeArea();
+    private final ExtCodeArea findHexadecimalRenderer = new ExtCodeArea();
     private HexSearchComboBoxPanel findComboBoxEditorComponent;
     private ComboBoxEditor findComboBoxEditor;
     private List<SearchCondition> searchHistory = new ArrayList<>();
 
-    private final CodeArea replaceHexadecimalRenderer = new CodeArea();
+    private final ExtCodeArea replaceHexadecimalRenderer = new ExtCodeArea();
     private HexSearchComboBoxPanel replaceComboBoxEditorComponent;
     private ComboBoxEditor replaceComboBoxEditor;
     private List<SearchCondition> replaceHistory = new ArrayList<>();
@@ -66,10 +67,11 @@ public class FindHexPanel extends javax.swing.JPanel {
     }
 
     private void init() {
-// TODO        findHexadecimalRenderer.setShowHeader(false);
-//        findHexadecimalRenderer.setShowLineNumbers(false);
-//        findHexadecimalRenderer.setWrapMode(true);
-        replaceHexadecimalRenderer.setBackgroundPaintMode(BasicBackgroundPaintMode.PLAIN);
+        findHexadecimalRenderer.setShowHeader(false);
+        findHexadecimalRenderer.setShowRowPosition(false);
+        findHexadecimalRenderer.setRowWrapping(RowWrappingCapable.RowWrappingMode.WRAPPING);
+        findHexadecimalRenderer.setWrappingBytesGroupSize(0);
+        findHexadecimalRenderer.setBackgroundPaintMode(ExtendedBackgroundPaintMode.PLAIN);
         findHexadecimalRenderer.setVerticalScrollBarVisibility(ScrollBarVisibility.NEVER);
         findHexadecimalRenderer.setHorizontalScrollBarVisibility(ScrollBarVisibility.NEVER);
         findHexadecimalRenderer.setContentData(new ByteArrayEditableData());
@@ -137,10 +139,11 @@ public class FindHexPanel extends javax.swing.JPanel {
         findComboBox.setEditor(findComboBoxEditor);
         findComboBox.setModel(new SearchHistoryModel(searchHistory));
 
-// TODO        replaceHexadecimalRenderer.setShowHeader(false);
-//        replaceHexadecimalRenderer.setShowLineNumbers(false);
-//        replaceHexadecimalRenderer.setWrapMode(true);
-        replaceHexadecimalRenderer.setBackgroundPaintMode(BasicBackgroundPaintMode.PLAIN);
+        replaceHexadecimalRenderer.setShowHeader(false);
+        replaceHexadecimalRenderer.setShowRowPosition(false);
+        replaceHexadecimalRenderer.setRowWrapping(RowWrappingCapable.RowWrappingMode.WRAPPING);
+        replaceHexadecimalRenderer.setWrappingBytesGroupSize(0);
+        replaceHexadecimalRenderer.setBackgroundPaintMode(ExtendedBackgroundPaintMode.PLAIN);
         replaceHexadecimalRenderer.setVerticalScrollBarVisibility(ScrollBarVisibility.NEVER);
         replaceHexadecimalRenderer.setHorizontalScrollBarVisibility(ScrollBarVisibility.NEVER);
         replaceHexadecimalRenderer.setContentData(new ByteArrayEditableData());
