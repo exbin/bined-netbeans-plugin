@@ -38,7 +38,7 @@ import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.bined.swing.extended.layout.ExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
 import org.exbin.framework.bined.CodeAreaPopupMenuHandler;
-import org.exbin.framework.bined.panel.FindHexPanel;
+import org.exbin.framework.bined.panel.FindBinaryPanel;
 import org.exbin.framework.bined.panel.BinaryMultilinePanel;
 import org.exbin.framework.bined.panel.BinarySearchComboBoxPanel;
 import org.exbin.framework.bined.panel.ReplaceParameters;
@@ -591,7 +591,7 @@ public class BinarySearchPanel extends javax.swing.JPanel {
 
     private void optionsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionsButtonActionPerformed
         cancelSearch();
-        final FindHexPanel findHexPanel = new FindHexPanel();
+        final FindBinaryPanel findHexPanel = new FindBinaryPanel();
         findHexPanel.setSelected();
         findHexPanel.setSearchHistory(searchHistory);
         findHexPanel.setSearchParameters(searchParameters);
@@ -602,7 +602,7 @@ public class BinarySearchPanel extends javax.swing.JPanel {
         JPanel dialogPanel = WindowUtils.createDialogPanel(findHexPanel, controlPanel);
         DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Find Text", true, new Object[0], null, 0, null, null);
         final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
-        findHexPanel.setMultilineEditorListener(new FindHexPanel.MultilineEditorListener() {
+        findHexPanel.setMultilineEditorListener(new FindBinaryPanel.MultilineEditorListener() {
             @Override
             public SearchCondition multilineEdit(SearchCondition condition) {
                 final BinaryMultilinePanel multilinePanel = new BinaryMultilinePanel();

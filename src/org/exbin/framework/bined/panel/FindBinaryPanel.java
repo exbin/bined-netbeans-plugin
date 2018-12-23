@@ -45,9 +45,9 @@ import org.exbin.utils.binary_data.ByteArrayEditableData;
  * @version 0.2.1 2018/12/22
  * @author ExBin Project (http://exbin.org)
  */
-public class FindHexPanel extends javax.swing.JPanel {
+public class FindBinaryPanel extends javax.swing.JPanel {
 
-    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(FindHexPanel.class);
+    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(FindBinaryPanel.class);
     public static final String POPUP_MENU_POSTFIX = ".searchFindHexPanel";
 
     private final ExtCodeArea findHexadecimalRenderer = new ExtCodeArea();
@@ -63,7 +63,7 @@ public class FindHexPanel extends javax.swing.JPanel {
     private CodeAreaPopupMenuHandler hexCodePopupMenuHandler;
     private MultilineEditorListener multilineEditorListener = null;
 
-    public FindHexPanel() {
+    public FindBinaryPanel() {
         initComponents();
         init();
     }
@@ -497,7 +497,7 @@ public class FindHexPanel extends javax.swing.JPanel {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        WindowUtils.invokeDialog(new FindHexPanel());
+        WindowUtils.invokeDialog(new FindBinaryPanel());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
