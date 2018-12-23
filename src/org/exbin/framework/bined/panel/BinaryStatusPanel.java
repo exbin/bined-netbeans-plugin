@@ -21,29 +21,30 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseEvent;
 import org.exbin.bined.EditationMode;
-import org.exbin.framework.bined.HexStatusApi;
+import org.exbin.bined.EditationOperation;
 import org.exbin.framework.editor.text.TextEncodingStatusApi;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
+import org.exbin.framework.bined.BinaryStatusApi;
 
 /**
- * Hexadecimal editor status panel.
+ * Binary editor status panel.
  *
- * @version 0.2.0 2018/09/11
+ * @version 0.2.0 2018/12/23
  * @author ExBin Project (http://exbin.org)
  */
-public class HexStatusPanel extends javax.swing.JPanel implements HexStatusApi, TextEncodingStatusApi {
+public class BinaryStatusPanel extends javax.swing.JPanel implements BinaryStatusApi, TextEncodingStatusApi {
 
     public static final String INSERT_EDITATION_MODE_LABEL = "INS";
     public static final String OVERWRITE_EDITATION_MODE_LABEL = "OVR";
     public static final String READONLY_EDITATION_MODE_LABEL = "RO";
     public static final String INPLACE_EDITATION_MODE_LABEL = "INP";
 
-    private EditationMode editationMode;
-    private StatusControlHandler statusControlHandle;
-    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(HexStatusPanel.class);
+    private EditationOperation editationOperation;
+    private StatusControlHandler statusControlHandler;
+    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(BinaryStatusPanel.class);
 
-    public HexStatusPanel() {
+    public BinaryStatusPanel() {
         initComponents();
     }
 
@@ -106,7 +107,7 @@ public class HexStatusPanel extends javax.swing.JPanel implements HexStatusApi, 
 
         memoryModeButtonGroup.add(deltaMemoryModeRadioButtonMenuItem);
         deltaMemoryModeRadioButtonMenuItem.setSelected(true);
-        deltaMemoryModeRadioButtonMenuItem.setText(resourceBundle.getString("HexStatusPanel.deltaMemoryModeRadioButtonMenuItem.text")); // NOI18N
+        deltaMemoryModeRadioButtonMenuItem.setText(resourceBundle.getString("BinaryStatusPanel.deltaMemoryModeRadioButtonMenuItem.text")); // NOI18N
         deltaMemoryModeRadioButtonMenuItem.setName("deltaMemoryModeRadioButtonMenuItem"); // NOI18N
         deltaMemoryModeRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -116,7 +117,7 @@ public class HexStatusPanel extends javax.swing.JPanel implements HexStatusApi, 
         memoryModePopupMenu.add(deltaMemoryModeRadioButtonMenuItem);
 
         memoryModeButtonGroup.add(ramMemoryModeRadioButtonMenuItem);
-        ramMemoryModeRadioButtonMenuItem.setText(resourceBundle.getString("HexStatusPanel.ramMemoryModeRadioButtonMenuItem.text")); // NOI18N
+        ramMemoryModeRadioButtonMenuItem.setText(resourceBundle.getString("BinaryStatusPanel.ramMemoryModeRadioButtonMenuItem.text")); // NOI18N
         ramMemoryModeRadioButtonMenuItem.setName("ramMemoryModeRadioButtonMenuItem"); // NOI18N
         ramMemoryModeRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -208,23 +209,23 @@ public class HexStatusPanel extends javax.swing.JPanel implements HexStatusApi, 
     }// </editor-fold>//GEN-END:initComponents
 
     private void editationModeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editationModeLabelMouseClicked
-        if (statusControlHandle != null && evt.getButton() == MouseEvent.BUTTON1) {
-            if (editationMode == EditationMode.INSERT) {
-                statusControlHandle.changeEditationMode(EditationMode.OVERWRITE);
-            } else if (editationMode == EditationMode.OVERWRITE) {
-                statusControlHandle.changeEditationMode(EditationMode.INSERT);
+        if (statusControlHandler != null && evt.getButton() == MouseEvent.BUTTON1) {
+            if (editationOperation == EditationOperation.INSERT) {
+                statusControlHandler.changeEditationOperation(EditationOperation.OVERWRITE);
+            } else if (editationOperation == EditationOperation.OVERWRITE) {
+                statusControlHandler.changeEditationOperation(EditationOperation.INSERT);
             }
         }
     }//GEN-LAST:event_editationModeLabelMouseClicked
 
     private void positionLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_positionLabelMouseClicked
         if (evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() > 1) {
-            statusControlHandle.changeCursorPosition();
+            statusControlHandler.changeCursorPosition();
         }
     }//GEN-LAST:event_positionLabelMouseClicked
 
     private void positionGoToMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_positionGoToMenuItemActionPerformed
-        statusControlHandle.changeCursorPosition();
+        statusControlHandler.changeCursorPosition();
     }//GEN-LAST:event_positionGoToMenuItemActionPerformed
 
     private void positionCopyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_positionCopyMenuItemActionPerformed
@@ -248,7 +249,7 @@ public class HexStatusPanel extends javax.swing.JPanel implements HexStatusApi, 
 
     private void encodingLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_encodingLabelMouseClicked
         if (evt.getButton() == MouseEvent.BUTTON1) {
-            statusControlHandle.cycleEncodings();
+            statusControlHandler.cycleEncodings();
         } else {
             handleEncodingPopup(evt);
         }
@@ -263,16 +264,16 @@ public class HexStatusPanel extends javax.swing.JPanel implements HexStatusApi, 
     }//GEN-LAST:event_encodingLabelMouseReleased
 
     private void deltaMemoryModeRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deltaMemoryModeRadioButtonMenuItemActionPerformed
-        statusControlHandle.changeMemoryMode(MemoryMode.DELTA_MODE);
+        statusControlHandler.changeMemoryMode(MemoryMode.DELTA_MODE);
     }//GEN-LAST:event_deltaMemoryModeRadioButtonMenuItemActionPerformed
 
     private void ramMemoryModeRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ramMemoryModeRadioButtonMenuItemActionPerformed
-        statusControlHandle.changeMemoryMode(MemoryMode.RAM_MEMORY);
+        statusControlHandler.changeMemoryMode(MemoryMode.RAM_MEMORY);
     }//GEN-LAST:event_ramMemoryModeRadioButtonMenuItemActionPerformed
 
     private void handleEncodingPopup(java.awt.event.MouseEvent evt) {
         if (evt.isPopupTrigger()) {
-            statusControlHandle.popupEncodingsMenu(evt);
+            statusControlHandler.popupEncodingsMenu(evt);
         }
     }
 
@@ -282,7 +283,7 @@ public class HexStatusPanel extends javax.swing.JPanel implements HexStatusApi, 
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        WindowUtils.invokeDialog(new HexStatusPanel());
+        WindowUtils.invokeDialog(new BinaryStatusPanel());
     }
 
 
@@ -332,16 +333,20 @@ public class HexStatusPanel extends javax.swing.JPanel implements HexStatusApi, 
     }
 
     @Override
-    public void setEditationMode(EditationMode editationMode) {
-        this.editationMode = editationMode;
+    public void setEditationMode(EditationMode editationMode, EditationOperation editationOperation) {
+        this.editationOperation = editationOperation;
         switch (editationMode) {
-            case INSERT: {
-                editationModeLabel.setText(INSERT_EDITATION_MODE_LABEL);
-                break;
-            }
-            case OVERWRITE: {
-                editationModeLabel.setText(OVERWRITE_EDITATION_MODE_LABEL);
-                break;
+            case EXPANDING: {
+                switch (editationOperation) {
+                    case INSERT: {
+                        editationModeLabel.setText(INSERT_EDITATION_MODE_LABEL);
+                        break;
+                    }
+                    case OVERWRITE: {
+                        editationModeLabel.setText(OVERWRITE_EDITATION_MODE_LABEL);
+                        break;
+                    }
+                }
             }
             case READ_ONLY: {
                 editationModeLabel.setText(READONLY_EDITATION_MODE_LABEL);
@@ -358,11 +363,11 @@ public class HexStatusPanel extends javax.swing.JPanel implements HexStatusApi, 
 
     @Override
     public void setControlHandler(StatusControlHandler editationModeChange) {
-        this.statusControlHandle = editationModeChange;
+        this.statusControlHandler = editationModeChange;
     }
 
     @Override
-    public void setMemoryMode(HexStatusApi.MemoryMode memoryMode) {
+    public void setMemoryMode(BinaryStatusApi.MemoryMode memoryMode) {
         memoryModeLabel.setText(memoryMode.getDisplayChar());
         boolean enabled = memoryMode != MemoryMode.READ_ONLY;
         deltaMemoryModeRadioButtonMenuItem.setEnabled(enabled);

@@ -65,7 +65,7 @@
                       <Image iconType="3" name="/org/exbin/bined/netbeans/resources/icons/bined-linewrap.png"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/exbin/deltahex/netbeans/Bundle.properties" key="HexEditorTopComponent.lineWrappingToggleButton.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/exbin/bined/netbeans/Bundle.properties" key="BinaryEditorTopComponent.lineWrappingToggleButton.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                   <Events>
@@ -78,7 +78,7 @@
                       <Image iconType="3" name="/org/exbin/bined/netbeans/resources/icons/insert-pilcrow.png"/>
                     </Property>
                     <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/exbin/deltahex/netbeans/Bundle.properties" key="HexEditorTopComponent.showUnprintablesToggleButton.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/exbin/bined/netbeans/Bundle.properties" key="BinaryEditorTopComponent.showUnprintablesToggleButton.toolTipText" replaceFormat="org.openide.util.NbBundle.getMessage({sourceFileName}.class, &quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                   <Events>

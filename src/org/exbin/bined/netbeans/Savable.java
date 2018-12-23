@@ -30,10 +30,10 @@ import org.openide.loaders.DataObject;
 class Savable extends AbstractSavable {
 
     private DataObject dataObject;
-    private final HexEditorTopComponent component;
+    private final BinaryEditorTopComponent component;
     private final ExtCodeArea codeArea;
 
-    public Savable(HexEditorTopComponent component, ExtCodeArea codeArea) {
+    public Savable(BinaryEditorTopComponent component, ExtCodeArea codeArea) {
         this.component = component;
         this.codeArea = codeArea;
     }

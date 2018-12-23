@@ -23,14 +23,14 @@ import org.openide.util.Exceptions;
 import org.openide.windows.WindowManager;
 
 /**
- * Installer for hexadecimal editor.
+ * Installer for binary editor.
  *
- * @version 0.1.2 2016/07/23
+ * @version 0.2.0 2018/12/22
  * @author ExBin Project (http://exbin.org)
  */
 public class Installer extends ModuleInstall {
 
-    private static final String OPEN_AS_HEX_ACTION_STRING = "org-exbin-bined-OpenAsHexAction.shadow";
+    private static final String OPEN_AS_BINARY_ACTION_STRING = "org-exbin-bined-OpenAsBinaryAction.shadow";
     private static final String OPENIDE_OPEN_ACTION_STRING = "org-openide-actions-OpenAction.shadow";
     private static final String OPEN_ACTION_STRING = "OpenAction.shadow";
     private static final String CUT_TO_CLIPBOARD_ACTION_STRING = "CutAction.shadow";
@@ -67,7 +67,8 @@ public class Installer extends ModuleInstall {
     }
 
     /**
-     * Creates references to the 'Open As Hex' action for all known file types.
+     * Creates references to the 'Open As Binary' action for all known file
+     * types.
      *
      * This is done when all modules are loaded and thus all file types have
      * been registered.
@@ -116,13 +117,13 @@ public class Installer extends ModuleInstall {
                         }
                     }
 
-                    final FileObject openAsHexAction = actionsFolder.getFileObject(OPEN_AS_HEX_ACTION_STRING);
-                    if (openAsHexAction == null) {
-                        final FileObject action = actionsFolder.createData(OPEN_AS_HEX_ACTION_STRING);
-                        action.setAttribute("originalFile", "Actions/File/org-exbin-bined-OpenAsHexAction.instance");
+                    final FileObject openAsBinaryAction = actionsFolder.getFileObject(OPEN_AS_BINARY_ACTION_STRING);
+                    if (openAsBinaryAction == null) {
+                        final FileObject action = actionsFolder.createData(OPEN_AS_BINARY_ACTION_STRING);
+                        action.setAttribute("originalFile", "Actions/File/org-exbin-bined-OpenAsBinaryAction.instance");
                         action.setAttribute("position", actionPosition);
                     } else {
-                        openAsHexAction.setAttribute("position", actionPosition);
+                        openAsBinaryAction.setAttribute("position", actionPosition);
                     }
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);
@@ -132,7 +133,7 @@ public class Installer extends ModuleInstall {
     }
 
     /**
-     * Drops all references to the 'Open As Hex' action.
+     * Drops all references to the 'Open As Binary' action.
      */
     private static final class ActionUninstaller extends FileTypeHandler {
 
@@ -141,9 +142,9 @@ public class Installer extends ModuleInstall {
             if (fileType.isFolder()) {
                 try {
                     final FileObject actionsFolder = FileUtil.createFolder(fileType, "Actions");
-                    final FileObject openAsHexAction = actionsFolder.getFileObject(OPEN_AS_HEX_ACTION_STRING);
-                    if (openAsHexAction != null) {
-                        openAsHexAction.delete();
+                    final FileObject openAsBinaryAction = actionsFolder.getFileObject(OPEN_AS_BINARY_ACTION_STRING);
+                    if (openAsBinaryAction != null) {
+                        openAsBinaryAction.delete();
                     }
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);

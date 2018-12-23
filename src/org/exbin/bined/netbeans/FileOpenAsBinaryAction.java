@@ -33,20 +33,20 @@ import org.openide.windows.WindowManager;
 /**
  * Open file in hexadecimal editor action.
  *
- * @version 0.2.0 2018/09/09
+ * @version 0.2.0 2018/12/22
  * @author ExBin Project (http://exbin.org)
  */
 @ActionID(
         category = "File",
-        id = "org.exbin.bined.netbeans.FileOpenAsHexAction"
+        id = "org.exbin.bined.netbeans.FileOpenAsBinaryAction"
 )
 @ActionRegistration(
         iconBase = "org/exbin/bined/netbeans/resources/icons/icon.png",
-        displayName = "#CTL_FileOpenAsHexAction"
+        displayName = "#CTL_FileOpenAsBinaryAction"
 )
 @ActionReference(path = "Menu/File", position = 850)
-@Messages("CTL_FileOpenAsHexAction=Open File as Hex...")
-public final class FileOpenAsHexAction implements ActionListener {
+@Messages("CTL_FileOpenAsBinaryAction=Open File as Binary...")
+public final class FileOpenAsBinaryAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -55,7 +55,7 @@ public final class FileOpenAsHexAction implements ActionListener {
             return;
         }
 
-        final HexEditorTopComponent hexEditor = new HexEditorTopComponent();
+        final BinaryEditorTopComponent hexEditor = new BinaryEditorTopComponent();
         editorMode.dockInto(hexEditor);
 
         JFileChooser fileChooser = new JFileChooser();

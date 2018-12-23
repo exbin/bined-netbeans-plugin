@@ -30,8 +30,10 @@ import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import org.exbin.bined.ScrollBarVisibility;
 import org.exbin.bined.capability.RowWrappingCapable;
+import org.exbin.bined.extended.theme.ExtendedBackgroundPaintMode;
 import org.exbin.bined.swing.extended.ExtCodeArea;
-import org.exbin.bined.swing.extended.ExtendedBackgroundPaintMode;
+import org.exbin.bined.swing.extended.layout.ExtendedCodeAreaLayoutProfile;
+import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
 import org.exbin.framework.bined.CodeAreaPopupMenuHandler;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
@@ -40,7 +42,7 @@ import org.exbin.utils.binary_data.ByteArrayEditableData;
 /**
  * Find text/hexadecimal data panel.
  *
- * @version 0.2.1 2018/08/12
+ * @version 0.2.1 2018/12/22
  * @author ExBin Project (http://exbin.org)
  */
 public class FindHexPanel extends javax.swing.JPanel {
@@ -49,12 +51,12 @@ public class FindHexPanel extends javax.swing.JPanel {
     public static final String POPUP_MENU_POSTFIX = ".searchFindHexPanel";
 
     private final ExtCodeArea findHexadecimalRenderer = new ExtCodeArea();
-    private HexSearchComboBoxPanel findComboBoxEditorComponent;
+    private BinarySearchComboBoxPanel findComboBoxEditorComponent;
     private ComboBoxEditor findComboBoxEditor;
     private List<SearchCondition> searchHistory = new ArrayList<>();
 
     private final ExtCodeArea replaceHexadecimalRenderer = new ExtCodeArea();
-    private HexSearchComboBoxPanel replaceComboBoxEditorComponent;
+    private BinarySearchComboBoxPanel replaceComboBoxEditorComponent;
     private ComboBoxEditor replaceComboBoxEditor;
     private List<SearchCondition> replaceHistory = new ArrayList<>();
 
@@ -67,16 +69,24 @@ public class FindHexPanel extends javax.swing.JPanel {
     }
 
     private void init() {
-        findHexadecimalRenderer.setShowHeader(false);
-        findHexadecimalRenderer.setShowRowPosition(false);
+        {
+            ExtendedCodeAreaLayoutProfile layoutProfile = findHexadecimalRenderer.getLayoutProfile();
+            layoutProfile.setShowHeader(false);
+            layoutProfile.setShowRowPosition(false);
+            findHexadecimalRenderer.setLayoutProfile(layoutProfile);
+        }
         findHexadecimalRenderer.setRowWrapping(RowWrappingCapable.RowWrappingMode.WRAPPING);
         findHexadecimalRenderer.setWrappingBytesGroupSize(0);
-        findHexadecimalRenderer.setBackgroundPaintMode(ExtendedBackgroundPaintMode.PLAIN);
+        {
+            ExtendedCodeAreaThemeProfile themeProfile = findHexadecimalRenderer.getThemeProfile();
+            themeProfile.setBackgroundPaintMode(ExtendedBackgroundPaintMode.PLAIN);
+            findHexadecimalRenderer.setThemeProfile(themeProfile);
+        }
         findHexadecimalRenderer.setVerticalScrollBarVisibility(ScrollBarVisibility.NEVER);
         findHexadecimalRenderer.setHorizontalScrollBarVisibility(ScrollBarVisibility.NEVER);
         findHexadecimalRenderer.setContentData(new ByteArrayEditableData());
 
-        findComboBoxEditorComponent = new HexSearchComboBoxPanel();
+        findComboBoxEditorComponent = new BinarySearchComboBoxPanel();
         findComboBox.setRenderer(new ListCellRenderer<SearchCondition>() {
             private final JPanel emptyPanel = new JPanel();
             private final DefaultListCellRenderer listCellRenderer = new DefaultListCellRenderer();
@@ -139,16 +149,24 @@ public class FindHexPanel extends javax.swing.JPanel {
         findComboBox.setEditor(findComboBoxEditor);
         findComboBox.setModel(new SearchHistoryModel(searchHistory));
 
-        replaceHexadecimalRenderer.setShowHeader(false);
-        replaceHexadecimalRenderer.setShowRowPosition(false);
+        {
+            ExtendedCodeAreaLayoutProfile layoutProfile = replaceHexadecimalRenderer.getLayoutProfile();
+            layoutProfile.setShowHeader(false);
+            layoutProfile.setShowRowPosition(false);
+            replaceHexadecimalRenderer.setLayoutProfile(layoutProfile);
+        }
         replaceHexadecimalRenderer.setRowWrapping(RowWrappingCapable.RowWrappingMode.WRAPPING);
         replaceHexadecimalRenderer.setWrappingBytesGroupSize(0);
-        replaceHexadecimalRenderer.setBackgroundPaintMode(ExtendedBackgroundPaintMode.PLAIN);
+        {
+            ExtendedCodeAreaThemeProfile themeProfile = replaceHexadecimalRenderer.getThemeProfile();
+            themeProfile.setBackgroundPaintMode(ExtendedBackgroundPaintMode.PLAIN);
+            replaceHexadecimalRenderer.setThemeProfile(themeProfile);
+        }
         replaceHexadecimalRenderer.setVerticalScrollBarVisibility(ScrollBarVisibility.NEVER);
         replaceHexadecimalRenderer.setHorizontalScrollBarVisibility(ScrollBarVisibility.NEVER);
         replaceHexadecimalRenderer.setContentData(new ByteArrayEditableData());
 
-        replaceComboBoxEditorComponent = new HexSearchComboBoxPanel();
+        replaceComboBoxEditorComponent = new BinarySearchComboBoxPanel();
         replaceComboBox.setRenderer(new ListCellRenderer<SearchCondition>() {
             private final JPanel emptyPanel = new JPanel();
             private final DefaultListCellRenderer listCellRenderer = new DefaultListCellRenderer();

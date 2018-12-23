@@ -27,19 +27,19 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
 /**
- * Open file in hexadecimal editor action.
+ * Open file in binary editor action.
  *
- * @version 0.2.0 2018/09/09
+ * @version 0.2.0 2018/12/22
  * @author ExBin Project (http://exbin.org)
  */
-@ActionID(category = "File", id = "org.exbin.bined.OpenAsHexAction")
-@ActionRegistration(displayName = "#CTL_OpenAsHexAction")
-@Messages("CTL_OpenAsHexAction=Open as Hex")
-public final class OpenAsHexAction implements ActionListener {
+@ActionID(category = "File", id = "org.exbin.bined.OpenAsBinaryAction")
+@ActionRegistration(displayName = "#CTL_OpenAsBinaryAction")
+@Messages("CTL_OpenAsBinaryAction=Open as Binary")
+public final class OpenAsBinaryAction implements ActionListener {
 
-    public OpenAsHexAction() {
+    public OpenAsBinaryAction() {
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent ev) {
         final Mode editorMode = WindowManager.getDefault().findMode("editor");
@@ -47,19 +47,19 @@ public final class OpenAsHexAction implements ActionListener {
             return;
         }
 
-        final HexEditorTopComponent hexEditor = new HexEditorTopComponent();
-        editorMode.dockInto(hexEditor);
+        final BinaryEditorTopComponent binaryEditor = new BinaryEditorTopComponent();
+        editorMode.dockInto(binaryEditor);
 
         TopComponent activeTC = TopComponent.getRegistry().getActivated();
         DataObject dataObject = activeTC.getLookup().lookup(DataObject.class);
         if (dataObject instanceof DataShadow) {
             dataObject = ((DataShadow) dataObject).getOriginal();
         }
-        
+
         if (dataObject != null) {
-            hexEditor.openDataObject(dataObject);
-            hexEditor.open();
-            hexEditor.requestActive();
+            binaryEditor.openDataObject(dataObject);
+            binaryEditor.open();
+            binaryEditor.requestActive();
         }
     }
 }

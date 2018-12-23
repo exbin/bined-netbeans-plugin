@@ -73,7 +73,7 @@
             </Property>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/framework/bined/panel/resources/HexStatusPanel.properties" key="HexStatusPanel.deltaMemoryModeRadioButtonMenuItem.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/framework/bined/panel/resources/HexStatusPanel.properties" key="BinaryStatusPanel.deltaMemoryModeRadioButtonMenuItem.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
             <Property name="name" type="java.lang.String" value="deltaMemoryModeRadioButtonMenuItem" noResource="true"/>
           </Properties>
@@ -87,7 +87,7 @@
               <ComponentRef name="memoryModeButtonGroup"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/framework/bined/panel/resources/HexStatusPanel.properties" key="HexStatusPanel.ramMemoryModeRadioButtonMenuItem.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/framework/bined/panel/resources/HexStatusPanel.properties" key="BinaryStatusPanel.ramMemoryModeRadioButtonMenuItem.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
             <Property name="name" type="java.lang.String" value="ramMemoryModeRadioButtonMenuItem" noResource="true"/>
           </Properties>

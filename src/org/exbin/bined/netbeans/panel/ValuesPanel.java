@@ -27,7 +27,7 @@ import javax.swing.SwingUtilities;
 import org.exbin.bined.CaretMovedListener;
 import org.exbin.bined.CaretPosition;
 import org.exbin.bined.DataChangedListener;
-import org.exbin.bined.netbeans.HexUndoSwingHandler;
+import org.exbin.bined.netbeans.BinaryUndoSwingHandler;
 import org.exbin.bined.operation.BinaryDataCommand;
 import org.exbin.bined.operation.BinaryDataOperationException;
 import org.exbin.bined.operation.swing.command.HexCompoundCommand;
@@ -57,7 +57,7 @@ public class ValuesPanel extends javax.swing.JPanel {
     public static final String VALUE_OUT_OF_RANGE = "Value is out of range";
 
     private ExtCodeArea codeArea;
-    private HexUndoSwingHandler undoHandler;
+    private BinaryUndoSwingHandler undoHandler;
     private long dataPosition;
     private DataChangedListener dataChangedListener;
     private CaretMovedListener caretMovedListener;
@@ -676,7 +676,7 @@ public class ValuesPanel extends javax.swing.JPanel {
     private javax.swing.JTextField wordTextField;
     // End of variables declaration//GEN-END:variables
 
-    public void setCodeArea(ExtCodeArea codeArea, HexUndoSwingHandler undoHandler) {
+    public void setCodeArea(ExtCodeArea codeArea, BinaryUndoSwingHandler undoHandler) {
         this.codeArea = codeArea;
         this.undoHandler = undoHandler;
     }

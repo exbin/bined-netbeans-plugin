@@ -123,9 +123,9 @@ public class EncodingsHandler implements TextEncodingPanelApi {
                             if (actionType == OptionsControlHandler.ControlActionType.SAVE) {
                                 // Save encodings
                                 for (int i = 0; i < encodings.size(); i++) {
-                                    preferences.put(HexEditorTopComponent.PREFERENCES_ENCODING_PREFIX + Integer.toString(i), encodings.get(i));
+                                    preferences.put(BinaryEditorTopComponent.PREFERENCES_ENCODING_PREFIX + Integer.toString(i), encodings.get(i));
                                 }
-                                preferences.remove(HexEditorTopComponent.PREFERENCES_ENCODING_PREFIX + Integer.toString(encodings.size()));
+                                preferences.remove(BinaryEditorTopComponent.PREFERENCES_ENCODING_PREFIX + Integer.toString(encodings.size()));
                             }
                         }
 
@@ -239,12 +239,12 @@ public class EncodingsHandler implements TextEncodingPanelApi {
 
     public void loadFromPreferences(Preferences preferences) {
         this.preferences = preferences;
-        setSelectedEncoding(preferences.get(HexEditorTopComponent.PREFERENCES_ENCODING_SELECTED, ENCODING_UTF8));
+        setSelectedEncoding(preferences.get(BinaryEditorTopComponent.PREFERENCES_ENCODING_SELECTED, ENCODING_UTF8));
         encodings.clear();
         String value;
         int i = 0;
         do {
-            value = preferences.get(HexEditorTopComponent.PREFERENCES_ENCODING_PREFIX + Integer.toString(i), null);
+            value = preferences.get(BinaryEditorTopComponent.PREFERENCES_ENCODING_PREFIX + Integer.toString(i), null);
             if (value != null) {
                 encodings.add(value);
                 i++;

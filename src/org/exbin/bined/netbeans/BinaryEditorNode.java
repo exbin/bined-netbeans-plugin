@@ -40,19 +40,19 @@ import org.openide.util.Exceptions;
  * @version 0.2.0 2018/09/10
  * @author ExBin Project (http://exbin.org)
  */
-public class HexEditorNode extends AbstractNode {
+public class BinaryEditorNode extends AbstractNode {
 
-    private final HexEditorTopComponent hexEditorTopComponent;
+    private final BinaryEditorTopComponent editorTopComponent;
 
-    public HexEditorNode(HexEditorTopComponent hexEditorTopComponent) {
+    public BinaryEditorNode(BinaryEditorTopComponent editorTopComponent) {
         super(Children.LEAF);
-        this.hexEditorTopComponent = hexEditorTopComponent;
+        this.editorTopComponent = editorTopComponent;
     }
 
     public void openFile(DataObject dataObject) {
-        ExtCodeArea codeArea = hexEditorTopComponent.getCodeArea();
+        ExtCodeArea codeArea = editorTopComponent.getCodeArea();
         boolean editable = dataObject.getPrimaryFile().canWrite();
-        SegmentsRepository segmentsRepository = HexEditorTopComponent.getSegmentsRepository();
+        SegmentsRepository segmentsRepository = BinaryEditorTopComponent.getSegmentsRepository();
         URI fileUri = dataObject.getPrimaryFile().toURI();
         if (fileUri == null) {
             InputStream stream = null;
@@ -60,7 +60,7 @@ public class HexEditorNode extends AbstractNode {
                 stream = dataObject.getPrimaryFile().getInputStream();
                 if (stream != null) {
                     ((EditableBinaryData) codeArea.getContentData()).loadFromStream(stream);
-                    codeArea.setEditationMode(editable ? EditationMode.OVERWRITE : EditationMode.READ_ONLY);
+                    codeArea.setEditationMode(editable ? EditationMode.EXPANDING : EditationMode.READ_ONLY);
                 }
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
@@ -76,9 +76,9 @@ public class HexEditorNode extends AbstractNode {
         } else {
             try {
                 BinaryData oldData = codeArea.getContentData();
-                codeArea.setEditationMode(editable ? EditationMode.OVERWRITE : EditationMode.READ_ONLY);
+                codeArea.setEditationMode(editable ? EditationMode.EXPANDING : EditationMode.READ_ONLY);
                 File file = new File(fileUri);
-                if (hexEditorTopComponent.isDeltaMemoryMode()) {
+                if (editorTopComponent.isDeltaMemoryMode()) {
                     FileDataSource fileSource = segmentsRepository.openFileSource(file, editable ? FileDataSource.EditationMode.READ_WRITE : FileDataSource.EditationMode.READ_ONLY);
                     DeltaDocument document = segmentsRepository.createDocument(fileSource);
                     codeArea.setContentData(document);
@@ -101,8 +101,8 @@ public class HexEditorNode extends AbstractNode {
     }
 
     public void saveFile(DataObject dataObject) {
-        ExtCodeArea codeArea = hexEditorTopComponent.getCodeArea();
-        SegmentsRepository segmentsRepository = HexEditorTopComponent.getSegmentsRepository();
+        ExtCodeArea codeArea = editorTopComponent.getCodeArea();
+        SegmentsRepository segmentsRepository = BinaryEditorTopComponent.getSegmentsRepository();
         BinaryData data = codeArea.getContentData();
         if (data instanceof DeltaDocument) {
             try {

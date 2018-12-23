@@ -36,10 +36,12 @@ import org.exbin.bined.PositionCodeType;
 import org.exbin.bined.basic.BasicBackgroundPaintMode;
 import org.exbin.bined.capability.RowWrappingCapable;
 import org.exbin.bined.delta.DeltaDocument;
+import org.exbin.bined.extended.theme.ExtendedBackgroundPaintMode;
 import org.exbin.bined.highlight.swing.extended.ExtendedHighlightNonAsciiCodeAreaPainter;
-import org.exbin.bined.netbeans.HexEditorTopComponent;
+import org.exbin.bined.netbeans.BinaryEditorTopComponent;
 import org.exbin.bined.swing.extended.ExtCodeArea;
-import org.exbin.bined.swing.extended.ExtendedBackgroundPaintMode;
+import org.exbin.bined.swing.extended.layout.ExtendedCodeAreaLayoutProfile;
+import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
 import org.exbin.framework.editor.text.panel.TextFontOptionsPanel;
 import org.exbin.framework.editor.text.panel.TextFontPanel;
 import org.exbin.framework.gui.utils.LanguageUtils;
@@ -53,7 +55,7 @@ import org.openide.util.NbPreferences;
 /**
  * Hexadecimal editor options panel.
  *
- * @version 0.2.0 2018/11/26
+ * @version 0.2.0 2018/12/22
  * @author ExBin Project (http://exbin.org)
  */
 public class BinEdOptionsPanel extends javax.swing.JPanel {
@@ -76,7 +78,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
     public BinEdOptionsPanel(BinEdOptionsPanelController controller) {
         this.controller = controller;
         initComponents();
-        preferences = NbPreferences.forModule(HexEditorTopComponent.class);
+        preferences = NbPreferences.forModule(BinaryEditorTopComponent.class);
 
         categoryModel.addElement(new CategoryItem("Mode", modePanel));
         categoryModel.addElement(new CategoryItem("Layout", layoutPanel));
@@ -408,7 +410,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 
         hexCharactersModeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "LOWER", "UPPER" }));
 
-        backgroundModeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NONE", "PLAIN", "STRIPPED", "GRIDDED" }));
+        backgroundModeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NONE", "PLAIN", "STRIPED", "GRIDDED" }));
         backgroundModeComboBox.setSelectedIndex(2);
 
         org.openide.awt.Mnemonics.setLocalizedText(positionCodeTypeLabel, resourceBundle.getString("positionCodeTypeLabel.text")); // NOI18N
@@ -606,46 +608,46 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 
     public void load() {
         // Layout
-        wrapLineModeCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_LINE_WRAPPING, false));
-        lineLengthSpinner.setValue(preferences.getInt(HexEditorTopComponent.PREFERENCES_BYTES_PER_LINE, 16));
-        showHeaderCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_HEADER, true));
-// TODO        String headerSpaceTypeName = preferences.get(HexEditorTopComponent.PREFERENCES_HEADER_SPACE_TYPE, CodeAreaSpace.SpaceType.HALF_UNIT.name());
+        wrapLineModeCheckBox.setSelected(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_LINE_WRAPPING, false));
+        lineLengthSpinner.setValue(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_BYTES_PER_LINE, 16));
+        showHeaderCheckBox.setSelected(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_HEADER, true));
+// TODO        String headerSpaceTypeName = preferences.get(BinaryEditorTopComponent.PREFERENCES_HEADER_SPACE_TYPE, CodeAreaSpace.SpaceType.HALF_UNIT.name());
 // TODO        CodeAreaSpace.SpaceType headerSpaceType = CodeAreaSpace.SpaceType.valueOf(headerSpaceTypeName);
 // TODO        headerSpaceComboBox.setSelectedIndex(headerSpaceType.ordinal());
-        headerSpaceSpinner.setValue(preferences.getInt(HexEditorTopComponent.PREFERENCES_HEADER_SPACE, 0));
-        showLineNumbersCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_LINE_NUMBERS, true));
-// TODO        String lineNumbersSpaceTypeName = preferences.get(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE_TYPE, CodeAreaSpace.SpaceType.ONE_UNIT.name());
+        headerSpaceSpinner.setValue(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_HEADER_SPACE, 0));
+        showLineNumbersCheckBox.setSelected(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_LINE_NUMBERS, true));
+// TODO        String lineNumbersSpaceTypeName = preferences.get(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE_TYPE, CodeAreaSpace.SpaceType.ONE_UNIT.name());
 // TODO        CodeAreaSpace.SpaceType lineNumbersSpaceType = CodeAreaSpace.SpaceType.valueOf(lineNumbersSpaceTypeName);
 // TODO        lineNumbersSpaceComboBox.setSelectedIndex(lineNumbersSpaceType.ordinal());
-        lineNumbersSpaceSpinner.setValue(preferences.getInt(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE, 8));
-// TODO        String lineNumbersLengthTypeName = preferences.get(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH_TYPE, CodeAreaLineNumberLength.LineNumberType.SPECIFIED.name());
+        lineNumbersSpaceSpinner.setValue(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE, 8));
+// TODO        String lineNumbersLengthTypeName = preferences.get(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH_TYPE, CodeAreaLineNumberLength.LineNumberType.SPECIFIED.name());
 // TODO        CodeAreaLineNumberLength.LineNumberType lineNumbersLengthType = CodeAreaLineNumberLength.LineNumberType.valueOf(lineNumbersLengthTypeName);
 // TODO        lineNumbersLengthComboBox.setSelectedIndex(lineNumbersLengthType.ordinal());
-        lineNumbersLengthSpinner.setValue(preferences.getInt(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH, 8));
-        byteGroupSizeSpinner.setValue(preferences.getInt(HexEditorTopComponent.PREFERENCES_BYTE_GROUP_SIZE, 1));
-        spaceGroupSizeSpinner.setValue(preferences.getInt(HexEditorTopComponent.PREFERENCES_SPACE_GROUP_SIZE, 0));
+        lineNumbersLengthSpinner.setValue(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH, 8));
+        byteGroupSizeSpinner.setValue(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_BYTE_GROUP_SIZE, 1));
+        spaceGroupSizeSpinner.setValue(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_SPACE_GROUP_SIZE, 0));
 
         // Mode
-        CodeAreaViewMode viewMode = CodeAreaViewMode.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_VIEW_MODE, CodeAreaViewMode.DUAL.name()));
+        CodeAreaViewMode viewMode = CodeAreaViewMode.valueOf(preferences.get(BinaryEditorTopComponent.PREFERENCES_VIEW_MODE, CodeAreaViewMode.DUAL.name()));
         viewModeComboBox.setSelectedIndex(viewMode.ordinal());
-        CodeType codeType = CodeType.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_CODE_TYPE, CodeType.HEXADECIMAL.name()));
+        CodeType codeType = CodeType.valueOf(preferences.get(BinaryEditorTopComponent.PREFERENCES_CODE_TYPE, CodeType.HEXADECIMAL.name()));
         codeTypeComboBox.setSelectedIndex(codeType.ordinal());
-        showNonprintableCharactersCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_UNPRINTABLES, true));
-        codeColorizationCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_CODE_COLORIZATION, true));
-        showValuesPanelCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_VALUES_PANEL, true));
-        memoryModeComboBox.setSelectedIndex(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_MEMORY_DELTA_MODE, true) ? 0 : 1);
+        showNonprintableCharactersCheckBox.setSelected(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_UNPRINTABLES, true));
+        codeColorizationCheckBox.setSelected(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_CODE_COLORIZATION, true));
+        showValuesPanelCheckBox.setSelected(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_VALUES_PANEL, true));
+        memoryModeComboBox.setSelectedIndex(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_MEMORY_DELTA_MODE, true) ? 0 : 1);
 
         // Decoration
-        ExtendedBackgroundPaintMode backgroundMode = convertBackgroundPaintMode(preferences.get(HexEditorTopComponent.PREFERENCES_BACKGROUND_MODE, ExtendedBackgroundPaintMode.STRIPED.name()));
+        ExtendedBackgroundPaintMode backgroundMode = convertBackgroundPaintMode(preferences.get(BinaryEditorTopComponent.PREFERENCES_BACKGROUND_MODE, ExtendedBackgroundPaintMode.STRIPED.name()));
         backgroundModeComboBox.setSelectedIndex(backgroundMode.ordinal());
-        lineNumbersBackgroundCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_PAINT_LINE_NUMBERS_BACKGROUND, true));
-        decoratorHeaderLineCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_HEADER_LINE, true));
-        decoratorPreviewLineCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_PREVIEW_LINE, true));
-        decoratorBoxCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_BOX, false));
-        decoratorLineNumLineCheckBox.setSelected(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_LINENUM_LINE, true));
-        CodeCharactersCase codeCharactersCase = CodeCharactersCase.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_HEX_CHARACTERS_CASE, CodeCharactersCase.UPPER.name()));
+        lineNumbersBackgroundCheckBox.setSelected(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_PAINT_LINE_NUMBERS_BACKGROUND, true));
+        decoratorHeaderLineCheckBox.setSelected(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_HEADER_LINE, true));
+        decoratorPreviewLineCheckBox.setSelected(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_PREVIEW_LINE, true));
+        decoratorBoxCheckBox.setSelected(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_BOX, false));
+        decoratorLineNumLineCheckBox.setSelected(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_LINENUM_LINE, true));
+        CodeCharactersCase codeCharactersCase = CodeCharactersCase.valueOf(preferences.get(BinaryEditorTopComponent.PREFERENCES_HEX_CHARACTERS_CASE, CodeCharactersCase.UPPER.name()));
         hexCharactersModeComboBox.setSelectedIndex(codeCharactersCase.ordinal());
-        PositionCodeType positionCodeType = PositionCodeType.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_POSITION_CODE_TYPE, PositionCodeType.HEXADECIMAL.name()));
+        PositionCodeType positionCodeType = PositionCodeType.valueOf(preferences.get(BinaryEditorTopComponent.PREFERENCES_POSITION_CODE_TYPE, PositionCodeType.HEXADECIMAL.name()));
         positionCodeTypeComboBox.setSelectedIndex(positionCodeType.ordinal());
 
         // Font
@@ -689,36 +691,36 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 
     public void store() {
         // Layout
-        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_LINE_WRAPPING, wrapLineModeCheckBox.isSelected());
-        preferences.putInt(HexEditorTopComponent.PREFERENCES_BYTES_PER_LINE, (Integer) lineLengthSpinner.getValue());
-        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_SHOW_HEADER, showHeaderCheckBox.isSelected());
-// TODO        preferences.put(HexEditorTopComponent.PREFERENCES_HEADER_SPACE_TYPE, CodeAreaSpace.SpaceType.values()[headerSpaceComboBox.getSelectedIndex()].name());
-        preferences.putInt(HexEditorTopComponent.PREFERENCES_HEADER_SPACE, (Integer) headerSpaceSpinner.getValue());
-        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_SHOW_LINE_NUMBERS, showLineNumbersCheckBox.isSelected());
-// TODO        preferences.put(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE_TYPE, CodeAreaSpace.SpaceType.values()[lineNumbersSpaceComboBox.getSelectedIndex()].name());
-        preferences.putInt(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE, (Integer) lineNumbersSpaceSpinner.getValue());
-// TODO        preferences.put(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH_TYPE, CodeAreaLineNumberLength.LineNumberType.values()[lineNumbersLengthComboBox.getSelectedIndex()].name());
-        preferences.putInt(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH, (Integer) lineNumbersLengthSpinner.getValue());
-        preferences.putInt(HexEditorTopComponent.PREFERENCES_BYTE_GROUP_SIZE, (Integer) byteGroupSizeSpinner.getValue());
-        preferences.putInt(HexEditorTopComponent.PREFERENCES_SPACE_GROUP_SIZE, (Integer) spaceGroupSizeSpinner.getValue());
+        preferences.putBoolean(BinaryEditorTopComponent.PREFERENCES_LINE_WRAPPING, wrapLineModeCheckBox.isSelected());
+        preferences.putInt(BinaryEditorTopComponent.PREFERENCES_BYTES_PER_LINE, (Integer) lineLengthSpinner.getValue());
+        preferences.putBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_HEADER, showHeaderCheckBox.isSelected());
+// TODO        preferences.put(BinaryEditorTopComponent.PREFERENCES_HEADER_SPACE_TYPE, CodeAreaSpace.SpaceType.values()[headerSpaceComboBox.getSelectedIndex()].name());
+        preferences.putInt(BinaryEditorTopComponent.PREFERENCES_HEADER_SPACE, (Integer) headerSpaceSpinner.getValue());
+        preferences.putBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_LINE_NUMBERS, showLineNumbersCheckBox.isSelected());
+// TODO        preferences.put(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE_TYPE, CodeAreaSpace.SpaceType.values()[lineNumbersSpaceComboBox.getSelectedIndex()].name());
+        preferences.putInt(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE, (Integer) lineNumbersSpaceSpinner.getValue());
+// TODO        preferences.put(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH_TYPE, CodeAreaLineNumberLength.LineNumberType.values()[lineNumbersLengthComboBox.getSelectedIndex()].name());
+        preferences.putInt(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH, (Integer) lineNumbersLengthSpinner.getValue());
+        preferences.putInt(BinaryEditorTopComponent.PREFERENCES_BYTE_GROUP_SIZE, (Integer) byteGroupSizeSpinner.getValue());
+        preferences.putInt(BinaryEditorTopComponent.PREFERENCES_SPACE_GROUP_SIZE, (Integer) spaceGroupSizeSpinner.getValue());
 
         // Mode
-        preferences.put(HexEditorTopComponent.PREFERENCES_VIEW_MODE, CodeAreaViewMode.values()[viewModeComboBox.getSelectedIndex()].name());
-        preferences.put(HexEditorTopComponent.PREFERENCES_CODE_TYPE, CodeType.values()[codeTypeComboBox.getSelectedIndex()].name());
-        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_SHOW_UNPRINTABLES, showNonprintableCharactersCheckBox.isSelected());
-        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_CODE_COLORIZATION, codeColorizationCheckBox.isSelected());
-        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_SHOW_VALUES_PANEL, showValuesPanelCheckBox.isSelected());
-        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_MEMORY_DELTA_MODE, isDeltaMemoryMode());
+        preferences.put(BinaryEditorTopComponent.PREFERENCES_VIEW_MODE, CodeAreaViewMode.values()[viewModeComboBox.getSelectedIndex()].name());
+        preferences.put(BinaryEditorTopComponent.PREFERENCES_CODE_TYPE, CodeType.values()[codeTypeComboBox.getSelectedIndex()].name());
+        preferences.putBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_UNPRINTABLES, showNonprintableCharactersCheckBox.isSelected());
+        preferences.putBoolean(BinaryEditorTopComponent.PREFERENCES_CODE_COLORIZATION, codeColorizationCheckBox.isSelected());
+        preferences.putBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_VALUES_PANEL, showValuesPanelCheckBox.isSelected());
+        preferences.putBoolean(BinaryEditorTopComponent.PREFERENCES_MEMORY_DELTA_MODE, isDeltaMemoryMode());
 
         // Decoration
-        preferences.put(HexEditorTopComponent.PREFERENCES_BACKGROUND_MODE, BasicBackgroundPaintMode.values()[backgroundModeComboBox.getSelectedIndex()].name());
-        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_PAINT_LINE_NUMBERS_BACKGROUND, lineNumbersBackgroundCheckBox.isSelected());
-        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_HEADER_LINE, decoratorHeaderLineCheckBox.isSelected());
-        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_PREVIEW_LINE, decoratorPreviewLineCheckBox.isSelected());
-        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_BOX, decoratorBoxCheckBox.isSelected());
-        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_LINENUM_LINE, decoratorLineNumLineCheckBox.isSelected());
-        preferences.put(HexEditorTopComponent.PREFERENCES_HEX_CHARACTERS_CASE, CodeCharactersCase.values()[hexCharactersModeComboBox.getSelectedIndex()].name());
-        preferences.put(HexEditorTopComponent.PREFERENCES_POSITION_CODE_TYPE, PositionCodeType.values()[positionCodeTypeComboBox.getSelectedIndex()].name());
+        preferences.put(BinaryEditorTopComponent.PREFERENCES_BACKGROUND_MODE, BasicBackgroundPaintMode.values()[backgroundModeComboBox.getSelectedIndex()].name());
+        preferences.putBoolean(BinaryEditorTopComponent.PREFERENCES_PAINT_LINE_NUMBERS_BACKGROUND, lineNumbersBackgroundCheckBox.isSelected());
+        preferences.putBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_HEADER_LINE, decoratorHeaderLineCheckBox.isSelected());
+        preferences.putBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_PREVIEW_LINE, decoratorPreviewLineCheckBox.isSelected());
+        preferences.putBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_BOX, decoratorBoxCheckBox.isSelected());
+        preferences.putBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_LINENUM_LINE, decoratorLineNumLineCheckBox.isSelected());
+        preferences.put(BinaryEditorTopComponent.PREFERENCES_HEX_CHARACTERS_CASE, CodeCharactersCase.values()[hexCharactersModeComboBox.getSelectedIndex()].name());
+        preferences.put(BinaryEditorTopComponent.PREFERENCES_POSITION_CODE_TYPE, PositionCodeType.values()[positionCodeTypeComboBox.getSelectedIndex()].name());
 
         // Font
         preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_DEFAULT, Boolean.toString(useDefaultFontCheckBox.isSelected()));
@@ -767,7 +769,8 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         memoryModeComboBox.setSelectedIndex(codeArea.getContentData() instanceof DeltaDocument ? 0 : 1);
 
         // Decoration
-        backgroundModeComboBox.setSelectedIndex(codeArea.getBackgroundPaintMode().ordinal());
+        ExtendedCodeAreaThemeProfile themeProfile = codeArea.getThemeProfile();
+        backgroundModeComboBox.setSelectedIndex(themeProfile.getBackgroundPaintMode().ordinal());
 // TODO        lineNumbersBackgroundCheckBox.setSelected(codeArea.isLineNumberBackground());
 // TODO        setDecorationMode(codeArea.getDecorationMode());
         hexCharactersModeComboBox.setSelectedIndex(codeArea.getCodeCharactersCase().ordinal());
@@ -781,9 +784,10 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 
     public void applyToCodeArea(ExtCodeArea codeArea) {
         // Layout
+        ExtendedCodeAreaLayoutProfile layoutProfile = codeArea.getLayoutProfile();
         codeArea.setRowWrapping(wrapLineModeCheckBox.isSelected() ? RowWrappingCapable.RowWrappingMode.WRAPPING : RowWrappingCapable.RowWrappingMode.NO_WRAPPING);
 // TODO        codeArea.setLineLength((Integer) lineLengthSpinner.getValue());
-        codeArea.setShowHeader(showHeaderCheckBox.isSelected());
+        layoutProfile.setShowHeader(showHeaderCheckBox.isSelected());
 //        codeArea.setHeaderSpaceType(CodeAreaSpace.SpaceType.values()[headerSpaceComboBox.getSelectedIndex()]);
 //        codeArea.setHeaderSpaceSize((Integer) headerSpaceSpinner.getValue());
 //        codeArea.setShowLineNumbers(showLineNumbersCheckBox.isSelected());
@@ -802,7 +806,8 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         // Memory mode handled from outside by isDeltaMemoryMode() method, worth fixing?
 
         // Decoration
-        codeArea.setBackgroundPaintMode(ExtendedBackgroundPaintMode.values()[backgroundModeComboBox.getSelectedIndex()]);
+        ExtendedCodeAreaThemeProfile themeProfile = codeArea.getThemeProfile();
+        themeProfile.setBackgroundPaintMode(ExtendedBackgroundPaintMode.values()[backgroundModeComboBox.getSelectedIndex()]);
 // TODO        codeArea.setLineNumberBackground(lineNumbersBackgroundCheckBox.isSelected());
 // TODO        codeArea.setDecorationMode(getDecorationMode());
         codeArea.setCodeCharactersCase(CodeCharactersCase.values()[hexCharactersModeComboBox.getSelectedIndex()]);

@@ -25,7 +25,7 @@ import org.exbin.framework.bined.panel.SearchParameters;
  * @version 0.2.0 2018/09/10
  * @author ExBin Project (http://exbin.org)
  */
-public interface HexSearchPanelApi {
+public interface BinarySearchPanelApi {
 
     void performFind(SearchParameters dialogSearchParameters);
 

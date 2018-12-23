@@ -54,26 +54,27 @@ import org.exbin.bined.CodeType;
 import org.exbin.bined.DataChangedListener;
 import org.exbin.bined.EditationMode;
 import org.exbin.bined.EditationModeChangedListener;
+import org.exbin.bined.EditationOperation;
 import org.exbin.bined.PositionCodeType;
 import org.exbin.bined.capability.RowWrappingCapable;
 import org.exbin.bined.capability.RowWrappingCapable.RowWrappingMode;
 import org.exbin.bined.delta.DeltaDocument;
 import org.exbin.bined.delta.FileDataSource;
 import org.exbin.bined.delta.SegmentsRepository;
+import org.exbin.bined.extended.theme.ExtendedBackgroundPaintMode;
 import org.exbin.bined.highlight.swing.extended.ExtendedHighlightCodeAreaPainter;
 import org.exbin.bined.highlight.swing.extended.ExtendedHighlightNonAsciiCodeAreaPainter;
 import org.exbin.bined.netbeans.panel.BinEdOptionsPanelBorder;
-import org.exbin.bined.netbeans.panel.HexSearchPanel;
-import org.exbin.bined.netbeans.panel.HexSearchPanelApi;
+import org.exbin.bined.netbeans.panel.BinarySearchPanel;
 import org.exbin.bined.netbeans.panel.ValuesPanel;
 import org.exbin.bined.operation.BinaryDataCommand;
 import org.exbin.bined.operation.swing.CodeAreaOperationCommandHandler;
 import org.exbin.bined.operation.undo.BinaryDataUndoUpdateListener;
 import org.exbin.bined.swing.extended.ExtCodeArea;
-import org.exbin.bined.swing.extended.ExtendedBackgroundPaintMode;
+import org.exbin.bined.swing.extended.layout.ExtendedCodeAreaLayoutProfile;
+import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
 import org.exbin.framework.bined.CodeAreaPopupMenuHandler;
-import org.exbin.framework.bined.HexStatusApi;
-import org.exbin.framework.bined.panel.HexStatusPanel;
+import org.exbin.framework.bined.panel.BinaryStatusPanel;
 import org.exbin.framework.bined.panel.ReplaceParameters;
 import org.exbin.framework.bined.panel.SearchCondition;
 import org.exbin.framework.bined.panel.SearchParameters;
@@ -102,19 +103,24 @@ import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
+import org.exbin.framework.bined.BinaryStatusApi;
+import org.exbin.bined.netbeans.panel.BinarySearchPanelApi;
 
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.2.0 2018/11/26
+ * @version 0.2.0 2018/12/22
  * @author ExBin Project (http://exbin.org)
  */
-@ConvertAsProperties(dtd = "-//org.exbin.bined//HexEditor//EN", autostore = false)
-@TopComponent.Description(preferredID = "HexEditorTopComponent",
+@ConvertAsProperties(dtd = "-//org.exbin.bined//BinaryEditor//EN", autostore = false)
+@TopComponent.Description(preferredID = "BinaryEditorTopComponent",
         persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
-@TopComponent.OpenActionRegistration(displayName = "#CTL_HexEditorAction", preferredID = "HexEditorTopComponent")
-public final class HexEditorTopComponent extends TopComponent implements MultiViewElement, Serializable, UndoRedo.Provider {
+@TopComponent.OpenActionRegistration(displayName = "#CTL_BinaryEditorAction", preferredID = "BinaryEditorTopComponent")
+public final class BinaryEditorTopComponent extends TopComponent implements MultiViewElement, Serializable, UndoRedo.Provider {
+
+    private static final String BINARY_EDITOR_TOP_COMPONENT_STRING = "CTL_BinaryEditorTopComponent";
+    private static final String BINARY_EDITOR_TOP_COMPONENT_HINT_STRING = "HINT_BinaryEditorTopComponent";
 
     public static final String PREFERENCES_MEMORY_DELTA_MODE = "deltaMode";
     public static final String PREFERENCES_CODE_TYPE = "codeType";
@@ -146,23 +152,23 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
     public static final String PREFERENCES_SHOW_VALUES_PANEL = "valuesPanel";
 
     private final Preferences preferences;
-    private final HexEditorNode node;
+    private final BinaryEditorNode node;
     private static SegmentsRepository segmentsRepository = null;
     private final ExtCodeArea codeArea;
     private final UndoRedo.Manager undoRedo;
-    private final HexUndoSwingHandler undoHandler;
+    private final BinaryUndoSwingHandler undoHandler;
     private final Savable savable;
     private final InstanceContent content = new InstanceContent();
     private final int metaMask;
 
-    private HexStatusPanel statusPanel;
-    private HexStatusApi hexStatus;
+    private BinaryStatusPanel statusPanel;
+    private BinaryStatusApi hexStatus;
     private TextEncodingStatusApi encodingStatus;
     private CharsetChangeListener charsetChangeListener = null;
     private GoToHandler goToHandler;
     private EncodingsHandler encodingsHandler;
     private boolean findTextPanelVisible = false;
-    private HexSearchPanel hexSearchPanel = null;
+    private BinarySearchPanel hexSearchPanel = null;
     private ValuesPanel valuesPanel = null;
     private JScrollPane valuesPanelScrollPane = null;
     private boolean valuesPanelVisible = false;
@@ -174,16 +180,16 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
     private long documentOriginalSize;
     private DataObject dataObject;
 
-    public HexEditorTopComponent() {
+    public BinaryEditorTopComponent() {
         initComponents();
 
-        preferences = NbPreferences.forModule(HexEditorTopComponent.class);
+        preferences = NbPreferences.forModule(BinaryEditorTopComponent.class);
 
         codeArea = new ExtCodeArea();
         codeArea.setPainter(new ExtendedHighlightNonAsciiCodeAreaPainter(codeArea));
         codeArea.setCodeFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         codeArea.getCaret().setBlinkRate(300);
-        statusPanel = new HexStatusPanel();
+        statusPanel = new BinaryStatusPanel();
         registerEncodingStatus(statusPanel);
         encodingsHandler = new EncodingsHandler(new TextEncodingStatusApi() {
             @Override
@@ -195,12 +201,12 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
             public void setEncoding(String encodingName) {
                 codeArea.setCharset(Charset.forName(encodingName));
                 encodingStatus.setEncoding(encodingName);
-                preferences.put(HexEditorTopComponent.PREFERENCES_ENCODING_SELECTED, encodingName);
+                preferences.put(BinaryEditorTopComponent.PREFERENCES_ENCODING_SELECTED, encodingName);
             }
         });
 
         undoRedo = new UndoRedo.Manager();
-        undoHandler = new HexUndoSwingHandler(codeArea, undoRedo);
+        undoHandler = new BinaryUndoSwingHandler(codeArea, undoRedo);
 
         loadFromPreferences();
 
@@ -221,7 +227,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
             }
         });
 
-        node = new HexEditorNode(this);
+        node = new BinaryEditorNode(this);
         content.add(node);
         savable = new Savable(this, codeArea);
 
@@ -252,8 +258,8 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
             }
         });
 
-        setName(NbBundle.getMessage(HexEditorTopComponent.class, "CTL_HexEditorTopComponent"));
-        setToolTipText(NbBundle.getMessage(HexEditorTopComponent.class, "HINT_HexEditorTopComponent"));
+        setName(NbBundle.getMessage(BinaryEditorTopComponent.class, BINARY_EDITOR_TOP_COMPONENT_STRING));
+        setToolTipText(NbBundle.getMessage(BinaryEditorTopComponent.class, BINARY_EDITOR_TOP_COMPONENT_HINT_STRING));
 
         applyFromCodeArea();
 
@@ -312,8 +318,8 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
         lineWrappingToggleButton.setSelected(codeArea.getRowWrapping() == RowWrappingCapable.RowWrappingMode.WRAPPING);
     }
 
-    public void registerHexStatus(HexStatusApi hexStatusApi) {
-        this.hexStatus = hexStatusApi;
+    public void registerHexStatus(BinaryStatusApi binaryStatusApi) {
+        this.hexStatus = binaryStatusApi;
         codeArea.addCaretMovedListener(new CaretMovedListener() {
             @Override
             public void caretMoved(CaretPosition caretPosition) {
@@ -325,16 +331,16 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
 
         codeArea.addEditationModeChangedListener(new EditationModeChangedListener() {
             @Override
-            public void editationModeChanged(EditationMode mode) {
-                hexStatus.setEditationMode(mode);
+            public void editationModeChanged(EditationMode mode, EditationOperation op) {
+                hexStatus.setEditationMode(mode, op);
             }
         });
-        hexStatus.setEditationMode(codeArea.getEditationMode());
+        hexStatus.setEditationMode(codeArea.getEditationMode(), codeArea.getEditationOperation());
 
-        hexStatus.setControlHandler(new HexStatusApi.StatusControlHandler() {
+        hexStatus.setControlHandler(new BinaryStatusApi.StatusControlHandler() {
             @Override
-            public void changeEditationMode(EditationMode editationMode) {
-                codeArea.setEditationMode(editationMode);
+            public void changeEditationOperation(EditationOperation editationOperation) {
+                codeArea.setEditationOperation(editationOperation);
             }
 
             @Override
@@ -357,11 +363,11 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
             }
 
             @Override
-            public void changeMemoryMode(HexStatusApi.MemoryMode memoryMode) {
-                boolean newDeltaMode = memoryMode == HexStatusApi.MemoryMode.DELTA_MODE;
+            public void changeMemoryMode(BinaryStatusApi.MemoryMode memoryMode) {
+                boolean newDeltaMode = memoryMode == BinaryStatusApi.MemoryMode.DELTA_MODE;
                 if (newDeltaMode != deltaMemoryMode) {
                     switchDeltaMemoryMode(newDeltaMode);
-                    preferences.putBoolean(HexEditorTopComponent.PREFERENCES_MEMORY_DELTA_MODE, deltaMemoryMode);
+                    preferences.putBoolean(BinaryEditorTopComponent.PREFERENCES_MEMORY_DELTA_MODE, deltaMemoryMode);
                 }
             }
         });
@@ -580,11 +586,11 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
     }
 
     private void updateCurrentMemoryMode() {
-        HexStatusApi.MemoryMode memoryMode = HexStatusApi.MemoryMode.RAM_MEMORY;
+        BinaryStatusApi.MemoryMode memoryMode = BinaryStatusApi.MemoryMode.RAM_MEMORY;
         if (codeArea.getEditationMode() == EditationMode.READ_ONLY) {
-            memoryMode = HexStatusApi.MemoryMode.READ_ONLY;
+            memoryMode = BinaryStatusApi.MemoryMode.READ_ONLY;
         } else if (codeArea.getContentData() instanceof DeltaDocument) {
-            memoryMode = HexStatusApi.MemoryMode.DELTA_MODE;
+            memoryMode = BinaryStatusApi.MemoryMode.DELTA_MODE;
         }
 
         if (hexStatus != null) {
@@ -621,7 +627,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
         controlToolBar.setRollover(true);
 
         lineWrappingToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/exbin/bined/netbeans/resources/icons/bined-linewrap.png"))); // NOI18N
-        lineWrappingToggleButton.setToolTipText(org.openide.util.NbBundle.getMessage(HexEditorTopComponent.class, "HexEditorTopComponent.lineWrappingToggleButton.toolTipText")); // NOI18N
+        lineWrappingToggleButton.setToolTipText(org.openide.util.NbBundle.getMessage(BinaryEditorTopComponent.class, "BinaryEditorTopComponent.lineWrappingToggleButton.toolTipText")); // NOI18N
         lineWrappingToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 lineWrappingToggleButtonActionPerformed(evt);
@@ -630,7 +636,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
         controlToolBar.add(lineWrappingToggleButton);
 
         showUnprintablesToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/exbin/bined/netbeans/resources/icons/insert-pilcrow.png"))); // NOI18N
-        showUnprintablesToggleButton.setToolTipText(org.openide.util.NbBundle.getMessage(HexEditorTopComponent.class, "HexEditorTopComponent.showUnprintablesToggleButton.toolTipText")); // NOI18N
+        showUnprintablesToggleButton.setToolTipText(org.openide.util.NbBundle.getMessage(BinaryEditorTopComponent.class, "BinaryEditorTopComponent.showUnprintablesToggleButton.toolTipText")); // NOI18N
         showUnprintablesToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showUnprintablesToggleButtonActionPerformed(evt);
@@ -668,18 +674,18 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
 
     private void lineWrappingToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lineWrappingToggleButtonActionPerformed
         codeArea.setRowWrapping(lineWrappingToggleButton.isSelected() ? RowWrappingCapable.RowWrappingMode.WRAPPING : RowWrappingCapable.RowWrappingMode.NO_WRAPPING);
-        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_LINE_WRAPPING, lineWrappingToggleButton.isSelected());
+        preferences.putBoolean(BinaryEditorTopComponent.PREFERENCES_LINE_WRAPPING, lineWrappingToggleButton.isSelected());
     }//GEN-LAST:event_lineWrappingToggleButtonActionPerformed
 
     private void showUnprintablesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showUnprintablesToggleButtonActionPerformed
         codeArea.setShowUnprintables(showUnprintablesToggleButton.isSelected());
-        preferences.putBoolean(HexEditorTopComponent.PREFERENCES_SHOW_UNPRINTABLES, lineWrappingToggleButton.isSelected());
+        preferences.putBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_UNPRINTABLES, lineWrappingToggleButton.isSelected());
     }//GEN-LAST:event_showUnprintablesToggleButtonActionPerformed
 
     private void codeTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_codeTypeComboBoxActionPerformed
         CodeType codeType = CodeType.values()[codeTypeComboBox.getSelectedIndex()];
         codeArea.setCodeType(codeType);
-        preferences.put(HexEditorTopComponent.PREFERENCES_CODE_TYPE, codeType.name());
+        preferences.put(BinaryEditorTopComponent.PREFERENCES_CODE_TYPE, codeType.name());
     }//GEN-LAST:event_codeTypeComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -903,7 +909,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
 
     public void showSearchPanel(boolean replace) {
         if (hexSearchPanel == null) {
-            hexSearchPanel = new HexSearchPanel(new HexSearchPanelApi() {
+            hexSearchPanel = new BinarySearchPanel(new BinarySearchPanelApi() {
                 @Override
                 public void performFind(SearchParameters searchParameters) {
                     ExtendedHighlightCodeAreaPainter painter = (ExtendedHighlightCodeAreaPainter) codeArea.getPainter();
@@ -996,7 +1002,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
                 public void dropPopupMenu(String menuPostfix) {
                 }
             });
-            hexSearchPanel.setClosePanelListener(new HexSearchPanel.ClosePanelListener() {
+            hexSearchPanel.setClosePanelListener(new BinarySearchPanel.ClosePanelListener() {
                 @Override
                 public void panelClosed() {
                     hideSearchPanel();
@@ -1269,56 +1275,60 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
     }
 
     private void loadFromPreferences() {
-        deltaMemoryMode = preferences.getBoolean(HexEditorTopComponent.PREFERENCES_MEMORY_DELTA_MODE, true);
-        CodeType codeType = CodeType.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_CODE_TYPE, "HEXADECIMAL"));
+        deltaMemoryMode = preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_MEMORY_DELTA_MODE, true);
+        CodeType codeType = CodeType.valueOf(preferences.get(BinaryEditorTopComponent.PREFERENCES_CODE_TYPE, "HEXADECIMAL"));
         codeArea.setCodeType(codeType);
         codeTypeComboBox.setSelectedIndex(codeType.ordinal());
-        String selectedEncoding = preferences.get(HexEditorTopComponent.PREFERENCES_ENCODING_SELECTED, "UTF-8");
+        String selectedEncoding = preferences.get(BinaryEditorTopComponent.PREFERENCES_ENCODING_SELECTED, "UTF-8");
         statusPanel.setEncoding(selectedEncoding);
         codeArea.setCharset(Charset.forName(selectedEncoding));
-        int bytesPerLine = preferences.getInt(HexEditorTopComponent.PREFERENCES_BYTES_PER_LINE, 16);
+        int bytesPerLine = preferences.getInt(BinaryEditorTopComponent.PREFERENCES_BYTES_PER_LINE, 16);
 // TODO        codeArea.setLineLength(bytesPerLine);
 
-        boolean showNonprintables = preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_UNPRINTABLES, false);
+        boolean showNonprintables = preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_UNPRINTABLES, false);
         showUnprintablesToggleButton.setSelected(showNonprintables);
         codeArea.setShowUnprintables(showNonprintables);
 
-        boolean lineWrapping = preferences.getBoolean(HexEditorTopComponent.PREFERENCES_LINE_WRAPPING, false);
+        boolean lineWrapping = preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_LINE_WRAPPING, false);
         codeArea.setRowWrapping(lineWrapping ? RowWrappingMode.WRAPPING : RowWrappingMode.NO_WRAPPING);
         lineWrappingToggleButton.setSelected(lineWrapping);
 
         encodingsHandler.loadFromPreferences(preferences);
 
         // Layout
-        codeArea.setShowHeader(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_HEADER, true));
-//        String headerSpaceTypeName = preferences.get(HexEditorTopComponent.PREFERENCES_HEADER_SPACE_TYPE, CodeAreaSpace.SpaceType.HALF_UNIT.name());
+        ExtendedCodeAreaLayoutProfile layoutProfile = codeArea.getLayoutProfile();
+        layoutProfile.setShowHeader(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_HEADER, true));
+//        String headerSpaceTypeName = preferences.get(BinaryEditorTopComponent.PREFERENCES_HEADER_SPACE_TYPE, CodeAreaSpace.SpaceType.HALF_UNIT.name());
 //        codeArea.setHeaderSpaceType(CodeAreaSpace.SpaceType.valueOf(headerSpaceTypeName));
-//        codeArea.setHeaderSpaceSize(preferences.getInt(HexEditorTopComponent.PREFERENCES_HEADER_SPACE, 0));
-//        codeArea.setShowLineNumbers(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_LINE_NUMBERS, true));
-//        String lineNumbersSpaceTypeName = preferences.get(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE_TYPE, CodeAreaSpace.SpaceType.ONE_UNIT.name());
+//        codeArea.setHeaderSpaceSize(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_HEADER_SPACE, 0));
+//        codeArea.setShowLineNumbers(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_LINE_NUMBERS, true));
+//        String lineNumbersSpaceTypeName = preferences.get(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE_TYPE, CodeAreaSpace.SpaceType.ONE_UNIT.name());
 //        codeArea.setLineNumberSpaceType(CodeAreaSpace.SpaceType.valueOf(lineNumbersSpaceTypeName));
-//        codeArea.setLineNumberSpaceSize(preferences.getInt(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE, 8));
-//        String lineNumbersLengthTypeName = preferences.get(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH_TYPE, CodeAreaLineNumberLength.LineNumberType.SPECIFIED.name());
+//        codeArea.setLineNumberSpaceSize(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE, 8));
+//        String lineNumbersLengthTypeName = preferences.get(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH_TYPE, CodeAreaLineNumberLength.LineNumberType.SPECIFIED.name());
 //        codeArea.setLineNumberType(CodeAreaLineNumberLength.LineNumberType.valueOf(lineNumbersLengthTypeName));
-//        codeArea.setLineNumberSpecifiedLength(preferences.getInt(HexEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH, 8));
-//        codeArea.setByteGroupSize(preferences.getInt(HexEditorTopComponent.PREFERENCES_BYTE_GROUP_SIZE, 1));
-//        codeArea.setSpaceGroupSize(preferences.getInt(HexEditorTopComponent.PREFERENCES_SPACE_GROUP_SIZE, 0));
-        // Mode
-        codeArea.setViewMode(CodeAreaViewMode.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_VIEW_MODE, CodeAreaViewMode.DUAL.name())));
-        codeArea.setCodeType(CodeType.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_CODE_TYPE, CodeType.HEXADECIMAL.name())));
-        ((ExtendedHighlightNonAsciiCodeAreaPainter) codeArea.getPainter()).setNonAsciiHighlightingEnabled(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_CODE_COLORIZATION, true));
-        // Memory mode handled from outside by isDeltaMemoryMode() method, worth fixing?
+//        codeArea.setLineNumberSpecifiedLength(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH, 8));
+//        codeArea.setByteGroupSize(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_BYTE_GROUP_SIZE, 1));
+//        codeArea.setSpaceGroupSize(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_SPACE_GROUP_SIZE, 0));
+        codeArea.setLayoutProfile(layoutProfile);
 
+        // Mode
+        codeArea.setViewMode(CodeAreaViewMode.valueOf(preferences.get(BinaryEditorTopComponent.PREFERENCES_VIEW_MODE, CodeAreaViewMode.DUAL.name())));
+        codeArea.setCodeType(CodeType.valueOf(preferences.get(BinaryEditorTopComponent.PREFERENCES_CODE_TYPE, CodeType.HEXADECIMAL.name())));
+        ((ExtendedHighlightNonAsciiCodeAreaPainter) codeArea.getPainter()).setNonAsciiHighlightingEnabled(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_CODE_COLORIZATION, true));
+        // Memory mode handled from outside by isDeltaMemoryMode() method, worth fixing?
         // Decoration
-        codeArea.setBackgroundPaintMode(convertBackgroundPaintMode(preferences.get(HexEditorTopComponent.PREFERENCES_BACKGROUND_MODE, ExtendedBackgroundPaintMode.STRIPED.name())));
-// TODO        codeArea.setLineNumberBackground(preferences.getBoolean(HexEditorTopComponent.PREFERENCES_PAINT_LINE_NUMBERS_BACKGROUND, true));
-// TODO        int decorationMode = (preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_HEADER_LINE, true) ? CodeArea.DECORATION_HEADER_LINE : 0)
-// TODO                + (preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_PREVIEW_LINE, true) ? CodeArea.DECORATION_PREVIEW_LINE : 0)
-// TODO                + (preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_BOX, false) ? CodeArea.DECORATION_BOX : 0)
-// TODO                + (preferences.getBoolean(HexEditorTopComponent.PREFERENCES_DECORATION_LINENUM_LINE, true) ? CodeArea.DECORATION_LINENUM_LINE : 0);
+        ExtendedCodeAreaThemeProfile themeProfile = codeArea.getThemeProfile();
+        themeProfile.setBackgroundPaintMode(convertBackgroundPaintMode(preferences.get(BinaryEditorTopComponent.PREFERENCES_BACKGROUND_MODE, ExtendedBackgroundPaintMode.STRIPED.name())));
+// TODO        codeArea.setLineNumberBackground(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_PAINT_LINE_NUMBERS_BACKGROUND, true));
+// TODO        int decorationMode = (preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_HEADER_LINE, true) ? CodeArea.DECORATION_HEADER_LINE : 0)
+// TODO                + (preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_PREVIEW_LINE, true) ? CodeArea.DECORATION_PREVIEW_LINE : 0)
+// TODO                + (preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_BOX, false) ? CodeArea.DECORATION_BOX : 0)
+// TODO                + (preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_LINENUM_LINE, true) ? CodeArea.DECORATION_LINENUM_LINE : 0);
 // TODO        codeArea.setDecorationMode(decorationMode);
-        codeArea.setCodeCharactersCase(CodeCharactersCase.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_HEX_CHARACTERS_CASE, CodeCharactersCase.UPPER.name())));
-        codeArea.setPositionCodeType(PositionCodeType.valueOf(preferences.get(HexEditorTopComponent.PREFERENCES_POSITION_CODE_TYPE, PositionCodeType.HEXADECIMAL.name())));
+        codeArea.setThemeProfile(themeProfile);
+        codeArea.setCodeCharactersCase(CodeCharactersCase.valueOf(preferences.get(BinaryEditorTopComponent.PREFERENCES_HEX_CHARACTERS_CASE, CodeCharactersCase.UPPER.name())));
+        codeArea.setPositionCodeType(PositionCodeType.valueOf(preferences.get(BinaryEditorTopComponent.PREFERENCES_POSITION_CODE_TYPE, PositionCodeType.HEXADECIMAL.name())));
 
         // Font
         Boolean useDefaultColor = Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_DEFAULT, Boolean.toString(true)));
@@ -1355,7 +1365,7 @@ public final class HexEditorTopComponent extends TopComponent implements MultiVi
             Font derivedFont = codeArea.getCodeFont().deriveFont(attribs);
             codeArea.setCodeFont(derivedFont);
         }
-        boolean showValuesPanel = preferences.getBoolean(HexEditorTopComponent.PREFERENCES_SHOW_VALUES_PANEL, true);
+        boolean showValuesPanel = preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_VALUES_PANEL, true);
         if (showValuesPanel) {
             showValuesPanel();
         }

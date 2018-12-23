@@ -35,7 +35,7 @@ import org.openide.util.Exceptions;
  * @version 0.2.0 2018/09/10
  * @author ExBin Project (http://exbin.org)
  */
-public class HexUndoSwingHandler implements BinaryDataUndoHandler {
+public class BinaryUndoSwingHandler implements BinaryDataUndoHandler {
 
     private final CodeAreaCore codeArea;
     private final List<BinaryDataUndoUpdateListener> listeners = new ArrayList<>();
@@ -49,7 +49,7 @@ public class HexUndoSwingHandler implements BinaryDataUndoHandler {
      * @param codeArea hexadecimal component
      * @param undoManager undo manager
      */
-    public HexUndoSwingHandler(CodeAreaCore codeArea, UndoRedo.Manager undoManager) {
+    public BinaryUndoSwingHandler(CodeAreaCore codeArea, UndoRedo.Manager undoManager) {
         this.codeArea = codeArea;
         this.undoManager = undoManager;
         init();
