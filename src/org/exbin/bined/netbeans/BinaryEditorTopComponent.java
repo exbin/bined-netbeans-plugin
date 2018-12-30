@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.prefs.Preferences;
+import javax.annotation.Nonnull;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
@@ -45,6 +46,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import org.exbin.bined.BasicCodeAreaZone;
 import org.exbin.bined.CaretMovedListener;
 import org.exbin.bined.CaretPosition;
 import org.exbin.bined.CodeAreaCaretPosition;
@@ -105,11 +107,14 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import org.exbin.framework.bined.BinaryStatusApi;
 import org.exbin.bined.netbeans.panel.BinarySearchPanelApi;
+import org.exbin.framework.gui.about.panel.AboutPanel;
+import org.exbin.framework.gui.utils.handler.CloseControlHandler;
+import org.exbin.framework.gui.utils.panel.CloseControlPanel;
 
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.2.0 2018/12/22
+ * @version 0.2.0 2018/12/29
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.bined//BinaryEditor//EN", autostore = false)
@@ -162,7 +167,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     private final int metaMask;
 
     private BinaryStatusPanel statusPanel;
-    private BinaryStatusApi hexStatus;
+    private BinaryStatusApi binaryStatus;
     private TextEncodingStatusApi encodingStatus;
     private CharsetChangeListener charsetChangeListener = null;
     private GoToHandler goToHandler;
@@ -222,7 +227,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         codeArea.setComponentPopupMenu(new JPopupMenu() {
             @Override
             public void show(Component invoker, int x, int y) {
-                JPopupMenu popupMenu = createContextMenu();
+                JPopupMenu popupMenu = createContextMenu(x, y);
                 popupMenu.show(invoker, x, y);
             }
         });
@@ -319,25 +324,25 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     }
 
     public void registerHexStatus(BinaryStatusApi binaryStatusApi) {
-        this.hexStatus = binaryStatusApi;
+        this.binaryStatus = binaryStatusApi;
         codeArea.addCaretMovedListener(new CaretMovedListener() {
             @Override
             public void caretMoved(CaretPosition caretPosition) {
                 String position = String.valueOf(caretPosition.getDataPosition());
                 position += ":" + caretPosition.getCodeOffset();
-                hexStatus.setCursorPosition(position);
+                binaryStatus.setCursorPosition(position);
             }
         });
 
         codeArea.addEditationModeChangedListener(new EditationModeChangedListener() {
             @Override
             public void editationModeChanged(EditationMode mode, EditationOperation op) {
-                hexStatus.setEditationMode(mode, op);
+                binaryStatus.setEditationMode(mode, op);
             }
         });
-        hexStatus.setEditationMode(codeArea.getEditationMode(), codeArea.getEditationOperation());
+        binaryStatus.setEditationMode(codeArea.getEditationMode(), codeArea.getEditationOperation());
 
-        hexStatus.setControlHandler(new BinaryStatusApi.StatusControlHandler() {
+        binaryStatus.setControlHandler(new BinaryStatusApi.StatusControlHandler() {
             @Override
             public void changeEditationOperation(EditationOperation editationOperation) {
                 codeArea.setEditationOperation(editationOperation);
@@ -574,7 +579,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     private void updateCurrentDocumentSize() {
         long dataSize = codeArea.getContentData().getDataSize();
         long difference = dataSize - documentOriginalSize;
-        hexStatus.setCurrentDocumentSize(dataSize + " (" + (difference > 0 ? "+" + difference : difference) + ")");
+        binaryStatus.setCurrentDocumentSize(dataSize + " (" + (difference > 0 ? "+" + difference : difference) + ")");
     }
 
     public boolean isDeltaMemoryMode() {
@@ -593,8 +598,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             memoryMode = BinaryStatusApi.MemoryMode.DELTA_MODE;
         }
 
-        if (hexStatus != null) {
-            hexStatus.setMemoryMode(memoryMode);
+        if (binaryStatus != null) {
+            binaryStatus.setMemoryMode(memoryMode);
         }
     }
 
@@ -646,6 +651,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         controlToolBar.add(separator1);
 
         codeTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "BIN", "OCT", "DEC", "HEX" }));
+        codeTypeComboBox.setSelectedIndex(3);
         codeTypeComboBox.setMaximumSize(new java.awt.Dimension(58, 25));
         codeTypeComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -664,7 +670,9 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         );
         infoToolbarLayout.setVerticalGroup(
             infoToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(controlToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(infoToolbarLayout.createSequentialGroup()
+                .addComponent(controlToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
 
         codeAreaPanel.add(infoToolbar, java.awt.BorderLayout.PAGE_START);
@@ -742,8 +750,11 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         String version = p.getProperty("version");
     }
 
-    private JPopupMenu createContextMenu() {
+    @Nonnull
+    private JPopupMenu createContextMenu(int x, int y) {
         final JPopupMenu result = new JPopupMenu();
+
+        BasicCodeAreaZone positionZone = codeArea.getPositionZone(x, y);
 
         final JMenuItem cutMenuItem = new JMenuItem("Cut");
         cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, metaMask));
@@ -903,6 +914,28 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             }
         });
         result.add(optionsMenuItem);
+        result.addSeparator();
+
+        final JMenuItem aboutMenuItem = new JMenuItem("About...");
+        aboutMenuItem.addActionListener((ActionEvent e) -> {
+            AboutPanel aboutPanel = new AboutPanel();
+            aboutPanel.setupFields();
+            CloseControlPanel closeControlPanel = new CloseControlPanel();
+            JPanel dialogPanel = WindowUtils.createDialogPanel(aboutPanel, closeControlPanel);
+            DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "About Plugin", true, new Object[0], null, 0, null, null);
+
+            final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
+            closeControlPanel.setHandler(new CloseControlHandler() {
+                @Override
+                public void controlActionPerformed() {
+                    WindowUtils.closeWindow(dialog);
+                }
+            });
+            WindowUtils.assignGlobalKeyListener(dialog, closeControlPanel.createOkCancelListener());
+            dialog.setSize(650, 460);
+            dialog.setVisible(true);
+        });
+        result.add(aboutMenuItem);
 
         return result;
     }
