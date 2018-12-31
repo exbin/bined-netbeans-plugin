@@ -36,7 +36,7 @@ import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
 
 /**
- * Basic about panel.
+ * About application panel.
  *
  * @version 0.2.0 2018/12/30
  * @author ExBin Project (http://exbin.org)

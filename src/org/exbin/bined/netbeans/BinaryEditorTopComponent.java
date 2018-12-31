@@ -15,6 +15,7 @@
  */
 package org.exbin.bined.netbeans;
 
+import org.exbin.bined.netbeans.preferences.BinaryEditorPreferences;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog;
@@ -24,17 +25,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.font.TextAttribute;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.prefs.Preferences;
 import javax.annotation.Nonnull;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -47,23 +44,16 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import org.exbin.bined.BasicCodeAreaZone;
-import org.exbin.bined.CaretMovedListener;
 import org.exbin.bined.CaretPosition;
 import org.exbin.bined.CodeAreaCaretPosition;
-import org.exbin.bined.CodeAreaViewMode;
-import org.exbin.bined.CodeCharactersCase;
 import org.exbin.bined.CodeType;
-import org.exbin.bined.DataChangedListener;
 import org.exbin.bined.EditationMode;
-import org.exbin.bined.EditationModeChangedListener;
 import org.exbin.bined.EditationOperation;
-import org.exbin.bined.PositionCodeType;
 import org.exbin.bined.capability.RowWrappingCapable;
 import org.exbin.bined.capability.RowWrappingCapable.RowWrappingMode;
 import org.exbin.bined.delta.DeltaDocument;
 import org.exbin.bined.delta.FileDataSource;
 import org.exbin.bined.delta.SegmentsRepository;
-import org.exbin.bined.extended.theme.ExtendedBackgroundPaintMode;
 import org.exbin.bined.highlight.swing.extended.ExtendedHighlightCodeAreaPainter;
 import org.exbin.bined.highlight.swing.extended.ExtendedHighlightNonAsciiCodeAreaPainter;
 import org.exbin.bined.netbeans.panel.BinEdOptionsPanelBorder;
@@ -73,7 +63,6 @@ import org.exbin.bined.operation.BinaryDataCommand;
 import org.exbin.bined.operation.swing.CodeAreaOperationCommandHandler;
 import org.exbin.bined.operation.undo.BinaryDataUndoUpdateListener;
 import org.exbin.bined.swing.extended.ExtCodeArea;
-import org.exbin.bined.swing.extended.layout.ExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
 import org.exbin.framework.bined.CodeAreaPopupMenuHandler;
 import org.exbin.framework.bined.panel.BinaryStatusPanel;
@@ -100,7 +89,6 @@ import org.openide.loaders.DataObject;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
-import org.openide.util.NbPreferences;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.windows.TopComponent;
@@ -108,13 +96,12 @@ import org.openide.windows.WindowManager;
 import org.exbin.framework.bined.BinaryStatusApi;
 import org.exbin.bined.netbeans.panel.BinarySearchPanelApi;
 import org.exbin.framework.gui.about.panel.AboutPanel;
-import org.exbin.framework.gui.utils.handler.CloseControlHandler;
 import org.exbin.framework.gui.utils.panel.CloseControlPanel;
 
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.2.0 2018/12/29
+ * @version 0.2.0 2018/12/31
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.bined//BinaryEditor//EN", autostore = false)
@@ -127,36 +114,12 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     private static final String BINARY_EDITOR_TOP_COMPONENT_STRING = "CTL_BinaryEditorTopComponent";
     private static final String BINARY_EDITOR_TOP_COMPONENT_HINT_STRING = "HINT_BinaryEditorTopComponent";
 
-    public static final String PREFERENCES_MEMORY_DELTA_MODE = "deltaMode";
-    public static final String PREFERENCES_CODE_TYPE = "codeType";
-    public static final String PREFERENCES_LINE_WRAPPING = "lineWrapping";
-    public static final String PREFERENCES_SHOW_UNPRINTABLES = "showNonpritables";
-    public static final String PREFERENCES_ENCODING_SELECTED = "selectedEncoding";
-    public static final String PREFERENCES_ENCODING_PREFIX = "textEncoding.";
-    public static final String PREFERENCES_BYTES_PER_LINE = "bytesPerLine";
-    public static final String PREFERENCES_SHOW_HEADER = "showHeader";
-    public static final String PREFERENCES_HEADER_SPACE_TYPE = "headerSpaceType";
-    public static final String PREFERENCES_HEADER_SPACE = "headerSpace";
-    public static final String PREFERENCES_SHOW_LINE_NUMBERS = "showLineNumbers";
-    public static final String PREFERENCES_LINE_NUMBERS_LENGTH_TYPE = "lineNumbersLengthType";
-    public static final String PREFERENCES_LINE_NUMBERS_LENGTH = "lineNumbersLength";
-    public static final String PREFERENCES_LINE_NUMBERS_SPACE_TYPE = "lineNumbersSpaceType";
-    public static final String PREFERENCES_LINE_NUMBERS_SPACE = "lineNumbersSpace";
-    public static final String PREFERENCES_VIEW_MODE = "viewMode";
-    public static final String PREFERENCES_BACKGROUND_MODE = "backgroundMode";
-    public static final String PREFERENCES_PAINT_LINE_NUMBERS_BACKGROUND = "showLineNumbersBackground";
-    public static final String PREFERENCES_POSITION_CODE_TYPE = "positionCodeType";
-    public static final String PREFERENCES_HEX_CHARACTERS_CASE = "hexCharactersCase";
-    public static final String PREFERENCES_DECORATION_HEADER_LINE = "decorationHeaderLine";
-    public static final String PREFERENCES_DECORATION_PREVIEW_LINE = "decorationPreviewLine";
-    public static final String PREFERENCES_DECORATION_BOX = "decorationBox";
-    public static final String PREFERENCES_DECORATION_LINENUM_LINE = "decorationLineNumLine";
-    public static final String PREFERENCES_BYTE_GROUP_SIZE = "byteGroupSize";
-    public static final String PREFERENCES_SPACE_GROUP_SIZE = "spaceGroupSize";
-    public static final String PREFERENCES_CODE_COLORIZATION = "codeColorization";
-    public static final String PREFERENCES_SHOW_VALUES_PANEL = "valuesPanel";
+    public static final String ACTION_CLIPBOARD_CUT = "cut-to-clipboard";
+    public static final String ACTION_CLIPBOARD_COPY = "copy-to-clipboard";
+    public static final String ACTION_CLIPBOARD_PASTE = "paste-from-clipboard";
+    private static final int FIND_MATCHES_LIMIT = 100;
 
-    private final Preferences preferences;
+    private final BinaryEditorPreferences preferences;
     private final BinaryEditorNode node;
     private static SegmentsRepository segmentsRepository = null;
     private final ExtCodeArea codeArea;
@@ -188,7 +151,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     public BinaryEditorTopComponent() {
         initComponents();
 
-        preferences = NbPreferences.forModule(BinaryEditorTopComponent.class);
+        preferences = new BinaryEditorPreferences();
 
         codeArea = new ExtCodeArea();
         codeArea.setPainter(new ExtendedHighlightNonAsciiCodeAreaPainter(codeArea));
@@ -206,7 +169,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             public void setEncoding(String encodingName) {
                 codeArea.setCharset(Charset.forName(encodingName));
                 encodingStatus.setEncoding(encodingName);
-                preferences.put(BinaryEditorTopComponent.PREFERENCES_ENCODING_SELECTED, encodingName);
+                preferences.setSelectedEncoding(encodingName);
             }
         });
 
@@ -253,14 +216,11 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             }
         });
 
-        codeArea.addDataChangedListener(new DataChangedListener() {
-            @Override
-            public void dataChanged() {
-                if (hexSearchPanel != null && hexSearchPanel.isVisible()) {
-                    hexSearchPanel.dataChanged();
-                }
-                updateCurrentDocumentSize();
+        codeArea.addDataChangedListener(() -> {
+            if (hexSearchPanel != null && hexSearchPanel.isVisible()) {
+                hexSearchPanel.dataChanged();
             }
+            updateCurrentDocumentSize();
         });
 
         setName(NbBundle.getMessage(BinaryEditorTopComponent.class, BINARY_EDITOR_TOP_COMPONENT_STRING));
@@ -268,19 +228,19 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
         applyFromCodeArea();
 
-        getActionMap().put("copy-to-clipboard", new AbstractAction() {
+        getActionMap().put(ACTION_CLIPBOARD_COPY, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 codeArea.copy();
             }
         });
-        getActionMap().put("cut-to-clipboard", new AbstractAction() {
+        getActionMap().put(ACTION_CLIPBOARD_CUT, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 codeArea.cut();
             }
         });
-        getActionMap().put("paste-from-clipboard", new AbstractAction() {
+        getActionMap().put(ACTION_CLIPBOARD_PASTE, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 codeArea.paste();
@@ -325,21 +285,13 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
     public void registerHexStatus(BinaryStatusApi binaryStatusApi) {
         this.binaryStatus = binaryStatusApi;
-        codeArea.addCaretMovedListener(new CaretMovedListener() {
-            @Override
-            public void caretMoved(CaretPosition caretPosition) {
-                String position = String.valueOf(caretPosition.getDataPosition());
-                position += ":" + caretPosition.getCodeOffset();
-                binaryStatus.setCursorPosition(position);
-            }
+        codeArea.addCaretMovedListener((CaretPosition caretPosition) -> {
+            String position = String.valueOf(caretPosition.getDataPosition());
+            position += ":" + caretPosition.getCodeOffset();
+            binaryStatus.setCursorPosition(position);
         });
 
-        codeArea.addEditationModeChangedListener(new EditationModeChangedListener() {
-            @Override
-            public void editationModeChanged(EditationMode mode, EditationOperation op) {
-                binaryStatus.setEditationMode(mode, op);
-            }
-        });
+        codeArea.addEditationModeChangedListener(binaryStatus::setEditationMode);
         binaryStatus.setEditationMode(codeArea.getEditationMode(), codeArea.getEditationOperation());
 
         binaryStatus.setControlHandler(new BinaryStatusApi.StatusControlHandler() {
@@ -372,7 +324,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                 boolean newDeltaMode = memoryMode == BinaryStatusApi.MemoryMode.DELTA_MODE;
                 if (newDeltaMode != deltaMemoryMode) {
                     switchDeltaMemoryMode(newDeltaMode);
-                    preferences.putBoolean(BinaryEditorTopComponent.PREFERENCES_MEMORY_DELTA_MODE, deltaMemoryMode);
+                    preferences.setDeltaMemoryMode(deltaMemoryMode);
                 }
             }
         });
@@ -420,12 +372,9 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
     public void registerEncodingStatus(TextEncodingStatusApi encodingStatusApi) {
         this.encodingStatus = encodingStatusApi;
-        setCharsetChangeListener(new CharsetChangeListener() {
-            @Override
-            public void charsetChanged() {
-                String selectedEncoding = codeArea.getCharset().name();
-                encodingStatus.setEncoding(selectedEncoding);
-            }
+        setCharsetChangeListener(() -> {
+            String selectedEncoding = codeArea.getCharset().name();
+            encodingStatus.setEncoding(selectedEncoding);
         });
     }
 
@@ -480,11 +429,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             setHtmlDisplayName(htmlDisplayName);
         } else {
             try {
-                SwingUtilities.invokeAndWait(new Runnable() {
-                    @Override
-                    public void run() {
-                        setHtmlDisplayName(htmlDisplayName);
-                    }
+                SwingUtilities.invokeAndWait(() -> {
+                    setHtmlDisplayName(htmlDisplayName);
                 });
             } catch (InterruptedException | InvocationTargetException ex) {
                 Exceptions.printStackTrace(ex);
@@ -682,18 +628,18 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
     private void lineWrappingToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lineWrappingToggleButtonActionPerformed
         codeArea.setRowWrapping(lineWrappingToggleButton.isSelected() ? RowWrappingCapable.RowWrappingMode.WRAPPING : RowWrappingCapable.RowWrappingMode.NO_WRAPPING);
-        preferences.putBoolean(BinaryEditorTopComponent.PREFERENCES_LINE_WRAPPING, lineWrappingToggleButton.isSelected());
+        preferences.setRowWrapping(lineWrappingToggleButton.isSelected());
     }//GEN-LAST:event_lineWrappingToggleButtonActionPerformed
 
     private void showUnprintablesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showUnprintablesToggleButtonActionPerformed
         codeArea.setShowUnprintables(showUnprintablesToggleButton.isSelected());
-        preferences.putBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_UNPRINTABLES, lineWrappingToggleButton.isSelected());
+        preferences.setShowUnprintables(lineWrappingToggleButton.isSelected());
     }//GEN-LAST:event_showUnprintablesToggleButtonActionPerformed
 
     private void codeTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_codeTypeComboBoxActionPerformed
         CodeType codeType = CodeType.values()[codeTypeComboBox.getSelectedIndex()];
         codeArea.setCodeType(codeType);
-        preferences.put(BinaryEditorTopComponent.PREFERENCES_CODE_TYPE, codeType.name());
+        preferences.setCodeType(codeType);
     }//GEN-LAST:event_codeTypeComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -730,7 +676,9 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             segmentsRepository.detachFileSource(fileSource);
             segmentsRepository.closeFileSource(fileSource);
         } else {
-            data.dispose();
+            if (data != null) {
+                data.dispose();
+            }
         }
     }
 
@@ -759,159 +707,123 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         final JMenuItem cutMenuItem = new JMenuItem("Cut");
         cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, metaMask));
         cutMenuItem.setEnabled(codeArea.hasSelection() && codeArea.isEditable());
-        cutMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                codeArea.cut();
-                result.setVisible(false);
-            }
+        cutMenuItem.addActionListener((ActionEvent e) -> {
+            codeArea.cut();
+            result.setVisible(false);
         });
         result.add(cutMenuItem);
 
         final JMenuItem copyMenuItem = new JMenuItem("Copy");
         copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, metaMask));
         copyMenuItem.setEnabled(codeArea.hasSelection());
-        copyMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                codeArea.copy();
-                result.setVisible(false);
-            }
+        copyMenuItem.addActionListener((ActionEvent e) -> {
+            codeArea.copy();
+            result.setVisible(false);
         });
         result.add(copyMenuItem);
 
         final JMenuItem copyAsCodeMenuItem = new JMenuItem("Copy as Code");
         copyAsCodeMenuItem.setEnabled(codeArea.hasSelection());
-        copyAsCodeMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                codeArea.copyAsCode();
-                result.setVisible(false);
-            }
+        copyAsCodeMenuItem.addActionListener((ActionEvent e) -> {
+            codeArea.copyAsCode();
+            result.setVisible(false);
         });
         result.add(copyAsCodeMenuItem);
 
         final JMenuItem pasteMenuItem = new JMenuItem("Paste");
         pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, metaMask));
         pasteMenuItem.setEnabled(codeArea.canPaste() && codeArea.isEditable());
-        pasteMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                codeArea.paste();
-                result.setVisible(false);
-            }
+        pasteMenuItem.addActionListener((ActionEvent e) -> {
+            codeArea.paste();
+            result.setVisible(false);
         });
         result.add(pasteMenuItem);
 
         final JMenuItem pasteFromCodeMenuItem = new JMenuItem("Paste from Code");
         pasteFromCodeMenuItem.setEnabled(codeArea.canPaste() && codeArea.isEditable());
-        pasteFromCodeMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    codeArea.pasteFromCode();
-                } catch (IllegalArgumentException ex) {
-                    JOptionPane.showMessageDialog(codeArea, ex.getMessage(), "Unable to Paste Code", JOptionPane.ERROR_MESSAGE);
-                }
-                result.setVisible(false);
+        pasteFromCodeMenuItem.addActionListener((ActionEvent e) -> {
+            try {
+                codeArea.pasteFromCode();
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(codeArea, ex.getMessage(), "Unable to Paste Code", JOptionPane.ERROR_MESSAGE);
             }
+            result.setVisible(false);
         });
         result.add(pasteFromCodeMenuItem);
 
         final JMenuItem deleteMenuItem = new JMenuItem("Delete");
         deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
         deleteMenuItem.setEnabled(codeArea.hasSelection() && codeArea.isEditable());
-        deleteMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                codeArea.delete();
-                result.setVisible(false);
-            }
+        deleteMenuItem.addActionListener((ActionEvent e) -> {
+            codeArea.delete();
+            result.setVisible(false);
         });
         result.add(deleteMenuItem);
         result.addSeparator();
 
         final JMenuItem selectAllMenuItem = new JMenuItem("Select All");
         selectAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, metaMask));
-        selectAllMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                codeArea.selectAll();
-                result.setVisible(false);
-            }
+        selectAllMenuItem.addActionListener((ActionEvent e) -> {
+            codeArea.selectAll();
+            result.setVisible(false);
         });
         result.add(selectAllMenuItem);
         result.addSeparator();
 
         final JMenuItem goToMenuItem = new JMenuItem("Go To...");
         goToMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, metaMask));
-        goToMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                goToHandler.getGoToLineAction().actionPerformed(null);
-            }
+        goToMenuItem.addActionListener((ActionEvent e) -> {
+            goToHandler.getGoToLineAction().actionPerformed(null);
         });
         result.add(goToMenuItem);
 
         final JMenuItem findMenuItem = new JMenuItem("Find...");
         findMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, metaMask));
-        findMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showSearchPanel(false);
-            }
+        findMenuItem.addActionListener((ActionEvent e) -> {
+            showSearchPanel(false);
         });
         result.add(findMenuItem);
 
         final JMenuItem replaceMenuItem = new JMenuItem("Replace...");
         replaceMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, metaMask));
         replaceMenuItem.setEnabled(codeArea.isEditable());
-        replaceMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showSearchPanel(true);
-            }
+        replaceMenuItem.addActionListener((ActionEvent e) -> {
+            showSearchPanel(true);
         });
         result.add(replaceMenuItem);
         result.addSeparator();
         final JMenuItem optionsMenuItem = new JMenuItem("Options...");
-        optionsMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                final BinEdOptionsPanelBorder optionsPanel = new BinEdOptionsPanelBorder();
-                optionsPanel.setFromCodeArea(codeArea);
-                optionsPanel.setShowValuesPanel(valuesPanelVisible);
-                OptionsControlPanel optionsControlPanel = new OptionsControlPanel();
-                JPanel dialogPanel = WindowUtils.createDialogPanel(optionsPanel, optionsControlPanel);
-                DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Options", true, new Object[0], null, 0, null, null);
+        optionsMenuItem.addActionListener((ActionEvent e) -> {
+            final BinEdOptionsPanelBorder optionsPanel = new BinEdOptionsPanelBorder();
+            optionsPanel.setFromCodeArea(codeArea);
+            optionsPanel.setShowValuesPanel(valuesPanelVisible);
+            OptionsControlPanel optionsControlPanel = new OptionsControlPanel();
+            JPanel dialogPanel = WindowUtils.createDialogPanel(optionsPanel, optionsControlPanel);
+            DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Options", true, new Object[0], null, 0, null, null);
 
-                final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
-                optionsControlPanel.setHandler(new OptionsControlHandler() {
-                    @Override
-                    public void controlActionPerformed(OptionsControlHandler.ControlActionType actionType) {
-                        if (actionType == OptionsControlHandler.ControlActionType.SAVE) {
-                            optionsPanel.store();
-                        }
-                        if (actionType != OptionsControlHandler.ControlActionType.CANCEL) {
-                            optionsPanel.applyToCodeArea(codeArea);
-                            boolean applyShowValuesPanel = optionsPanel.isShowValuesPanel();
-                            if (applyShowValuesPanel) {
-                                showValuesPanel();
-                            } else {
-                                hideValuesPanel();
-                            }
-                            applyFromCodeArea();
-                            switchDeltaMemoryMode(optionsPanel.isDeltaMemoryMode());
-                            codeArea.repaint();
-                        }
-
-                        WindowUtils.closeWindow(dialog);
+            final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
+            optionsControlPanel.setHandler((OptionsControlHandler.ControlActionType actionType) -> {
+                if (actionType == OptionsControlHandler.ControlActionType.SAVE) {
+                    optionsPanel.store();
+                }
+                if (actionType != OptionsControlHandler.ControlActionType.CANCEL) {
+                    optionsPanel.applyToCodeArea(codeArea);
+                    boolean applyShowValuesPanel = optionsPanel.isShowValuesPanel();
+                    if (applyShowValuesPanel) {
+                        showValuesPanel();
+                    } else {
+                        hideValuesPanel();
                     }
-                });
-                WindowUtils.assignGlobalKeyListener(dialog, optionsControlPanel.createOkCancelListener());
-                dialog.setSize(650, 460);
-                dialog.setVisible(true);
-            }
+                    applyFromCodeArea();
+                    switchDeltaMemoryMode(optionsPanel.isDeltaMemoryMode());
+                    codeArea.repaint();
+                }
+
+                WindowUtils.closeWindow(dialog);
+            });
+            WindowUtils.assignGlobalKeyListener(dialog, optionsControlPanel.createOkCancelListener());
+            dialog.setSize(650, 460);
+            dialog.setVisible(true);
         });
         result.add(optionsMenuItem);
         result.addSeparator();
@@ -925,11 +837,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "About Plugin", true, new Object[0], null, 0, null, null);
 
             final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
-            closeControlPanel.setHandler(new CloseControlHandler() {
-                @Override
-                public void controlActionPerformed() {
-                    WindowUtils.closeWindow(dialog);
-                }
+            closeControlPanel.setHandler(() -> {
+                WindowUtils.closeWindow(dialog);
             });
             WindowUtils.assignGlobalKeyListener(dialog, closeControlPanel.createOkCancelListener());
             dialog.setSize(650, 460);
@@ -1035,12 +944,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                 public void dropPopupMenu(String menuPostfix) {
                 }
             });
-            hexSearchPanel.setClosePanelListener(new BinarySearchPanel.ClosePanelListener() {
-                @Override
-                public void panelClosed() {
-                    hideSearchPanel();
-                }
-            });
+            hexSearchPanel.setClosePanelListener(this::hideSearchPanel);
         }
 
         if (!findTextPanelVisible) {
@@ -1217,7 +1121,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                 match.setLength(matchLength);
                 foundMatches.add(match);
 
-                if (foundMatches.size() == 100 || !searchParameters.isMultipleMatches()) {
+                if (foundMatches.size() == FIND_MATCHES_LIMIT || !searchParameters.isMultipleMatches()) {
                     break;
                 }
             }
@@ -1285,7 +1189,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                 match.setLength(searchData.getDataSize());
                 foundMatches.add(match);
 
-                if (foundMatches.size() == 100 || !searchParameters.isMultipleMatches()) {
+                if (foundMatches.size() == FIND_MATCHES_LIMIT || !searchParameters.isMultipleMatches()) {
                     break;
                 }
             }
@@ -1308,29 +1212,29 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     }
 
     private void loadFromPreferences() {
-        deltaMemoryMode = preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_MEMORY_DELTA_MODE, true);
-        CodeType codeType = CodeType.valueOf(preferences.get(BinaryEditorTopComponent.PREFERENCES_CODE_TYPE, "HEXADECIMAL"));
+        deltaMemoryMode = preferences.isDeltaMemoryMode();
+        CodeType codeType = preferences.getCodeType();
         codeArea.setCodeType(codeType);
         codeTypeComboBox.setSelectedIndex(codeType.ordinal());
-        String selectedEncoding = preferences.get(BinaryEditorTopComponent.PREFERENCES_ENCODING_SELECTED, "UTF-8");
+        String selectedEncoding = preferences.getSelectedEncoding();
         statusPanel.setEncoding(selectedEncoding);
         codeArea.setCharset(Charset.forName(selectedEncoding));
-        int bytesPerLine = preferences.getInt(BinaryEditorTopComponent.PREFERENCES_BYTES_PER_LINE, 16);
+//        int bytesPerLine = preferences.getInt(BinaryEditorTopComponent.PREFERENCES_BYTES_PER_LINE, 16);
 // TODO        codeArea.setLineLength(bytesPerLine);
 
-        boolean showNonprintables = preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_UNPRINTABLES, false);
+        boolean showNonprintables = preferences.isShowNonprintables();
         showUnprintablesToggleButton.setSelected(showNonprintables);
         codeArea.setShowUnprintables(showNonprintables);
 
-        boolean lineWrapping = preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_LINE_WRAPPING, false);
+        boolean lineWrapping = preferences.isRowWrapping();
         codeArea.setRowWrapping(lineWrapping ? RowWrappingMode.WRAPPING : RowWrappingMode.NO_WRAPPING);
         lineWrappingToggleButton.setSelected(lineWrapping);
 
         encodingsHandler.loadFromPreferences(preferences);
 
         // Layout
-        ExtendedCodeAreaLayoutProfile layoutProfile = codeArea.getLayoutProfile();
-        layoutProfile.setShowHeader(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_HEADER, true));
+//        ExtendedCodeAreaLayoutProfile layoutProfile = codeArea.getLayoutProfile();
+//        layoutProfile.setShowHeader(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_HEADER, true));
 //        String headerSpaceTypeName = preferences.get(BinaryEditorTopComponent.PREFERENCES_HEADER_SPACE_TYPE, CodeAreaSpace.SpaceType.HALF_UNIT.name());
 //        codeArea.setHeaderSpaceType(CodeAreaSpace.SpaceType.valueOf(headerSpaceTypeName));
 //        codeArea.setHeaderSpaceSize(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_HEADER_SPACE, 0));
@@ -1343,62 +1247,32 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 //        codeArea.setLineNumberSpecifiedLength(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH, 8));
 //        codeArea.setByteGroupSize(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_BYTE_GROUP_SIZE, 1));
 //        codeArea.setSpaceGroupSize(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_SPACE_GROUP_SIZE, 0));
-        codeArea.setLayoutProfile(layoutProfile);
-
+//        codeArea.setLayoutProfile(layoutProfile);
         // Mode
-        codeArea.setViewMode(CodeAreaViewMode.valueOf(preferences.get(BinaryEditorTopComponent.PREFERENCES_VIEW_MODE, CodeAreaViewMode.DUAL.name())));
-        codeArea.setCodeType(CodeType.valueOf(preferences.get(BinaryEditorTopComponent.PREFERENCES_CODE_TYPE, CodeType.HEXADECIMAL.name())));
-        ((ExtendedHighlightNonAsciiCodeAreaPainter) codeArea.getPainter()).setNonAsciiHighlightingEnabled(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_CODE_COLORIZATION, true));
+        codeArea.setViewMode(preferences.getViewMode());
+        codeArea.setCodeType(preferences.getCodeType());
+        ((ExtendedHighlightNonAsciiCodeAreaPainter) codeArea.getPainter()).setNonAsciiHighlightingEnabled(preferences.isCodeColorization());
         // Memory mode handled from outside by isDeltaMemoryMode() method, worth fixing?
         // Decoration
         ExtendedCodeAreaThemeProfile themeProfile = codeArea.getThemeProfile();
-        themeProfile.setBackgroundPaintMode(convertBackgroundPaintMode(preferences.get(BinaryEditorTopComponent.PREFERENCES_BACKGROUND_MODE, ExtendedBackgroundPaintMode.STRIPED.name())));
-// TODO        codeArea.setLineNumberBackground(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_PAINT_LINE_NUMBERS_BACKGROUND, true));
+        themeProfile.setBackgroundPaintMode(preferences.getBackgroundPaintMode());
+        themeProfile.setPaintRowPosBackground(preferences.isPaintRowPosBackground());
 // TODO        int decorationMode = (preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_HEADER_LINE, true) ? CodeArea.DECORATION_HEADER_LINE : 0)
 // TODO                + (preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_PREVIEW_LINE, true) ? CodeArea.DECORATION_PREVIEW_LINE : 0)
 // TODO                + (preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_BOX, false) ? CodeArea.DECORATION_BOX : 0)
 // TODO                + (preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_LINENUM_LINE, true) ? CodeArea.DECORATION_LINENUM_LINE : 0);
 // TODO        codeArea.setDecorationMode(decorationMode);
         codeArea.setThemeProfile(themeProfile);
-        codeArea.setCodeCharactersCase(CodeCharactersCase.valueOf(preferences.get(BinaryEditorTopComponent.PREFERENCES_HEX_CHARACTERS_CASE, CodeCharactersCase.UPPER.name())));
-        codeArea.setPositionCodeType(PositionCodeType.valueOf(preferences.get(BinaryEditorTopComponent.PREFERENCES_POSITION_CODE_TYPE, PositionCodeType.HEXADECIMAL.name())));
+        codeArea.setCodeCharactersCase(preferences.getCodeCharactersCase());
+        codeArea.setPositionCodeType(preferences.getPositionCodeType());
 
         // Font
-        Boolean useDefaultColor = Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_DEFAULT, Boolean.toString(true)));
+        Boolean useDefaultFont = preferences.isUseDefaultFont();
 
-        if (!useDefaultColor) {
-            String value;
-            Map<TextAttribute, Object> attribs = new HashMap<>();
-            value = preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_FAMILY, null);
-            if (value != null) {
-                attribs.put(TextAttribute.FAMILY, value);
-            }
-            value = preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SIZE, null);
-            if (value != null) {
-                attribs.put(TextAttribute.SIZE, new Integer(value).floatValue());
-            }
-            if (Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_UNDERLINE, null))) {
-                attribs.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_LOW_ONE_PIXEL);
-            }
-            if (Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_STRIKETHROUGH, null))) {
-                attribs.put(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
-            }
-            if (Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_STRONG, null))) {
-                attribs.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
-            }
-            if (Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_ITALIC, null))) {
-                attribs.put(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
-            }
-            if (Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SUBSCRIPT, null))) {
-                attribs.put(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB);
-            }
-            if (Boolean.valueOf(preferences.get(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SUPERSCRIPT, null))) {
-                attribs.put(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUPER);
-            }
-            Font derivedFont = codeArea.getCodeFont().deriveFont(attribs);
-            codeArea.setCodeFont(derivedFont);
+        if (!useDefaultFont) {
+            codeArea.setCodeFont(preferences.getCodeFont(codeArea.getCodeFont()));
         }
-        boolean showValuesPanel = preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_VALUES_PANEL, true);
+        boolean showValuesPanel = preferences.isShowValuesPanel();
         if (showValuesPanel) {
             showValuesPanel();
         }
@@ -1446,13 +1320,6 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     @Override
     public void componentDeactivated() {
         super.componentDeactivated();
-    }
-
-    private ExtendedBackgroundPaintMode convertBackgroundPaintMode(String value) {
-        if ("STRIPPED".equals(value)) {
-            return ExtendedBackgroundPaintMode.STRIPED;
-        }
-        return ExtendedBackgroundPaintMode.valueOf(value);
     }
 
     public static interface CharsetChangeListener {
