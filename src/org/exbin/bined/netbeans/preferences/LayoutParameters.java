@@ -17,7 +17,6 @@ package org.exbin.bined.netbeans.preferences;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.prefs.Preferences;
 import org.exbin.bined.swing.extended.layout.ExtendedCodeAreaLayoutProfile;
 
 /**
@@ -28,8 +27,8 @@ import org.exbin.bined.swing.extended.layout.ExtendedCodeAreaLayoutProfile;
  */
 public class LayoutParameters {
 
-    public static final String PREFERENCES_LAYOUT_COUNT = "layoutsCount";
-    public static final String PREFERENCES_LAYOUT_NAME_PREFIX = "layoutsName.";
+    public static final String PREFERENCES_LAYOUT_PROFILES_COUNT = "layoutProfilesCount";
+    public static final String PREFERENCES_LAYOUT_PROFILE_NAME_PREFIX = "layoutProfileName.";
     public static final String PREFERENCES_LAYOUT_VALUE_PREFIX = "layouts.";
 
     public static final String LAYOUT_SHOW_HEADER = "showHeader";
@@ -44,18 +43,18 @@ public class LayoutParameters {
     public static final String LAYOUT_SPACE_GROUP_SIZE = "spaceGroupSize";
     public static final String LAYOUT_DOUBLE_SPACE_GROUP_SIZE = "doubleSpaceGroupSize";
 
-    private final Preferences preferences;
+    private final PreferencesWrapper preferences;
 
-    public LayoutParameters(Preferences preferences) {
+    public LayoutParameters(PreferencesWrapper preferences) {
         this.preferences = preferences;
     }
 
     public List<String> getLayoutList() {
         List<String> layoutList = new ArrayList<>();
-        int layoutsCount = preferences.getInt(PREFERENCES_LAYOUT_COUNT, 0);
+        int layoutsCount = preferences.getInt(PREFERENCES_LAYOUT_PROFILES_COUNT, 0);
 
         for (int i = 0; i < layoutsCount; i++) {
-            String layoutName = preferences.get(PREFERENCES_LAYOUT_NAME_PREFIX + String.valueOf(i), "");
+            String layoutName = preferences.get(PREFERENCES_LAYOUT_PROFILE_NAME_PREFIX + String.valueOf(i), "");
             layoutList.add(layoutName);
         }
 
@@ -63,16 +62,16 @@ public class LayoutParameters {
     }
 
     public void setLayoutList(List<String> layoutNames) {
-        int prevLayoutsCount = preferences.getInt(PREFERENCES_LAYOUT_COUNT, 0);
+        int prevLayoutsCount = preferences.getInt(PREFERENCES_LAYOUT_PROFILES_COUNT, 0);
         for (int i = 0; i < prevLayoutsCount; i++) {
             clearLayout(i);
         }
 
         int themesCount = layoutNames.size();
-        preferences.putInt(PREFERENCES_LAYOUT_COUNT, themesCount);
+        preferences.putInt(PREFERENCES_LAYOUT_PROFILES_COUNT, themesCount);
 
         for (int i = 0; i < themesCount; i++) {
-            preferences.put(PREFERENCES_LAYOUT_NAME_PREFIX + String.valueOf(i), layoutNames.get(i));
+            preferences.put(PREFERENCES_LAYOUT_PROFILE_NAME_PREFIX + String.valueOf(i), layoutNames.get(i));
         }
     }
 

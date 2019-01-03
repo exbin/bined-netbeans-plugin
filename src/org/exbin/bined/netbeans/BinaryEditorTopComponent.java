@@ -21,7 +21,6 @@ import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -70,7 +69,6 @@ import org.exbin.framework.bined.panel.ReplaceParameters;
 import org.exbin.framework.bined.panel.SearchCondition;
 import org.exbin.framework.bined.panel.SearchParameters;
 import org.exbin.framework.editor.text.TextEncodingStatusApi;
-import org.exbin.framework.editor.text.panel.TextFontOptionsPanel;
 import org.exbin.framework.gui.utils.WindowUtils;
 import org.exbin.framework.gui.utils.handler.OptionsControlHandler;
 import org.exbin.framework.gui.utils.panel.OptionsControlPanel;
@@ -95,13 +93,15 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import org.exbin.framework.bined.BinaryStatusApi;
 import org.exbin.bined.netbeans.panel.BinarySearchPanelApi;
+import org.exbin.bined.netbeans.preferences.PreferencesWrapper;
 import org.exbin.framework.gui.about.panel.AboutPanel;
 import org.exbin.framework.gui.utils.panel.CloseControlPanel;
+import org.openide.util.NbPreferences;
 
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.2.0 2018/12/31
+ * @version 0.2.0 2019/01/03
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.bined//BinaryEditor//EN", autostore = false)
@@ -151,7 +151,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     public BinaryEditorTopComponent() {
         initComponents();
 
-        preferences = new BinaryEditorPreferences();
+        preferences = new BinaryEditorPreferences(new PreferencesWrapper(NbPreferences.forModule(BinaryEditorPreferences.class)));
 
         codeArea = new ExtCodeArea();
         codeArea.setPainter(new ExtendedHighlightNonAsciiCodeAreaPainter(codeArea));

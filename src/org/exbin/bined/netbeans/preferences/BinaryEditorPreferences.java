@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.prefs.Preferences;
 import org.exbin.bined.CodeAreaViewMode;
 import org.exbin.bined.CodeCharactersCase;
 import org.exbin.bined.CodeType;
@@ -30,7 +29,6 @@ import org.exbin.bined.PositionCodeType;
 import org.exbin.bined.extended.theme.ExtendedBackgroundPaintMode;
 import org.exbin.bined.netbeans.EncodingsHandler;
 import org.exbin.framework.editor.text.panel.TextFontOptionsPanel;
-import org.openide.util.NbPreferences;
 
 /**
  * Hexadecimal editor node.
@@ -69,10 +67,10 @@ public class BinaryEditorPreferences {
     public static final String PREFERENCES_CODE_COLORIZATION = "codeColorization";
     public static final String PREFERENCES_SHOW_VALUES_PANEL = "valuesPanel";
 
-    private final Preferences preferences;
+    private final PreferencesWrapper preferences;
 
-    public BinaryEditorPreferences() {
-        preferences = NbPreferences.forModule(BinaryEditorPreferences.class);
+    public BinaryEditorPreferences(PreferencesWrapper preferences) {
+        this.preferences = preferences;
     }
 
     public String getSelectedEncoding() {

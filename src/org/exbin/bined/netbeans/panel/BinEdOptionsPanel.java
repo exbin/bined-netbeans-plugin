@@ -24,7 +24,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import org.exbin.bined.CodeAreaViewMode;
 import org.exbin.bined.CodeCharactersCase;
 import org.exbin.bined.CodeType;
@@ -34,6 +33,7 @@ import org.exbin.bined.delta.DeltaDocument;
 import org.exbin.bined.extended.theme.ExtendedBackgroundPaintMode;
 import org.exbin.bined.highlight.swing.extended.ExtendedHighlightNonAsciiCodeAreaPainter;
 import org.exbin.bined.netbeans.preferences.BinaryEditorPreferences;
+import org.exbin.bined.netbeans.preferences.PreferencesWrapper;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.bined.swing.extended.layout.ExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
@@ -44,6 +44,7 @@ import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
 import org.exbin.framework.gui.utils.panel.DefaultControlPanel;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
+import org.openide.util.NbPreferences;
 
 /**
  * Hexadecimal editor options panel.
@@ -71,7 +72,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
     public BinEdOptionsPanel(BinEdOptionsPanelController controller) {
         this.controller = controller;
         initComponents();
-        preferences = new BinaryEditorPreferences();
+        preferences = new BinaryEditorPreferences(new PreferencesWrapper(NbPreferences.forModule(BinaryEditorPreferences.class)));
 
         categoryModel.addElement(new CategoryItem("Mode", modePanel));
         categoryModel.addElement(new CategoryItem("Layout", layoutPanel));
@@ -79,18 +80,15 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         categoryModel.addElement(new CategoryItem("Fonts & Colors", fontsAndColorPanel));
         categoriesList.setModel(categoryModel);
 
-        categoriesList.addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                int selectedIndex = categoriesList.getSelectedIndex();
-                if (selectedIndex >= 0) {
-                    CategoryItem categoryItem = categoryModel.get(selectedIndex);
-                    currentCategoryPanel = categoryItem.getCategoryPanel();
-                    mainPane.setViewportView(currentCategoryPanel);
-                    mainPane.invalidate();
-                    revalidate();
-                    mainPane.repaint();
-                }
+        categoriesList.addListSelectionListener((ListSelectionEvent e) -> {
+            int selectedIndex = categoriesList.getSelectedIndex();
+            if (selectedIndex >= 0) {
+                CategoryItem categoryItem = categoryModel.get(selectedIndex);
+                currentCategoryPanel = categoryItem.getCategoryPanel();
+                mainPane.setViewportView(currentCategoryPanel);
+                mainPane.invalidate();
+                revalidate();
+                mainPane.repaint();
             }
         });
         categoriesList.setCellRenderer(new DefaultListCellRenderer() {
