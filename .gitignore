@@ -3,6 +3,5 @@
 .nb-gradle-properties
 build/
 target/
-/release
 *~
 /nbproject/private/

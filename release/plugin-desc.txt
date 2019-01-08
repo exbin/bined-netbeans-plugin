@@ -1,0 +1,1 @@
+Basic hexadecimal editor for viewing and editing binary files in hexadecimal and textual dump form. Supports insert/overwrite modes, encoding switching and undo/redo.
