@@ -49,7 +49,7 @@ import org.openide.util.NbPreferences;
 /**
  * Hexadecimal editor options panel.
  *
- * @version 0.2.0 2018/12/31
+ * @version 0.2.0 2019/01/09
  * @author ExBin Project (http://exbin.org)
  */
 public class BinEdOptionsPanel extends javax.swing.JPanel {
@@ -140,25 +140,26 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         memoryModeLabel = new javax.swing.JLabel();
         memoryModeComboBox = new javax.swing.JComboBox<>();
         showValuesPanelCheckBox = new javax.swing.JCheckBox();
-        decorationPanel = new javax.swing.JPanel();
-        hexCharactersModeLabel = new javax.swing.JLabel();
-        backgroundModeLabel = new javax.swing.JLabel();
-        hexCharactersModeComboBox = new javax.swing.JComboBox<>();
-        backgroundModeComboBox = new javax.swing.JComboBox<>();
         positionCodeTypeLabel = new javax.swing.JLabel();
-        lineNumbersBackgroundCheckBox = new javax.swing.JCheckBox();
         positionCodeTypeComboBox = new javax.swing.JComboBox<>();
-        linesPanel = new javax.swing.JPanel();
-        decoratorLineNumLineCheckBox = new javax.swing.JCheckBox();
-        decoratorPreviewLineCheckBox = new javax.swing.JCheckBox();
-        decoratorBoxCheckBox = new javax.swing.JCheckBox();
-        decoratorHeaderLineCheckBox = new javax.swing.JCheckBox();
+        hexCharactersModeLabel = new javax.swing.JLabel();
+        hexCharactersModeComboBox = new javax.swing.JComboBox<>();
+        decorationPanel = new javax.swing.JPanel();
         fontsAndColorPanel = new javax.swing.JPanel();
         fontLabel = new javax.swing.JLabel();
         fontTextField = new javax.swing.JTextField();
         selectFontButton = new javax.swing.JButton();
         useDefaultFontCheckBox = new javax.swing.JCheckBox();
         colorsLabel = new javax.swing.JLabel();
+        themePanel = new javax.swing.JPanel();
+        backgroundModeLabel = new javax.swing.JLabel();
+        backgroundModeComboBox = new javax.swing.JComboBox<>();
+        paintRowPosBackgroundCheckBox = new javax.swing.JCheckBox();
+        linesPanel = new javax.swing.JPanel();
+        decoratorLineNumLineCheckBox = new javax.swing.JCheckBox();
+        decoratorPreviewLineCheckBox = new javax.swing.JCheckBox();
+        decoratorBoxCheckBox = new javax.swing.JCheckBox();
+        decoratorHeaderLineCheckBox = new javax.swing.JCheckBox();
         categoriesLabel = new javax.swing.JLabel();
         categoriesScrollPane = new javax.swing.JScrollPane();
         categoriesList = new javax.swing.JList<>();
@@ -350,6 +351,15 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 
         org.openide.awt.Mnemonics.setLocalizedText(showValuesPanelCheckBox, resourceBundle.getString("showValuesPanelCheckBox.text")); // NOI18N
 
+        org.openide.awt.Mnemonics.setLocalizedText(positionCodeTypeLabel, resourceBundle.getString("positionCodeTypeLabel.text")); // NOI18N
+
+        positionCodeTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "OCTAL", "DECIMAL", "HEXADECIMAL" }));
+        positionCodeTypeComboBox.setSelectedIndex(2);
+
+        org.openide.awt.Mnemonics.setLocalizedText(hexCharactersModeLabel, resourceBundle.getString("hexCharactersModeLabel.text")); // NOI18N
+
+        hexCharactersModeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "LOWER", "UPPER" }));
+
         javax.swing.GroupLayout modePanelLayout = new javax.swing.GroupLayout(modePanel);
         modePanel.setLayout(modePanelLayout);
         modePanelLayout.setHorizontalGroup(
@@ -357,19 +367,30 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
             .addGroup(modePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(modePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(memoryModeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(viewModeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(showNonprintableCharactersCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(codeTypeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(codeColorizationCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(modePanelLayout.createSequentialGroup()
+                        .addComponent(memoryModeLabel)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(modePanelLayout.createSequentialGroup()
                         .addGroup(modePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(viewModeScrollModeLabel)
-                            .addComponent(codeTypeScrollModeLabel)
-                            .addComponent(memoryModeLabel))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(showValuesPanelCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                            .addComponent(hexCharactersModeLabel)
+                            .addComponent(positionCodeTypeLabel))
+                        .addGap(95, 95, 95))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, modePanelLayout.createSequentialGroup()
+                        .addGroup(modePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(memoryModeComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(showValuesPanelCheckBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(codeColorizationCheckBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(showNonprintableCharactersCheckBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(hexCharactersModeComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(positionCodeTypeComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, modePanelLayout.createSequentialGroup()
+                                .addGroup(modePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(viewModeScrollModeLabel)
+                                    .addComponent(codeTypeScrollModeLabel))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(viewModeComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(codeTypeComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap())))
         );
         modePanelLayout.setVerticalGroup(
             modePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -383,6 +404,14 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(codeTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(positionCodeTypeLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(positionCodeTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(hexCharactersModeLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(hexCharactersModeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(showNonprintableCharactersCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(codeColorizationCheckBox)
@@ -395,101 +424,15 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        org.openide.awt.Mnemonics.setLocalizedText(hexCharactersModeLabel, resourceBundle.getString("hexCharactersModeLabel.text")); // NOI18N
-
-        org.openide.awt.Mnemonics.setLocalizedText(backgroundModeLabel, resourceBundle.getString("backgroundModeLabel.text")); // NOI18N
-
-        hexCharactersModeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "LOWER", "UPPER" }));
-
-        backgroundModeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NONE", "PLAIN", "STRIPED", "GRIDDED" }));
-        backgroundModeComboBox.setSelectedIndex(2);
-
-        org.openide.awt.Mnemonics.setLocalizedText(positionCodeTypeLabel, resourceBundle.getString("positionCodeTypeLabel.text")); // NOI18N
-
-        org.openide.awt.Mnemonics.setLocalizedText(lineNumbersBackgroundCheckBox, resourceBundle.getString("lineNumbersBackgroundCheckBox.text")); // NOI18N
-
-        positionCodeTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "OCTAL", "DECIMAL", "HEXADECIMAL" }));
-        positionCodeTypeComboBox.setSelectedIndex(2);
-
-        linesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceBundle.getString("linesPanel.border.title"))); // NOI18N
-
-        org.openide.awt.Mnemonics.setLocalizedText(decoratorLineNumLineCheckBox, resourceBundle.getString("decoratorLineNumLineCheckBox.text")); // NOI18N
-
-        org.openide.awt.Mnemonics.setLocalizedText(decoratorPreviewLineCheckBox, resourceBundle.getString("decoratorPreviewLineCheckBox.text")); // NOI18N
-
-        org.openide.awt.Mnemonics.setLocalizedText(decoratorBoxCheckBox, resourceBundle.getString("decoratorBoxCheckBox.text")); // NOI18N
-
-        org.openide.awt.Mnemonics.setLocalizedText(decoratorHeaderLineCheckBox, resourceBundle.getString("decoratorHeaderLineCheckBox.text")); // NOI18N
-
-        javax.swing.GroupLayout linesPanelLayout = new javax.swing.GroupLayout(linesPanel);
-        linesPanel.setLayout(linesPanelLayout);
-        linesPanelLayout.setHorizontalGroup(
-            linesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(linesPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(linesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(decoratorLineNumLineCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(decoratorPreviewLineCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(decoratorBoxCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(decoratorHeaderLineCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        linesPanelLayout.setVerticalGroup(
-            linesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(linesPanelLayout.createSequentialGroup()
-                .addComponent(decoratorHeaderLineCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(decoratorLineNumLineCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(decoratorPreviewLineCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(decoratorBoxCheckBox))
-        );
-
         javax.swing.GroupLayout decorationPanelLayout = new javax.swing.GroupLayout(decorationPanel);
         decorationPanel.setLayout(decorationPanelLayout);
         decorationPanelLayout.setHorizontalGroup(
             decorationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(decorationPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(decorationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(decorationPanelLayout.createSequentialGroup()
-                        .addComponent(backgroundModeLabel)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(decorationPanelLayout.createSequentialGroup()
-                        .addGroup(decorationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(hexCharactersModeLabel)
-                            .addComponent(positionCodeTypeLabel))
-                        .addGap(138, 138, 138))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, decorationPanelLayout.createSequentialGroup()
-                        .addGroup(decorationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(positionCodeTypeComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(hexCharactersModeComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(backgroundModeComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lineNumbersBackgroundCheckBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(linesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addContainerGap())))
+            .addGap(0, 280, Short.MAX_VALUE)
         );
         decorationPanelLayout.setVerticalGroup(
             decorationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, decorationPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(backgroundModeLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(backgroundModeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lineNumbersBackgroundCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(linesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(hexCharactersModeLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(hexCharactersModeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(positionCodeTypeLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(positionCodeTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGap(0, 334, Short.MAX_VALUE)
         );
 
         org.openide.awt.Mnemonics.setLocalizedText(fontLabel, resourceBundle.getString("fontLabel.text")); // NOI18N
@@ -543,6 +486,84 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        org.openide.awt.Mnemonics.setLocalizedText(backgroundModeLabel, resourceBundle.getString("backgroundModeLabel.text")); // NOI18N
+
+        backgroundModeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NONE", "PLAIN", "STRIPED", "GRIDDED" }));
+        backgroundModeComboBox.setSelectedIndex(2);
+
+        org.openide.awt.Mnemonics.setLocalizedText(paintRowPosBackgroundCheckBox, resourceBundle.getString("paintRowPosBackgroundCheckBox.text")); // NOI18N
+        paintRowPosBackgroundCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                paintRowPosBackgroundCheckBoxActionPerformed(evt);
+            }
+        });
+
+        linesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceBundle.getString("linesPanel.border.title"))); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(decoratorLineNumLineCheckBox, resourceBundle.getString("decoratorLineNumLineCheckBox.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(decoratorPreviewLineCheckBox, resourceBundle.getString("decoratorPreviewLineCheckBox.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(decoratorBoxCheckBox, resourceBundle.getString("decoratorBoxCheckBox.text")); // NOI18N
+
+        org.openide.awt.Mnemonics.setLocalizedText(decoratorHeaderLineCheckBox, resourceBundle.getString("decoratorHeaderLineCheckBox.text")); // NOI18N
+
+        javax.swing.GroupLayout linesPanelLayout = new javax.swing.GroupLayout(linesPanel);
+        linesPanel.setLayout(linesPanelLayout);
+        linesPanelLayout.setHorizontalGroup(
+            linesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(linesPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(linesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(decoratorLineNumLineCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(decoratorPreviewLineCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(decoratorBoxCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(decoratorHeaderLineCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        linesPanelLayout.setVerticalGroup(
+            linesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(linesPanelLayout.createSequentialGroup()
+                .addComponent(decoratorHeaderLineCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(decoratorLineNumLineCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(decoratorPreviewLineCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(decoratorBoxCheckBox))
+        );
+
+        javax.swing.GroupLayout themePanelLayout = new javax.swing.GroupLayout(themePanel);
+        themePanel.setLayout(themePanelLayout);
+        themePanelLayout.setHorizontalGroup(
+            themePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(themePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(themePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(themePanelLayout.createSequentialGroup()
+                        .addComponent(backgroundModeLabel)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, themePanelLayout.createSequentialGroup()
+                        .addGroup(themePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(backgroundModeComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(paintRowPosBackgroundCheckBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 268, Short.MAX_VALUE)
+                            .addComponent(linesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap())))
+        );
+        themePanelLayout.setVerticalGroup(
+            themePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, themePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(backgroundModeLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(backgroundModeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(paintRowPosBackgroundCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(linesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         org.openide.awt.Mnemonics.setLocalizedText(categoriesLabel, "Categories:");
 
         categoriesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -593,6 +614,10 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         WindowUtils.assignGlobalKeyListener(dialog, textFontControlPanel.createOkCancelListener());
         dialog.setVisible(true);
     }//GEN-LAST:event_selectFontButtonActionPerformed
+
+    private void paintRowPosBackgroundCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paintRowPosBackgroundCheckBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_paintRowPosBackgroundCheckBoxActionPerformed
 
     public void load() {
         // Layout
@@ -838,7 +863,6 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
     private javax.swing.JSpinner lineLengthSpinner;
     private javax.swing.JLabel lineNumberLengthLabel;
     private javax.swing.JLabel lineNumberSpaceLabel;
-    private javax.swing.JCheckBox lineNumbersBackgroundCheckBox;
     private javax.swing.JComboBox<String> lineNumbersLengthComboBox;
     private javax.swing.JSpinner lineNumbersLengthSpinner;
     private javax.swing.JPanel lineNumbersPanel;
@@ -849,6 +873,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> memoryModeComboBox;
     private javax.swing.JLabel memoryModeLabel;
     private javax.swing.JPanel modePanel;
+    private javax.swing.JCheckBox paintRowPosBackgroundCheckBox;
     private javax.swing.JComboBox<String> positionCodeTypeComboBox;
     private javax.swing.JLabel positionCodeTypeLabel;
     private javax.swing.JButton selectFontButton;
@@ -858,6 +883,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
     private javax.swing.JCheckBox showValuesPanelCheckBox;
     private javax.swing.JLabel spaceGroupSizeLabel;
     private javax.swing.JSpinner spaceGroupSizeSpinner;
+    private javax.swing.JPanel themePanel;
     private javax.swing.JCheckBox useDefaultFontCheckBox;
     private javax.swing.JComboBox<String> viewModeComboBox;
     private javax.swing.JLabel viewModeScrollModeLabel;
