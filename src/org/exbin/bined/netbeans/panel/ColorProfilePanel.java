@@ -15,6 +15,8 @@
  */
 package org.exbin.bined.netbeans.panel;
 
+import java.awt.BorderLayout;
+import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.gui.utils.LanguageUtils;
 
 /**
@@ -27,8 +29,16 @@ public class ColorProfilePanel extends javax.swing.JPanel {
 
     private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(ColorProfilePanel.class);
 
+    private ExtCodeArea codeArea;
+
     public ColorProfilePanel() {
         initComponents();
+        init();
+    }
+
+    private void init() {
+        codeArea = new ExtCodeArea();
+        previewPanel.add(codeArea, BorderLayout.CENTER);
     }
 
     /**
@@ -42,43 +52,65 @@ public class ColorProfilePanel extends javax.swing.JPanel {
 
         preferencesScrollPane = new javax.swing.JScrollPane();
         preferencesPanel = new javax.swing.JPanel();
+        colorsScrollPane = new javax.swing.JScrollPane();
+        colorsTable = new javax.swing.JTable();
         previewPanel = new javax.swing.JPanel();
+        previewLabel = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
+
+        colorsTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        colorsScrollPane.setViewportView(colorsTable);
 
         javax.swing.GroupLayout preferencesPanelLayout = new javax.swing.GroupLayout(preferencesPanel);
         preferencesPanel.setLayout(preferencesPanelLayout);
         preferencesPanelLayout.setHorizontalGroup(
             preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 397, Short.MAX_VALUE)
+            .addGroup(preferencesPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(colorsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
+                .addContainerGap())
         );
         preferencesPanelLayout.setVerticalGroup(
             preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 428, Short.MAX_VALUE)
+            .addGroup(preferencesPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(colorsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 493, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         preferencesScrollPane.setViewportView(preferencesPanel);
 
         add(preferencesScrollPane, java.awt.BorderLayout.WEST);
 
-        javax.swing.GroupLayout previewPanelLayout = new javax.swing.GroupLayout(previewPanel);
-        previewPanel.setLayout(previewPanelLayout);
-        previewPanelLayout.setHorizontalGroup(
-            previewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 377, Short.MAX_VALUE)
-        );
-        previewPanelLayout.setVerticalGroup(
-            previewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 431, Short.MAX_VALUE)
-        );
+        previewPanel.setLayout(new java.awt.BorderLayout());
+
+        previewLabel.setBackground(javax.swing.UIManager.getDefaults().getColor("Button.darkShadow"));
+        org.openide.awt.Mnemonics.setLocalizedText(previewLabel, resourceBundle.getString("previewLabel.text")); // NOI18N
+        previewLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        previewLabel.setOpaque(true);
+        previewPanel.add(previewLabel, java.awt.BorderLayout.NORTH);
 
         add(previewPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane colorsScrollPane;
+    private javax.swing.JTable colorsTable;
     private javax.swing.JPanel preferencesPanel;
     private javax.swing.JScrollPane preferencesScrollPane;
+    private javax.swing.JLabel previewLabel;
     private javax.swing.JPanel previewPanel;
     // End of variables declaration//GEN-END:variables
 }

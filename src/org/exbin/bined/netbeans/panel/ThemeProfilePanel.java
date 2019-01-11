@@ -15,6 +15,8 @@
  */
 package org.exbin.bined.netbeans.panel;
 
+import java.awt.BorderLayout;
+import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.gui.utils.LanguageUtils;
 
 /**
@@ -27,8 +29,16 @@ public class ThemeProfilePanel extends javax.swing.JPanel {
 
     private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(ThemeProfilePanel.class);
 
+    private ExtCodeArea codeArea;
+
     public ThemeProfilePanel() {
         initComponents();
+        init();
+    }
+    
+    private void init() {
+        codeArea = new ExtCodeArea();
+        previewPanel.add(codeArea, BorderLayout.CENTER);
     }
 
     /**
@@ -51,6 +61,7 @@ public class ThemeProfilePanel extends javax.swing.JPanel {
         decoratorBoxCheckBox = new javax.swing.JCheckBox();
         decoratorHeaderLineCheckBox = new javax.swing.JCheckBox();
         previewPanel = new javax.swing.JPanel();
+        previewLabel = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -133,16 +144,13 @@ public class ThemeProfilePanel extends javax.swing.JPanel {
 
         add(preferencesScrollPane, java.awt.BorderLayout.WEST);
 
-        javax.swing.GroupLayout previewPanelLayout = new javax.swing.GroupLayout(previewPanel);
-        previewPanel.setLayout(previewPanelLayout);
-        previewPanelLayout.setHorizontalGroup(
-            previewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 701, Short.MAX_VALUE)
-        );
-        previewPanelLayout.setVerticalGroup(
-            previewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 638, Short.MAX_VALUE)
-        );
+        previewPanel.setLayout(new java.awt.BorderLayout());
+
+        previewLabel.setBackground(javax.swing.UIManager.getDefaults().getColor("Button.darkShadow"));
+        org.openide.awt.Mnemonics.setLocalizedText(previewLabel, resourceBundle.getString("ThemeProfilePanel.previewLabel.text")); // NOI18N
+        previewLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        previewLabel.setOpaque(true);
+        previewPanel.add(previewLabel, java.awt.BorderLayout.NORTH);
 
         add(previewPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -159,6 +167,7 @@ public class ThemeProfilePanel extends javax.swing.JPanel {
     private javax.swing.JCheckBox paintRowPosBackgroundCheckBox;
     private javax.swing.JPanel preferencesPanel;
     private javax.swing.JScrollPane preferencesScrollPane;
+    private javax.swing.JLabel previewLabel;
     private javax.swing.JPanel previewPanel;
     // End of variables declaration//GEN-END:variables
 }

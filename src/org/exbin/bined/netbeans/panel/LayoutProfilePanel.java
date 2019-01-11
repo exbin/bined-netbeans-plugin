@@ -15,6 +15,8 @@
  */
 package org.exbin.bined.netbeans.panel;
 
+import java.awt.BorderLayout;
+import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.gui.utils.LanguageUtils;
 
 /**
@@ -26,9 +28,17 @@ import org.exbin.framework.gui.utils.LanguageUtils;
 public class LayoutProfilePanel extends javax.swing.JPanel {
 
     private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(LayoutProfilePanel.class);
+    
+    private ExtCodeArea codeArea;
 
     public LayoutProfilePanel() {
         initComponents();
+        init();
+    }
+    
+    private void init() {
+        codeArea = new ExtCodeArea();
+        previewPanel.add(codeArea, BorderLayout.CENTER);
     }
 
     /**
@@ -68,6 +78,7 @@ public class LayoutProfilePanel extends javax.swing.JPanel {
         rowPositionRightSpaceSpinner = new javax.swing.JSpinner();
         halfSpaceGroupSizeSpinner = new javax.swing.JSpinner();
         previewPanel = new javax.swing.JPanel();
+        previewLabel = new javax.swing.JLabel();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -213,12 +224,10 @@ public class LayoutProfilePanel extends javax.swing.JPanel {
                         .addComponent(maxBytesPerRowSpinner)
                         .addComponent(rowPositionPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(spaceGroupSizeSpinner)
-                        .addGroup(preferencesPanelLayout.createSequentialGroup()
-                            .addComponent(spaceGroupSizeLabel)
-                            .addGap(0, 0, Short.MAX_VALUE))
                         .addComponent(doubleSpaceGroupSizeSpinner)
                         .addGroup(preferencesPanelLayout.createSequentialGroup()
                             .addGroup(preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(spaceGroupSizeLabel)
                                 .addComponent(maxBytesPerRowLabel)
                                 .addComponent(wrapLineModeCheckBox)
                                 .addComponent(halfSpaceGroupSizeLabel)
@@ -260,16 +269,13 @@ public class LayoutProfilePanel extends javax.swing.JPanel {
 
         add(preferencesScrollPane, java.awt.BorderLayout.WEST);
 
-        javax.swing.GroupLayout previewPanelLayout = new javax.swing.GroupLayout(previewPanel);
-        previewPanel.setLayout(previewPanelLayout);
-        previewPanelLayout.setHorizontalGroup(
-            previewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        previewPanelLayout.setVerticalGroup(
-            previewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 713, Short.MAX_VALUE)
-        );
+        previewPanel.setLayout(new java.awt.BorderLayout());
+
+        previewLabel.setBackground(javax.swing.UIManager.getDefaults().getColor("Button.darkShadow"));
+        org.openide.awt.Mnemonics.setLocalizedText(previewLabel, resourceBundle.getString("LayoutProfilePanel.previewLabel.text")); // NOI18N
+        previewLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        previewLabel.setOpaque(true);
+        previewPanel.add(previewLabel, java.awt.BorderLayout.NORTH);
 
         add(previewPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -293,6 +299,7 @@ public class LayoutProfilePanel extends javax.swing.JPanel {
     private javax.swing.JSpinner minRowPositionLengthSpinner;
     private javax.swing.JPanel preferencesPanel;
     private javax.swing.JScrollPane preferencesScrollPane;
+    private javax.swing.JLabel previewLabel;
     private javax.swing.JPanel previewPanel;
     private javax.swing.JLabel rowPositionLeftSpaceLabel;
     private javax.swing.JSpinner rowPositionLeftSpaceSpinner;
