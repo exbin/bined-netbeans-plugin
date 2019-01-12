@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.bined.netbeans.preferences;
+package org.exbin.bined.ideplugin.preferences;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,9 +44,9 @@ public class ThemeParameters {
     public static final String THEME_DECORATION_BOX_LINES = THEME_DECORATION_PREFIX + ExtendedCodeAreaDecorations.BOX_LINES.getId();
     public static final String THEME_DECORATION_GROUP_LINES = THEME_DECORATION_PREFIX + ExtendedCodeAreaDecorations.GROUP_LINES.getId();
 
-    private final PreferencesWrapper preferences;
+    private final Preferences preferences;
 
-    public ThemeParameters(PreferencesWrapper preferences) {
+    public ThemeParameters(Preferences preferences) {
         this.preferences = preferences;
     }
 

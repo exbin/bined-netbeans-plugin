@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.bined.netbeans.preferences;
+package org.exbin.bined.ideplugin.preferences;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -62,9 +62,9 @@ public class ColorParameters {
     public static final String UNPRINTABLES_COLOR = "unprintablesColor";
     public static final String UNPRINTABLES_BACKGROUND = "unprintablesBackground";
 
-    private final PreferencesWrapper preferences;
+    private final Preferences preferences;
 
-    public ColorParameters(PreferencesWrapper preferences) {
+    public ColorParameters(Preferences preferences) {
         this.preferences = preferences;
     }
 

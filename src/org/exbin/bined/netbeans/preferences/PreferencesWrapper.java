@@ -15,84 +15,100 @@
  */
 package org.exbin.bined.netbeans.preferences;
 
+import org.exbin.bined.ideplugin.preferences.Preferences;
 import java.util.prefs.BackingStoreException;
-import java.util.prefs.Preferences;
 import org.openide.util.Exceptions;
 
 /**
- * Hexadecimal editor node.
+ * Wrapper for preferences
  *
- * @version 0.2.0 2019/01/03
+ * @version 0.2.0 2019/01/12
  * @author ExBin Project (http://exbin.org)
  */
-public class PreferencesWrapper {
+public class PreferencesWrapper implements Preferences {
 
-    private final Preferences preferences;
+    private final java.util.prefs.Preferences preferences;
 
-    public PreferencesWrapper(Preferences preferences) {
+    public PreferencesWrapper(java.util.prefs.Preferences preferences) {
         this.preferences = preferences;
     }
 
+    @Override
     public void put(String key, String value) {
         preferences.put(key, value);
     }
 
+    @Override
     public String get(String key, String def) {
         return preferences.get(key, def);
     }
 
+    @Override
     public void remove(String key) {
         preferences.remove(key);
     }
 
+    @Override
     public void putInt(String key, int value) {
         preferences.putInt(key, value);
     }
 
+    @Override
     public int getInt(String key, int def) {
         return preferences.getInt(key, def);
     }
 
+    @Override
     public void putLong(String key, long value) {
         preferences.putLong(key, value);
     }
 
+    @Override
     public long getLong(String key, long def) {
         return preferences.getLong(key, def);
     }
 
+    @Override
     public void putBoolean(String key, boolean value) {
         preferences.putBoolean(key, value);
     }
 
+    @Override
     public boolean getBoolean(String key, boolean def) {
         return preferences.getBoolean(key, def);
     }
 
+    @Override
     public void putFloat(String key, float value) {
         preferences.putFloat(key, value);
     }
 
+    @Override
     public float getFloat(String key, float def) {
         return preferences.getFloat(key, def);
     }
 
+    @Override
     public void putDouble(String key, double value) {
         preferences.putDouble(key, value);
     }
 
+    @Override
     public double getDouble(String key, double def) {
         return preferences.getDouble(key, def);
     }
 
+    @Override
     public void putByteArray(String key, byte[] value) {
         preferences.putByteArray(key, value);
     }
 
+    @Override
     public byte[] getByteArray(String key, byte[] def) {
         return preferences.getByteArray(key, def);
     }
 
+    @Override
     public void flush() {
         try {
             preferences.flush();
@@ -101,6 +117,7 @@ public class PreferencesWrapper {
         }
     }
 
+    @Override
     public void sync() {
         try {
             preferences.sync();

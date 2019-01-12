@@ -15,7 +15,7 @@
  */
 package org.exbin.bined.netbeans;
 
-import org.exbin.bined.netbeans.preferences.BinaryEditorPreferences;
+import org.exbin.bined.ideplugin.preferences.BinaryEditorPreferences;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog;
@@ -57,7 +57,7 @@ import org.exbin.bined.highlight.swing.extended.ExtendedHighlightCodeAreaPainter
 import org.exbin.bined.highlight.swing.extended.ExtendedHighlightNonAsciiCodeAreaPainter;
 import org.exbin.bined.netbeans.panel.BinEdOptionsPanelBorder;
 import org.exbin.bined.netbeans.panel.BinarySearchPanel;
-import org.exbin.bined.netbeans.panel.ValuesPanel;
+import org.exbin.bined.ideplugin.panel.ValuesPanel;
 import org.exbin.bined.operation.BinaryDataCommand;
 import org.exbin.bined.operation.swing.CodeAreaOperationCommandHandler;
 import org.exbin.bined.operation.undo.BinaryDataUndoUpdateListener;

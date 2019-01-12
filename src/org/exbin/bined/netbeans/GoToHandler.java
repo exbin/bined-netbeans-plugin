@@ -39,14 +39,13 @@ import org.openide.DialogDisplayer;
  */
 public class GoToHandler {
 
-    private final ResourceBundle resourceBundle;
+    private final ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(GoToHandler.class);
 
     private final ExtCodeArea codeArea;
     private Action goToLineAction;
 
     public GoToHandler(@Nonnull ExtCodeArea codeArea) {
         this.codeArea = codeArea;
-        resourceBundle = LanguageUtils.getResourceBundleByClass(GoToHandler.class);
         init();
     }
 
@@ -67,16 +66,13 @@ public class GoToHandler {
 
                     final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
                     goToPanel.initFocus();
-                    goToControlPanel.setHandler(new DefaultControlHandler() {
-                        @Override
-                        public void controlActionPerformed(DefaultControlHandler.ControlActionType actionType) {
-                            if (actionType == DefaultControlHandler.ControlActionType.OK) {
-                                goToPanel.acceptInput();
-                                codeArea.setCaretPosition(goToPanel.getGoToPosition());
-                            }
-
-                            WindowUtils.closeWindow(dialog);
+                    goToControlPanel.setHandler((DefaultControlHandler.ControlActionType actionType) -> {
+                        if (actionType == DefaultControlHandler.ControlActionType.OK) {
+                            goToPanel.acceptInput();
+                            codeArea.setCaretPosition(goToPanel.getGoToPosition());
                         }
+
+                        WindowUtils.closeWindow(dialog);
                     });
                     WindowUtils.assignGlobalKeyListener(dialog, goToControlPanel.createOkCancelListener());
                     dialog.setVisible(true);

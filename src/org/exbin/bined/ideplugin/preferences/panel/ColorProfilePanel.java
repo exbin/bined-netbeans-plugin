@@ -13,9 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.bined.netbeans.panel;
+package org.exbin.bined.ideplugin.preferences.panel;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import javax.swing.table.DefaultTableCellRenderer;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.gui.utils.LanguageUtils;
 
@@ -28,6 +30,8 @@ import org.exbin.framework.gui.utils.LanguageUtils;
 public class ColorProfilePanel extends javax.swing.JPanel {
 
     private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(ColorProfilePanel.class);
+    
+    private final ColorTableModel colorTableModel = new ColorTableModel();
 
     private ExtCodeArea codeArea;
 
@@ -39,6 +43,8 @@ public class ColorProfilePanel extends javax.swing.JPanel {
     private void init() {
         codeArea = new ExtCodeArea();
         previewPanel.add(codeArea, BorderLayout.CENTER);
+        
+        colorsTable.setDefaultRenderer(Color.class, new DefaultTableCellRenderer());
     }
 
     /**
@@ -59,17 +65,7 @@ public class ColorProfilePanel extends javax.swing.JPanel {
 
         setLayout(new java.awt.BorderLayout());
 
-        colorsTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
+        colorsTable.setModel(colorTableModel);
         colorsScrollPane.setViewportView(colorsTable);
 
         javax.swing.GroupLayout preferencesPanelLayout = new javax.swing.GroupLayout(preferencesPanel);
@@ -78,14 +74,14 @@ public class ColorProfilePanel extends javax.swing.JPanel {
             preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(preferencesPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(colorsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
+                .addComponent(colorsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
                 .addContainerGap())
         );
         preferencesPanelLayout.setVerticalGroup(
             preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(preferencesPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(colorsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 493, Short.MAX_VALUE)
+                .addComponent(colorsScrollPane)
                 .addContainerGap())
         );
 

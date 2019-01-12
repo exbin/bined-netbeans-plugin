@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.bined.netbeans.panel;
+package org.exbin.bined.ideplugin.preferences.panel;
 
 import java.awt.BorderLayout;
 import org.exbin.bined.swing.extended.ExtCodeArea;

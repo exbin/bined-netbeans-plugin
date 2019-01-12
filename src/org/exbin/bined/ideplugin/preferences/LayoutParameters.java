@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.bined.netbeans.preferences;
+package org.exbin.bined.ideplugin.preferences;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,9 +43,9 @@ public class LayoutParameters {
     public static final String LAYOUT_SPACE_GROUP_SIZE = "spaceGroupSize";
     public static final String LAYOUT_DOUBLE_SPACE_GROUP_SIZE = "doubleSpaceGroupSize";
 
-    private final PreferencesWrapper preferences;
+    private final Preferences preferences;
 
-    public LayoutParameters(PreferencesWrapper preferences) {
+    public LayoutParameters(Preferences preferences) {
         this.preferences = preferences;
     }
 

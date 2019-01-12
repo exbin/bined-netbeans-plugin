@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.bined.netbeans.panel;
+package org.exbin.bined.ideplugin.panel;
 
 import java.awt.event.KeyEvent;
 import java.math.BigInteger;
@@ -21,6 +21,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.InputMismatchException;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import org.exbin.bined.CaretMovedListener;
@@ -41,9 +42,10 @@ import org.openide.util.Exceptions;
 /**
  * Values side panel.
  *
- * @version 0.2.0 2018/10/27
+ * @version 0.2.0 2019/01/12
  * @author ExBin Project (http://exbin.org)
  */
+@ParametersAreNonnullByDefault
 public class ValuesPanel extends javax.swing.JPanel {
 
     public static final int UBYTE_MAX_VALUE = 255;
@@ -681,19 +683,13 @@ public class ValuesPanel extends javax.swing.JPanel {
     }
 
     public void enableUpdate() {
-        dataChangedListener = new DataChangedListener() {
-            @Override
-            public void dataChanged() {
-                updateEditationMode();
-                updateValues();
-            }
+        dataChangedListener = () -> {
+            updateEditationMode();
+            updateValues();
         };
         codeArea.addDataChangedListener(dataChangedListener);
-        caretMovedListener = new CaretMovedListener() {
-            @Override
-            public void caretMoved(CaretPosition caretPosition) {
-                updateValues();
-            }
+        caretMovedListener = (CaretPosition caretPosition) -> {
+            updateValues();
         };
         codeArea.addCaretMovedListener(caretMovedListener);
         undoUpdateListener = new BinaryDataUndoUpdateListener() {
@@ -843,11 +839,8 @@ public class ValuesPanel extends javax.swing.JPanel {
         }
 
         private void scheduleNextStep(final ValuesPanelField valuesPanelField) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    updateValue(valuesPanelField);
-                }
+            SwingUtilities.invokeLater(() -> {
+                updateValue(valuesPanelField);
             });
         }
 
@@ -881,12 +874,9 @@ public class ValuesPanel extends javax.swing.JPanel {
             if (valuesPanelField == lastValue) {
                 stopUpdate();
             } else {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        ValuesPanelField nextValue = panelFields[valuesPanelField.ordinal() + 1];
-                        updateValue(nextValue);
-                    }
+                SwingUtilities.invokeLater(() -> {
+                    ValuesPanelField nextValue = panelFields[valuesPanelField.ordinal() + 1];
+                    updateValue(nextValue);
                 });
             }
         }

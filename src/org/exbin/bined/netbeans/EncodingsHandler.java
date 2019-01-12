@@ -15,7 +15,7 @@
  */
 package org.exbin.bined.netbeans;
 
-import org.exbin.bined.netbeans.preferences.BinaryEditorPreferences;
+import org.exbin.bined.ideplugin.preferences.BinaryEditorPreferences;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;

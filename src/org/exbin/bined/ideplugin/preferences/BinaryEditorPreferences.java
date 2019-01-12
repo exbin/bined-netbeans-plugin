@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.bined.netbeans.preferences;
+package org.exbin.bined.ideplugin.preferences;
 
 import java.awt.Font;
 import java.awt.font.TextAttribute;
@@ -67,9 +67,9 @@ public class BinaryEditorPreferences {
     public static final String PREFERENCES_CODE_COLORIZATION = "codeColorization";
     public static final String PREFERENCES_SHOW_VALUES_PANEL = "valuesPanel";
 
-    private final PreferencesWrapper preferences;
+    private final Preferences preferences;
 
-    public BinaryEditorPreferences(PreferencesWrapper preferences) {
+    public BinaryEditorPreferences(Preferences preferences) {
         this.preferences = preferences;
     }
 
