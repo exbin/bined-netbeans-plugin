@@ -28,14 +28,14 @@ import org.exbin.framework.gui.utils.LanguageUtils;
 public class LayoutProfilePanel extends javax.swing.JPanel {
 
     private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(LayoutProfilePanel.class);
-    
+
     private ExtCodeArea codeArea;
 
     public LayoutProfilePanel() {
         initComponents();
         init();
     }
-    
+
     private void init() {
         codeArea = new ExtCodeArea();
         previewPanel.add(codeArea, BorderLayout.CENTER);
@@ -82,15 +82,15 @@ public class LayoutProfilePanel extends javax.swing.JPanel {
 
         setLayout(new java.awt.BorderLayout());
 
-        org.openide.awt.Mnemonics.setLocalizedText(spaceGroupSizeLabel, resourceBundle.getString("spaceGroupSizeLabel.text")); // NOI18N
+        spaceGroupSizeLabel.setText(resourceBundle.getString("spaceGroupSizeLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(wrapLineModeCheckBox, resourceBundle.getString("wrapLineModeCheckBox.text")); // NOI18N
+        wrapLineModeCheckBox.setText(resourceBundle.getString("wrapLineModeCheckBox.text")); // NOI18N
 
         spaceGroupSizeSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
 
-        org.openide.awt.Mnemonics.setLocalizedText(maxBytesPerRowLabel, resourceBundle.getString("maxBytesPerRowLabel.text")); // NOI18N
+        maxBytesPerRowLabel.setText(resourceBundle.getString("maxBytesPerRowLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(doubleSpaceGroupSizeLabel, resourceBundle.getString("doubleSpaceGroupSizeLabel.text")); // NOI18N
+        doubleSpaceGroupSizeLabel.setText(resourceBundle.getString("doubleSpaceGroupSizeLabel.text")); // NOI18N
 
         maxBytesPerRowSpinner.setModel(new javax.swing.SpinnerNumberModel(16, 0, null, 1));
 
@@ -98,13 +98,13 @@ public class LayoutProfilePanel extends javax.swing.JPanel {
 
         headerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceBundle.getString("headerPanel.border.title"))); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(showHeaderCheckBox, resourceBundle.getString("showHeaderCheckBox.text")); // NOI18N
+        showHeaderCheckBox.setText(resourceBundle.getString("showHeaderCheckBox.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(headerTopSpaceLabel, resourceBundle.getString("headerTopSpaceLabel.text")); // NOI18N
+        headerTopSpaceLabel.setText(resourceBundle.getString("headerTopSpaceLabel.text")); // NOI18N
 
         headerTopSpaceSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
 
-        org.openide.awt.Mnemonics.setLocalizedText(headerBottomSpaceLabel, resourceBundle.getString("headerBottomSpaceLabel.text")); // NOI18N
+        headerBottomSpaceLabel.setText(resourceBundle.getString("headerBottomSpaceLabel.text")); // NOI18N
 
         headerBottomSpaceSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
 
@@ -140,27 +140,27 @@ public class LayoutProfilePanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        org.openide.awt.Mnemonics.setLocalizedText(halfSpaceGroupSizeLabel, resourceBundle.getString("halfSpaceGroupSizeLabel.text")); // NOI18N
+        halfSpaceGroupSizeLabel.setText(resourceBundle.getString("halfSpaceGroupSizeLabel.text")); // NOI18N
 
         rowPositionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceBundle.getString("rowPositionPanel.border.title"))); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(showRowPositionCheckBox, resourceBundle.getString("showRowPositionCheckBox.text")); // NOI18N
+        showRowPositionCheckBox.setText(resourceBundle.getString("showRowPositionCheckBox.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(minRowPositionLengthLabel, resourceBundle.getString("minRowPositionLengthLabel.text")); // NOI18N
+        minRowPositionLengthLabel.setText(resourceBundle.getString("minRowPositionLengthLabel.text")); // NOI18N
 
         minRowPositionLengthSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         minRowPositionLengthSpinner.setValue(8);
 
-        org.openide.awt.Mnemonics.setLocalizedText(maxRowPositionLengthLabel, resourceBundle.getString("maxRowPositionLengthLabel.text")); // NOI18N
+        maxRowPositionLengthLabel.setText(resourceBundle.getString("maxRowPositionLengthLabel.text")); // NOI18N
 
         maxRowPositionLengthSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         maxRowPositionLengthSpinner.setValue(8);
 
-        org.openide.awt.Mnemonics.setLocalizedText(rowPositionLeftSpaceLabel, resourceBundle.getString("rowPositionLeftSpaceLabel.text")); // NOI18N
+        rowPositionLeftSpaceLabel.setText(resourceBundle.getString("rowPositionLeftSpaceLabel.text")); // NOI18N
 
         rowPositionLeftSpaceSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
 
-        org.openide.awt.Mnemonics.setLocalizedText(rowPositionRightSpaceLabel, resourceBundle.getString("rowPositionRightSpaceLabel.text")); // NOI18N
+        rowPositionRightSpaceLabel.setText(resourceBundle.getString("rowPositionRightSpaceLabel.text")); // NOI18N
 
         rowPositionRightSpaceSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
 
@@ -272,7 +272,7 @@ public class LayoutProfilePanel extends javax.swing.JPanel {
         previewPanel.setLayout(new java.awt.BorderLayout());
 
         previewLabel.setBackground(javax.swing.UIManager.getDefaults().getColor("Button.darkShadow"));
-        org.openide.awt.Mnemonics.setLocalizedText(previewLabel, resourceBundle.getString("LayoutProfilePanel.previewLabel.text")); // NOI18N
+        previewLabel.setText(resourceBundle.getString("LayoutProfilePanel.previewLabel.text")); // NOI18N
         previewLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         previewLabel.setOpaque(true);
         previewPanel.add(previewLabel, java.awt.BorderLayout.NORTH);

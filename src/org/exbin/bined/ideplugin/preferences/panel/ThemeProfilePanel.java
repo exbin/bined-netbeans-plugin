@@ -35,7 +35,7 @@ public class ThemeProfilePanel extends javax.swing.JPanel {
         initComponents();
         init();
     }
-    
+
     private void init() {
         codeArea = new ExtCodeArea();
         previewPanel.add(codeArea, BorderLayout.CENTER);
@@ -65,22 +65,22 @@ public class ThemeProfilePanel extends javax.swing.JPanel {
 
         setLayout(new java.awt.BorderLayout());
 
-        org.openide.awt.Mnemonics.setLocalizedText(backgroundModeLabel, resourceBundle.getString("backgroundModeLabel.text")); // NOI18N
+        backgroundModeLabel.setText(resourceBundle.getString("backgroundModeLabel.text")); // NOI18N
 
         backgroundModeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NONE", "PLAIN", "STRIPED", "GRIDDED" }));
         backgroundModeComboBox.setSelectedIndex(2);
 
-        org.openide.awt.Mnemonics.setLocalizedText(paintRowPosBackgroundCheckBox, resourceBundle.getString("paintRowPosBackgroundCheckBox.text")); // NOI18N
+        paintRowPosBackgroundCheckBox.setText(resourceBundle.getString("paintRowPosBackgroundCheckBox.text")); // NOI18N
 
         linesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceBundle.getString("linesPanel.border.title"))); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(decoratorLineNumLineCheckBox, resourceBundle.getString("decoratorLineNumLineCheckBox.text")); // NOI18N
+        decoratorLineNumLineCheckBox.setText(resourceBundle.getString("decoratorLineNumLineCheckBox.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(decoratorPreviewLineCheckBox, resourceBundle.getString("decoratorPreviewLineCheckBox.text")); // NOI18N
+        decoratorPreviewLineCheckBox.setText(resourceBundle.getString("decoratorPreviewLineCheckBox.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(decoratorBoxCheckBox, resourceBundle.getString("decoratorBoxCheckBox.text")); // NOI18N
+        decoratorBoxCheckBox.setText(resourceBundle.getString("decoratorBoxCheckBox.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(decoratorHeaderLineCheckBox, resourceBundle.getString("decoratorHeaderLineCheckBox.text")); // NOI18N
+        decoratorHeaderLineCheckBox.setText(resourceBundle.getString("decoratorHeaderLineCheckBox.text")); // NOI18N
 
         javax.swing.GroupLayout linesPanelLayout = new javax.swing.GroupLayout(linesPanel);
         linesPanel.setLayout(linesPanelLayout);
@@ -147,7 +147,7 @@ public class ThemeProfilePanel extends javax.swing.JPanel {
         previewPanel.setLayout(new java.awt.BorderLayout());
 
         previewLabel.setBackground(javax.swing.UIManager.getDefaults().getColor("Button.darkShadow"));
-        org.openide.awt.Mnemonics.setLocalizedText(previewLabel, resourceBundle.getString("ThemeProfilePanel.previewLabel.text")); // NOI18N
+        previewLabel.setText(resourceBundle.getString("ThemeProfilePanel.previewLabel.text")); // NOI18N
         previewLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         previewLabel.setOpaque(true);
         previewPanel.add(previewLabel, java.awt.BorderLayout.NORTH);

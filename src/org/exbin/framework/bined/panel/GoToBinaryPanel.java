@@ -81,20 +81,20 @@ public class GoToBinaryPanel extends javax.swing.JPanel {
         decimalPositionLabel = new javax.swing.JLabel();
         positionSpinner = new javax.swing.JSpinner();
 
-        currentPositionLabel.setText(resourceBundle.getString("GoToHexDialog.currentPositionLabel.text")); // NOI18N
+        currentPositionLabel.setText(resourceBundle.getString("currentPositionLabel.text")); // NOI18N
 
         currentPositionTextField.setEditable(false);
 
-        targetPositionLabel.setText(resourceBundle.getString("GoToHexDialog.targetPositionLabel.text")); // NOI18N
+        targetPositionLabel.setText(resourceBundle.getString("targetPositionLabel.text")); // NOI18N
 
         targetPositionTextField.setEditable(false);
         targetPositionTextField.setText("0");
 
-        goToPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceBundle.getString("GoToHexDialog.goToPanel.border.title"))); // NOI18N
+        goToPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceBundle.getString("goToPanel.border.title"))); // NOI18N
 
         positionTypeButtonGroup.add(absoluteRadioButton);
         absoluteRadioButton.setSelected(true);
-        absoluteRadioButton.setText(resourceBundle.getString("GoToHexDialog.absoluteRadioButton.text")); // NOI18N
+        absoluteRadioButton.setText(resourceBundle.getString("absoluteRadioButton.text")); // NOI18N
         absoluteRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 absoluteRadioButtonActionPerformed(evt);
@@ -102,7 +102,7 @@ public class GoToBinaryPanel extends javax.swing.JPanel {
         });
 
         positionTypeButtonGroup.add(relativeRadioButton);
-        relativeRadioButton.setText(resourceBundle.getString("GoToHexDialog.relativeRadioButton.text")); // NOI18N
+        relativeRadioButton.setText(resourceBundle.getString("relativeRadioButton.text")); // NOI18N
         relativeRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 relativeRadioButtonActionPerformed(evt);
@@ -130,7 +130,7 @@ public class GoToBinaryPanel extends javax.swing.JPanel {
                         .addComponent(decimalPositionLabel)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addComponent(absoluteRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 327, Short.MAX_VALUE)
+            .addComponent(absoluteRadioButton, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
             .addComponent(relativeRadioButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         goToPanelLayout.setVerticalGroup(

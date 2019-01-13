@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.bined.netbeans.preferences;
+package org.exbin.bined.netbeans;
 
 import org.exbin.bined.ideplugin.preferences.Preferences;
 import java.util.prefs.BackingStoreException;

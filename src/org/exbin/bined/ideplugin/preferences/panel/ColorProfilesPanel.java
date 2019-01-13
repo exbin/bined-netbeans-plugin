@@ -16,15 +16,22 @@
  */
 package org.exbin.bined.ideplugin.preferences.panel;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nonnull;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
+import javax.swing.ListModel;
+import javax.swing.event.ListDataListener;
 import org.exbin.bined.swing.extended.color.ExtendedCodeAreaColorProfile;
 import org.exbin.framework.gui.utils.LanguageUtils;
 
 /**
  * Manage list of color profiles panel.
  *
- * @version 0.2.0 2019/01/12
+ * @version 0.2.0 2019/01/13
  * @author ExBin Project (http://exbin.org)
  */
 public class ColorProfilesPanel extends javax.swing.JPanel {
@@ -36,6 +43,36 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
 
     public ColorProfilesPanel() {
         initComponents();
+        init();
+    }
+
+    private void init() {
+        profilesList.setModel(new ListModel<ColorProfile>() {
+            @Override
+            public int getSize() {
+                return colorProfiles.size();
+            }
+
+            @Nonnull
+            @Override
+            public ColorProfile getElementAt(int index) {
+                return colorProfiles.get(index);
+            }
+
+            @Override
+            public void addListDataListener(ListDataListener l) {
+            }
+
+            @Override
+            public void removeListDataListener(ListDataListener l) {
+            }
+        });
+        profilesList.setCellRenderer(new ListCellRenderer<ColorProfile>() {
+            @Override
+            public Component getListCellRendererComponent(JList<? extends ColorProfile> list, ColorProfile value, int index, boolean isSelected, boolean cellHasFocus) {
+                return new JLabel(value.profileName);
+            }
+        });
     }
 
     /**
@@ -65,7 +102,7 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
         });
         profilesListScrollPane.setViewportView(profilesList);
 
-        org.openide.awt.Mnemonics.setLocalizedText(upButton, resourceBundle.getString("upButton.text")); // NOI18N
+        upButton.setText(resourceBundle.getString("upButton.text")); // NOI18N
         upButton.setEnabled(false);
         upButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -73,7 +110,7 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(downButton, resourceBundle.getString("downButton.text")); // NOI18N
+        downButton.setText(resourceBundle.getString("downButton.text")); // NOI18N
         downButton.setEnabled(false);
         downButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -81,14 +118,14 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(addButton, resourceBundle.getString("addButton.text")); // NOI18N
+        addButton.setText(resourceBundle.getString("addButton.text")); // NOI18N
         addButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addButtonActionPerformed(evt);
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(removeButton, resourceBundle.getString("removeButton.text")); // NOI18N
+        removeButton.setText(resourceBundle.getString("removeButton.text")); // NOI18N
         removeButton.setEnabled(false);
         removeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -96,7 +133,7 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(selectAllButton, resourceBundle.getString("selectAllButton.text")); // NOI18N
+        selectAllButton.setText(resourceBundle.getString("selectAllButton.text")); // NOI18N
         selectAllButton.setEnabled(false);
         selectAllButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -104,7 +141,7 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(editButton, resourceBundle.getString("editButton.text")); // NOI18N
+        editButton.setText(resourceBundle.getString("editButton.text")); // NOI18N
         editButton.setEnabled(false);
         editButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -112,7 +149,7 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(hideButton, resourceBundle.getString("hideButton.text")); // NOI18N
+        hideButton.setText(resourceBundle.getString("hideButton.text")); // NOI18N
         hideButton.setEnabled(false);
         hideButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

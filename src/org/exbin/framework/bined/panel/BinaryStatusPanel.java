@@ -336,6 +336,11 @@ public class BinaryStatusPanel extends javax.swing.JPanel implements BinaryStatu
     public void setEditationMode(EditationMode editationMode, EditationOperation editationOperation) {
         this.editationOperation = editationOperation;
         switch (editationMode) {
+            case READ_ONLY: {
+                editationModeLabel.setText(READONLY_EDITATION_MODE_LABEL);
+                break;
+            }
+            case CAPPED:
             case EXPANDING: {
                 switch (editationOperation) {
                     case INSERT: {
@@ -346,11 +351,9 @@ public class BinaryStatusPanel extends javax.swing.JPanel implements BinaryStatu
                         editationModeLabel.setText(OVERWRITE_EDITATION_MODE_LABEL);
                         break;
                     }
+                    default:
+                        throw new IllegalStateException("Unexpected editation operation " + editationOperation.name());
                 }
-            }
-            case READ_ONLY: {
-                editationModeLabel.setText(READONLY_EDITATION_MODE_LABEL);
-                break;
             }
             case INPLACE: {
                 editationModeLabel.setText(INPLACE_EDITATION_MODE_LABEL);
@@ -362,8 +365,8 @@ public class BinaryStatusPanel extends javax.swing.JPanel implements BinaryStatu
     }
 
     @Override
-    public void setControlHandler(StatusControlHandler editationModeChange) {
-        this.statusControlHandler = editationModeChange;
+    public void setControlHandler(StatusControlHandler statusControlHandler) {
+        this.statusControlHandler = statusControlHandler;
     }
 
     @Override

@@ -93,7 +93,6 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import org.exbin.framework.bined.BinaryStatusApi;
 import org.exbin.bined.netbeans.panel.BinarySearchPanelApi;
-import org.exbin.bined.netbeans.preferences.PreferencesWrapper;
 import org.exbin.framework.gui.about.panel.AboutPanel;
 import org.exbin.framework.gui.utils.panel.CloseControlPanel;
 import org.openide.util.NbPreferences;

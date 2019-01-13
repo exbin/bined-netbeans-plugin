@@ -50,7 +50,7 @@ public class ColorCellPanel extends javax.swing.JPanel implements TableCellRende
         colorLabel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         colorLabel.setOpaque(true);
 
-        org.openide.awt.Mnemonics.setLocalizedText(colorButton, "Edit...");
+        colorButton.setText("Edit...");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

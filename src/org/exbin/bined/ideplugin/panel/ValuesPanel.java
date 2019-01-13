@@ -112,7 +112,7 @@ public class ValuesPanel extends javax.swing.JPanel {
         signedRadioButton1 = new javax.swing.JRadioButton();
         littleEndianRadioButton = new javax.swing.JRadioButton();
 
-        org.openide.awt.Mnemonics.setLocalizedText(binaryLabel, "Binary");
+        binaryLabel.setText("Binary"); // NOI18N
 
         binaryCheckBox0.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -162,7 +162,7 @@ public class ValuesPanel extends javax.swing.JPanel {
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(byteLabel, "Byte");
+        byteLabel.setText("Byte");
 
         byteTextField.setEditable(false);
         byteTextField.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -171,7 +171,7 @@ public class ValuesPanel extends javax.swing.JPanel {
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(wordLabel, "Word");
+        wordLabel.setText("Word");
 
         wordTextField.setEditable(false);
         wordTextField.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -180,7 +180,7 @@ public class ValuesPanel extends javax.swing.JPanel {
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(intLabel, "Integer");
+        intLabel.setText("Integer");
 
         intTextField.setEditable(false);
         intTextField.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -189,7 +189,7 @@ public class ValuesPanel extends javax.swing.JPanel {
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(longLabel, "Long");
+        longLabel.setText("Long");
 
         longTextField.setEditable(false);
         longTextField.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -198,7 +198,7 @@ public class ValuesPanel extends javax.swing.JPanel {
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(floatLabel, "Float");
+        floatLabel.setText("Float");
 
         floatTextField.setEditable(false);
         floatTextField.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -207,7 +207,7 @@ public class ValuesPanel extends javax.swing.JPanel {
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(doubleLabel, "Double");
+        doubleLabel.setText("Double");
 
         doubleTextField.setEditable(false);
         doubleTextField.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -216,7 +216,7 @@ public class ValuesPanel extends javax.swing.JPanel {
             }
         });
 
-        org.openide.awt.Mnemonics.setLocalizedText(characterLabel, "Character");
+        characterLabel.setText("Character");
 
         characterTextField.setEditable(false);
         characterTextField.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -227,7 +227,7 @@ public class ValuesPanel extends javax.swing.JPanel {
 
         endianButtonGroup.add(bigEndianRadioButton);
         bigEndianRadioButton.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(bigEndianRadioButton, "BE");
+        bigEndianRadioButton.setText("BE");
         bigEndianRadioButton.setToolTipText("Big Endian");
         bigEndianRadioButton.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -239,7 +239,7 @@ public class ValuesPanel extends javax.swing.JPanel {
 
         integerSignButtonGroup.add(signedRadioButton);
         signedRadioButton.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(signedRadioButton, "Sig");
+        signedRadioButton.setText("Sig");
         signedRadioButton.setToolTipText("Signed Integers");
         signedRadioButton.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -248,7 +248,7 @@ public class ValuesPanel extends javax.swing.JPanel {
         });
 
         integerSignButtonGroup.add(signedRadioButton1);
-        org.openide.awt.Mnemonics.setLocalizedText(signedRadioButton1, "Uns");
+        signedRadioButton1.setText("Uns");
         signedRadioButton1.setToolTipText("Unsigned Integers");
         signedRadioButton1.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -257,7 +257,7 @@ public class ValuesPanel extends javax.swing.JPanel {
         });
 
         endianButtonGroup.add(littleEndianRadioButton);
-        org.openide.awt.Mnemonics.setLocalizedText(littleEndianRadioButton, "LE");
+        littleEndianRadioButton.setText("LE");
         littleEndianRadioButton.setToolTipText("Little Endian");
         littleEndianRadioButton.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -703,7 +703,9 @@ public class ValuesPanel extends javax.swing.JPanel {
                 updateValues();
             }
         };
-        undoHandler.addUndoUpdateListener(undoUpdateListener);
+        if (undoHandler != null) {
+            undoHandler.addUndoUpdateListener(undoUpdateListener);
+        }
         updateEditationMode();
         updateValues();
     }
@@ -711,7 +713,9 @@ public class ValuesPanel extends javax.swing.JPanel {
     public void disableUpdate() {
         codeArea.removeDataChangedListener(dataChangedListener);
         codeArea.removeCaretMovedListener(caretMovedListener);
-        undoHandler.addUndoUpdateListener(undoUpdateListener);
+        if (undoHandler != null) {
+            undoHandler.addUndoUpdateListener(undoUpdateListener);
+        }
     }
 
     public void updateEditationMode() {
@@ -773,10 +777,12 @@ public class ValuesPanel extends javax.swing.JPanel {
                 command = new ModifyDataCommand(codeArea, dataPosition, byteArrayData);
             }
 
-            try {
-                undoHandler.execute(command);
-            } catch (BinaryDataOperationException ex) {
-                Exceptions.printStackTrace(ex);
+            if (undoHandler != null) {
+                try {
+                    undoHandler.execute(command);
+                } catch (BinaryDataOperationException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
             }
         }
         codeArea.setCaretPosition(oldDataPosition);

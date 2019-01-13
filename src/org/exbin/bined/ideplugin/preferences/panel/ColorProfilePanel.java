@@ -30,7 +30,7 @@ import org.exbin.framework.gui.utils.LanguageUtils;
 public class ColorProfilePanel extends javax.swing.JPanel {
 
     private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(ColorProfilePanel.class);
-    
+
     private final ColorTableModel colorTableModel = new ColorTableModel();
 
     private ExtCodeArea codeArea;
@@ -43,7 +43,7 @@ public class ColorProfilePanel extends javax.swing.JPanel {
     private void init() {
         codeArea = new ExtCodeArea();
         previewPanel.add(codeArea, BorderLayout.CENTER);
-        
+
         colorsTable.setDefaultRenderer(Color.class, new DefaultTableCellRenderer());
     }
 
@@ -92,7 +92,7 @@ public class ColorProfilePanel extends javax.swing.JPanel {
         previewPanel.setLayout(new java.awt.BorderLayout());
 
         previewLabel.setBackground(javax.swing.UIManager.getDefaults().getColor("Button.darkShadow"));
-        org.openide.awt.Mnemonics.setLocalizedText(previewLabel, resourceBundle.getString("previewLabel.text")); // NOI18N
+        previewLabel.setText(resourceBundle.getString("previewLabel.text")); // NOI18N
         previewLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
         previewLabel.setOpaque(true);
         previewPanel.add(previewLabel, java.awt.BorderLayout.NORTH);
