@@ -4,7 +4,7 @@
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="1"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
-    <AuxValue name="FormSettings_formBundle" type="java.lang.String" value="org/exbin/bined/ideplugin/preferences/panel/resources/ThemeProfilePanel"/>
+    <AuxValue name="FormSettings_formBundle" type="java.lang.String" value="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel"/>
     <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
     <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="true"/>
@@ -72,7 +72,7 @@
             <Component class="javax.swing.JLabel" name="backgroundModeLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/bined/ideplugin/preferences/panel/resources/ThemeProfilePanel.properties" key="backgroundModeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="backgroundModeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
@@ -95,7 +95,7 @@
             <Component class="javax.swing.JCheckBox" name="paintRowPosBackgroundCheckBox">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/bined/ideplugin/preferences/panel/resources/ThemeProfilePanel.properties" key="paintRowPosBackgroundCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="paintRowPosBackgroundCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
@@ -104,7 +104,7 @@
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                     <TitledBorder title="Lines">
-                      <ResourceString PropertyName="titleX" bundle="org/exbin/bined/ideplugin/preferences/panel/resources/ThemeProfilePanel.properties" key="linesPanel.border.title" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString PropertyName="titleX" bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="linesPanel.border.title" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </TitledBorder>
                   </Border>
                 </Property>
@@ -143,28 +143,28 @@
                 <Component class="javax.swing.JCheckBox" name="decoratorLineNumLineCheckBox">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/exbin/bined/ideplugin/preferences/panel/resources/ThemeProfilePanel.properties" key="decoratorLineNumLineCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="decoratorLineNumLineCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="decoratorPreviewLineCheckBox">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/exbin/bined/ideplugin/preferences/panel/resources/ThemeProfilePanel.properties" key="decoratorPreviewLineCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="decoratorPreviewLineCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="decoratorBoxCheckBox">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/exbin/bined/ideplugin/preferences/panel/resources/ThemeProfilePanel.properties" key="decoratorBoxCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="decoratorBoxCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="decoratorHeaderLineCheckBox">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/exbin/bined/ideplugin/preferences/panel/resources/ThemeProfilePanel.properties" key="decoratorHeaderLineCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="decoratorHeaderLineCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -189,7 +189,7 @@
               <Color blue="2c" green="2a" id="Button.darkShadow" palette="3" red="27" type="palette"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/bined/ideplugin/preferences/panel/resources/ThemeProfilePanel.properties" key="ThemeProfilePanel.previewLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="ThemeProfilePanel.previewLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">

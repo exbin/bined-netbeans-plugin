@@ -15,7 +15,7 @@
  */
 package org.exbin.bined.netbeans;
 
-import org.exbin.bined.ideplugin.preferences.Preferences;
+import org.exbin.framework.bined.preferences.Preferences;
 import java.util.prefs.BackingStoreException;
 import org.openide.util.Exceptions;
 

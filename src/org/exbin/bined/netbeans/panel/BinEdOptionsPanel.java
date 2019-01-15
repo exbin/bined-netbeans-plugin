@@ -31,7 +31,7 @@ import org.exbin.bined.capability.RowWrappingCapable;
 import org.exbin.bined.delta.DeltaDocument;
 import org.exbin.bined.extended.theme.ExtendedBackgroundPaintMode;
 import org.exbin.bined.highlight.swing.extended.ExtendedHighlightNonAsciiCodeAreaPainter;
-import org.exbin.bined.ideplugin.preferences.BinaryEditorPreferences;
+import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
 import org.exbin.bined.netbeans.PreferencesWrapper;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.bined.swing.extended.layout.ExtendedCodeAreaLayoutProfile;

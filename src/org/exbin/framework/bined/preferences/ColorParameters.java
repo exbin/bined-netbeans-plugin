@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.bined.ideplugin.preferences;
+package org.exbin.framework.bined.preferences;
 
 import java.awt.Color;
 import java.util.ArrayList;
