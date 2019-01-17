@@ -36,6 +36,7 @@ import org.exbin.bined.netbeans.PreferencesWrapper;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.bined.swing.extended.layout.ExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
+import org.exbin.framework.bined.preferences.panel.ColorProfilesPanel;
 import org.exbin.framework.editor.text.panel.TextFontPanel;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
@@ -48,7 +49,7 @@ import org.openide.util.NbPreferences;
 /**
  * Hexadecimal editor options panel.
  *
- * @version 0.2.0 2019/01/09
+ * @version 0.2.0 2019/01/17
  * @author ExBin Project (http://exbin.org)
  */
 public class BinEdOptionsPanel extends javax.swing.JPanel {
@@ -62,6 +63,8 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 
     private Font binEdDefaultFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
     private Font binEdFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
+    
+    private final ColorProfilesPanel colorProfilesPanel = new ColorProfilesPanel();
 
     public BinEdOptionsPanel() {
         this(null);
@@ -75,8 +78,9 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 
         categoryModel.addElement(new CategoryItem("Mode", modePanel));
         categoryModel.addElement(new CategoryItem("Layout", layoutPanel));
-        categoryModel.addElement(new CategoryItem("Decoration", decorationPanel));
+//        categoryModel.addElement(new CategoryItem("Decoration", decorationPanel));
         categoryModel.addElement(new CategoryItem("Fonts & Colors", fontsAndColorPanel));
+        categoryModel.addElement(new CategoryItem("Colors", colorProfilesPanel));
         categoriesList.setModel(categoryModel);
 
         categoriesList.addListSelectionListener((ListSelectionEvent e) -> {
@@ -143,7 +147,6 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         positionCodeTypeComboBox = new javax.swing.JComboBox<>();
         hexCharactersModeLabel = new javax.swing.JLabel();
         hexCharactersModeComboBox = new javax.swing.JComboBox<>();
-        decorationPanel = new javax.swing.JPanel();
         fontsAndColorPanel = new javax.swing.JPanel();
         fontLabel = new javax.swing.JLabel();
         fontTextField = new javax.swing.JTextField();
@@ -421,17 +424,6 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(memoryModeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        javax.swing.GroupLayout decorationPanelLayout = new javax.swing.GroupLayout(decorationPanel);
-        decorationPanel.setLayout(decorationPanelLayout);
-        decorationPanelLayout.setHorizontalGroup(
-            decorationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 280, Short.MAX_VALUE)
-        );
-        decorationPanelLayout.setVerticalGroup(
-            decorationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 334, Short.MAX_VALUE)
         );
 
         org.openide.awt.Mnemonics.setLocalizedText(fontLabel, resourceBundle.getString("fontLabel.text")); // NOI18N
@@ -843,7 +835,6 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> codeTypeComboBox;
     private javax.swing.JLabel codeTypeScrollModeLabel;
     private javax.swing.JLabel colorsLabel;
-    private javax.swing.JPanel decorationPanel;
     private javax.swing.JCheckBox decoratorBoxCheckBox;
     private javax.swing.JCheckBox decoratorHeaderLineCheckBox;
     private javax.swing.JCheckBox decoratorLineNumLineCheckBox;

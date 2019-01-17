@@ -17,38 +17,31 @@
 package org.exbin.framework.bined.preferences.panel;
 
 import java.awt.Component;
-import java.awt.Dialog;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListModel;
 import javax.swing.event.ListDataListener;
 import org.exbin.bined.swing.extended.color.ExtendedCodeAreaColorProfile;
 import org.exbin.framework.gui.utils.LanguageUtils;
-import org.exbin.framework.gui.utils.WindowUtils;
-import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
-import org.exbin.framework.gui.utils.panel.DefaultControlPanel;
-import org.openide.DialogDescriptor;
-import org.openide.DialogDisplayer;
 
 /**
- * Manage list of color profiles panel.
+ * Manage list of theme profiles panel.
  *
  * @version 0.2.0 2019/01/17
  * @author ExBin Project (http://exbin.org)
  */
-public class ColorProfilesPanel extends javax.swing.JPanel {
+public class ThemeProfilesPanel extends javax.swing.JPanel {
 
-    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(ColorProfilesPanel.class);
+    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(ThemeProfilesPanel.class);
 
     private boolean modified = false;
     private final List<ColorProfile> colorProfiles = new ArrayList<>();
 
-    public ColorProfilesPanel() {
+    public ThemeProfilesPanel() {
         initComponents();
         init();
     }
@@ -102,11 +95,6 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
         editButton = new javax.swing.JButton();
         hideButton = new javax.swing.JButton();
 
-        profilesList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "(build-in colors profile)" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         profilesListScrollPane.setViewportView(profilesList);
 
         upButton.setText(resourceBundle.getString("upButton.text")); // NOI18N
@@ -256,20 +244,6 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_downButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        ColorProfilePanel colorProfilePanel = new ColorProfilePanel();
-        DefaultControlPanel controlPanel = new DefaultControlPanel();
-        JPanel dialogPanel = WindowUtils.createDialogPanel(colorProfilePanel, controlPanel);
-        DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Manage Colors", true, new Object[0], null, 0, null, null);
-        final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
-        controlPanel.setHandler((DefaultControlHandler.ControlActionType actionType) -> {
-            if (actionType != DefaultControlHandler.ControlActionType.CANCEL) {
-                // TODO
-            }
-
-            WindowUtils.closeWindow(dialog);
-        });
-        dialog.setVisible(true);
-
 //        if (addEncodingsOperation != null) {
 //            List<String> encodings = addEncodingsOperation.run(((EncodingsListModel) profilesList.getModel()).getCharsets());
 //            if (encodings != null) {

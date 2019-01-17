@@ -17,7 +17,6 @@ package org.exbin.framework.bined.preferences.panel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import javax.swing.table.DefaultTableCellRenderer;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.gui.utils.LanguageUtils;
 
@@ -44,7 +43,7 @@ public class ColorProfilePanel extends javax.swing.JPanel {
         codeArea = new ExtCodeArea();
         previewPanel.add(codeArea, BorderLayout.CENTER);
 
-        colorsTable.setDefaultRenderer(Color.class, new DefaultTableCellRenderer());
+        colorsTable.setDefaultRenderer(Color.class, new ColorCellTableRenderer());
     }
 
     /**

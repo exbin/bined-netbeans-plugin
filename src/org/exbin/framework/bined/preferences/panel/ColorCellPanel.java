@@ -19,16 +19,15 @@ import java.awt.Color;
 import java.awt.Component;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JTable;
-import javax.swing.table.TableCellRenderer;
 
 /**
- * Table model for Color profile panel.
+ * Color cell panel for color profile panel.
  *
- * @version 0.2.0 2019/01/12
+ * @version 0.2.0 2019/01/17
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
-public class ColorCellPanel extends javax.swing.JPanel implements TableCellRenderer {
+public class ColorCellPanel extends javax.swing.JPanel {
 
     public ColorCellPanel(Color color) {
         initComponents();
@@ -78,8 +77,4 @@ public class ColorCellPanel extends javax.swing.JPanel implements TableCellRende
     private javax.swing.JLabel colorLabel;
     // End of variables declaration//GEN-END:variables
 
-    @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        return new ColorCellPanel((Color) value);
-    }
 }
