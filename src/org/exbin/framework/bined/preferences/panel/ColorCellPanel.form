@@ -18,7 +18,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="colorLabel" min="-2" pref="86" max="-2" attributes="0"/>
+              <Component id="colorLabel" pref="80" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="colorButton" min="-2" max="-2" attributes="0"/>
           </Group>
@@ -26,12 +26,8 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="colorLabel" min="-2" pref="20" max="-2" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
-          </Group>
-          <Component id="colorButton" alignment="1" max="32767" attributes="0"/>
+          <Component id="colorLabel" pref="20" max="32767" attributes="0"/>
+          <Component id="colorButton" pref="0" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -49,7 +45,11 @@
     <Component class="javax.swing.JButton" name="colorButton">
       <Properties>
         <Property name="text" type="java.lang.String" value="Edit..."/>
+        <Property name="alignmentY" type="float" value="0.0"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="colorButtonActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

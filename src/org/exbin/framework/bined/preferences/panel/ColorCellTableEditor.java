@@ -17,9 +17,11 @@ package org.exbin.framework.bined.preferences.panel;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.util.EventObject;
 import javax.annotation.ParametersAreNonnullByDefault;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.JTable;
+import javax.swing.event.CellEditorListener;
+import javax.swing.table.TableCellEditor;
 
 /**
  * Table model for color profile panel.
@@ -28,13 +30,13 @@ import javax.swing.JTable;
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
-public class ColorCellTableRenderer implements TableCellRenderer {
+public class ColorCellTableEditor implements TableCellEditor {
 
-    public ColorCellTableRenderer() {
+    public ColorCellTableEditor() {
     }
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         return new ColorCellPanel(new ColorCellPanel.ColorHandler() {
             @Override
             public Color getColor() {
@@ -48,5 +50,37 @@ public class ColorCellTableRenderer implements TableCellRenderer {
                 model.setValueAt(color, row, column);
             }
         });
+    }
+
+    @Override
+    public Object getCellEditorValue() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean isCellEditable(EventObject anEvent) {
+        return true;
+    }
+
+    @Override
+    public boolean shouldSelectCell(EventObject anEvent) {
+        return true;
+    }
+
+    @Override
+    public boolean stopCellEditing() {
+        return true;
+    }
+
+    @Override
+    public void cancelCellEditing() {
+    }
+
+    @Override
+    public void addCellEditorListener(CellEditorListener l) {
+    }
+
+    @Override
+    public void removeCellEditorListener(CellEditorListener l) {
     }
 }

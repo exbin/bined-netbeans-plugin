@@ -39,14 +39,14 @@ import org.exbin.bined.swing.extended.color.ExtendedCodeAreaColorProfile;
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
-public class ColorTableModel implements TableModel {
+public class ColorProfileTableModel implements TableModel {
 
     private final List<TableModelListener> listeners = new ArrayList<>();
 
     private final List<ColorRow> rows = new ArrayList<>();
     private ExtendedCodeAreaColorProfile colorProfile;
 
-    public ColorTableModel() {
+    public ColorProfileTableModel() {
         init();
     }
 
@@ -122,7 +122,14 @@ public class ColorTableModel implements TableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return false;
+        switch (columnIndex) {
+            case 0:
+                return false;
+            case 1:
+                return true;
+        }
+
+        throw new InvalidParameterException("Unexpected column index " + columnIndex);
     }
 
     @Override
@@ -147,6 +154,7 @@ public class ColorTableModel implements TableModel {
 
                 colorProfile.addColor(rows.get(rowIndex).colorType, (Color) aValue);
                 notifyAllListeners(rowIndex);
+                return;
             }
         }
 

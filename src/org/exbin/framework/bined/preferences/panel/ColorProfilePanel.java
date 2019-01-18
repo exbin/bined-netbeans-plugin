@@ -18,19 +18,20 @@ package org.exbin.framework.bined.preferences.panel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import org.exbin.bined.swing.extended.ExtCodeArea;
+import org.exbin.bined.swing.extended.color.ExtendedCodeAreaColorProfile;
 import org.exbin.framework.gui.utils.LanguageUtils;
 
 /**
  * Color profile panel.
  *
- * @version 0.2.0 2019/01/10
+ * @version 0.2.0 2019/01/18
  * @author ExBin Project (http://exbin.org)
  */
 public class ColorProfilePanel extends javax.swing.JPanel {
 
     private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(ColorProfilePanel.class);
 
-    private final ColorTableModel colorTableModel = new ColorTableModel();
+    private final ColorProfileTableModel colorTableModel = new ColorProfileTableModel();
 
     private ExtCodeArea codeArea;
 
@@ -44,6 +45,9 @@ public class ColorProfilePanel extends javax.swing.JPanel {
         previewPanel.add(codeArea, BorderLayout.CENTER);
 
         colorsTable.setDefaultRenderer(Color.class, new ColorCellTableRenderer());
+        colorsTable.setDefaultEditor(Color.class, new ColorCellTableEditor());
+
+        colorTableModel.setColorProfile((ExtendedCodeAreaColorProfile) codeArea.getColorsProfile());
     }
 
     /**
