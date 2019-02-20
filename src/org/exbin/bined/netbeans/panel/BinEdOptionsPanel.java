@@ -29,12 +29,13 @@ import org.exbin.bined.CodeType;
 import org.exbin.bined.PositionCodeType;
 import org.exbin.bined.capability.RowWrappingCapable;
 import org.exbin.bined.delta.DeltaDocument;
+import org.exbin.bined.extended.layout.ExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.extended.theme.ExtendedBackgroundPaintMode;
 import org.exbin.bined.highlight.swing.extended.ExtendedHighlightNonAsciiCodeAreaPainter;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
 import org.exbin.bined.netbeans.PreferencesWrapper;
 import org.exbin.bined.swing.extended.ExtCodeArea;
-import org.exbin.bined.swing.extended.layout.ExtendedCodeAreaLayoutProfile;
+import org.exbin.bined.swing.extended.layout.DefaultExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
 import org.exbin.framework.bined.preferences.panel.ColorProfilesPanel;
 import org.exbin.framework.editor.text.panel.TextFontPanel;
@@ -63,7 +64,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 
     private Font binEdDefaultFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
     private Font binEdFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
-    
+
     private final ColorProfilesPanel colorProfilesPanel = new ColorProfilesPanel();
 
     public BinEdOptionsPanel() {
@@ -743,7 +744,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         ExtendedCodeAreaLayoutProfile layoutProfile = codeArea.getLayoutProfile();
         codeArea.setRowWrapping(wrapLineModeCheckBox.isSelected() ? RowWrappingCapable.RowWrappingMode.WRAPPING : RowWrappingCapable.RowWrappingMode.NO_WRAPPING);
 // TODO        codeArea.setLineLength((Integer) lineLengthSpinner.getValue());
-        layoutProfile.setShowHeader(showHeaderCheckBox.isSelected());
+        ((DefaultExtendedCodeAreaLayoutProfile) layoutProfile).setShowHeader(showHeaderCheckBox.isSelected());
 //        codeArea.setHeaderSpaceType(CodeAreaSpace.SpaceType.values()[headerSpaceComboBox.getSelectedIndex()]);
 //        codeArea.setHeaderSpaceSize((Integer) headerSpaceSpinner.getValue());
 //        codeArea.setShowLineNumbers(showLineNumbersCheckBox.isSelected());

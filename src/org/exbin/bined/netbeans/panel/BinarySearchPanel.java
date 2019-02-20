@@ -32,9 +32,10 @@ import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import org.exbin.bined.ScrollBarVisibility;
 import org.exbin.bined.capability.RowWrappingCapable;
+import org.exbin.bined.extended.layout.ExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.extended.theme.ExtendedBackgroundPaintMode;
 import org.exbin.bined.swing.extended.ExtCodeArea;
-import org.exbin.bined.swing.extended.layout.ExtendedCodeAreaLayoutProfile;
+import org.exbin.bined.swing.extended.layout.DefaultExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
 import org.exbin.framework.bined.CodeAreaPopupMenuHandler;
 import org.exbin.framework.bined.panel.FindBinaryPanel;
@@ -94,8 +95,8 @@ public class BinarySearchPanel extends javax.swing.JPanel {
     private void init() {
         {
             ExtendedCodeAreaLayoutProfile layoutProfile = hexadecimalRenderer.getLayoutProfile();
-            layoutProfile.setShowHeader(false);
-            layoutProfile.setShowRowPosition(false);
+            ((DefaultExtendedCodeAreaLayoutProfile) layoutProfile).setShowHeader(false);
+            ((DefaultExtendedCodeAreaLayoutProfile) layoutProfile).setShowRowPosition(false);
             hexadecimalRenderer.setLayoutProfile(layoutProfile);
         }
         hexadecimalRenderer.setRowWrapping(RowWrappingCapable.RowWrappingMode.WRAPPING);

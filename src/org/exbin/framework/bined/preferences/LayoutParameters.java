@@ -17,7 +17,8 @@ package org.exbin.framework.bined.preferences;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.exbin.bined.swing.extended.layout.ExtendedCodeAreaLayoutProfile;
+import org.exbin.bined.extended.layout.ExtendedCodeAreaLayoutProfile;
+import org.exbin.bined.swing.extended.layout.DefaultExtendedCodeAreaLayoutProfile;
 
 /**
  * Layout parameters.
@@ -76,7 +77,7 @@ public class LayoutParameters {
     }
 
     public ExtendedCodeAreaLayoutProfile getLayoutProfile(int layoutIndex) {
-        ExtendedCodeAreaLayoutProfile layoutProfile = new ExtendedCodeAreaLayoutProfile();
+        DefaultExtendedCodeAreaLayoutProfile layoutProfile = new DefaultExtendedCodeAreaLayoutProfile();
         String layoutPrefix = PREFERENCES_LAYOUT_VALUE_PREFIX + String.valueOf(layoutIndex) + ".";
         layoutProfile.setShowHeader(preferences.getBoolean(layoutPrefix + LAYOUT_SHOW_HEADER, layoutProfile.isShowHeader()));
         layoutProfile.setShowRowPosition(preferences.getBoolean(layoutPrefix + LAYOUT_SHOW_ROW_POSITION, layoutProfile.isShowRowPosition()));
@@ -93,7 +94,7 @@ public class LayoutParameters {
         return layoutProfile;
     }
 
-    public void LayoutProfile(int layoutIndex, ExtendedCodeAreaLayoutProfile layoutProfile) {
+    public void LayoutProfile(int layoutIndex, DefaultExtendedCodeAreaLayoutProfile layoutProfile) {
         String layoutPrefix = PREFERENCES_LAYOUT_VALUE_PREFIX + String.valueOf(layoutIndex) + ".";
         preferences.putBoolean(layoutPrefix + LAYOUT_SHOW_HEADER, layoutProfile.isShowHeader());
         preferences.putBoolean(layoutPrefix + LAYOUT_SHOW_ROW_POSITION, layoutProfile.isShowRowPosition());
