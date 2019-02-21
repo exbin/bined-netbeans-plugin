@@ -744,7 +744,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         ExtendedCodeAreaLayoutProfile layoutProfile = codeArea.getLayoutProfile();
         codeArea.setRowWrapping(wrapLineModeCheckBox.isSelected() ? RowWrappingCapable.RowWrappingMode.WRAPPING : RowWrappingCapable.RowWrappingMode.NO_WRAPPING);
 // TODO        codeArea.setLineLength((Integer) lineLengthSpinner.getValue());
-        ((DefaultExtendedCodeAreaLayoutProfile) layoutProfile).setShowHeader(showHeaderCheckBox.isSelected());
+        layoutProfile.setShowHeader(showHeaderCheckBox.isSelected());
 //        codeArea.setHeaderSpaceType(CodeAreaSpace.SpaceType.values()[headerSpaceComboBox.getSelectedIndex()]);
 //        codeArea.setHeaderSpaceSize((Integer) headerSpaceSpinner.getValue());
 //        codeArea.setShowLineNumbers(showLineNumbersCheckBox.isSelected());

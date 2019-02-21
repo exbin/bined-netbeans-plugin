@@ -33,7 +33,6 @@ import org.exbin.bined.capability.RowWrappingCapable;
 import org.exbin.bined.extended.layout.ExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.extended.theme.ExtendedBackgroundPaintMode;
 import org.exbin.bined.swing.extended.ExtCodeArea;
-import org.exbin.bined.swing.extended.layout.DefaultExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
 import org.exbin.framework.bined.CodeAreaPopupMenuHandler;
 import org.exbin.framework.gui.utils.LanguageUtils;
@@ -72,8 +71,8 @@ public class FindBinaryPanel extends javax.swing.JPanel {
     private void init() {
         {
             ExtendedCodeAreaLayoutProfile layoutProfile = findHexadecimalRenderer.getLayoutProfile();
-            ((DefaultExtendedCodeAreaLayoutProfile) layoutProfile).setShowHeader(false);
-            ((DefaultExtendedCodeAreaLayoutProfile) layoutProfile).setShowRowPosition(false);
+            layoutProfile.setShowHeader(false);
+            layoutProfile.setShowRowPosition(false);
             findHexadecimalRenderer.setLayoutProfile(layoutProfile);
         }
         findHexadecimalRenderer.setRowWrapping(RowWrappingCapable.RowWrappingMode.WRAPPING);
@@ -152,8 +151,8 @@ public class FindBinaryPanel extends javax.swing.JPanel {
 
         {
             ExtendedCodeAreaLayoutProfile layoutProfile = replaceHexadecimalRenderer.getLayoutProfile();
-            ((DefaultExtendedCodeAreaLayoutProfile) layoutProfile).setShowHeader(false);
-            ((DefaultExtendedCodeAreaLayoutProfile) layoutProfile).setShowRowPosition(false);
+            layoutProfile.setShowHeader(false);
+            layoutProfile.setShowRowPosition(false);
             replaceHexadecimalRenderer.setLayoutProfile(layoutProfile);
         }
         replaceHexadecimalRenderer.setRowWrapping(RowWrappingCapable.RowWrappingMode.WRAPPING);
