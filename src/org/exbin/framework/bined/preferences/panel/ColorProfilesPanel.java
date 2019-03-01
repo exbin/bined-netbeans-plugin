@@ -21,32 +21,33 @@ import java.awt.Dialog;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nonnull;
-import javax.swing.JLabel;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+import javax.swing.AbstractListModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
-import javax.swing.ListModel;
-import javax.swing.event.ListDataListener;
+import javax.swing.event.ListSelectionEvent;
 import org.exbin.bined.swing.extended.color.ExtendedCodeAreaColorProfile;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
 import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
 import org.exbin.framework.gui.utils.panel.DefaultControlPanel;
-import org.openide.DialogDescriptor;
-import org.openide.DialogDisplayer;
 
 /**
  * Manage list of color profiles panel.
  *
- * @version 0.2.0 2019/01/17
+ * @version 0.2.0 2019/03/01
  * @author ExBin Project (http://exbin.org)
  */
+@ParametersAreNonnullByDefault
 public class ColorProfilesPanel extends javax.swing.JPanel {
 
     private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(ColorProfilesPanel.class);
 
     private boolean modified = false;
-    private final List<ColorProfile> colorProfiles = new ArrayList<>();
 
     public ColorProfilesPanel() {
         initComponents();
@@ -54,32 +55,32 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
     }
 
     private void init() {
-        profilesList.setModel(new ListModel<ColorProfile>() {
-            @Override
-            public int getSize() {
-                return colorProfiles.size();
-            }
+        profilesList.setModel(new ProfilesListModel());
+        profilesList.setCellRenderer(new ProfileCellRenderer());
+        profilesList.addListSelectionListener((ListSelectionEvent e) -> updateStates());
+    }
 
-            @Nonnull
-            @Override
-            public ColorProfile getElementAt(int index) {
-                return colorProfiles.get(index);
-            }
+    private void updateStates() {
+        int[] selectedIndices = profilesList.getSelectedIndices();
+        boolean hasSelection = selectedIndices.length > 0;
+        boolean singleSelection = selectedIndices.length == 1;
+        boolean hasAnyItems = !getProfilesListModel().isEmpty();
+        editButton.setEnabled(singleSelection);
+        selectAllButton.setEnabled(hasAnyItems);
+        removeButton.setEnabled(hasSelection);
 
-            @Override
-            public void addListDataListener(ListDataListener l) {
-            }
+        if (hasSelection) {
+            upButton.setEnabled(profilesList.getMaxSelectionIndex() >= selectedIndices.length);
+            downButton.setEnabled(profilesList.getMinSelectionIndex() + selectedIndices.length < getProfilesListModel().getSize());
+        } else {
+            upButton.setEnabled(false);
+            downButton.setEnabled(false);
+        }
+    }
 
-            @Override
-            public void removeListDataListener(ListDataListener l) {
-            }
-        });
-        profilesList.setCellRenderer(new ListCellRenderer<ColorProfile>() {
-            @Override
-            public Component getListCellRendererComponent(JList<? extends ColorProfile> list, ColorProfile value, int index, boolean isSelected, boolean cellHasFocus) {
-                return new JLabel(value.profileName);
-            }
-        });
+    @Nonnull
+    private ProfilesListModel getProfilesListModel() {
+        return ((ProfilesListModel) profilesList.getModel());
     }
 
     /**
@@ -92,7 +93,7 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         profilesListScrollPane = new javax.swing.JScrollPane();
-        profilesList = new javax.swing.JList();
+        profilesList = new javax.swing.JList<>();
         profilesControlPanel = new javax.swing.JPanel();
         upButton = new javax.swing.JButton();
         downButton = new javax.swing.JButton();
@@ -102,11 +103,6 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
         editButton = new javax.swing.JButton();
         hideButton = new javax.swing.JButton();
 
-        profilesList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "(build-in colors profile)" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         profilesListScrollPane.setViewportView(profilesList);
 
         upButton.setText(resourceBundle.getString("upButton.text")); // NOI18N
@@ -221,33 +217,34 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upButtonActionPerformed
+        ProfilesListModel model = getProfilesListModel();
         int[] indices = profilesList.getSelectedIndices();
         int last = 0;
         for (int i = 0; i < indices.length; i++) {
             int next = indices[i];
             if (last != next) {
-                ColorProfile item = colorProfiles.get(next);
-                colorProfiles.add(next - 1, item);
+                ColorProfile item = model.getElementAt(next);
+                model.add(next - 1, item);
                 profilesList.getSelectionModel().addSelectionInterval(next - 1, next - 1);
-                colorProfiles.remove(next + 1);
+                model.remove(next + 1);
             } else {
                 last++;
             }
         }
-
         wasModified();
     }//GEN-LAST:event_upButtonActionPerformed
 
     private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
+        ProfilesListModel model = getProfilesListModel();
         int[] indices = profilesList.getSelectedIndices();
-        int last = profilesList.getModel().getSize() - 1;
+        int last = model.getSize() - 1;
         for (int i = indices.length; i > 0; i--) {
             int next = indices[i - 1];
             if (last != next) {
-                ColorProfile item = colorProfiles.get(next);
-                colorProfiles.add(next + 2, item);
+                ColorProfile item = model.getElementAt(next);
+                model.add(next + 2, item);
                 profilesList.getSelectionModel().addSelectionInterval(next + 2, next + 2);
-                colorProfiles.remove(next);
+                model.remove(next);
             } else {
                 last--;
             }
@@ -257,36 +254,83 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         ColorProfilePanel colorProfilePanel = new ColorProfilePanel();
+        NamedProfilePanel namedProfilePanel = new NamedProfilePanel(colorProfilePanel);
         DefaultControlPanel controlPanel = new DefaultControlPanel();
-        JPanel dialogPanel = WindowUtils.createDialogPanel(colorProfilePanel, controlPanel);
-        DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Manage Colors", true, new Object[0], null, 0, null, null);
-        final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
+        JPanel dialogPanel = WindowUtils.createDialogPanel(namedProfilePanel, controlPanel);
+
+        final Dialog dialog = WindowUtils.createDialog(dialogPanel, null, Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setTitle("Add Colors Profile");
         controlPanel.setHandler((DefaultControlHandler.ControlActionType actionType) -> {
             if (actionType != DefaultControlHandler.ControlActionType.CANCEL) {
-                // TODO
+                if (!isValidProfileName(namedProfilePanel.getProfileName())) {
+                    JOptionPane.showMessageDialog(this, "Invalid profile name", "Profile Editation Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                ColorProfile profileRecord = new ColorProfile();
+                ExtendedCodeAreaColorProfile colorProfile = colorProfilePanel.getColorProfile();
+                profileRecord.profileName = namedProfilePanel.getProfileName();
+                profileRecord.colorProfile = colorProfile;
+                int selectedIndex = profilesList.getSelectedIndex();
+                ProfilesListModel model = getProfilesListModel();
+                if (selectedIndex >= 0) {
+                    profilesList.clearSelection();
+                    model.add(selectedIndex, profileRecord);
+                } else {
+                    model.add(profileRecord);
+                }
+                wasModified();
             }
 
             WindowUtils.closeWindow(dialog);
         });
         dialog.setVisible(true);
-
-//        if (addEncodingsOperation != null) {
-//            List<String> encodings = addEncodingsOperation.run(((EncodingsListModel) profilesList.getModel()).getCharsets());
-//            if (encodings != null) {
-//                ((EncodingsListModel) profilesList.getModel()).addAll(encodings, profilesList.getSelectedIndex());
-//                profilesList.clearSelection();
-//                wasModified();
-//            }
-//        }
+        dialog.dispose();
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
-        for (int profileIndex : profilesList.getSelectedIndices()) {
-            colorProfiles.remove(profileIndex);
-        }
+        ProfilesListModel model = getProfilesListModel();
+        model.removeIndices(profilesList.getSelectedIndices());
         profilesList.clearSelection();
         wasModified();
     }//GEN-LAST:event_removeButtonActionPerformed
+
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        ProfilesListModel model = getProfilesListModel();
+        int selectedIndex = profilesList.getSelectedIndex();
+        ColorProfile profileRecord = model.getElementAt(selectedIndex);
+        ColorProfilePanel colorProfilePanel = new ColorProfilePanel();
+        NamedProfilePanel namedProfilePanel = new NamedProfilePanel(colorProfilePanel);
+        DefaultControlPanel controlPanel = new DefaultControlPanel();
+        JPanel dialogPanel = WindowUtils.createDialogPanel(namedProfilePanel, controlPanel);
+
+        final Dialog dialog = WindowUtils.createDialog(dialogPanel, null, Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setTitle("Edit Colors Profile");
+        namedProfilePanel.setProfileName(profileRecord.profileName);
+        colorProfilePanel.setColorProfile(profileRecord.colorProfile);
+        controlPanel.setHandler((DefaultControlHandler.ControlActionType actionType) -> {
+            if (actionType != DefaultControlHandler.ControlActionType.CANCEL) {
+                if (!isValidProfileName(namedProfilePanel.getProfileName())) {
+                    JOptionPane.showMessageDialog(this, "Invalid profile name", "Profile Editation Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                ExtendedCodeAreaColorProfile colorProfile = colorProfilePanel.getColorProfile();
+                profileRecord.profileName = namedProfilePanel.getProfileName();
+                profileRecord.colorProfile = colorProfile;
+                model.notifyProfileModified(selectedIndex);
+                wasModified();
+            }
+
+            WindowUtils.closeWindow(dialog);
+        });
+        dialog.setVisible(true);
+        dialog.dispose();
+    }//GEN-LAST:event_editButtonActionPerformed
+
+    private void hideButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_hideButtonActionPerformed
 
     private void selectAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllButtonActionPerformed
         if (profilesList.getSelectedIndices().length < profilesList.getModel().getSize()) {
@@ -296,20 +340,26 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_selectAllButtonActionPerformed
 
-    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_editButtonActionPerformed
-
-    private void hideButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_hideButtonActionPerformed
-
     public boolean isModified() {
         return modified;
     }
 
     private void wasModified() {
         modified = true;
+        updateStates();
+    }
+
+    private boolean isValidProfileName(@Nullable String profileName) {
+        return profileName != null && !"".equals(profileName.trim());
+    }
+
+    /**
+     * Test method for this panel.
+     *
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        WindowUtils.invokeDialog(new ColorProfilesPanel());
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -318,7 +368,7 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
     private javax.swing.JButton editButton;
     private javax.swing.JButton hideButton;
     private javax.swing.JPanel profilesControlPanel;
-    private javax.swing.JList profilesList;
+    private javax.swing.JList<ColorProfile> profilesList;
     private javax.swing.JScrollPane profilesListScrollPane;
     private javax.swing.JButton removeButton;
     private javax.swing.JButton selectAllButton;
@@ -328,7 +378,92 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
     private final static class ColorProfile {
 
         String profileName;
+        boolean visible = true;
         ExtendedCodeAreaColorProfile colorProfile;
+    }
 
+    @ParametersAreNonnullByDefault
+    private static final class ProfilesListModel extends AbstractListModel<ColorProfile> {
+
+        private final List<ColorProfile> profiles = new ArrayList<>();
+
+        public ProfilesListModel() {
+        }
+
+        @Override
+        public int getSize() {
+            if (profiles == null) {
+                return 0;
+            }
+            return profiles.size();
+        }
+
+        public boolean isEmpty() {
+            return profiles == null || profiles.isEmpty();
+        }
+
+        @Nullable
+        @Override
+        public ColorProfile getElementAt(int index) {
+            return profiles.get(index);
+        }
+
+        @Nonnull
+        public List<ColorProfile> getProfiles() {
+            return profiles;
+        }
+
+        public void setProfiles(List<ColorProfile> profiles) {
+            this.profiles.clear();
+            this.profiles.addAll(profiles);
+            fireContentsChanged(this, 0, profiles.size());
+        }
+
+        public void addAll(List<ColorProfile> list, int index) {
+            if (index >= 0) {
+                profiles.addAll(index, list);
+                fireIntervalAdded(this, index, list.size() + index);
+            } else {
+                profiles.addAll(list);
+                fireIntervalAdded(this, profiles.size() - list.size(), profiles.size());
+            }
+        }
+
+        public void removeIndices(int[] indices) {
+            for (int i = indices.length - 1; i >= 0; i--) {
+                profiles.remove(indices[i]);
+            }
+            fireContentsChanged(this, 0, profiles.size());
+        }
+
+        public void remove(int index) {
+            profiles.remove(index);
+            fireIntervalRemoved(this, index, index);
+        }
+
+        public void add(int index, ColorProfile item) {
+            profiles.add(index, item);
+            fireIntervalAdded(this, index, index);
+        }
+
+        public void add(ColorProfile item) {
+            profiles.add(item);
+            int index = profiles.size() - 1;
+            fireIntervalAdded(this, index, index);
+        }
+
+        public void notifyProfileModified(int index) {
+            fireContentsChanged(this, index, index);
+        }
+    }
+
+    private static final class ProfileCellRenderer implements ListCellRenderer<ColorProfile> {
+
+        private final DefaultListCellRenderer defaultListCellRenderer = new DefaultListCellRenderer();
+
+        @Override
+        public Component getListCellRendererComponent(JList<? extends ColorProfile> list, ColorProfile value, int index, boolean isSelected, boolean cellHasFocus) {
+            return defaultListCellRenderer.getListCellRendererComponent(list, value.profileName, index, isSelected, cellHasFocus);
+        }
     }
 }

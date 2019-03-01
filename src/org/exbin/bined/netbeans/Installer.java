@@ -16,6 +16,7 @@
 package org.exbin.bined.netbeans;
 
 import java.io.IOException;
+import javax.annotation.ParametersAreNonnullByDefault;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.modules.ModuleInstall;
@@ -25,7 +26,7 @@ import org.openide.windows.WindowManager;
 /**
  * Installer for binary editor.
  *
- * @version 0.2.0 2018/12/22
+ * @version 0.2.0 2019/03/01
  * @author ExBin Project (http://exbin.org)
  */
 public class Installer extends ModuleInstall {
@@ -49,6 +50,7 @@ public class Installer extends ModuleInstall {
      * A Runnable that delegates all known filetypes to an abstract method for
      * further processing.
      */
+    @ParametersAreNonnullByDefault
     private static abstract class FileTypeHandler implements Runnable {
 
         @Override
@@ -73,6 +75,7 @@ public class Installer extends ModuleInstall {
      * This is done when all modules are loaded and thus all file types have
      * been registered.
      */
+    @ParametersAreNonnullByDefault
     private static final class ActionInstaller extends FileTypeHandler {
 
         @Override
@@ -135,6 +138,7 @@ public class Installer extends ModuleInstall {
     /**
      * Drops all references to the 'Open As Binary' action.
      */
+    @ParametersAreNonnullByDefault
     private static final class ActionUninstaller extends FileTypeHandler {
 
         @Override

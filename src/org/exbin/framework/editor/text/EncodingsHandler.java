@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.bined.netbeans;
+package org.exbin.framework.editor.text;
 
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
 import java.awt.Component;
@@ -33,7 +33,6 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
-import org.exbin.framework.editor.text.TextEncodingStatusApi;
 import org.exbin.framework.editor.text.panel.AddEncodingPanel;
 import org.exbin.framework.editor.text.panel.TextEncodingPanel;
 import org.exbin.framework.editor.text.panel.TextEncodingPanelApi;
@@ -113,7 +112,7 @@ public class EncodingsHandler implements TextEncodingPanelApi {
                         encodings = textEncodingPanel.getEncodingList();
                         rebuildEncodings();
                         if (actionType == OptionsControlHandler.ControlActionType.SAVE) {
-                            preferences.setEncodings(encodings);
+                            preferences.getCodeAreaParameters().setEncodings(encodings);
                         }
                     }
 
@@ -220,9 +219,9 @@ public class EncodingsHandler implements TextEncodingPanelApi {
 
     public void loadFromPreferences(BinaryEditorPreferences preferences) {
         this.preferences = preferences;
-        setSelectedEncoding(preferences.getSelectedEncoding());
+        setSelectedEncoding(preferences.getCodeAreaParameters().getSelectedEncoding());
         encodings.clear();
-        encodings.addAll(preferences.getEncodings());
+        encodings.addAll(preferences.getCodeAreaParameters().getEncodings());
         rebuildEncodings();
     }
 

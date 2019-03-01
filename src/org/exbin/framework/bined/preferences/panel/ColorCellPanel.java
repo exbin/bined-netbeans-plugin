@@ -17,15 +17,17 @@ package org.exbin.framework.bined.preferences.panel;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
+import javax.swing.border.EtchedBorder;
+import org.exbin.framework.gui.utils.WindowUtils;
 
 /**
  * Color cell panel for color profile panel.
  *
- * @version 0.2.0 2019/01/17
+ * @version 0.2.0 2019/03/01
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -36,7 +38,12 @@ public class ColorCellPanel extends javax.swing.JPanel {
     public ColorCellPanel(ColorHandler colorHandler) {
         initComponents();
         this.colorHandler = colorHandler;
-        colorLabel.setBackground(colorHandler.getColor());
+        setColor(colorHandler.getColor());
+    }
+
+    private void setColor(@Nullable Color color) {
+        colorLabel.setBorder(color == null ? null : new EtchedBorder());
+        colorLabel.setBackground(color);
     }
 
     /**
@@ -56,6 +63,7 @@ public class ColorCellPanel extends javax.swing.JPanel {
 
         colorButton.setText("Edit...");
         colorButton.setAlignmentY(0.0F);
+        colorButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         colorButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 colorButtonActionPerformed(evt);
@@ -67,10 +75,10 @@ public class ColorCellPanel extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(colorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(colorButton))
+                .addComponent(colorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(colorButton, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -81,17 +89,33 @@ public class ColorCellPanel extends javax.swing.JPanel {
 
     private void colorButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorButtonActionPerformed
         final JColorChooser colorChooser = new javax.swing.JColorChooser();
-        JDialog dialog = JColorChooser.createDialog(this, "Select Color", true, colorChooser, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Color color = colorChooser.getColor();
-                colorLabel.setBackground(color);
-                colorHandler.setColor(color);
-            }
+        JDialog dialog = JColorChooser.createDialog(this, "Select Color", true, colorChooser, (ActionEvent e) -> {
+            Color color = colorChooser.getColor();
+            colorLabel.setBackground(color);
+            colorHandler.setColor(color);
         }, null);
         dialog.setVisible(true);
     }//GEN-LAST:event_colorButtonActionPerformed
 
+    /**
+     * Test method for this panel.
+     *
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        WindowUtils.invokeDialog(new ColorCellPanel(new ColorHandler() {
+            @Nullable
+            @Override
+            public Color getColor() {
+                return Color.BLACK;
+            }
+
+            @Override
+            public void setColor(@Nullable Color color) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        }));
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton colorButton;
@@ -100,8 +124,9 @@ public class ColorCellPanel extends javax.swing.JPanel {
 
     public interface ColorHandler {
 
+        @Nullable
         Color getColor();
 
-        void setColor(Color color);
+        void setColor(@Nullable Color color);
     }
 }

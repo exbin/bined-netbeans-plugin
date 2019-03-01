@@ -17,14 +17,17 @@ package org.exbin.bined.netbeans;
 
 import org.exbin.framework.bined.preferences.Preferences;
 import java.util.prefs.BackingStoreException;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import org.openide.util.Exceptions;
 
 /**
- * Wrapper for preferences
+ * Wrapper for preferences.
  *
- * @version 0.2.0 2019/01/12
+ * @version 0.2.0 2019/03/01
  * @author ExBin Project (http://exbin.org)
  */
+@ParametersAreNonnullByDefault
 public class PreferencesWrapper implements Preferences {
 
     private final java.util.prefs.Preferences preferences;
@@ -34,12 +37,12 @@ public class PreferencesWrapper implements Preferences {
     }
 
     @Override
-    public void put(String key, String value) {
+    public void put(String key, @Nullable String value) {
         preferences.put(key, value);
     }
 
     @Override
-    public String get(String key, String def) {
+    public String get(String key, @Nullable String def) {
         return preferences.get(key, def);
     }
 

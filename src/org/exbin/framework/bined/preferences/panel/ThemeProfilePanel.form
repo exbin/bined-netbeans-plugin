@@ -31,39 +31,30 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="261" max="32767" attributes="0"/>
-                  <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="backgroundModeLabel" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="122" max="-2" attributes="0"/>
-                              </Group>
-                              <Component id="backgroundModeComboBox" alignment="0" max="32767" attributes="0"/>
-                              <Component id="paintRowPosBackgroundCheckBox" alignment="0" max="32767" attributes="0"/>
-                              <Component id="linesPanel" alignment="1" max="32767" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="backgroundModeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="paintRowPosBackgroundCheckBox" alignment="0" max="32767" attributes="0"/>
+                          <Component id="backgroundModeComboBox" alignment="0" max="32767" attributes="0"/>
+                          <Component id="linesPanel" alignment="0" max="32767" attributes="0"/>
                       </Group>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <EmptySpace min="0" pref="635" max="32767" attributes="0"/>
-                  <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="backgroundModeLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="backgroundModeComboBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="paintRowPosBackgroundCheckBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="linesPanel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="411" max="32767" attributes="0"/>
-                      </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="backgroundModeLabel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="backgroundModeComboBox" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="paintRowPosBackgroundCheckBox" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="linesPanel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -72,22 +63,26 @@
             <Component class="javax.swing.JLabel" name="backgroundModeLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="backgroundModeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="ThemeProfilePanel.backgroundModeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="backgroundModeComboBox">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="4">
+                  <StringArray count="5">
                     <StringItem index="0" value="NONE"/>
                     <StringItem index="1" value="PLAIN"/>
                     <StringItem index="2" value="STRIPED"/>
                     <StringItem index="3" value="GRIDDED"/>
+                    <StringItem index="4" value="CHESSBOARD"/>
                   </StringArray>
                 </Property>
                 <Property name="selectedIndex" type="int" value="2"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="backgroundModeComboBoxActionPerformed"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
               </AuxValues>
@@ -95,16 +90,19 @@
             <Component class="javax.swing.JCheckBox" name="paintRowPosBackgroundCheckBox">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="paintRowPosBackgroundCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="ThemeProfilePanel.paintRowPosBackgroundCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="paintRowPosBackgroundCheckBoxItemStateChanged"/>
+              </Events>
             </Component>
             <Container class="javax.swing.JPanel" name="linesPanel">
               <Properties>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                     <TitledBorder title="Lines">
-                      <ResourceString PropertyName="titleX" bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="linesPanel.border.title" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString PropertyName="titleX" bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="ThemeProfilePanel.linesPanel.border.title" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </TitledBorder>
                   </Border>
                 </Property>
@@ -116,8 +114,8 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="decoratorLineNumLineCheckBox" alignment="0" max="32767" attributes="0"/>
-                              <Component id="decoratorPreviewLineCheckBox" alignment="0" max="32767" attributes="0"/>
+                              <Component id="decoratorRowPosLineCheckBox" alignment="0" max="32767" attributes="0"/>
+                              <Component id="decoratorSplitLineCheckBox" alignment="0" max="32767" attributes="0"/>
                               <Component id="decoratorBoxCheckBox" alignment="0" max="32767" attributes="0"/>
                               <Component id="decoratorHeaderLineCheckBox" alignment="0" max="32767" attributes="0"/>
                           </Group>
@@ -130,9 +128,9 @@
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="decoratorHeaderLineCheckBox" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="decoratorLineNumLineCheckBox" min="-2" max="-2" attributes="0"/>
+                          <Component id="decoratorRowPosLineCheckBox" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="decoratorPreviewLineCheckBox" min="-2" max="-2" attributes="0"/>
+                          <Component id="decoratorSplitLineCheckBox" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="decoratorBoxCheckBox" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -140,33 +138,45 @@
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Component class="javax.swing.JCheckBox" name="decoratorLineNumLineCheckBox">
+                <Component class="javax.swing.JCheckBox" name="decoratorRowPosLineCheckBox">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="decoratorLineNumLineCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="ThemeProfilePanel.decoratorRowPosLineCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="decoratorRowPosLineCheckBoxItemStateChanged"/>
+                  </Events>
                 </Component>
-                <Component class="javax.swing.JCheckBox" name="decoratorPreviewLineCheckBox">
+                <Component class="javax.swing.JCheckBox" name="decoratorSplitLineCheckBox">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="decoratorPreviewLineCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="ThemeProfilePanel.decoratorSplitLineCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="decoratorSplitLineCheckBoxItemStateChanged"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="decoratorBoxCheckBox">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="decoratorBoxCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="ThemeProfilePanel.decoratorBoxCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="decoratorBoxCheckBoxItemStateChanged"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JCheckBox" name="decoratorHeaderLineCheckBox">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="decoratorHeaderLineCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/exbin/framework/bined/preferences/panel/resources/ThemeProfilePanel.properties" key="ThemeProfilePanel.decoratorHeaderLineCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="decoratorHeaderLineCheckBoxItemStateChanged"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.AbstractListModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -231,12 +232,12 @@ public class TextEncodingPanel extends javax.swing.JPanel implements OptionsPane
     }//GEN-LAST:event_removeButtonActionPerformed
 
     private void upButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_upButtonActionPerformed
+        EncodingsListModel model = (EncodingsListModel) encodingsList.getModel();
         int[] indices = encodingsList.getSelectedIndices();
         int last = 0;
         for (int i = 0; i < indices.length; i++) {
             int next = indices[i];
             if (last != next) {
-                EncodingsListModel model = (EncodingsListModel) encodingsList.getModel();
                 String item = (String) model.getElementAt(next);
                 model.add(next - 1, item);
                 encodingsList.getSelectionModel().addSelectionInterval(next - 1, next - 1);
@@ -249,13 +250,13 @@ public class TextEncodingPanel extends javax.swing.JPanel implements OptionsPane
     }//GEN-LAST:event_upButtonActionPerformed
 
     private void downButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downButtonActionPerformed
+        EncodingsListModel model = (EncodingsListModel) encodingsList.getModel();
         int[] indices = encodingsList.getSelectedIndices();
-        int last = encodingsList.getModel().getSize() - 1;
+        int last = model.getSize() - 1;
         for (int i = indices.length; i > 0; i--) {
             int next = indices[i - 1];
             if (last != next) {
-                EncodingsListModel model = (EncodingsListModel) encodingsList.getModel();
-                String item = (String) model.getElementAt(next);
+                String item = model.getElementAt(next);
                 model.add(next + 2, item);
                 encodingsList.getSelectionModel().addSelectionInterval(next + 2, next + 2);
                 model.remove(next);
@@ -360,7 +361,8 @@ public class TextEncodingPanel extends javax.swing.JPanel implements OptionsPane
         List<String> run(List<String> usedEncodings);
     }
 
-    private class EncodingsListModel extends AbstractListModel {
+    @ParametersAreNonnullByDefault
+    private static class EncodingsListModel extends AbstractListModel<String> {
 
         private List<String> charsets = null;
 
@@ -373,20 +375,14 @@ public class TextEncodingPanel extends javax.swing.JPanel implements OptionsPane
         }
 
         @Override
-        public Object getElementAt(int index) {
+        public String getElementAt(int index) {
             return charsets.get(index);
         }
 
-        /**
-         * @return the charsets
-         */
         public List<String> getCharsets() {
             return charsets;
         }
 
-        /**
-         * @param charsets the charsets to set
-         */
         public void setCharsets(List<String> charsets) {
             this.charsets = charsets;
             fireContentsChanged(this, 0, charsets.size());

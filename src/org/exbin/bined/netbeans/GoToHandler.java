@@ -19,6 +19,7 @@ import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JPanel;
@@ -37,6 +38,7 @@ import org.openide.DialogDisplayer;
  * @version 0.2.0 2018/10/27
  * @author ExBin Project (http://exbin.org)
  */
+@ParametersAreNonnullByDefault
 public class GoToHandler {
 
     private final ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(GoToHandler.class);
@@ -44,7 +46,7 @@ public class GoToHandler {
     private final ExtCodeArea codeArea;
     private Action goToLineAction;
 
-    public GoToHandler(@Nonnull ExtCodeArea codeArea) {
+    public GoToHandler(ExtCodeArea codeArea) {
         this.codeArea = codeArea;
         init();
     }
@@ -52,6 +54,7 @@ public class GoToHandler {
     private void init() {
     }
 
+    @Nonnull
     public Action getGoToLineAction() {
         if (goToLineAction == null) {
             goToLineAction = new AbstractAction() {

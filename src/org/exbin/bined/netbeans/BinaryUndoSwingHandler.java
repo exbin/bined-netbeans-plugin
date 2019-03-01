@@ -150,9 +150,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoHandler {
 
         commandPosition++;
         undoUpdated();
-        for (BinaryDataUndoUpdateListener listener : listeners) {
-            listener.undoCommandAdded(command);
-        }
+        listeners.forEach((listener) -> listener.undoCommandAdded(command));
     }
 
     /**
@@ -300,9 +298,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoHandler {
     }
 
     private void undoUpdated() {
-        for (BinaryDataUndoUpdateListener listener : listeners) {
-            listener.undoCommandPositionChanged();
-        }
+        listeners.forEach((listener) -> listener.undoCommandPositionChanged());
     }
 
     @Override

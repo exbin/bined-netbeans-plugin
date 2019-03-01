@@ -15,17 +15,21 @@
  */
 package org.exbin.framework.bined.preferences;
 
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+
 /**
  * Preferences interface.
  *
  * @version 0.2.0 2019/02/25
  * @author ExBin Project (http://exbin.org)
  */
+@ParametersAreNonnullByDefault
 public interface Preferences {
 
     void flush();
 
-    String get(String key, String def);
+    String get(String key, @Nullable String def);
 
     boolean getBoolean(String key, boolean def);
 
@@ -39,7 +43,7 @@ public interface Preferences {
 
     long getLong(String key, long def);
 
-    void put(String key, String value);
+    void put(String key, @Nullable String value);
 
     void putBoolean(String key, boolean value);
 
@@ -56,5 +60,4 @@ public interface Preferences {
     void remove(String key);
 
     void sync();
-
 }

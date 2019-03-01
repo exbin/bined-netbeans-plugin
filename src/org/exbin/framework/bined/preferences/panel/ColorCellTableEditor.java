@@ -17,35 +17,38 @@ package org.exbin.framework.bined.preferences.panel;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.util.EventObject;
 import javax.annotation.ParametersAreNonnullByDefault;
+import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
-import javax.swing.event.CellEditorListener;
 import javax.swing.table.TableCellEditor;
 
 /**
  * Table model for color profile panel.
  *
- * @version 0.2.0 2019/01/18
+ * @version 0.2.0 2019/03/01
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
-public class ColorCellTableEditor implements TableCellEditor {
+public class ColorCellTableEditor extends AbstractCellEditor implements TableCellEditor {
+
+    private Color currentColor = null;
 
     public ColorCellTableEditor() {
     }
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        currentColor = (Color) value;
         return new ColorCellPanel(new ColorCellPanel.ColorHandler() {
             @Override
             public Color getColor() {
-                ColorProfileTableModel model = (ColorProfileTableModel) table.getModel();
-                return (Color) model.getValueAt(row, column);
+                return currentColor;
             }
 
             @Override
             public void setColor(Color color) {
+                currentColor = color;
+
                 ColorProfileTableModel model = (ColorProfileTableModel) table.getModel();
                 model.setValueAt(color, row, column);
             }
@@ -54,33 +57,6 @@ public class ColorCellTableEditor implements TableCellEditor {
 
     @Override
     public Object getCellEditorValue() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public boolean isCellEditable(EventObject anEvent) {
-        return true;
-    }
-
-    @Override
-    public boolean shouldSelectCell(EventObject anEvent) {
-        return true;
-    }
-
-    @Override
-    public boolean stopCellEditing() {
-        return true;
-    }
-
-    @Override
-    public void cancelCellEditing() {
-    }
-
-    @Override
-    public void addCellEditorListener(CellEditorListener l) {
-    }
-
-    @Override
-    public void removeCellEditorListener(CellEditorListener l) {
+        return currentColor;
     }
 }

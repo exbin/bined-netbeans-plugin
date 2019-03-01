@@ -17,6 +17,7 @@ package org.exbin.bined.netbeans;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.annotation.ParametersAreNonnullByDefault;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
 import org.openide.loaders.DataObject;
@@ -32,6 +33,7 @@ import org.openide.windows.WindowManager;
  * @version 0.2.0 2018/12/22
  * @author ExBin Project (http://exbin.org)
  */
+@ParametersAreNonnullByDefault
 @ActionID(category = "File", id = "org.exbin.bined.OpenAsBinaryAction")
 @ActionRegistration(displayName = "#CTL_OpenAsBinaryAction")
 @Messages("CTL_OpenAsBinaryAction=Open as Binary")

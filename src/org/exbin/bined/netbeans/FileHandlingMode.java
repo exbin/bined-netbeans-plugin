@@ -13,28 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.bined.netbeans.panel;
-
-import javax.annotation.ParametersAreNonnullByDefault;
-import org.exbin.framework.bined.panel.ReplaceParameters;
-import org.exbin.framework.bined.panel.SearchParameters;
+package org.exbin.bined.netbeans;
 
 /**
- * Hex search panel interface.
+ * File handling mode.
  *
  * @version 0.2.0 2019/03/01
  * @author ExBin Project (http://exbin.org)
  */
-@ParametersAreNonnullByDefault
-public interface BinarySearchPanelApi {
-
-    void performFind(SearchParameters dialogSearchParameters);
-
-    void setMatchPosition(int matchPosition);
-
-    void updatePosition();
-
-    void performReplace(SearchParameters searchParameters, ReplaceParameters replaceParameters);
-
-    void clearMatches();
+public enum FileHandlingMode {
+    /**
+     * Whole file is loaded to memory.
+     */
+    MEMORY,
+    /**
+     * File is handled using delta changes.
+     */
+    DELTA;
 }

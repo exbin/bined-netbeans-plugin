@@ -22,21 +22,22 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import org.exbin.bined.CodeAreaViewMode;
 import org.exbin.bined.CodeCharactersCase;
 import org.exbin.bined.CodeType;
 import org.exbin.bined.PositionCodeType;
 import org.exbin.bined.extended.theme.ExtendedBackgroundPaintMode;
-import org.exbin.bined.netbeans.EncodingsHandler;
+import org.exbin.framework.editor.text.EncodingsHandler;
 import org.exbin.framework.editor.text.panel.TextFontOptionsPanel;
 
 /**
  * Legacy parameters for version 0.1.
  *
- * @version 0.2.0 2019/02/25
+ * @version 0.2.0 2019/03/01
  * @author ExBin Project (http://exbin.org)
  */
-public class LegacyParameters {
+public class LegacyPreferences {
 
     public static final String PREFERENCES_MEMORY_DELTA_MODE = "deltaMode";
     public static final String PREFERENCES_CODE_TYPE = "codeType";
@@ -69,7 +70,7 @@ public class LegacyParameters {
 
     private final Preferences preferences;
 
-    public LegacyParameters(Preferences preferences) {
+    public LegacyPreferences(Preferences preferences) {
         this.preferences = preferences;
     }
 
@@ -104,6 +105,7 @@ public class LegacyParameters {
         preferences.remove(PREFERENCES_ENCODING_PREFIX + Integer.toString(encodings.size()));
     }
 
+    @Nonnull
     private ExtendedBackgroundPaintMode convertBackgroundPaintMode(String value) {
         if ("STRIPPED".equals(value)) {
             return ExtendedBackgroundPaintMode.STRIPED;

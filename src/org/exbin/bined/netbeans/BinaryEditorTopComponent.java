@@ -15,6 +15,7 @@
  */
 package org.exbin.bined.netbeans;
 
+import org.exbin.framework.editor.text.EncodingsHandler;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -100,7 +101,7 @@ import org.openide.util.NbPreferences;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.2.0 2019/01/03
+ * @version 0.2.0 2019/03/01
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.bined//BinaryEditor//EN", autostore = false)
@@ -168,7 +169,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             public void setEncoding(String encodingName) {
                 codeArea.setCharset(Charset.forName(encodingName));
                 encodingStatus.setEncoding(encodingName);
-                preferences.setSelectedEncoding(encodingName);
+                preferences.getCodeAreaParameters().setSelectedEncoding(encodingName);
             }
         });
 
@@ -323,7 +324,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                 boolean newDeltaMode = memoryMode == BinaryStatusApi.MemoryMode.DELTA_MODE;
                 if (newDeltaMode != deltaMemoryMode) {
                     switchDeltaMemoryMode(newDeltaMode);
-                    preferences.setDeltaMemoryMode(deltaMemoryMode);
+                    FileHandlingMode fileHandlingMode = deltaMemoryMode ? FileHandlingMode.DELTA : FileHandlingMode.MEMORY;
+                    preferences.getEditorParameters().setFileHandlingMode(fileHandlingMode.name());
                 }
             }
         });
@@ -627,18 +629,18 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
     private void lineWrappingToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lineWrappingToggleButtonActionPerformed
         codeArea.setRowWrapping(lineWrappingToggleButton.isSelected() ? RowWrappingCapable.RowWrappingMode.WRAPPING : RowWrappingCapable.RowWrappingMode.NO_WRAPPING);
-        preferences.setRowWrapping(lineWrappingToggleButton.isSelected());
+        preferences.getCodeAreaParameters().setRowWrapping(lineWrappingToggleButton.isSelected());
     }//GEN-LAST:event_lineWrappingToggleButtonActionPerformed
 
     private void showUnprintablesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showUnprintablesToggleButtonActionPerformed
         codeArea.setShowUnprintables(showUnprintablesToggleButton.isSelected());
-        preferences.setShowUnprintables(lineWrappingToggleButton.isSelected());
+        preferences.getCodeAreaParameters().setShowUnprintables(lineWrappingToggleButton.isSelected());
     }//GEN-LAST:event_showUnprintablesToggleButtonActionPerformed
 
     private void codeTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_codeTypeComboBoxActionPerformed
         CodeType codeType = CodeType.values()[codeTypeComboBox.getSelectedIndex()];
         codeArea.setCodeType(codeType);
-        preferences.setCodeType(codeType);
+        preferences.getCodeAreaParameters().setCodeType(codeType);
     }//GEN-LAST:event_codeTypeComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1211,21 +1213,21 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     }
 
     private void loadFromPreferences() {
-        deltaMemoryMode = preferences.isDeltaMemoryMode();
-        CodeType codeType = preferences.getCodeType();
+        deltaMemoryMode = FileHandlingMode.DELTA.name().equals(preferences.getEditorParameters().getFileHandlingMode());
+        CodeType codeType = preferences.getCodeAreaParameters().getCodeType();
         codeArea.setCodeType(codeType);
         codeTypeComboBox.setSelectedIndex(codeType.ordinal());
-        String selectedEncoding = preferences.getSelectedEncoding();
+        String selectedEncoding = preferences.getCodeAreaParameters().getSelectedEncoding();
         statusPanel.setEncoding(selectedEncoding);
         codeArea.setCharset(Charset.forName(selectedEncoding));
 //        int bytesPerLine = preferences.getInt(BinaryEditorTopComponent.PREFERENCES_BYTES_PER_LINE, 16);
 // TODO        codeArea.setLineLength(bytesPerLine);
 
-        boolean showNonprintables = preferences.isShowNonprintables();
+        boolean showNonprintables = preferences.getCodeAreaParameters().isShowNonprintables();
         showUnprintablesToggleButton.setSelected(showNonprintables);
         codeArea.setShowUnprintables(showNonprintables);
 
-        boolean lineWrapping = preferences.isRowWrapping();
+        boolean lineWrapping = preferences.getCodeAreaParameters().isRowWrapping();
         codeArea.setRowWrapping(lineWrapping ? RowWrappingMode.WRAPPING : RowWrappingMode.NO_WRAPPING);
         lineWrappingToggleButton.setSelected(lineWrapping);
 
@@ -1248,30 +1250,30 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 //        codeArea.setSpaceGroupSize(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_SPACE_GROUP_SIZE, 0));
 //        codeArea.setLayoutProfile(layoutProfile);
         // Mode
-        codeArea.setViewMode(preferences.getViewMode());
-        codeArea.setCodeType(preferences.getCodeType());
-        ((ExtendedHighlightNonAsciiCodeAreaPainter) codeArea.getPainter()).setNonAsciiHighlightingEnabled(preferences.isCodeColorization());
+        codeArea.setViewMode(preferences.getCodeAreaParameters().getViewMode());
+        codeArea.setCodeType(preferences.getCodeAreaParameters().getCodeType());
+        ((ExtendedHighlightNonAsciiCodeAreaPainter) codeArea.getPainter()).setNonAsciiHighlightingEnabled(preferences.getCodeAreaParameters().isCodeColorization());
         // Memory mode handled from outside by isDeltaMemoryMode() method, worth fixing?
         // Decoration
         ExtendedCodeAreaThemeProfile themeProfile = codeArea.getThemeProfile();
-        themeProfile.setBackgroundPaintMode(preferences.getBackgroundPaintMode());
-        themeProfile.setPaintRowPosBackground(preferences.isPaintRowPosBackground());
+// TODO       themeProfile.setBackgroundPaintMode(preferences.getBackgroundPaintMode());
+// TODO        themeProfile.setPaintRowPosBackground(preferences.isPaintRowPosBackground());
 // TODO        int decorationMode = (preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_HEADER_LINE, true) ? CodeArea.DECORATION_HEADER_LINE : 0)
 // TODO                + (preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_PREVIEW_LINE, true) ? CodeArea.DECORATION_PREVIEW_LINE : 0)
 // TODO                + (preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_BOX, false) ? CodeArea.DECORATION_BOX : 0)
 // TODO                + (preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_LINENUM_LINE, true) ? CodeArea.DECORATION_LINENUM_LINE : 0);
 // TODO        codeArea.setDecorationMode(decorationMode);
         codeArea.setThemeProfile(themeProfile);
-        codeArea.setCodeCharactersCase(preferences.getCodeCharactersCase());
-        codeArea.setPositionCodeType(preferences.getPositionCodeType());
+        codeArea.setCodeCharactersCase(preferences.getCodeAreaParameters().getCodeCharactersCase());
+        codeArea.setPositionCodeType(preferences.getCodeAreaParameters().getPositionCodeType());
 
         // Font
-        Boolean useDefaultFont = preferences.isUseDefaultFont();
+        Boolean useDefaultFont = preferences.getCodeAreaParameters().isUseDefaultFont();
 
         if (!useDefaultFont) {
-            codeArea.setCodeFont(preferences.getCodeFont(codeArea.getCodeFont()));
+            codeArea.setCodeFont(preferences.getCodeAreaParameters().getCodeFont(codeArea.getCodeFont()));
         }
-        boolean showValuesPanel = preferences.isShowValuesPanel();
+        boolean showValuesPanel = preferences.getEditorParameters().isShowValuesPanel();
         if (showValuesPanel) {
             showValuesPanel();
         }

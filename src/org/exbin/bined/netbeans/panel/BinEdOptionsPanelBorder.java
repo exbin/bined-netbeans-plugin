@@ -61,11 +61,11 @@ public class BinEdOptionsPanelBorder extends javax.swing.JPanel {
     }
 
     public boolean isShowValuesPanel() {
-        return optionsPanel.isShowValuesPanel();
+        return true; // TODO optionsPanel.isShowValuesPanel();
     }
 
     public void setShowValuesPanel(boolean flag) {
-        optionsPanel.setShowValuesPanel(flag);
+        // TODO optionsPanel.setShowValuesPanel(flag);
     }
 
     public void store() {
@@ -73,6 +73,6 @@ public class BinEdOptionsPanelBorder extends javax.swing.JPanel {
     }
 
     public boolean isDeltaMemoryMode() {
-        return optionsPanel.isDeltaMemoryMode();
+        return true; // TODO optionsPanel.isDeltaMemoryMode();
     }
 }

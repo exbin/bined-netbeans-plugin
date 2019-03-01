@@ -17,14 +17,28 @@ package org.exbin.framework.bined.preferences.panel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.Nonnull;
+import org.exbin.bined.EditationMode;
+import org.exbin.bined.SelectionRange;
+import org.exbin.bined.capability.EditationModeCapable;
+import org.exbin.bined.capability.RowWrappingCapable;
+import org.exbin.bined.highlight.swing.extended.ExtendedHighlightCodeAreaPainter;
+import org.exbin.bined.highlight.swing.extended.ExtendedHighlightNonAsciiCodeAreaPainter;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.bined.swing.extended.color.ExtendedCodeAreaColorProfile;
 import org.exbin.framework.gui.utils.LanguageUtils;
+import org.exbin.framework.gui.utils.WindowUtils;
+import org.exbin.utils.binary_data.ByteArrayEditableData;
 
 /**
  * Color profile panel.
  *
- * @version 0.2.0 2019/01/18
+ * @version 0.2.0 2019/03/01
  * @author ExBin Project (http://exbin.org)
  */
 public class ColorProfilePanel extends javax.swing.JPanel {
@@ -42,12 +56,47 @@ public class ColorProfilePanel extends javax.swing.JPanel {
 
     private void init() {
         codeArea = new ExtCodeArea();
+        initPreviewCodeArea();
         previewPanel.add(codeArea, BorderLayout.CENTER);
 
         colorsTable.setDefaultRenderer(Color.class, new ColorCellTableRenderer());
         colorsTable.setDefaultEditor(Color.class, new ColorCellTableEditor());
 
         colorTableModel.setColorProfile((ExtendedCodeAreaColorProfile) codeArea.getColorsProfile());
+    }
+
+    private void initPreviewCodeArea() {
+        ((EditationModeCapable) codeArea).setEditationMode(EditationMode.READ_ONLY);
+        ExtendedHighlightNonAsciiCodeAreaPainter painter = new ExtendedHighlightNonAsciiCodeAreaPainter(codeArea);
+        codeArea.setPainter(painter);
+        List<ExtendedHighlightCodeAreaPainter.SearchMatch> exampleMatches = new ArrayList<>();
+        // Set manual search matches for "ligula"
+        exampleMatches.add(new ExtendedHighlightCodeAreaPainter.SearchMatch(145, 6));
+        exampleMatches.add(new ExtendedHighlightCodeAreaPainter.SearchMatch(480, 6));
+        exampleMatches.add(new ExtendedHighlightCodeAreaPainter.SearchMatch(1983, 6));
+        painter.setMatches(exampleMatches);
+        painter.setCurrentMatchIndex(1);
+        ByteArrayEditableData exampleData = new ByteArrayEditableData();
+        try {
+            exampleData.loadFromStream(getClass().getResourceAsStream("/org/exbin/framework/bined/resources/preview/lorem.txt"));
+        } catch (IOException ex) {
+            Logger.getLogger(ColorProfilePanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        codeArea.setContentData(exampleData);
+        ((RowWrappingCapable) codeArea).setRowWrapping(RowWrappingCapable.RowWrappingMode.WRAPPING);
+        codeArea.setEnabled(false);
+        codeArea.setShowUnprintables(true);
+        codeArea.setSelection(new SelectionRange(200, 300));
+    }
+
+    public void setColorProfile(@Nonnull ExtendedCodeAreaColorProfile colorProfile) {
+        codeArea.setColorsProfile(colorProfile);
+        colorTableModel.setColorProfile(colorProfile);
+    }
+
+    @Nonnull
+    public ExtendedCodeAreaColorProfile getColorProfile() {
+        return (ExtendedCodeAreaColorProfile) codeArea.getColorsProfile();
     }
 
     /**
@@ -103,6 +152,14 @@ public class ColorProfilePanel extends javax.swing.JPanel {
         add(previewPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Test method for this panel.
+     *
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        WindowUtils.invokeDialog(new ColorProfilePanel());
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane colorsScrollPane;

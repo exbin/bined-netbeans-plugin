@@ -17,6 +17,9 @@ package org.exbin.bined.netbeans;
 
 import java.io.IOException;
 import java.util.Objects;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.netbeans.spi.actions.AbstractSavable;
 import org.openide.loaders.DataObject;
@@ -27,6 +30,7 @@ import org.openide.loaders.DataObject;
  * @version 0.2.0 2018/09/10
  * @author ExBin Project (http://exbin.org)
  */
+@ParametersAreNonnullByDefault
 class Savable extends AbstractSavable {
 
     private DataObject dataObject;
@@ -50,13 +54,14 @@ class Savable extends AbstractSavable {
         this.dataObject = dataObject;
     }
 
+    @Nonnull
     @Override
     protected String findDisplayName() {
         return dataObject == null ? "<unknown file>" : dataObject.getPrimaryFile().getName();
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(@Nullable Object obj) {
         if (this == obj) {
             return true;
         }
