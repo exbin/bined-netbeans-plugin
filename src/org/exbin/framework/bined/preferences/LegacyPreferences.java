@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.CodeAreaViewMode;
 import org.exbin.bined.CodeCharactersCase;
 import org.exbin.bined.CodeType;
@@ -37,6 +38,7 @@ import org.exbin.framework.editor.text.panel.TextFontOptionsPanel;
  * @version 0.2.0 2019/03/01
  * @author ExBin Project (http://exbin.org)
  */
+@ParametersAreNonnullByDefault
 public class LegacyPreferences {
 
     public static final String PREFERENCES_MEMORY_DELTA_MODE = "deltaMode";
@@ -74,6 +76,7 @@ public class LegacyPreferences {
         this.preferences = preferences;
     }
 
+    @Nonnull
     public String getSelectedEncoding() {
         return preferences.get(PREFERENCES_ENCODING_SELECTED, EncodingsHandler.ENCODING_UTF8);
     }
@@ -82,6 +85,7 @@ public class LegacyPreferences {
         preferences.put(PREFERENCES_ENCODING_SELECTED, encodingName);
     }
 
+    @Nonnull
     public Collection<String> getEncodings() {
         List<String> encodings = new ArrayList<>();
         String value;
@@ -113,10 +117,16 @@ public class LegacyPreferences {
         return ExtendedBackgroundPaintMode.valueOf(value);
     }
 
+    @Nonnull
+    public CodeType getCodeType() {
+        return CodeType.valueOf(preferences.get(PREFERENCES_CODE_TYPE, CodeType.HEXADECIMAL.name()));
+    }
+
     public void setCodeType(CodeType codeType) {
         preferences.put(PREFERENCES_CODE_TYPE, codeType.name());
     }
 
+    @Nonnull
     public Font getCodeFont(Font initialFont) {
         String value;
         Map<TextAttribute, Object> attribs = new HashMap<>();
@@ -188,10 +198,6 @@ public class LegacyPreferences {
         preferences.putBoolean(PREFERENCES_LINE_WRAPPING, rowWrapping);
     }
 
-    public CodeType getCodeType() {
-        return CodeType.valueOf(preferences.get(PREFERENCES_CODE_TYPE, CodeType.HEXADECIMAL.name()));
-    }
-
     public boolean isShowNonprintables() {
         return preferences.getBoolean(PREFERENCES_SHOW_UNPRINTABLES, false);
     }
@@ -208,6 +214,7 @@ public class LegacyPreferences {
         preferences.putBoolean(PREFERENCES_SHOW_VALUES_PANEL, showValuesPanel);
     }
 
+    @Nonnull
     public CodeCharactersCase getCodeCharactersCase() {
         return CodeCharactersCase.valueOf(preferences.get(PREFERENCES_HEX_CHARACTERS_CASE, CodeCharactersCase.UPPER.name()));
     }
@@ -216,14 +223,21 @@ public class LegacyPreferences {
         preferences.put(PREFERENCES_HEX_CHARACTERS_CASE, codeCharactersCase.name());
     }
 
+    @Nonnull
     public PositionCodeType getPositionCodeType() {
         return PositionCodeType.valueOf(preferences.get(PREFERENCES_POSITION_CODE_TYPE, PositionCodeType.HEXADECIMAL.name()));
     }
 
+    public void setPositionCodeType(PositionCodeType positionCodeType) {
+        preferences.put(PREFERENCES_POSITION_CODE_TYPE, positionCodeType.name());
+    }
+
+    @Nonnull
     public ExtendedBackgroundPaintMode getBackgroundPaintMode() {
         return convertBackgroundPaintMode(preferences.get(PREFERENCES_BACKGROUND_MODE, ExtendedBackgroundPaintMode.STRIPED.name()));
     }
 
+    @Nonnull
     public CodeAreaViewMode getViewMode() {
         return CodeAreaViewMode.valueOf(preferences.get(PREFERENCES_VIEW_MODE, CodeAreaViewMode.DUAL.name()));
     }
@@ -250,9 +264,5 @@ public class LegacyPreferences {
 
     public void setUseDefaultFont(boolean useDefaultFont) {
         preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_DEFAULT, Boolean.toString(useDefaultFont));
-    }
-
-    public void setPositionCodeType(PositionCodeType positionCodeType) {
-        preferences.put(PREFERENCES_POSITION_CODE_TYPE, positionCodeType.name());
     }
 }

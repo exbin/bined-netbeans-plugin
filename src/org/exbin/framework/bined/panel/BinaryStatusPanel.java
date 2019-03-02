@@ -20,6 +20,7 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseEvent;
+import javax.swing.JToolTip;
 import org.exbin.bined.EditationMode;
 import org.exbin.bined.EditationOperation;
 import org.exbin.framework.editor.text.TextEncodingStatusApi;
@@ -28,9 +29,9 @@ import org.exbin.framework.gui.utils.WindowUtils;
 import org.exbin.framework.bined.BinaryStatusApi;
 
 /**
- * Binary editor status panel.
+ * Hexadecimal editor status panel.
  *
- * @version 0.2.0 2018/12/23
+ * @version 0.2.0 2018/09/11
  * @author ExBin Project (http://exbin.org)
  */
 public class BinaryStatusPanel extends javax.swing.JPanel implements BinaryStatusApi, TextEncodingStatusApi {
@@ -61,13 +62,31 @@ public class BinaryStatusPanel extends javax.swing.JPanel implements BinaryStatu
         positionCopyMenuItem = new javax.swing.JMenuItem();
         positionGoToMenuItem = new javax.swing.JMenuItem();
         documentSizePopupMenu = new javax.swing.JPopupMenu();
+        octDocumentSizeModeRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        decDocumentSizeModeRadioButtonMenuItem1 = new javax.swing.JRadioButtonMenuItem();
+        hexDocumentSizeModeRadioButtonMenuItem1 = new javax.swing.JRadioButtonMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         documentSizeCopyMenuItem = new javax.swing.JMenuItem();
         memoryModePopupMenu = new javax.swing.JPopupMenu();
         deltaMemoryModeRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         ramMemoryModeRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         memoryModeButtonGroup = new javax.swing.ButtonGroup();
+        documentSizeModeButtonGroup = new javax.swing.ButtonGroup();
         memoryModeLabel = new javax.swing.JLabel();
-        documentSizeLabel = new javax.swing.JLabel();
+        documentSizeLabel = new javax.swing.JLabel() {
+            @Override
+            public JToolTip createToolTip() {
+
+                String tooltipText = "<html>" + resourceBundle.getString("documentSizeLabel.toolTipText") +
+                "<br>OCT: " +
+                "<br>DEC: " +
+                "<br>HEX: " +
+                "</html>";
+                documentSizeLabel.setToolTipText(tooltipText);
+                return super.createToolTip();
+            }
+        }
+        ;
         positionLabel = new javax.swing.JLabel();
         editationModeLabel = new javax.swing.JLabel();
         encodingLabel = new javax.swing.JLabel();
@@ -93,6 +112,25 @@ public class BinaryStatusPanel extends javax.swing.JPanel implements BinaryStatu
         positionPopupMenu.add(positionGoToMenuItem);
 
         documentSizePopupMenu.setName("documentSizePopupMenu"); // NOI18N
+
+        documentSizeModeButtonGroup.add(octDocumentSizeModeRadioButtonMenuItem);
+        octDocumentSizeModeRadioButtonMenuItem.setText(resourceBundle.getString("octDocumentSizeModeRadioButtonMenuItem.text")); // NOI18N
+        octDocumentSizeModeRadioButtonMenuItem.setName("octDocumentSizeModeRadioButtonMenuItem"); // NOI18N
+        documentSizePopupMenu.add(octDocumentSizeModeRadioButtonMenuItem);
+
+        documentSizeModeButtonGroup.add(decDocumentSizeModeRadioButtonMenuItem1);
+        decDocumentSizeModeRadioButtonMenuItem1.setSelected(true);
+        decDocumentSizeModeRadioButtonMenuItem1.setText(resourceBundle.getString("decDocumentSizeModeRadioButtonMenuItem1.text")); // NOI18N
+        decDocumentSizeModeRadioButtonMenuItem1.setName("decDocumentSizeModeRadioButtonMenuItem1"); // NOI18N
+        documentSizePopupMenu.add(decDocumentSizeModeRadioButtonMenuItem1);
+
+        documentSizeModeButtonGroup.add(hexDocumentSizeModeRadioButtonMenuItem1);
+        hexDocumentSizeModeRadioButtonMenuItem1.setText(resourceBundle.getString("hexDocumentSizeModeRadioButtonMenuItem1.text")); // NOI18N
+        hexDocumentSizeModeRadioButtonMenuItem1.setName("hexDocumentSizeModeRadioButtonMenuItem1"); // NOI18N
+        documentSizePopupMenu.add(hexDocumentSizeModeRadioButtonMenuItem1);
+
+        jSeparator1.setName("jSeparator1"); // NOI18N
+        documentSizePopupMenu.add(jSeparator1);
 
         documentSizeCopyMenuItem.setText(resourceBundle.getString("documentSizeCopyMenuItem.text")); // NOI18N
         documentSizeCopyMenuItem.setName("documentSizeCopyMenuItem"); // NOI18N
@@ -288,15 +326,20 @@ public class BinaryStatusPanel extends javax.swing.JPanel implements BinaryStatu
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JRadioButtonMenuItem decDocumentSizeModeRadioButtonMenuItem1;
     private javax.swing.JRadioButtonMenuItem deltaMemoryModeRadioButtonMenuItem;
     private javax.swing.JMenuItem documentSizeCopyMenuItem;
     private javax.swing.JLabel documentSizeLabel;
+    private javax.swing.ButtonGroup documentSizeModeButtonGroup;
     private javax.swing.JPopupMenu documentSizePopupMenu;
     private javax.swing.JLabel editationModeLabel;
     private javax.swing.JLabel encodingLabel;
+    private javax.swing.JRadioButtonMenuItem hexDocumentSizeModeRadioButtonMenuItem1;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.ButtonGroup memoryModeButtonGroup;
     private javax.swing.JLabel memoryModeLabel;
     private javax.swing.JPopupMenu memoryModePopupMenu;
+    private javax.swing.JRadioButtonMenuItem octDocumentSizeModeRadioButtonMenuItem;
     private javax.swing.JMenuItem positionCopyMenuItem;
     private javax.swing.JMenuItem positionGoToMenuItem;
     private javax.swing.JLabel positionLabel;
@@ -340,8 +383,8 @@ public class BinaryStatusPanel extends javax.swing.JPanel implements BinaryStatu
                 editationModeLabel.setText(READONLY_EDITATION_MODE_LABEL);
                 break;
             }
-            case CAPPED:
-            case EXPANDING: {
+            case EXPANDING:
+            case CAPPED: {
                 switch (editationOperation) {
                     case INSERT: {
                         editationModeLabel.setText(INSERT_EDITATION_MODE_LABEL);

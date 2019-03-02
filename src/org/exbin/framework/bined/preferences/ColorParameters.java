@@ -18,6 +18,8 @@ package org.exbin.framework.bined.preferences;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.color.BasicCodeAreaDecorationColorType;
 import org.exbin.bined.color.CodeAreaBasicColors;
 import org.exbin.bined.extended.color.CodeAreaUnprintablesColorType;
@@ -31,6 +33,7 @@ import org.exbin.bined.swing.extended.color.ExtendedCodeAreaColorProfile;
  * @version 0.2.0 2019/01/03
  * @author ExBin Project (http://exbin.org)
  */
+@ParametersAreNonnullByDefault
 public class ColorParameters {
 
     public static final String PREFERENCES_COLOR_PROFILES_COUNT = "colorProfilesCount";
@@ -68,6 +71,7 @@ public class ColorParameters {
         this.preferences = preferences;
     }
 
+    @Nonnull
     public List<String> getColorProfilesList() {
         List<String> themesList = new ArrayList<>();
         int themesCount = preferences.getInt(PREFERENCES_COLOR_PROFILES_COUNT, 0);
@@ -94,6 +98,7 @@ public class ColorParameters {
         }
     }
 
+    @Nonnull
     public ExtendedCodeAreaColorProfile getColorsProfile(int themeIndex) {
         ExtendedCodeAreaColorProfile colorProfile = new ExtendedCodeAreaColorProfile();
         String colorProfilePrefix = PREFERENCES_COLOR_VALUE_PREFIX + String.valueOf(themeIndex) + ".";
@@ -190,6 +195,7 @@ public class ColorParameters {
      * @param color
      * @return
      */
+    @Nonnull
     private static String colorAsText(Color color) {
         int red = color.getRed();
         int green = color.getGreen();
@@ -204,6 +210,7 @@ public class ColorParameters {
      * @param colorStr e.g. "#FFFFFF"
      * @return
      */
+    @Nonnull
     private static Color textAsColor(String colorStr) {
         return Color.decode(colorStr);
     }

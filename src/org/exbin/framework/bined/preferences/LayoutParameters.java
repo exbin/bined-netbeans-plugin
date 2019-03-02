@@ -17,15 +17,18 @@ package org.exbin.framework.bined.preferences;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.extended.layout.ExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.swing.extended.layout.DefaultExtendedCodeAreaLayoutProfile;
 
 /**
  * Layout parameters.
  *
- * @version 0.2.0 2019/01/02
+ * @version 0.2.0 2019/03/02
  * @author ExBin Project (http://exbin.org)
  */
+@ParametersAreNonnullByDefault
 public class LayoutParameters {
 
     public static final String PREFERENCES_LAYOUT_PROFILES_COUNT = "layoutProfilesCount";
@@ -50,6 +53,7 @@ public class LayoutParameters {
         this.preferences = preferences;
     }
 
+    @Nonnull
     public List<String> getLayoutList() {
         List<String> layoutList = new ArrayList<>();
         int layoutsCount = preferences.getInt(PREFERENCES_LAYOUT_PROFILES_COUNT, 0);
@@ -76,6 +80,7 @@ public class LayoutParameters {
         }
     }
 
+    @Nonnull
     public ExtendedCodeAreaLayoutProfile getLayoutProfile(int layoutIndex) {
         DefaultExtendedCodeAreaLayoutProfile layoutProfile = new DefaultExtendedCodeAreaLayoutProfile();
         String layoutPrefix = PREFERENCES_LAYOUT_VALUE_PREFIX + String.valueOf(layoutIndex) + ".";

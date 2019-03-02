@@ -17,6 +17,8 @@ package org.exbin.framework.bined.preferences;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.extended.theme.ExtendedBackgroundPaintMode;
 import org.exbin.bined.swing.extended.layout.ExtendedCodeAreaDecorations;
 import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
@@ -27,6 +29,7 @@ import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
  * @version 0.2.0 2019/01/01
  * @author ExBin Project (http://exbin.org)
  */
+@ParametersAreNonnullByDefault
 public class ThemeParameters {
 
     public static final String PREFERENCES_THEMES_COUNT = "themesCount";
@@ -50,6 +53,7 @@ public class ThemeParameters {
         this.preferences = preferences;
     }
 
+    @Nonnull
     public List<String> getThemesList() {
         List<String> themesList = new ArrayList<>();
         int themesCount = preferences.getInt(PREFERENCES_THEMES_COUNT, 0);
@@ -76,6 +80,7 @@ public class ThemeParameters {
         }
     }
 
+    @Nonnull
     public ExtendedCodeAreaThemeProfile getThemeProfile(int themeIndex) {
         ExtendedCodeAreaThemeProfile themeProfile = new ExtendedCodeAreaThemeProfile();
         String themePrefix = PREFERENCES_THEME_VALUE_PREFIX + String.valueOf(themeIndex) + ".";

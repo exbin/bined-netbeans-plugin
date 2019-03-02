@@ -18,7 +18,6 @@ package org.exbin.framework.bined.preferences;
 import java.awt.Font;
 import java.awt.font.TextAttribute;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +71,7 @@ public class CodeAreaParameters {
     }
 
     @Nonnull
-    public Collection<String> getEncodings() {
+    public List<String> getEncodings() {
         List<String> encodings = new ArrayList<>();
         String value;
         int i = 0;

@@ -29,6 +29,7 @@ public interface Preferences {
 
     void flush();
 
+    @Nullable
     String get(String key, @Nullable String def);
 
     boolean getBoolean(String key, boolean def);

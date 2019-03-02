@@ -44,6 +44,45 @@
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
+        <MenuItem class="javax.swing.JRadioButtonMenuItem" name="octDocumentSizeModeRadioButtonMenuItem">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="documentSizeModeButtonGroup"/>
+            </Property>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="octDocumentSizeModeRadioButtonMenuItem.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="octDocumentSizeModeRadioButtonMenuItem" noResource="true"/>
+          </Properties>
+        </MenuItem>
+        <MenuItem class="javax.swing.JRadioButtonMenuItem" name="decDocumentSizeModeRadioButtonMenuItem1">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="documentSizeModeButtonGroup"/>
+            </Property>
+            <Property name="selected" type="boolean" value="true"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="decDocumentSizeModeRadioButtonMenuItem1.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="decDocumentSizeModeRadioButtonMenuItem1" noResource="true"/>
+          </Properties>
+        </MenuItem>
+        <MenuItem class="javax.swing.JRadioButtonMenuItem" name="hexDocumentSizeModeRadioButtonMenuItem1">
+          <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="documentSizeModeButtonGroup"/>
+            </Property>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="hexDocumentSizeModeRadioButtonMenuItem1.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="hexDocumentSizeModeRadioButtonMenuItem1" noResource="true"/>
+          </Properties>
+        </MenuItem>
+        <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="jSeparator1" noResource="true"/>
+          </Properties>
+        </Component>
         <MenuItem class="javax.swing.JMenuItem" name="documentSizeCopyMenuItem">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -98,6 +137,8 @@
       </SubComponents>
     </Container>
     <Component class="javax.swing.ButtonGroup" name="memoryModeButtonGroup">
+    </Component>
+    <Component class="javax.swing.ButtonGroup" name="documentSizeModeButtonGroup">
     </Component>
   </NonVisualComponents>
   <Properties>
@@ -181,6 +222,9 @@
         </Property>
         <Property name="name" type="java.lang.String" value="documentSizeLabel" noResource="true"/>
       </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JLabel() {&#xa;    @Override&#xa;    public JToolTip createToolTip() {&#xa;        &#xa;        String tooltipText = &quot;&lt;html&gt;&quot; + resourceBundle.getString(&quot;documentSizeLabel.toolTipText&quot;) + &#xa;            &quot;&lt;br&gt;OCT: &quot; +&#xa;            &quot;&lt;br&gt;DEC: &quot; +&#xa;            &quot;&lt;br&gt;HEX: &quot; +&#xa;            &quot;&lt;/html&gt;&quot;;&#xa;        documentSizeLabel.setToolTipText(tooltipText);&#xa;        return super.createToolTip();&#xa;    }&#xa;}&#xa;"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="positionLabel">
       <Properties>

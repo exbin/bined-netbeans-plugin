@@ -35,11 +35,15 @@ import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
 import org.exbin.bined.netbeans.PreferencesWrapper;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
-import org.exbin.framework.bined.preferences.panel.CodeAreaParametersPanel;
-import org.exbin.framework.bined.preferences.panel.ColorProfilesPanel;
-import org.exbin.framework.bined.preferences.panel.EditorParametersPanel;
-import org.exbin.framework.bined.preferences.panel.LayoutProfilesPanel;
-import org.exbin.framework.bined.preferences.panel.ThemeProfilesPanel;
+import org.exbin.framework.bined.options.CharsetOptions;
+import org.exbin.framework.bined.options.CodeAreaOptions;
+import org.exbin.framework.bined.options.EditorOptions;
+import org.exbin.framework.bined.options.panel.CodeAreaOptionsPanel;
+import org.exbin.framework.bined.options.panel.ColorProfilesPanel;
+import org.exbin.framework.bined.options.panel.EditorOptionsPanel;
+import org.exbin.framework.bined.options.panel.LayoutProfilesPanel;
+import org.exbin.framework.bined.options.panel.ProfileSelectionPanel;
+import org.exbin.framework.bined.options.panel.ThemeProfilesPanel;
 import org.exbin.framework.editor.text.panel.TextFontPanel;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
@@ -52,7 +56,7 @@ import org.openide.util.NbPreferences;
 /**
  * Hexadecimal editor options panel.
  *
- * @version 0.2.0 2019/03/01
+ * @version 0.2.0 2019/03/02
  * @author ExBin Project (http://exbin.org)
  */
 public class BinEdOptionsPanel extends javax.swing.JPanel {
@@ -63,19 +67,22 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 
     private DefaultListModel<CategoryItem> categoryModel = new DefaultListModel<>();
     private JPanel currentCategoryPanel = null;
-
-    private Font binEdDefaultFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
-    private Font binEdFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
-
-    private final CodeAreaParametersPanel codeAreaParametersPanel = new CodeAreaParametersPanel();
-    private final EditorParametersPanel editorParametersPanel = new EditorParametersPanel();
+    
+    private final EditorOptions editorOptions = new EditorOptions();
+    private final CharsetOptions charsetOptions = new CharsetOptions();
+    private final CodeAreaOptions codeAreaOptions = new CodeAreaOptions();
+    
+    private final EditorOptionsPanel editorParametersPanel = new EditorOptionsPanel();
+    private final CodeAreaOptionsPanel codeAreaParametersPanel = new CodeAreaOptionsPanel();
     private final LayoutProfilesPanel layoutProfilesPanel = new LayoutProfilesPanel();
+    private final ProfileSelectionPanel layoutSelectionPanel = new ProfileSelectionPanel(layoutProfilesPanel);
     private final ThemeProfilesPanel themeProfilesPanel = new ThemeProfilesPanel();
+    private final ProfileSelectionPanel themeSelectionPanel = new ProfileSelectionPanel(themeProfilesPanel);
     private final ColorProfilesPanel colorProfilesPanel = new ColorProfilesPanel();
+    private final ProfileSelectionPanel colorSelectionPanel = new ProfileSelectionPanel(colorProfilesPanel);
 
     public BinEdOptionsPanel() {
-        this(null);
-//        updateFontTextField();
+        this(new BinEdOptionsPanelController());
     }
 
     public BinEdOptionsPanel(BinEdOptionsPanelController controller) {
@@ -85,9 +92,9 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 
         categoryModel.addElement(new CategoryItem("Editor", editorParametersPanel));
         categoryModel.addElement(new CategoryItem("Code Area", codeAreaParametersPanel));
-        categoryModel.addElement(new CategoryItem("Layout Profiles", layoutProfilesPanel));
-        categoryModel.addElement(new CategoryItem("Theme Profiles", themeProfilesPanel));
-        categoryModel.addElement(new CategoryItem("Colors Profiles", colorProfilesPanel));
+        categoryModel.addElement(new CategoryItem("Layout Profiles", layoutSelectionPanel));
+        categoryModel.addElement(new CategoryItem("Theme Profiles", themeSelectionPanel));
+        categoryModel.addElement(new CategoryItem("Colors Profiles", colorSelectionPanel));
         categoriesList.setModel(categoryModel);
 
         categoriesList.addListSelectionListener((ListSelectionEvent e) -> {
@@ -153,6 +160,14 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     public void load() {
+        editorOptions.loadFromParameters(preferences.getEditorParameters());
+        codeAreaOptions.loadFromParameters(preferences.getCodeAreaParameters());
+//        charsetOptions.loadFromParameters(preferences.getCharsetParameters());
+        
+        editorParametersPanel.loadFromOptions(editorOptions);
+        codeAreaParametersPanel.loadFromOptions(codeAreaOptions);
+//        charsetParametersPanel.loadFromOptions(charsetOptions);
+
         // Layout
 // TODO        wrapLineModeCheckBox.setSelected(preferences.isRowWrapping());
 //        lineLengthSpinner.setValue(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_BYTES_PER_LINE, 16));
@@ -172,7 +187,6 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 //        lineNumbersLengthSpinner.setValue(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH, 8));
 //        byteGroupSizeSpinner.setValue(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_BYTE_GROUP_SIZE, 1));
 //        spaceGroupSizeSpinner.setValue(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_SPACE_GROUP_SIZE, 0));
-
         // Mode
 // TODO        CodeAreaViewMode viewMode = preferences.getViewMode();
 // TODO        viewModeComboBox.setSelectedIndex(viewMode.ordinal());
@@ -205,6 +219,14 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
     }
 
     public void store() {
+        editorParametersPanel.saveToOptions(editorOptions);
+        codeAreaParametersPanel.saveToOptions(codeAreaOptions);
+//        charsetParametersPanel.saveToOptions(charsetOptions);
+
+        editorOptions.saveToParameters(preferences.getEditorParameters());
+        codeAreaOptions.saveToParameters(preferences.getCodeAreaParameters());
+//        charsetOptions.saveToParameters(preferences.getCharsetParameters());
+
         // Layout
 // TODO        preferences.setRowWrapping(wrapLineModeCheckBox.isSelected());
 //        preferences.putInt(BinaryEditorTopComponent.PREFERENCES_BYTES_PER_LINE, (Integer) lineLengthSpinner.getValue());
@@ -261,7 +283,6 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 // TODO        showNonprintableCharactersCheckBox.setSelected(codeArea.isShowUnprintables());
 // TODO        codeColorizationCheckBox.setSelected(((ExtendedHighlightNonAsciiCodeAreaPainter) codeArea.getPainter()).isNonAsciiHighlightingEnabled());
 // TODO        memoryModeComboBox.setSelectedIndex(codeArea.getContentData() instanceof DeltaDocument ? 0 : 1);
-
         // Decoration
         ExtendedCodeAreaThemeProfile themeProfile = codeArea.getThemeProfile();
 // TODO        backgroundModeComboBox.setSelectedIndex(themeProfile.getBackgroundPaintMode().ordinal());
@@ -271,7 +292,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 // TODO        positionCodeTypeComboBox.setSelectedIndex(codeArea.getPositionCodeType().ordinal());
 
         // Font
-        binEdFont = codeArea.getCodeFont();
+//        binEdFont = codeArea.getCodeFont();
 //        updateFontTextField();
 // TODO        useDefaultFontCheckBox.setSelected(binEdFont.equals(binEdDefaultFont));
     }
@@ -298,7 +319,6 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 // TODO        codeArea.setShowUnprintables(showNonprintableCharactersCheckBox.isSelected());
 // TODO        ((ExtendedHighlightNonAsciiCodeAreaPainter) codeArea.getPainter()).setNonAsciiHighlightingEnabled(codeColorizationCheckBox.isSelected());
         // Memory mode handled from outside by isDeltaMemoryMode() method, worth fixing?
-
         // Decoration
         ExtendedCodeAreaThemeProfile themeProfile = codeArea.getThemeProfile();
 // TODO        themeProfile.setBackgroundPaintMode(ExtendedBackgroundPaintMode.values()[backgroundModeComboBox.getSelectedIndex()]);
@@ -340,7 +360,6 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 //    public boolean isDeltaMemoryMode() {
 //        return memoryModeComboBox.getSelectedIndex() == 0;
 //    }
-
     boolean valid() {
         // TODO check whether form is consistent and complete
         return true;
