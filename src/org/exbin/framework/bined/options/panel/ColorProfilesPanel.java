@@ -254,6 +254,7 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         ColorProfilePanel colorProfilePanel = new ColorProfilePanel();
+        colorProfilePanel.setColorProfile(new ExtendedCodeAreaColorProfile());
         NamedProfilePanel namedProfilePanel = new NamedProfilePanel(colorProfilePanel);
         DefaultControlPanel controlPanel = new DefaultControlPanel();
         JPanel dialogPanel = WindowUtils.createDialogPanel(namedProfilePanel, controlPanel);
@@ -284,6 +285,7 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
 
             WindowUtils.closeWindow(dialog);
         });
+        dialog.setLocationByPlatform(true);
         dialog.setVisible(true);
         dialog.dispose();
     }//GEN-LAST:event_addButtonActionPerformed
@@ -324,6 +326,7 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
 
             WindowUtils.closeWindow(dialog);
         });
+        dialog.setLocationByPlatform(true);
         dialog.setVisible(true);
         dialog.dispose();
     }//GEN-LAST:event_editButtonActionPerformed

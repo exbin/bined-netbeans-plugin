@@ -96,7 +96,7 @@
             <Component class="javax.swing.JLabel" name="halfSpaceGroupSizeLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="LayoutProfilePanel.halfSpaceGroupSizeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="halfSpaceGroupSizeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
@@ -105,7 +105,7 @@
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                     <TitledBorder title="Row Positions">
-                      <ResourceString PropertyName="titleX" bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="LayoutProfilePanel.rowPositionPanel.border.title" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString PropertyName="titleX" bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="rowPositionPanel.border.title" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </TitledBorder>
                   </Border>
                 </Property>
@@ -165,7 +165,7 @@
                 <Component class="javax.swing.JCheckBox" name="showRowPositionCheckBox">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="LayoutProfilePanel.showRowPositionCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="showRowPositionCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                   <Events>
@@ -175,7 +175,7 @@
                 <Component class="javax.swing.JLabel" name="minRowPositionLengthLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="LayoutProfilePanel.minRowPositionLengthLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="minRowPositionLengthLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -195,7 +195,7 @@
                 <Component class="javax.swing.JLabel" name="maxRowPositionLengthLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="LayoutProfilePanel.maxRowPositionLengthLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="maxRowPositionLengthLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -215,7 +215,7 @@
                 <Component class="javax.swing.JLabel" name="rowPositionLeftSpaceLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="LayoutProfilePanel.rowPositionLeftSpaceLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="rowPositionLeftSpaceLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -232,7 +232,7 @@
                 <Component class="javax.swing.JLabel" name="rowPositionRightSpaceLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="LayoutProfilePanel.rowPositionRightSpaceLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="rowPositionRightSpaceLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -261,14 +261,14 @@
             <Component class="javax.swing.JLabel" name="spaceGroupSizeLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="LayoutProfilePanel.spaceGroupSizeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="spaceGroupSizeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JCheckBox" name="wrapLineModeCheckBox">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="LayoutProfilePanel.wrapLineModeCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="wrapLineModeCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
               <Events>
@@ -278,7 +278,7 @@
             <Component class="javax.swing.JLabel" name="maxBytesPerRowLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="LayoutProfilePanel.maxBytesPerRowLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="maxBytesPerRowLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
@@ -295,7 +295,7 @@
             <Component class="javax.swing.JLabel" name="doubleSpaceGroupSizeLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="LayoutProfilePanel.doubleSpaceGroupSizeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="doubleSpaceGroupSizeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
             </Component>
@@ -324,7 +324,7 @@
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                   <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                     <TitledBorder title="Header">
-                      <ResourceString PropertyName="titleX" bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="LayoutProfilePanel.headerPanel.border.title" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString PropertyName="titleX" bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="headerPanel.border.title" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </TitledBorder>
                   </Border>
                 </Property>
@@ -372,7 +372,7 @@
                 <Component class="javax.swing.JCheckBox" name="showHeaderCheckBox">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="LayoutProfilePanel.showHeaderCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="showHeaderCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                   <Events>
@@ -382,7 +382,7 @@
                 <Component class="javax.swing.JLabel" name="headerTopSpaceLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="LayoutProfilePanel.headerTopSpaceLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="headerTopSpaceLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -399,7 +399,7 @@
                 <Component class="javax.swing.JLabel" name="headerBottomSpaceLabel">
                   <Properties>
                     <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="LayoutProfilePanel.headerBottomSpaceLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                      <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="headerBottomSpaceLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                     </Property>
                   </Properties>
                 </Component>
@@ -434,7 +434,7 @@
               <Color blue="2c" green="2a" id="Button.darkShadow" palette="3" red="27" type="palette"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="LayoutProfilePanel.previewLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="previewLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">

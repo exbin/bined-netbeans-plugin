@@ -39,7 +39,7 @@ import org.exbin.framework.gui.utils.panel.DefaultControlPanel;
 /**
  * Manage list of layout profiles panel.
  *
- * @version 0.2.0 2019/03/01
+ * @version 0.2.0 2019/03/10
  * @author ExBin Project (http://exbin.org)
  */
 public class LayoutProfilesPanel extends javax.swing.JPanel {
@@ -253,6 +253,7 @@ public class LayoutProfilesPanel extends javax.swing.JPanel {
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         LayoutProfilePanel layoutProfilePanel = new LayoutProfilePanel();
+        layoutProfilePanel.setLayoutProfile(new DefaultExtendedCodeAreaLayoutProfile());
         NamedProfilePanel namedProfilePanel = new NamedProfilePanel(layoutProfilePanel);
         DefaultControlPanel controlPanel = new DefaultControlPanel();
         JPanel dialogPanel = WindowUtils.createDialogPanel(namedProfilePanel, controlPanel);
@@ -284,7 +285,7 @@ public class LayoutProfilesPanel extends javax.swing.JPanel {
             WindowUtils.closeWindow(dialog);
         });
         dialog.setLocationByPlatform(true);
-        WindowUtils.invokeDialog(dialog);
+        dialog.setVisible(true);
         dialog.dispose();
     }//GEN-LAST:event_addButtonActionPerformed
 
@@ -332,6 +333,7 @@ public class LayoutProfilesPanel extends javax.swing.JPanel {
 
             WindowUtils.closeWindow(dialog);
         });
+        dialog.setLocationByPlatform(true);
         dialog.setVisible(true);
         dialog.dispose();
     }//GEN-LAST:event_editButtonActionPerformed

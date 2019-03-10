@@ -29,6 +29,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
+import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
 import org.exbin.framework.gui.utils.LanguageUtils;
@@ -39,7 +40,7 @@ import org.exbin.framework.gui.utils.panel.DefaultControlPanel;
 /**
  * Manage list of theme profiles panel.
  *
- * @version 0.2.0 2019/03/01
+ * @version 0.2.0 2019/03/10
  * @author ExBin Project (http://exbin.org)
  */
 public class ThemeProfilesPanel extends javax.swing.JPanel {
@@ -254,6 +255,7 @@ public class ThemeProfilesPanel extends javax.swing.JPanel {
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         ThemeProfilePanel themeProfilePanel = new ThemeProfilePanel();
+        themeProfilePanel.setThemeProfile(new ExtendedCodeAreaThemeProfile());
         NamedProfilePanel namedProfilePanel = new NamedProfilePanel(themeProfilePanel);
         DefaultControlPanel controlPanel = new DefaultControlPanel();
         JPanel dialogPanel = WindowUtils.createDialogPanel(namedProfilePanel, controlPanel);
@@ -284,6 +286,7 @@ public class ThemeProfilesPanel extends javax.swing.JPanel {
 
             WindowUtils.closeWindow(dialog);
         });
+        dialog.setLocationByPlatform(true);
         dialog.setVisible(true);
         dialog.dispose();
     }//GEN-LAST:event_addButtonActionPerformed
@@ -332,6 +335,7 @@ public class ThemeProfilesPanel extends javax.swing.JPanel {
 
             WindowUtils.closeWindow(dialog);
         });
+        dialog.setLocationByPlatform(true);
         dialog.setVisible(true);
         dialog.dispose();
     }//GEN-LAST:event_editButtonActionPerformed
@@ -346,6 +350,10 @@ public class ThemeProfilesPanel extends javax.swing.JPanel {
 
     private void wasModified() {
         modified = true;
+    }
+
+    public void addProfilesListListener(ListDataListener listener) {
+        getProfilesListModel().addListDataListener(listener);
     }
 
     private boolean isValidProfileName(@Nullable String profileName) {

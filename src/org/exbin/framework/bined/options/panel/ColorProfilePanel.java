@@ -117,25 +117,12 @@ public class ColorProfilePanel extends javax.swing.JPanel {
 
         setLayout(new java.awt.BorderLayout());
 
+        preferencesPanel.setLayout(new java.awt.BorderLayout());
+
         colorsTable.setModel(colorTableModel);
         colorsScrollPane.setViewportView(colorsTable);
 
-        javax.swing.GroupLayout preferencesPanelLayout = new javax.swing.GroupLayout(preferencesPanel);
-        preferencesPanel.setLayout(preferencesPanelLayout);
-        preferencesPanelLayout.setHorizontalGroup(
-            preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(preferencesPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(colorsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        preferencesPanelLayout.setVerticalGroup(
-            preferencesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(preferencesPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(colorsScrollPane)
-                .addContainerGap())
-        );
+        preferencesPanel.add(colorsScrollPane, java.awt.BorderLayout.CENTER);
 
         preferencesScrollPane.setViewportView(preferencesPanel);
 
