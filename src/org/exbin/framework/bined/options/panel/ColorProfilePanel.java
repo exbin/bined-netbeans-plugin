@@ -38,7 +38,7 @@ import org.exbin.utils.binary_data.ByteArrayEditableData;
 /**
  * Color profile panel.
  *
- * @version 0.2.0 2019/03/01
+ * @version 0.2.0 2019/03/11
  * @author ExBin Project (http://exbin.org)
  */
 public class ColorProfilePanel extends javax.swing.JPanel {
@@ -98,7 +98,7 @@ public class ColorProfilePanel extends javax.swing.JPanel {
     public ExtendedCodeAreaColorProfile getColorProfile() {
         return (ExtendedCodeAreaColorProfile) codeArea.getColorsProfile();
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -108,7 +108,6 @@ public class ColorProfilePanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        preferencesScrollPane = new javax.swing.JScrollPane();
         preferencesPanel = new javax.swing.JPanel();
         colorsScrollPane = new javax.swing.JScrollPane();
         colorsTable = new javax.swing.JTable();
@@ -124,9 +123,7 @@ public class ColorProfilePanel extends javax.swing.JPanel {
 
         preferencesPanel.add(colorsScrollPane, java.awt.BorderLayout.CENTER);
 
-        preferencesScrollPane.setViewportView(preferencesPanel);
-
-        add(preferencesScrollPane, java.awt.BorderLayout.WEST);
+        add(preferencesPanel, java.awt.BorderLayout.WEST);
 
         previewPanel.setLayout(new java.awt.BorderLayout());
 
@@ -152,7 +149,6 @@ public class ColorProfilePanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane colorsScrollPane;
     private javax.swing.JTable colorsTable;
     private javax.swing.JPanel preferencesPanel;
-    private javax.swing.JScrollPane preferencesScrollPane;
     private javax.swing.JLabel previewLabel;
     private javax.swing.JPanel previewPanel;
     // End of variables declaration//GEN-END:variables

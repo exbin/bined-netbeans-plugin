@@ -24,7 +24,7 @@ import org.openide.util.Exceptions;
 /**
  * Wrapper for preferences.
  *
- * @version 0.2.0 2019/03/01
+ * @version 0.2.0 2019/03/11
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -38,7 +38,11 @@ public class PreferencesWrapper implements Preferences {
 
     @Override
     public void put(String key, @Nullable String value) {
-        preferences.put(key, value);
+        if (value == null) {
+            preferences.remove(key);
+        } else {
+            preferences.put(key, value);
+        }
     }
 
     @Override

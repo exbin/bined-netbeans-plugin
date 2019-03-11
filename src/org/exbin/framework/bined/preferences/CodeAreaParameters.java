@@ -35,7 +35,7 @@ import org.exbin.framework.editor.text.panel.TextFontOptionsPanel;
 /**
  * Code area preferences.
  *
- * @version 0.2.0 2019/03/01
+ * @version 0.2.0 2019/03/11
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -129,25 +129,36 @@ public class CodeAreaParameters {
     }
 
     public void setCodeFont(Font font) {
-        Map<TextAttribute, ?> attribs = font.getAttributes();
-        String value = (String) attribs.get(TextAttribute.FAMILY);
-        if (value != null) {
-            preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_FAMILY, value);
+        if (font != null) {
+            Map<TextAttribute, ?> attribs = font.getAttributes();
+            String value = (String) attribs.get(TextAttribute.FAMILY);
+            if (value != null) {
+                preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_FAMILY, value);
+            } else {
+                preferences.remove(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_FAMILY);
+            }
+            Float fontSize = (Float) attribs.get(TextAttribute.SIZE);
+            if (fontSize != null) {
+                preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SIZE, Integer.toString((int) (float) fontSize));
+            } else {
+                preferences.remove(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SIZE);
+            }
+            preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_UNDERLINE, Boolean.toString(TextAttribute.UNDERLINE_LOW_ONE_PIXEL.equals(attribs.get(TextAttribute.UNDERLINE))));
+            preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_STRIKETHROUGH, Boolean.toString(TextAttribute.STRIKETHROUGH_ON.equals(attribs.get(TextAttribute.STRIKETHROUGH))));
+            preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_STRONG, Boolean.toString(TextAttribute.WEIGHT_BOLD.equals(attribs.get(TextAttribute.WEIGHT))));
+            preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_ITALIC, Boolean.toString(TextAttribute.POSTURE_OBLIQUE.equals(attribs.get(TextAttribute.POSTURE))));
+            preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SUBSCRIPT, Boolean.toString(TextAttribute.SUPERSCRIPT_SUB.equals(attribs.get(TextAttribute.SUPERSCRIPT))));
+            preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SUPERSCRIPT, Boolean.toString(TextAttribute.SUPERSCRIPT_SUPER.equals(attribs.get(TextAttribute.SUPERSCRIPT))));
         } else {
             preferences.remove(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_FAMILY);
-        }
-        Float fontSize = (Float) attribs.get(TextAttribute.SIZE);
-        if (fontSize != null) {
-            preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SIZE, Integer.toString((int) (float) fontSize));
-        } else {
             preferences.remove(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SIZE);
+            preferences.remove(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_UNDERLINE);
+            preferences.remove(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_STRIKETHROUGH);
+            preferences.remove(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_STRONG);
+            preferences.remove(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_ITALIC);
+            preferences.remove(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SUBSCRIPT);
+            preferences.remove(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SUPERSCRIPT);
         }
-        preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_UNDERLINE, Boolean.toString(TextAttribute.UNDERLINE_LOW_ONE_PIXEL.equals(attribs.get(TextAttribute.UNDERLINE))));
-        preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_STRIKETHROUGH, Boolean.toString(TextAttribute.STRIKETHROUGH_ON.equals(attribs.get(TextAttribute.STRIKETHROUGH))));
-        preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_STRONG, Boolean.toString(TextAttribute.WEIGHT_BOLD.equals(attribs.get(TextAttribute.WEIGHT))));
-        preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_ITALIC, Boolean.toString(TextAttribute.POSTURE_OBLIQUE.equals(attribs.get(TextAttribute.POSTURE))));
-        preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SUBSCRIPT, Boolean.toString(TextAttribute.SUPERSCRIPT_SUB.equals(attribs.get(TextAttribute.SUPERSCRIPT))));
-        preferences.put(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SUPERSCRIPT, Boolean.toString(TextAttribute.SUPERSCRIPT_SUPER.equals(attribs.get(TextAttribute.SUPERSCRIPT))));
     }
 
     public boolean isRowWrapping() {

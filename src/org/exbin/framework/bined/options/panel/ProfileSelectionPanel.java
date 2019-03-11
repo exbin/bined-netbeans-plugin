@@ -21,13 +21,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
 
 /**
  * Wrapper panel for named profile.
  *
- * @version 0.2.0 2019/03/02
+ * @version 0.2.0 2019/03/11
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -38,6 +40,48 @@ public class ProfileSelectionPanel extends javax.swing.JPanel {
     public ProfileSelectionPanel(JPanel profilePanel) {
         initComponents();
         addPanel(profilePanel);
+
+        if (profilePanel instanceof ProfileListPanel) {
+            final ProfileListPanel listPanel = (ProfileListPanel) profilePanel;
+            listPanel.addProfileListPanelListener(new ListDataListener() {
+                @Override
+                public void intervalAdded(@Nonnull ListDataEvent event) {
+                    List<String> profileNames = listPanel.getProfileNames();
+                    int startIndex = event.getIndex0();
+                    int endIndex = event.getIndex1();
+                    for (int index = startIndex; index <= endIndex; index++) {
+                        DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) defaultProfileComboBox.getModel();
+                        String profileName = profileNames.get(index);
+                        model.insertElementAt(profileName, index);
+                        if (model.getSize() == 1) {
+                            defaultProfileComboBox.setSelectedIndex(0);
+                        }
+                    }
+                }
+
+                @Override
+                public void intervalRemoved(@Nonnull ListDataEvent event) {
+                    int startIndex = event.getIndex0();
+                    int endIndex = event.getIndex1();
+                    for (int index = endIndex; index >= startIndex; index--) {
+                        DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) defaultProfileComboBox.getModel();
+                        model.removeElementAt(index);
+                    }
+                }
+
+                @Override
+                public void contentsChanged(@Nonnull ListDataEvent event) {
+                    List<String> profileNames = listPanel.getProfileNames();
+                    int startIndex = event.getIndex0();
+                    int endIndex = event.getIndex1();
+                    for (int index = startIndex; index <= endIndex; index++) {
+                        DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) defaultProfileComboBox.getModel();
+                        model.removeElementAt(index);
+                        model.insertElementAt(profileNames.get(index), index);
+                    }
+                }
+            });
+        }
     }
 
     private void addPanel(JPanel profilePanel) {

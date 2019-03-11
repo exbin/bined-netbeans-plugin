@@ -105,5 +105,4 @@ public final class BinEdOptionsPanelController extends OptionsPanelController {
         }
         pcs.firePropertyChange(OptionsPanelController.PROP_VALID, null, null);
     }
-
 }

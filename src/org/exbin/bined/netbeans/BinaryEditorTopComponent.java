@@ -796,6 +796,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         final JMenuItem optionsMenuItem = new JMenuItem("Options...");
         optionsMenuItem.addActionListener((ActionEvent e) -> {
             final BinEdOptionsPanelBorder optionsPanel = new BinEdOptionsPanelBorder();
+            optionsPanel.load();
             optionsPanel.setFromCodeArea(codeArea);
             optionsPanel.setShowValuesPanel(valuesPanelVisible);
             OptionsControlPanel optionsControlPanel = new OptionsControlPanel();

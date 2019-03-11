@@ -29,8 +29,10 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
+import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import org.exbin.bined.swing.extended.color.ExtendedCodeAreaColorProfile;
+import org.exbin.framework.bined.preferences.ColorParameters;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
 import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
@@ -39,11 +41,11 @@ import org.exbin.framework.gui.utils.panel.DefaultControlPanel;
 /**
  * Manage list of color profiles panel.
  *
- * @version 0.2.0 2019/03/01
+ * @version 0.2.0 2019/03/11
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
-public class ColorProfilesPanel extends javax.swing.JPanel {
+public class ColorProfilesPanel extends javax.swing.JPanel implements ProfileListPanel {
 
     private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(ColorProfilesPanel.class);
 
@@ -66,6 +68,7 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
         boolean singleSelection = selectedIndices.length == 1;
         boolean hasAnyItems = !getProfilesListModel().isEmpty();
         editButton.setEnabled(singleSelection);
+        copyButton.setEnabled(singleSelection);
         selectAllButton.setEnabled(hasAnyItems);
         removeButton.setEnabled(hasSelection);
 
@@ -81,6 +84,19 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
     @Nonnull
     private ProfilesListModel getProfilesListModel() {
         return ((ProfilesListModel) profilesList.getModel());
+    }
+
+    @Nonnull
+    @Override
+    public List<String> getProfileNames() {
+        List<String> profileNames = new ArrayList<>();
+        getProfilesListModel().profiles.forEach((profile) -> profileNames.add(profile.profileName));
+        return profileNames;
+    }
+
+    @Override
+    public void addProfileListPanelListener(ListDataListener listener) {
+        getProfilesListModel().addListDataListener(listener);
     }
 
     /**
@@ -102,6 +118,7 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
         selectAllButton = new javax.swing.JButton();
         editButton = new javax.swing.JButton();
         hideButton = new javax.swing.JButton();
+        copyButton = new javax.swing.JButton();
 
         profilesListScrollPane.setViewportView(profilesList);
 
@@ -160,6 +177,14 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
             }
         });
 
+        copyButton.setText(resourceBundle.getString("ColorProfilesPanel.copyButton.text")); // NOI18N
+        copyButton.setEnabled(false);
+        copyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout profilesControlPanelLayout = new javax.swing.GroupLayout(profilesControlPanel);
         profilesControlPanel.setLayout(profilesControlPanelLayout);
         profilesControlPanelLayout.setHorizontalGroup(
@@ -173,7 +198,8 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
                     .addComponent(selectAllButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
                     .addComponent(downButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(upButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(addButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(addButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(copyButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         profilesControlPanelLayout.setVerticalGroup(
@@ -182,13 +208,15 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(addButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(editButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(copyButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(upButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(downButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(selectAllButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(editButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(removeButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -253,6 +281,8 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_downButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+        ProfilesListModel model = getProfilesListModel();
+        int selectedIndex = profilesList.getSelectedIndex();
         ColorProfilePanel colorProfilePanel = new ColorProfilePanel();
         colorProfilePanel.setColorProfile(new ExtendedCodeAreaColorProfile());
         NamedProfilePanel namedProfilePanel = new NamedProfilePanel(colorProfilePanel);
@@ -268,17 +298,15 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
                     return;
                 }
 
-                ColorProfile profileRecord = new ColorProfile();
+                ColorProfile newProfileRecord = new ColorProfile();
                 ExtendedCodeAreaColorProfile colorProfile = colorProfilePanel.getColorProfile();
-                profileRecord.profileName = namedProfilePanel.getProfileName();
-                profileRecord.colorProfile = colorProfile;
-                int selectedIndex = profilesList.getSelectedIndex();
-                ProfilesListModel model = getProfilesListModel();
+                newProfileRecord.profileName = namedProfilePanel.getProfileName();
+                newProfileRecord.colorProfile = colorProfile;
                 if (selectedIndex >= 0) {
                     profilesList.clearSelection();
-                    model.add(selectedIndex, profileRecord);
+                    model.add(selectedIndex, newProfileRecord);
                 } else {
-                    model.add(profileRecord);
+                    model.add(newProfileRecord);
                 }
                 wasModified();
             }
@@ -343,6 +371,47 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_selectAllButtonActionPerformed
 
+    private void copyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyButtonActionPerformed
+        ProfilesListModel model = getProfilesListModel();
+        int selectedIndex = profilesList.getSelectedIndex();
+        ColorProfile profileRecord = model.getElementAt(selectedIndex);
+        ColorProfilePanel colorProfilePanel = new ColorProfilePanel();
+        colorProfilePanel.setColorProfile(new ExtendedCodeAreaColorProfile());
+        NamedProfilePanel namedProfilePanel = new NamedProfilePanel(colorProfilePanel);
+        DefaultControlPanel controlPanel = new DefaultControlPanel();
+        JPanel dialogPanel = WindowUtils.createDialogPanel(namedProfilePanel, controlPanel);
+
+        final Dialog dialog = WindowUtils.createDialog(dialogPanel, null, Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.setTitle("Copy Colors Profile");
+        colorProfilePanel.setColorProfile(profileRecord.colorProfile);
+        controlPanel.setHandler((DefaultControlHandler.ControlActionType actionType) -> {
+            if (actionType != DefaultControlHandler.ControlActionType.CANCEL) {
+                if (!isValidProfileName(namedProfilePanel.getProfileName())) {
+                    JOptionPane.showMessageDialog(this, "Invalid profile name", "Profile Editation Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                ColorProfile newProfileRecord = new ColorProfile();
+                ExtendedCodeAreaColorProfile colorProfile = colorProfilePanel.getColorProfile();
+                newProfileRecord.profileName = namedProfilePanel.getProfileName();
+                newProfileRecord.colorProfile = colorProfile;
+                if (selectedIndex >= 0) {
+                    model.add(selectedIndex + 1, newProfileRecord);
+                    profilesList.setSelectedIndex(selectedIndex + 1);
+                } else {
+                    profilesList.clearSelection();
+                    model.add(newProfileRecord);
+                }
+                wasModified();
+            }
+
+            WindowUtils.closeWindow(dialog);
+        });
+        dialog.setLocationByPlatform(true);
+        dialog.setVisible(true);
+        dialog.dispose();
+    }//GEN-LAST:event_copyButtonActionPerformed
+
     public boolean isModified() {
         return modified;
     }
@@ -356,6 +425,37 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
         return profileName != null && !"".equals(profileName.trim());
     }
 
+    public void loadFromParameters(ColorParameters parameters) {
+        List<ColorProfile> profiles = new ArrayList<>();
+        List<String> profileNames = parameters.getColorProfilesList();
+        for (int index = 0; index < profileNames.size(); index++) {
+            ColorProfile profile = new ColorProfile();
+            profile.profileName = profileNames.get(index);
+            profile.colorProfile = parameters.getColorsProfile(index);
+            profiles.add(profile);
+        }
+
+        ProfilesListModel model = getProfilesListModel();
+        model.setProfiles(profiles);
+    }
+
+    public void saveToParameters(ColorParameters parameters) {
+        List<String> profileNames = parameters.getColorProfilesList();
+        for (int index = 0; index < profileNames.size(); index++) {
+            parameters.clearColorsProfile(index);
+        }
+
+        profileNames.clear();
+        ProfilesListModel model = getProfilesListModel();
+        List<ColorProfile> profiles = model.getProfiles();
+        for (int index = 0; index < profiles.size(); index++) {
+            ColorProfile profile = profiles.get(index);
+            profileNames.add(profile.profileName);
+            parameters.setColorsProfile(index, profile.colorProfile);
+        }
+        parameters.setColorProfilesList(profileNames);
+    }
+
     /**
      * Test method for this panel.
      *
@@ -367,6 +467,7 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
+    private javax.swing.JButton copyButton;
     private javax.swing.JButton downButton;
     private javax.swing.JButton editButton;
     private javax.swing.JButton hideButton;
@@ -417,9 +518,16 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
         }
 
         public void setProfiles(List<ColorProfile> profiles) {
-            this.profiles.clear();
-            this.profiles.addAll(profiles);
-            fireContentsChanged(this, 0, profiles.size());
+            int size = this.profiles.size();
+            if (size > 0) {
+                this.profiles.clear();
+                fireIntervalRemoved(this, 0, size - 1);
+            }
+            int profilesSize = profiles.size();
+            if (profilesSize > 0) {
+                this.profiles.addAll(profiles);
+                fireIntervalAdded(this, 0, profilesSize - 1);
+            }
         }
 
         public void addAll(List<ColorProfile> list, int index) {
@@ -435,8 +543,8 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
         public void removeIndices(int[] indices) {
             for (int i = indices.length - 1; i >= 0; i--) {
                 profiles.remove(indices[i]);
+                fireIntervalRemoved(this, 0, indices[i]);
             }
-            fireContentsChanged(this, 0, profiles.size());
         }
 
         public void remove(int index) {
@@ -460,6 +568,7 @@ public class ColorProfilesPanel extends javax.swing.JPanel {
         }
     }
 
+    @ParametersAreNonnullByDefault
     private static final class ProfileCellRenderer implements ListCellRenderer<ColorProfile> {
 
         private final DefaultListCellRenderer defaultListCellRenderer = new DefaultListCellRenderer();

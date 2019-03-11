@@ -29,8 +29,10 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
+import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import org.exbin.bined.swing.extended.layout.DefaultExtendedCodeAreaLayoutProfile;
+import org.exbin.framework.bined.preferences.LayoutParameters;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
 import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
@@ -39,10 +41,10 @@ import org.exbin.framework.gui.utils.panel.DefaultControlPanel;
 /**
  * Manage list of layout profiles panel.
  *
- * @version 0.2.0 2019/03/10
+ * @version 0.2.0 2019/03/11
  * @author ExBin Project (http://exbin.org)
  */
-public class LayoutProfilesPanel extends javax.swing.JPanel {
+public class LayoutProfilesPanel extends javax.swing.JPanel implements ProfileListPanel {
 
     private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(LayoutProfilesPanel.class);
 
@@ -65,6 +67,7 @@ public class LayoutProfilesPanel extends javax.swing.JPanel {
         boolean singleSelection = selectedIndices.length == 1;
         boolean hasAnyItems = !getProfilesListModel().isEmpty();
         editButton.setEnabled(singleSelection);
+        copyButton.setEnabled(singleSelection);
         selectAllButton.setEnabled(hasAnyItems);
         removeButton.setEnabled(hasSelection);
 
@@ -75,6 +78,19 @@ public class LayoutProfilesPanel extends javax.swing.JPanel {
             upButton.setEnabled(false);
             downButton.setEnabled(false);
         }
+    }
+
+    @Nonnull
+    @Override
+    public List<String> getProfileNames() {
+        List<String> profileNames = new ArrayList<>();
+        getProfilesListModel().profiles.forEach((profile) -> profileNames.add(profile.profileName));
+        return profileNames;
+    }
+
+    @Override
+    public void addProfileListPanelListener(ListDataListener listener) {
+        getProfilesListModel().addListDataListener(listener);
     }
 
     @Nonnull
@@ -101,6 +117,7 @@ public class LayoutProfilesPanel extends javax.swing.JPanel {
         selectAllButton = new javax.swing.JButton();
         editButton = new javax.swing.JButton();
         hideButton = new javax.swing.JButton();
+        copyButton = new javax.swing.JButton();
 
         profilesListScrollPane.setViewportView(profilesList);
 
@@ -159,6 +176,14 @@ public class LayoutProfilesPanel extends javax.swing.JPanel {
             }
         });
 
+        copyButton.setText(resourceBundle.getString("copyButton.text")); // NOI18N
+        copyButton.setEnabled(false);
+        copyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout profilesControlPanelLayout = new javax.swing.GroupLayout(profilesControlPanel);
         profilesControlPanel.setLayout(profilesControlPanelLayout);
         profilesControlPanelLayout.setHorizontalGroup(
@@ -172,7 +197,8 @@ public class LayoutProfilesPanel extends javax.swing.JPanel {
                     .addComponent(selectAllButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
                     .addComponent(downButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(upButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(addButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(addButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(copyButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         profilesControlPanelLayout.setVerticalGroup(
@@ -181,13 +207,15 @@ public class LayoutProfilesPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(addButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(editButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(copyButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(upButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(downButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(selectAllButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(editButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(removeButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -252,6 +280,8 @@ public class LayoutProfilesPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_downButtonActionPerformed
 
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+        ProfilesListModel model = getProfilesListModel();
+        int selectedIndex = profilesList.getSelectedIndex();
         LayoutProfilePanel layoutProfilePanel = new LayoutProfilePanel();
         layoutProfilePanel.setLayoutProfile(new DefaultExtendedCodeAreaLayoutProfile());
         NamedProfilePanel namedProfilePanel = new NamedProfilePanel(layoutProfilePanel);
@@ -267,17 +297,15 @@ public class LayoutProfilesPanel extends javax.swing.JPanel {
                     return;
                 }
 
-                LayoutProfile profileRecord = new LayoutProfile();
+                LayoutProfile newProfileRecord = new LayoutProfile();
                 DefaultExtendedCodeAreaLayoutProfile layoutProfile = layoutProfilePanel.getLayoutProfile();
-                profileRecord.profileName = namedProfilePanel.getProfileName();
-                profileRecord.layoutProfile = layoutProfile;
-                int selectedIndex = profilesList.getSelectedIndex();
-                ProfilesListModel model = getProfilesListModel();
+                newProfileRecord.profileName = namedProfilePanel.getProfileName();
+                newProfileRecord.layoutProfile = layoutProfile;
                 if (selectedIndex >= 0) {
                     profilesList.clearSelection();
-                    model.add(selectedIndex, profileRecord);
+                    model.add(selectedIndex, newProfileRecord);
                 } else {
-                    model.add(profileRecord);
+                    model.add(newProfileRecord);
                 }
                 wasModified();
             }
@@ -342,6 +370,47 @@ public class LayoutProfilesPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_hideButtonActionPerformed
 
+    private void copyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_copyButtonActionPerformed
+        ProfilesListModel model = getProfilesListModel();
+        int selectedIndex = profilesList.getSelectedIndex();
+        LayoutProfile profileRecord = model.getElementAt(selectedIndex);
+        LayoutProfilePanel layoutProfilePanel = new LayoutProfilePanel();
+        layoutProfilePanel.setLayoutProfile(new DefaultExtendedCodeAreaLayoutProfile());
+        NamedProfilePanel namedProfilePanel = new NamedProfilePanel(layoutProfilePanel);
+        DefaultControlPanel controlPanel = new DefaultControlPanel();
+        JPanel dialogPanel = WindowUtils.createDialogPanel(namedProfilePanel, controlPanel);
+
+        final Dialog dialog = WindowUtils.createDialog(dialogPanel, null, Dialog.ModalityType.APPLICATION_MODAL);
+        layoutProfilePanel.setLayoutProfile(profileRecord.layoutProfile);
+        dialog.setTitle("Copy Layout Profile");
+        controlPanel.setHandler((DefaultControlHandler.ControlActionType actionType) -> {
+            if (actionType != DefaultControlHandler.ControlActionType.CANCEL) {
+                if (!isValidProfileName(namedProfilePanel.getProfileName())) {
+                    JOptionPane.showMessageDialog(this, "Invalid profile name", "Profile Editation Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                LayoutProfile newProfileRecord = new LayoutProfile();
+                DefaultExtendedCodeAreaLayoutProfile layoutProfile = layoutProfilePanel.getLayoutProfile();
+                newProfileRecord.profileName = namedProfilePanel.getProfileName();
+                newProfileRecord.layoutProfile = layoutProfile;
+                if (selectedIndex >= 0) {
+                    model.add(selectedIndex + 1, newProfileRecord);
+                    profilesList.setSelectedIndex(selectedIndex + 1);
+                } else {
+                    profilesList.clearSelection();
+                    model.add(newProfileRecord);
+                }
+                wasModified();
+            }
+
+            WindowUtils.closeWindow(dialog);
+        });
+        dialog.setLocationByPlatform(true);
+        dialog.setVisible(true);
+        dialog.dispose();
+    }//GEN-LAST:event_copyButtonActionPerformed
+
     public boolean isModified() {
         return modified;
     }
@@ -352,6 +421,37 @@ public class LayoutProfilesPanel extends javax.swing.JPanel {
 
     private boolean isValidProfileName(@Nullable String profileName) {
         return profileName != null && !"".equals(profileName.trim());
+    }
+
+    public void loadFromParameters(LayoutParameters parameters) {
+        List<LayoutProfile> profiles = new ArrayList<>();
+        List<String> profileNames = parameters.getLayoutProfilesList();
+        for (int index = 0; index < profileNames.size(); index++) {
+            LayoutProfile profile = new LayoutProfile();
+            profile.profileName = profileNames.get(index);
+            profile.layoutProfile = (DefaultExtendedCodeAreaLayoutProfile) parameters.getLayoutProfile(index);
+            profiles.add(profile);
+        }
+
+        ProfilesListModel model = getProfilesListModel();
+        model.setProfiles(profiles);
+    }
+
+    public void saveToParameters(LayoutParameters parameters) {
+        List<String> profileNames = parameters.getLayoutProfilesList();
+        for (int index = 0; index < profileNames.size(); index++) {
+            parameters.clearLayout(index);
+        }
+
+        profileNames.clear();
+        ProfilesListModel model = getProfilesListModel();
+        List<LayoutProfile> profiles = model.getProfiles();
+        for (int index = 0; index < profiles.size(); index++) {
+            LayoutProfile profile = profiles.get(index);
+            profileNames.add(profile.profileName);
+            parameters.LayoutProfile(index, profile.layoutProfile);
+        }
+        parameters.setLayoutProfilesList(profileNames);
     }
 
     /**
@@ -365,6 +465,7 @@ public class LayoutProfilesPanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
+    private javax.swing.JButton copyButton;
     private javax.swing.JButton downButton;
     private javax.swing.JButton editButton;
     private javax.swing.JButton hideButton;
@@ -415,9 +516,16 @@ public class LayoutProfilesPanel extends javax.swing.JPanel {
         }
 
         public void setProfiles(List<LayoutProfile> profiles) {
-            this.profiles.clear();
-            this.profiles.addAll(profiles);
-            fireContentsChanged(this, 0, profiles.size());
+            int size = this.profiles.size();
+            if (size > 0) {
+                this.profiles.clear();
+                fireIntervalRemoved(this, 0, size - 1);
+            }
+            int profilesSize = profiles.size();
+            if (profilesSize > 0) {
+                this.profiles.addAll(profiles);
+                fireIntervalAdded(this, 0, profilesSize - 1);
+            }
         }
 
         public void addAll(List<LayoutProfile> list, int index) {
@@ -433,8 +541,8 @@ public class LayoutProfilesPanel extends javax.swing.JPanel {
         public void removeIndices(int[] indices) {
             for (int i = indices.length - 1; i >= 0; i--) {
                 profiles.remove(indices[i]);
+                fireIntervalRemoved(this, 0, indices[i]);
             }
-            fireContentsChanged(this, 0, profiles.size());
         }
 
         public void remove(int index) {
@@ -458,6 +566,7 @@ public class LayoutProfilesPanel extends javax.swing.JPanel {
         }
     }
 
+    @ParametersAreNonnullByDefault
     private static final class ProfileCellRenderer implements ListCellRenderer<LayoutProfile> {
 
         private final DefaultListCellRenderer defaultListCellRenderer = new DefaultListCellRenderer();

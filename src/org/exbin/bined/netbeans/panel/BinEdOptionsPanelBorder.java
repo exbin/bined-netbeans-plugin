@@ -68,6 +68,9 @@ public class BinEdOptionsPanelBorder extends javax.swing.JPanel {
         // TODO optionsPanel.setShowValuesPanel(flag);
     }
 
+    public void load() {
+        optionsPanel.load();
+    }
     public void store() {
         optionsPanel.store();
     }

@@ -19,19 +19,19 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import org.exbin.bined.extended.layout.ExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.swing.extended.layout.DefaultExtendedCodeAreaLayoutProfile;
 
 /**
  * Layout parameters.
  *
- * @version 0.2.0 2019/03/02
+ * @version 0.2.0 2019/03/11
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
 public class LayoutParameters {
 
     public static final String PREFERENCES_LAYOUT_PROFILES_COUNT = "layoutProfilesCount";
+    public static final String PREFERENCES_LAYOUT_PROFILE_SELECTED = "layoutProfileSelected";
     public static final String PREFERENCES_LAYOUT_PROFILE_NAME_PREFIX = "layoutProfileName.";
     public static final String PREFERENCES_LAYOUT_VALUE_PREFIX = "layouts.";
 
@@ -54,7 +54,7 @@ public class LayoutParameters {
     }
 
     @Nonnull
-    public List<String> getLayoutList() {
+    public List<String> getLayoutProfilesList() {
         List<String> layoutList = new ArrayList<>();
         int layoutsCount = preferences.getInt(PREFERENCES_LAYOUT_PROFILES_COUNT, 0);
 
@@ -66,7 +66,7 @@ public class LayoutParameters {
         return layoutList;
     }
 
-    public void setLayoutList(List<String> layoutNames) {
+    public void setLayoutProfilesList(List<String> layoutNames) {
         int prevLayoutsCount = preferences.getInt(PREFERENCES_LAYOUT_PROFILES_COUNT, 0);
         for (int i = 0; i < prevLayoutsCount; i++) {
             clearLayout(i);
@@ -80,8 +80,16 @@ public class LayoutParameters {
         }
     }
 
+    public int getSelectedProfile() {
+        return preferences.getInt(PREFERENCES_LAYOUT_PROFILE_SELECTED, 0);
+    }
+
+    public void setSelectedProfile(int profileIndex) {
+        preferences.putInt(PREFERENCES_LAYOUT_PROFILE_SELECTED, profileIndex);
+    }
+
     @Nonnull
-    public ExtendedCodeAreaLayoutProfile getLayoutProfile(int layoutIndex) {
+    public DefaultExtendedCodeAreaLayoutProfile getLayoutProfile(int layoutIndex) {
         DefaultExtendedCodeAreaLayoutProfile layoutProfile = new DefaultExtendedCodeAreaLayoutProfile();
         String layoutPrefix = PREFERENCES_LAYOUT_VALUE_PREFIX + String.valueOf(layoutIndex) + ".";
         layoutProfile.setShowHeader(preferences.getBoolean(layoutPrefix + LAYOUT_SHOW_HEADER, layoutProfile.isShowHeader()));

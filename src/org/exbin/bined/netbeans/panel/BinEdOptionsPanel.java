@@ -163,6 +163,9 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         editorOptions.loadFromParameters(preferences.getEditorParameters());
         codeAreaOptions.loadFromParameters(preferences.getCodeAreaParameters());
 //        charsetOptions.loadFromParameters(preferences.getCharsetParameters());
+        layoutProfilesPanel.loadFromParameters(preferences.getLayoutParameters());
+        colorProfilesPanel.loadFromParameters(preferences.getColorParameters());
+        themeProfilesPanel.loadFromParameters(preferences.getThemeParameters());
         
         editorParametersPanel.loadFromOptions(editorOptions);
         codeAreaParametersPanel.loadFromOptions(codeAreaOptions);
@@ -219,12 +222,15 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
     }
 
     public void store() {
-        editorParametersPanel.saveToOptions(editorOptions);
-        codeAreaParametersPanel.saveToOptions(codeAreaOptions);
-//        charsetParametersPanel.saveToOptions(charsetOptions);
-
         editorOptions.saveToParameters(preferences.getEditorParameters());
         codeAreaOptions.saveToParameters(preferences.getCodeAreaParameters());
+//        charsetParametersPanel.saveToOptions(charsetOptions);
+        layoutProfilesPanel.saveToParameters(preferences.getLayoutParameters());
+        colorProfilesPanel.saveToParameters(preferences.getColorParameters());
+        themeProfilesPanel.saveToParameters(preferences.getThemeParameters());
+
+        editorParametersPanel.saveToOptions(editorOptions);
+        codeAreaParametersPanel.saveToOptions(codeAreaOptions);
 //        charsetOptions.saveToParameters(preferences.getCharsetParameters());
 
         // Layout
@@ -364,21 +370,6 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         // TODO check whether form is consistent and complete
         return true;
     }
-
-//    private void updateFontTextField() {
-//        int fontStyle = binEdFont.getStyle();
-//        String fontStyleName;
-//        if ((fontStyle & (Font.BOLD + Font.ITALIC)) == Font.BOLD + Font.ITALIC) {
-//            fontStyleName = "Bold Italic";
-//        } else if ((fontStyle & Font.BOLD) > 0) {
-//            fontStyleName = "Bold";
-//        } else if ((fontStyle & Font.ITALIC) > 0) {
-//            fontStyleName = "Italic";
-//        } else {
-//            fontStyleName = "Plain";
-//        }
-//        fontTextField.setText(binEdFont.getFamily() + " " + String.valueOf(binEdFont.getSize()) + " " + fontStyleName);
-//    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel categoriesLabel;
