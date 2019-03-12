@@ -543,7 +543,7 @@ public class ColorProfilesPanel extends javax.swing.JPanel implements ProfileLis
         public void removeIndices(int[] indices) {
             for (int i = indices.length - 1; i >= 0; i--) {
                 profiles.remove(indices[i]);
-                fireIntervalRemoved(this, 0, indices[i]);
+                fireIntervalRemoved(this, indices[i], indices[i]);
             }
         }
 

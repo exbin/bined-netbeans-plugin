@@ -38,7 +38,7 @@ import org.exbin.utils.binary_data.ByteArrayEditableData;
 /**
  * Color profile panel.
  *
- * @version 0.2.0 2019/03/11
+ * @version 0.2.0 2019/03/12
  * @author ExBin Project (http://exbin.org)
  */
 public class ColorProfilePanel extends javax.swing.JPanel {
@@ -90,15 +90,16 @@ public class ColorProfilePanel extends javax.swing.JPanel {
     }
 
     public void setColorProfile(@Nonnull ExtendedCodeAreaColorProfile colorProfile) {
-        codeArea.setColorsProfile(colorProfile);
-        colorTableModel.setColorProfile(colorProfile);
+        ExtendedCodeAreaColorProfile newColorProfile = new ExtendedCodeAreaColorProfile(colorProfile);
+        codeArea.setColorsProfile(newColorProfile);
+        colorTableModel.setColorProfile(newColorProfile);
     }
 
     @Nonnull
     public ExtendedCodeAreaColorProfile getColorProfile() {
-        return (ExtendedCodeAreaColorProfile) codeArea.getColorsProfile();
+        return new ExtendedCodeAreaColorProfile((ExtendedCodeAreaColorProfile) codeArea.getColorsProfile());
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

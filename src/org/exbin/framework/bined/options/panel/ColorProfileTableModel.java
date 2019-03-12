@@ -35,7 +35,7 @@ import org.exbin.bined.swing.extended.color.ExtendedCodeAreaColorProfile;
 /**
  * Table model for Color profile panel.
  *
- * @version 0.2.0 2019/01/12
+ * @version 0.2.0 2019/03/12
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -152,7 +152,7 @@ public class ColorProfileTableModel implements TableModel {
                     throw new IllegalStateException("Editing is not allowed when color profile was not set");
                 }
 
-                colorProfile.addColor(rows.get(rowIndex).colorType, (Color) aValue);
+                colorProfile.setColor(rows.get(rowIndex).colorType, (Color) aValue);
                 notifyAllListeners(rowIndex);
                 return;
             }
@@ -162,19 +162,21 @@ public class ColorProfileTableModel implements TableModel {
     }
 
     @Override
-    public void addTableModelListener(TableModelListener l) {
-        listeners.add(l);
+    public void addTableModelListener(TableModelListener listener) {
+        listeners.add(listener);
     }
 
     @Override
-    public void removeTableModelListener(TableModelListener l) {
-        listeners.remove(l);
+    public void removeTableModelListener(TableModelListener listener) {
+        listeners.remove(listener);
     }
 
     private void notifyAllListeners(int rowNumber) {
-        listeners.forEach((listener) -> {
-            listener.tableChanged(new TableModelEvent(this, rowNumber));
-        });
+        listeners.forEach((listener) -> listener.tableChanged(new TableModelEvent(this, rowNumber, 1, TableModelEvent.UPDATE)));
+    }
+
+    private void notifyAllListeners() {
+        listeners.forEach((listener) -> listener.tableChanged(new TableModelEvent(this, 0, rows.size() - 1, 1, TableModelEvent.UPDATE)));
     }
 
     private static class ColorRow {

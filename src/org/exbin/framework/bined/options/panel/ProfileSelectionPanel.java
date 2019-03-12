@@ -29,7 +29,7 @@ import org.exbin.framework.gui.utils.WindowUtils;
 /**
  * Wrapper panel for named profile.
  *
- * @version 0.2.0 2019/03/11
+ * @version 0.2.0 2019/03/12
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -51,10 +51,13 @@ public class ProfileSelectionPanel extends javax.swing.JPanel {
                     int endIndex = event.getIndex1();
                     for (int index = startIndex; index <= endIndex; index++) {
                         DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) defaultProfileComboBox.getModel();
+                        int selectedIndex = defaultProfileComboBox.getSelectedIndex();
                         String profileName = profileNames.get(index);
                         model.insertElementAt(profileName, index);
                         if (model.getSize() == 1) {
                             defaultProfileComboBox.setSelectedIndex(0);
+                        } else if (index < selectedIndex) {
+                            defaultProfileComboBox.setSelectedIndex(selectedIndex + 1);
                         }
                     }
                 }
@@ -65,7 +68,11 @@ public class ProfileSelectionPanel extends javax.swing.JPanel {
                     int endIndex = event.getIndex1();
                     for (int index = endIndex; index >= startIndex; index--) {
                         DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) defaultProfileComboBox.getModel();
+                        int selectedIndex = defaultProfileComboBox.getSelectedIndex();
                         model.removeElementAt(index);
+                        if (selectedIndex == index && model.getSize() > 0) {
+                            defaultProfileComboBox.setSelectedIndex(index == 0 ? 0 : index - 1);
+                        }
                     }
                 }
 
@@ -76,8 +83,12 @@ public class ProfileSelectionPanel extends javax.swing.JPanel {
                     int endIndex = event.getIndex1();
                     for (int index = startIndex; index <= endIndex; index++) {
                         DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) defaultProfileComboBox.getModel();
+                        boolean selected = defaultProfileComboBox.getSelectedIndex() == index;
                         model.removeElementAt(index);
                         model.insertElementAt(profileNames.get(index), index);
+                        if (selected) {
+                            defaultProfileComboBox.setSelectedIndex(index);
+                        }
                     }
                 }
             });
