@@ -15,6 +15,7 @@
  */
 package org.exbin.framework.bined.preferences;
 
+import org.exbin.framework.Preferences;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nonnull;

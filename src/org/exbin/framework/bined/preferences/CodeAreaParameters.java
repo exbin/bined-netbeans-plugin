@@ -15,6 +15,7 @@
  */
 package org.exbin.framework.bined.preferences;
 
+import org.exbin.framework.Preferences;
 import java.awt.Font;
 import java.awt.font.TextAttribute;
 import java.util.ArrayList;

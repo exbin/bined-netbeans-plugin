@@ -15,6 +15,7 @@
  */
 package org.exbin.framework.bined.preferences;
 
+import org.exbin.framework.Preferences;
 import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -63,6 +64,11 @@ public class BinaryEditorPreferences {
                 preferences.flush();
             }
         }
+    }
+
+    @Nonnull
+    public Preferences getPreferences() {
+        return preferences;
     }
 
     @Nonnull

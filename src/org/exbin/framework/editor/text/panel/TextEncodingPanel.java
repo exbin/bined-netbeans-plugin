@@ -19,13 +19,13 @@ package org.exbin.framework.editor.text.panel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.prefs.Preferences;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.AbstractListModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.exbin.framework.Preferences;
 import org.exbin.framework.gui.options.api.OptionsPanel;
 import org.exbin.framework.gui.options.api.OptionsPanel.ModifiedOptionListener;
 import org.exbin.framework.gui.options.api.OptionsPanel.PathItem;
@@ -34,7 +34,7 @@ import org.exbin.framework.gui.utils.LanguageUtils;
 /**
  * Text encoding selection panel.
  *
- * @version 0.2.0 2017/01/06
+ * @version 0.2.0 2019/03/13
  * @author ExBin Project (http://exbin.org)
  */
 public class TextEncodingPanel extends javax.swing.JPanel implements OptionsPanel {

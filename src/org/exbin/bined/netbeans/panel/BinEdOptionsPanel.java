@@ -174,7 +174,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         
         editorParametersPanel.loadFromOptions(editorOptions);
         codeAreaParametersPanel.loadFromOptions(codeAreaOptions);
-//        charsetParametersPanel.loadFromOptions(charsetOptions);
+        charsetParametersPanel.loadFromPreferences(preferences.getPreferences());
 
         // Layout
 // TODO        wrapLineModeCheckBox.setSelected(preferences.isRowWrapping());
@@ -237,7 +237,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 
         editorParametersPanel.saveToOptions(editorOptions);
         codeAreaParametersPanel.saveToOptions(codeAreaOptions);
-//        charsetOptions.saveToParameters(preferences.getCharsetParameters());
+        charsetParametersPanel.saveToPreferences(preferences.getPreferences());
 
         // Layout
 // TODO        preferences.setRowWrapping(wrapLineModeCheckBox.isSelected());
