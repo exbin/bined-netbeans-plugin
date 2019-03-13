@@ -44,6 +44,7 @@ import org.exbin.framework.bined.options.panel.EditorOptionsPanel;
 import org.exbin.framework.bined.options.panel.LayoutProfilesPanel;
 import org.exbin.framework.bined.options.panel.ProfileSelectionPanel;
 import org.exbin.framework.bined.options.panel.ThemeProfilesPanel;
+import org.exbin.framework.editor.text.panel.TextEncodingPanel;
 import org.exbin.framework.editor.text.panel.TextFontPanel;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
@@ -74,6 +75,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
     
     private final EditorOptionsPanel editorParametersPanel = new EditorOptionsPanel();
     private final CodeAreaOptionsPanel codeAreaParametersPanel = new CodeAreaOptionsPanel();
+    private final TextEncodingPanel charsetParametersPanel = new TextEncodingPanel();
     private final LayoutProfilesPanel layoutProfilesPanel = new LayoutProfilesPanel();
     private final ProfileSelectionPanel layoutSelectionPanel = new ProfileSelectionPanel(layoutProfilesPanel);
     private final ThemeProfilesPanel themeProfilesPanel = new ThemeProfilesPanel();
@@ -92,6 +94,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 
         categoryModel.addElement(new CategoryItem("Editor", editorParametersPanel));
         categoryModel.addElement(new CategoryItem("Code Area", codeAreaParametersPanel));
+        categoryModel.addElement(new CategoryItem("Charset", charsetParametersPanel));
         categoryModel.addElement(new CategoryItem("Layout Profiles", layoutSelectionPanel));
         categoryModel.addElement(new CategoryItem("Theme Profiles", themeSelectionPanel));
         categoryModel.addElement(new CategoryItem("Colors Profiles", colorSelectionPanel));
@@ -162,7 +165,9 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
     public void load() {
         editorOptions.loadFromParameters(preferences.getEditorParameters());
         codeAreaOptions.loadFromParameters(preferences.getCodeAreaParameters());
-//        charsetOptions.loadFromParameters(preferences.getCharsetParameters());
+        // TODO statusOptions.loadFromParameters(preferences.getStatusParameters());
+
+        charsetOptions.loadFromParameters(preferences.getCharsetParameters());
         layoutProfilesPanel.loadFromParameters(preferences.getLayoutParameters());
         colorProfilesPanel.loadFromParameters(preferences.getColorParameters());
         themeProfilesPanel.loadFromParameters(preferences.getThemeParameters());
@@ -224,7 +229,8 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
     public void store() {
         editorOptions.saveToParameters(preferences.getEditorParameters());
         codeAreaOptions.saveToParameters(preferences.getCodeAreaParameters());
-//        charsetParametersPanel.saveToOptions(charsetOptions);
+        
+        // TODO charsetParametersPanel.saveToPreferences(preferences);
         layoutProfilesPanel.saveToParameters(preferences.getLayoutParameters());
         colorProfilesPanel.saveToParameters(preferences.getColorParameters());
         themeProfilesPanel.saveToParameters(preferences.getThemeParameters());
