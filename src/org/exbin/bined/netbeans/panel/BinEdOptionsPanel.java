@@ -17,23 +17,18 @@ package org.exbin.bined.netbeans.panel;
 
 import java.awt.Component;
 import java.awt.Dialog;
-import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
-import org.exbin.bined.CodeAreaViewMode;
-import org.exbin.bined.CodeCharactersCase;
-import org.exbin.bined.CodeType;
-import org.exbin.bined.PositionCodeType;
-import org.exbin.bined.capability.RowWrappingCapable;
-import org.exbin.bined.delta.DeltaDocument;
-import org.exbin.bined.extended.layout.ExtendedCodeAreaLayoutProfile;
-import org.exbin.bined.highlight.swing.extended.ExtendedHighlightNonAsciiCodeAreaPainter;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
 import org.exbin.bined.netbeans.PreferencesWrapper;
 import org.exbin.bined.swing.extended.ExtCodeArea;
+import org.exbin.bined.swing.extended.color.ExtendedCodeAreaColorProfile;
+import org.exbin.bined.swing.extended.layout.DefaultExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
 import org.exbin.framework.bined.options.CharsetOptions;
 import org.exbin.framework.bined.options.CodeAreaOptions;
@@ -44,8 +39,8 @@ import org.exbin.framework.bined.options.panel.EditorOptionsPanel;
 import org.exbin.framework.bined.options.panel.LayoutProfilesPanel;
 import org.exbin.framework.bined.options.panel.ProfileSelectionPanel;
 import org.exbin.framework.bined.options.panel.ThemeProfilesPanel;
+import org.exbin.framework.editor.text.panel.AddEncodingPanel;
 import org.exbin.framework.editor.text.panel.TextEncodingPanel;
-import org.exbin.framework.editor.text.panel.TextFontPanel;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
 import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
@@ -57,7 +52,7 @@ import org.openide.util.NbPreferences;
 /**
  * Hexadecimal editor options panel.
  *
- * @version 0.2.0 2019/03/02
+ * @version 0.2.0 2019/03/14
  * @author ExBin Project (http://exbin.org)
  */
 public class BinEdOptionsPanel extends javax.swing.JPanel {
@@ -68,11 +63,11 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 
     private DefaultListModel<CategoryItem> categoryModel = new DefaultListModel<>();
     private JPanel currentCategoryPanel = null;
-    
+
     private final EditorOptions editorOptions = new EditorOptions();
     private final CharsetOptions charsetOptions = new CharsetOptions();
     private final CodeAreaOptions codeAreaOptions = new CodeAreaOptions();
-    
+
     private final EditorOptionsPanel editorParametersPanel = new EditorOptionsPanel();
     private final CodeAreaOptionsPanel codeAreaParametersPanel = new CodeAreaOptionsPanel();
     private final TextEncodingPanel charsetParametersPanel = new TextEncodingPanel();
@@ -119,6 +114,25 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
             }
         });
         categoriesList.setSelectedIndex(0);
+
+        charsetParametersPanel.setAddEncodingsOperation((List<String> usedEncodings) -> {
+            final List<String> result = new ArrayList<>();
+            final AddEncodingPanel addEncodingPanel = new AddEncodingPanel();
+            addEncodingPanel.setUsedEncodings(usedEncodings);
+            DefaultControlPanel encodingsControlPanel = new DefaultControlPanel(addEncodingPanel.getResourceBundle());
+            JPanel dialogPanel = WindowUtils.createDialogPanel(addEncodingPanel, encodingsControlPanel);
+            DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Add Encodings", true, new Object[0], null, 0, null, null);
+            final Dialog addEncodingDialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
+            encodingsControlPanel.setHandler((DefaultControlHandler.ControlActionType actionType) -> {
+                if (actionType == DefaultControlHandler.ControlActionType.OK) {
+                    result.addAll(addEncodingPanel.getEncodings());
+                }
+
+                WindowUtils.closeWindow(addEncodingDialog);
+            });
+            addEncodingDialog.setVisible(true);
+            return result;
+        });
     }
 
     /**
@@ -171,7 +185,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         layoutProfilesPanel.loadFromParameters(preferences.getLayoutParameters());
         colorProfilesPanel.loadFromParameters(preferences.getColorParameters());
         themeProfilesPanel.loadFromParameters(preferences.getThemeParameters());
-        
+
         editorParametersPanel.loadFromOptions(editorOptions);
         codeAreaParametersPanel.loadFromOptions(codeAreaOptions);
         charsetParametersPanel.loadFromPreferences(preferences.getPreferences());
@@ -229,7 +243,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
     public void store() {
         editorOptions.saveToParameters(preferences.getEditorParameters());
         codeAreaOptions.saveToParameters(preferences.getCodeAreaParameters());
-        
+
         // TODO charsetParametersPanel.saveToPreferences(preferences);
         layoutProfilesPanel.saveToParameters(preferences.getLayoutParameters());
         colorProfilesPanel.saveToParameters(preferences.getColorParameters());
@@ -252,7 +266,6 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 //        preferences.putInt(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH, (Integer) lineNumbersLengthSpinner.getValue());
 //        preferences.putInt(BinaryEditorTopComponent.PREFERENCES_BYTE_GROUP_SIZE, (Integer) byteGroupSizeSpinner.getValue());
 //        preferences.putInt(BinaryEditorTopComponent.PREFERENCES_SPACE_GROUP_SIZE, (Integer) spaceGroupSizeSpinner.getValue());
-
         // Mode
 // TODO        preferences.setViewMode(CodeAreaViewMode.values()[viewModeComboBox.getSelectedIndex()]);
 // TODO        preferences.setCodeType(CodeType.values()[codeTypeComboBox.getSelectedIndex()]);
@@ -275,6 +288,9 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
     }
 
     public void setFromCodeArea(ExtCodeArea codeArea) {
+        codeAreaOptions.applyFromCodeArea(codeArea);
+        charsetOptions.applyFromCodeArea(codeArea);
+
         // Layout
 // TODO        wrapLineModeCheckBox.setSelected(codeArea.getRowWrapping() == RowWrappingCapable.RowWrappingMode.WRAPPING);
 // TODO        lineLengthSpinner.setValue(codeArea.getLineLength());
@@ -310,8 +326,28 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
     }
 
     public void applyToCodeArea(ExtCodeArea codeArea) {
+        codeAreaOptions.applyToCodeArea(codeArea);
+        charsetOptions.applyToCodeArea(codeArea);
+        
+        int selectedLayoutProfile = layoutSelectionPanel.getDefaultProfile();
+        if (selectedLayoutProfile >= 0) {
+            DefaultExtendedCodeAreaLayoutProfile layoutProfile = layoutProfilesPanel.getProfile(selectedLayoutProfile);
+            codeArea.setLayoutProfile(layoutProfile);
+        }
+        int selectedColorProfile = colorSelectionPanel.getDefaultProfile();
+        if (selectedColorProfile >= 0) {
+            ExtendedCodeAreaColorProfile colorProfile = colorProfilesPanel.getProfile(selectedColorProfile);
+            codeArea.setColorsProfile(colorProfile);
+        }
+
+        int selectedThemeProfile = themeSelectionPanel.getDefaultProfile();
+        if (selectedThemeProfile >= 0) {
+            ExtendedCodeAreaThemeProfile themeProfile = themeProfilesPanel.getProfile(selectedThemeProfile);
+            codeArea.setThemeProfile(themeProfile);
+        }
+
         // Layout
-        ExtendedCodeAreaLayoutProfile layoutProfile = codeArea.getLayoutProfile();
+//        ExtendedCodeAreaLayoutProfile layoutProfile = codeArea.getLayoutProfile();
 // TODO        codeArea.setRowWrapping(wrapLineModeCheckBox.isSelected() ? RowWrappingCapable.RowWrappingMode.WRAPPING : RowWrappingCapable.RowWrappingMode.NO_WRAPPING);
 // TODO        codeArea.setLineLength((Integer) lineLengthSpinner.getValue());
 // TODO        layoutProfile.setShowHeader(showHeaderCheckBox.isSelected());

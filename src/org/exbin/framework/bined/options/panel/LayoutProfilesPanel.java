@@ -97,6 +97,10 @@ public class LayoutProfilesPanel extends javax.swing.JPanel implements ProfileLi
     private ProfilesListModel getProfilesListModel() {
         return ((ProfilesListModel) profilesList.getModel());
     }
+    
+    public DefaultExtendedCodeAreaLayoutProfile getProfile(int profileIndex) {
+        return getProfilesListModel().getElementAt(profileIndex).layoutProfile;
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.

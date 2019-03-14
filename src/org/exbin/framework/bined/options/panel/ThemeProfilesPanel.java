@@ -98,6 +98,10 @@ public class ThemeProfilesPanel extends javax.swing.JPanel implements ProfileLis
         getProfilesListModel().addListDataListener(listener);
     }
 
+    public ExtendedCodeAreaThemeProfile getProfile(int profileIndex) {
+        return getProfilesListModel().getElementAt(profileIndex).themeProfile;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

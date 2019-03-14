@@ -32,6 +32,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import org.exbin.bined.swing.extended.color.ExtendedCodeAreaColorProfile;
+import org.exbin.bined.swing.extended.layout.DefaultExtendedCodeAreaLayoutProfile;
 import org.exbin.framework.bined.preferences.ColorParameters;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
@@ -84,6 +85,10 @@ public class ColorProfilesPanel extends javax.swing.JPanel implements ProfileLis
     @Nonnull
     private ProfilesListModel getProfilesListModel() {
         return ((ProfilesListModel) profilesList.getModel());
+    }
+
+    public ExtendedCodeAreaColorProfile getProfile(int profileIndex) {
+        return getProfilesListModel().getElementAt(profileIndex).colorProfile;
     }
 
     @Nonnull
