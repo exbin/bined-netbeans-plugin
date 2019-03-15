@@ -17,6 +17,7 @@ package org.exbin.framework.bined.options.panel;
 
 import java.awt.BorderLayout;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
@@ -73,7 +74,8 @@ public class ThemeProfilePanel extends javax.swing.JPanel {
 
     @Nonnull
     public ExtendedCodeAreaThemeProfile getThemeProfile() {
-        return codeArea.getThemeProfile();
+        ExtendedCodeAreaThemeProfile themeProfile = codeArea.getThemeProfile();
+        return Objects.requireNonNull(themeProfile).createCopy();
     }
 
     public void setThemeProfile(ExtendedCodeAreaThemeProfile themeProfile) {

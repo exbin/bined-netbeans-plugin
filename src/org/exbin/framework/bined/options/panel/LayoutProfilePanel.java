@@ -17,6 +17,7 @@ package org.exbin.framework.bined.options.panel;
 
 import java.awt.BorderLayout;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
@@ -71,26 +72,28 @@ public class LayoutProfilePanel extends javax.swing.JPanel {
 
     @Nonnull
     public DefaultExtendedCodeAreaLayoutProfile getLayoutProfile() {
-        return (DefaultExtendedCodeAreaLayoutProfile) codeArea.getLayoutProfile();
+        DefaultExtendedCodeAreaLayoutProfile layoutProfile = (DefaultExtendedCodeAreaLayoutProfile) codeArea.getLayoutProfile();
+        return Objects.requireNonNull(layoutProfile).createCopy();
     }
 
     public void setLayoutProfile(DefaultExtendedCodeAreaLayoutProfile layoutProfile) {
-        codeArea.setLayoutProfile(layoutProfile);
+        DefaultExtendedCodeAreaLayoutProfile newLayoutProfile = layoutProfile.createCopy();
+        codeArea.setLayoutProfile(newLayoutProfile);
         // TODO Maybe move to layout?
         wrapLineModeCheckBox.setSelected(codeArea.getRowWrapping() == RowWrappingCapable.RowWrappingMode.WRAPPING);
         maxBytesPerRowSpinner.setValue(codeArea.getMaxBytesPerRow());
         minRowPositionLengthSpinner.setValue(codeArea.getMinRowPositionLength());
         maxRowPositionLengthSpinner.setValue(codeArea.getMaxRowPositionLength());
-        showHeaderCheckBox.setSelected(layoutProfile.isShowHeader());
-        headerTopSpaceSpinner.setValue(layoutProfile.getTopHeaderSpace());
-        headerBottomSpaceSpinner.setValue(layoutProfile.getBottomHeaderSpace());
-        showRowPositionCheckBox.setSelected(layoutProfile.isShowRowPosition());
-        rowPositionLeftSpaceSpinner.setValue(layoutProfile.getLeftRowPositionSpace());
-        rowPositionRightSpaceSpinner.setValue(layoutProfile.getRightRowPositionSpace());
-        spaceGroupSizeSpinner.setValue(layoutProfile.getSpaceGroupSize());
-        halfSpaceGroupSizeSpinner.setValue(layoutProfile.getHalfSpaceGroupSize());
-        doubleSpaceGroupSizeSpinner.setValue(layoutProfile.getDoubleSpaceGroupSize());
-        
+        showHeaderCheckBox.setSelected(newLayoutProfile.isShowHeader());
+        headerTopSpaceSpinner.setValue(newLayoutProfile.getTopHeaderSpace());
+        headerBottomSpaceSpinner.setValue(newLayoutProfile.getBottomHeaderSpace());
+        showRowPositionCheckBox.setSelected(newLayoutProfile.isShowRowPosition());
+        rowPositionLeftSpaceSpinner.setValue(newLayoutProfile.getLeftRowPositionSpace());
+        rowPositionRightSpaceSpinner.setValue(newLayoutProfile.getRightRowPositionSpace());
+        spaceGroupSizeSpinner.setValue(newLayoutProfile.getSpaceGroupSize());
+        halfSpaceGroupSizeSpinner.setValue(newLayoutProfile.getHalfSpaceGroupSize());
+        doubleSpaceGroupSizeSpinner.setValue(newLayoutProfile.getDoubleSpaceGroupSize());
+
     }
 
     /**

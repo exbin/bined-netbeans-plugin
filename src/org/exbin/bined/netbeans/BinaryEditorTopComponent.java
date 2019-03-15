@@ -313,7 +313,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             }
 
             @Override
-            public void popupEncodingsMenu(MouseEvent mouseEvent) {
+            public void encodingsPopupEncodingsMenu(MouseEvent mouseEvent) {
                 if (encodingsHandler != null) {
                     encodingsHandler.popupEncodingsMenu(mouseEvent);
                 }

@@ -68,11 +68,6 @@ public class LayoutParameters {
     }
 
     public void setLayoutProfilesList(List<String> layoutNames) {
-        int prevLayoutsCount = preferences.getInt(PREFERENCES_LAYOUT_PROFILES_COUNT, 0);
-        for (int i = 0; i < prevLayoutsCount; i++) {
-            clearLayout(i);
-        }
-
         int themesCount = layoutNames.size();
         preferences.putInt(PREFERENCES_LAYOUT_PROFILES_COUNT, themesCount);
 
@@ -108,7 +103,7 @@ public class LayoutParameters {
         return layoutProfile;
     }
 
-    public void LayoutProfile(int layoutIndex, DefaultExtendedCodeAreaLayoutProfile layoutProfile) {
+    public void setLayoutProfile(int layoutIndex, DefaultExtendedCodeAreaLayoutProfile layoutProfile) {
         String layoutPrefix = PREFERENCES_LAYOUT_VALUE_PREFIX + String.valueOf(layoutIndex) + ".";
         preferences.putBoolean(layoutPrefix + LAYOUT_SHOW_HEADER, layoutProfile.isShowHeader());
         preferences.putBoolean(layoutPrefix + LAYOUT_SHOW_ROW_POSITION, layoutProfile.isShowRowPosition());

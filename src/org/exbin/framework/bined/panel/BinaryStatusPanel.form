@@ -11,6 +11,64 @@
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
+        <Menu class="javax.swing.JMenu" name="cursorPositionCodeTypeMenu">
+          <Properties>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="cursorPositionCodeTypeMenu.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="cursorPositionCodeTypeMenu" noResource="true"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="octalCursorPositionModeRadioButtonMenuItem">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="cursorPositionModeButtonGroup"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="octalCursorPositionModeRadioButtonMenuItem.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="name" type="java.lang.String" value="octalCursorPositionModeRadioButtonMenuItem" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="decimalCursorPositionModeRadioButtonMenuItem">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="cursorPositionModeButtonGroup"/>
+                </Property>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="decimalCursorPositionModeRadioButtonMenuItem.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="name" type="java.lang.String" value="decimalCursorPositionModeRadioButtonMenuItem" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="hexadecimalCursorPositionModeRadioButtonMenuItem">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="cursorPositionModeButtonGroup"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="hexadecimalCursorPositionModeRadioButtonMenuItem.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="name" type="java.lang.String" value="hexadecimalCursorPositionModeRadioButtonMenuItem" noResource="true"/>
+              </Properties>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <MenuItem class="javax.swing.JCheckBoxMenuItem" name="cursorPositionShowOffsetCheckBoxMenuItem">
+          <Properties>
+            <Property name="selected" type="boolean" value="true"/>
+            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+              <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="cursorPositionShowOffsetCheckBoxMenuItem.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+            </Property>
+            <Property name="name" type="java.lang.String" value="cursorPositionShowOffsetCheckBoxMenuItem" noResource="true"/>
+          </Properties>
+        </MenuItem>
+        <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator2">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="jSeparator2" noResource="true"/>
+          </Properties>
+        </Component>
         <MenuItem class="javax.swing.JMenuItem" name="positionCopyMenuItem">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
@@ -44,38 +102,56 @@
         <Property name="useNullLayout" type="boolean" value="true"/>
       </Layout>
       <SubComponents>
-        <MenuItem class="javax.swing.JRadioButtonMenuItem" name="octDocumentSizeModeRadioButtonMenuItem">
+        <Menu class="javax.swing.JMenu" name="documentSizeCodeTypeMenu">
           <Properties>
-            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-              <ComponentRef name="documentSizeModeButtonGroup"/>
-            </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="octDocumentSizeModeRadioButtonMenuItem.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="documentSizecodeTypeMenu.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
-            <Property name="name" type="java.lang.String" value="octDocumentSizeModeRadioButtonMenuItem" noResource="true"/>
+            <Property name="name" type="java.lang.String" value="documentSizeCodeTypeMenu" noResource="true"/>
           </Properties>
-        </MenuItem>
-        <MenuItem class="javax.swing.JRadioButtonMenuItem" name="decDocumentSizeModeRadioButtonMenuItem1">
+          <SubComponents>
+            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="octalDocumentSizeModeRadioButtonMenuItem">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="documentSizeModeButtonGroup"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="octDocumentSizeModeRadioButtonMenuItem.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="name" type="java.lang.String" value="octalDocumentSizeModeRadioButtonMenuItem" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="decimalDocumentSizeModeRadioButtonMenuItem">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="documentSizeModeButtonGroup"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="decDocumentSizeModeRadioButtonMenuItem1.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="name" type="java.lang.String" value="decimalDocumentSizeModeRadioButtonMenuItem" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="hexadecimalDocumentSizeModeRadioButtonMenuItem">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="documentSizeModeButtonGroup"/>
+                </Property>
+                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+                  <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="hexDocumentSizeModeRadioButtonMenuItem1.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                </Property>
+                <Property name="name" type="java.lang.String" value="hexadecimalDocumentSizeModeRadioButtonMenuItem" noResource="true"/>
+              </Properties>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <MenuItem class="javax.swing.JCheckBoxMenuItem" name="showRelativeCheckBoxMenuItem">
           <Properties>
-            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-              <ComponentRef name="documentSizeModeButtonGroup"/>
-            </Property>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="decDocumentSizeModeRadioButtonMenuItem1.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="showRelativeCheckBoxMenuItem.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
-            <Property name="name" type="java.lang.String" value="decDocumentSizeModeRadioButtonMenuItem1" noResource="true"/>
-          </Properties>
-        </MenuItem>
-        <MenuItem class="javax.swing.JRadioButtonMenuItem" name="hexDocumentSizeModeRadioButtonMenuItem1">
-          <Properties>
-            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-              <ComponentRef name="documentSizeModeButtonGroup"/>
-            </Property>
-            <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="hexDocumentSizeModeRadioButtonMenuItem1.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
-            </Property>
-            <Property name="name" type="java.lang.String" value="hexDocumentSizeModeRadioButtonMenuItem1" noResource="true"/>
+            <Property name="name" type="java.lang.String" value="showRelativeCheckBoxMenuItem" noResource="true"/>
           </Properties>
         </MenuItem>
         <Component class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
@@ -112,7 +188,7 @@
             </Property>
             <Property name="selected" type="boolean" value="true"/>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="BinaryStatusPanel.deltaMemoryModeRadioButtonMenuItem.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="deltaMemoryModeRadioButtonMenuItem.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
             <Property name="name" type="java.lang.String" value="deltaMemoryModeRadioButtonMenuItem" noResource="true"/>
           </Properties>
@@ -126,7 +202,7 @@
               <ComponentRef name="memoryModeButtonGroup"/>
             </Property>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="BinaryStatusPanel.ramMemoryModeRadioButtonMenuItem.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="ramMemoryModeRadioButtonMenuItem.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
             <Property name="name" type="java.lang.String" value="ramMemoryModeRadioButtonMenuItem" noResource="true"/>
           </Properties>
@@ -139,6 +215,8 @@
     <Component class="javax.swing.ButtonGroup" name="memoryModeButtonGroup">
     </Component>
     <Component class="javax.swing.ButtonGroup" name="documentSizeModeButtonGroup">
+    </Component>
+    <Component class="javax.swing.ButtonGroup" name="cursorPositionModeButtonGroup">
     </Component>
   </NonVisualComponents>
   <Properties>
@@ -166,7 +244,7 @@
               <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
               <Component id="documentSizeLabel" min="-2" pref="168" max="-2" attributes="0"/>
               <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
-              <Component id="positionLabel" min="-2" pref="168" max="-2" attributes="0"/>
+              <Component id="cursorPositionLabel" min="-2" pref="168" max="-2" attributes="0"/>
               <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
               <Component id="memoryModeLabel" min="-2" pref="16" max="-2" attributes="0"/>
               <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
@@ -179,7 +257,7 @@
           <Component id="editationModeLabel" max="32767" attributes="0"/>
           <Component id="documentSizeLabel" alignment="0" max="32767" attributes="0"/>
           <Component id="memoryModeLabel" alignment="0" max="32767" attributes="0"/>
-          <Component id="positionLabel" alignment="0" max="32767" attributes="0"/>
+          <Component id="cursorPositionLabel" alignment="0" max="32767" attributes="0"/>
           <Component id="encodingLabel" alignment="0" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
@@ -223,15 +301,15 @@
         <Property name="name" type="java.lang.String" value="documentSizeLabel" noResource="true"/>
       </Properties>
       <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JLabel() {&#xa;    @Override&#xa;    public JToolTip createToolTip() {&#xa;        &#xa;        String tooltipText = &quot;&lt;html&gt;&quot; + resourceBundle.getString(&quot;documentSizeLabel.toolTipText&quot;) + &#xa;            &quot;&lt;br&gt;OCT: &quot; +&#xa;            &quot;&lt;br&gt;DEC: &quot; +&#xa;            &quot;&lt;br&gt;HEX: &quot; +&#xa;            &quot;&lt;/html&gt;&quot;;&#xa;        documentSizeLabel.setToolTipText(tooltipText);&#xa;        return super.createToolTip();&#xa;    }&#xa;}&#xa;"/>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JLabel() {&#xa;    @Override&#xa;    public JToolTip createToolTip() {&#xa;        return createDocumentSizeToolTip();&#xa;    }&#xa;}&#xa;"/>
       </AuxValues>
     </Component>
-    <Component class="javax.swing.JLabel" name="positionLabel">
+    <Component class="javax.swing.JLabel" name="cursorPositionLabel">
       <Properties>
         <Property name="horizontalAlignment" type="int" value="0"/>
         <Property name="text" type="java.lang.String" value="0:0"/>
         <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="positionLabel.toolTipText" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/exbin/framework/bined/panel/resources/BinaryStatusPanel.properties" key="cursorPositionLabel.toolTipText" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
         </Property>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
@@ -241,11 +319,14 @@
         <Property name="componentPopupMenu" type="javax.swing.JPopupMenu" editor="org.netbeans.modules.form.ComponentChooserEditor">
           <ComponentRef name="positionPopupMenu"/>
         </Property>
-        <Property name="name" type="java.lang.String" value="positionLabel" noResource="true"/>
+        <Property name="name" type="java.lang.String" value="cursorPositionLabel" noResource="true"/>
       </Properties>
       <Events>
-        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="positionLabelMouseClicked"/>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="cursorPositionLabelMouseClicked"/>
       </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JLabel() {&#xa;    @Override&#xa;    public JToolTip createToolTip() {&#xa;        return createCursorPositionToolTip();&#xa;    }&#xa;}&#xa;"/>
+      </AuxValues>
     </Component>
     <Component class="javax.swing.JLabel" name="editationModeLabel">
       <Properties>

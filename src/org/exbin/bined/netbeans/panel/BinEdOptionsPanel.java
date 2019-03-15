@@ -33,11 +33,13 @@ import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
 import org.exbin.framework.bined.options.CharsetOptions;
 import org.exbin.framework.bined.options.CodeAreaOptions;
 import org.exbin.framework.bined.options.EditorOptions;
+import org.exbin.framework.bined.options.StatusOptions;
 import org.exbin.framework.bined.options.panel.CodeAreaOptionsPanel;
 import org.exbin.framework.bined.options.panel.ColorProfilesPanel;
 import org.exbin.framework.bined.options.panel.EditorOptionsPanel;
 import org.exbin.framework.bined.options.panel.LayoutProfilesPanel;
 import org.exbin.framework.bined.options.panel.ProfileSelectionPanel;
+import org.exbin.framework.bined.options.panel.StatusOptionsPanel;
 import org.exbin.framework.bined.options.panel.ThemeProfilesPanel;
 import org.exbin.framework.editor.text.panel.AddEncodingPanel;
 import org.exbin.framework.editor.text.panel.TextEncodingPanel;
@@ -52,7 +54,7 @@ import org.openide.util.NbPreferences;
 /**
  * Hexadecimal editor options panel.
  *
- * @version 0.2.0 2019/03/14
+ * @version 0.2.0 2019/03/15
  * @author ExBin Project (http://exbin.org)
  */
 public class BinEdOptionsPanel extends javax.swing.JPanel {
@@ -65,10 +67,12 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
     private JPanel currentCategoryPanel = null;
 
     private final EditorOptions editorOptions = new EditorOptions();
+    private final StatusOptions statusOptions = new StatusOptions();
     private final CharsetOptions charsetOptions = new CharsetOptions();
     private final CodeAreaOptions codeAreaOptions = new CodeAreaOptions();
 
     private final EditorOptionsPanel editorParametersPanel = new EditorOptionsPanel();
+    private final StatusOptionsPanel statusParametersPanel = new StatusOptionsPanel();
     private final CodeAreaOptionsPanel codeAreaParametersPanel = new CodeAreaOptionsPanel();
     private final TextEncodingPanel charsetParametersPanel = new TextEncodingPanel();
     private final LayoutProfilesPanel layoutProfilesPanel = new LayoutProfilesPanel();
@@ -88,6 +92,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         preferences = new BinaryEditorPreferences(new PreferencesWrapper(NbPreferences.forModule(BinaryEditorPreferences.class)));
 
         categoryModel.addElement(new CategoryItem("Editor", editorParametersPanel));
+        categoryModel.addElement(new CategoryItem("Status Panel", statusParametersPanel));
         categoryModel.addElement(new CategoryItem("Code Area", codeAreaParametersPanel));
         categoryModel.addElement(new CategoryItem("Charset", charsetParametersPanel));
         categoryModel.addElement(new CategoryItem("Layout Profiles", layoutSelectionPanel));
@@ -178,16 +183,17 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 
     public void load() {
         editorOptions.loadFromParameters(preferences.getEditorParameters());
+        statusOptions.loadFromParameters(preferences.getStatusParameters());
         codeAreaOptions.loadFromParameters(preferences.getCodeAreaParameters());
-        // TODO statusOptions.loadFromParameters(preferences.getStatusParameters());
+
+        editorParametersPanel.loadFromOptions(editorOptions);
+        statusParametersPanel.loadFromOptions(statusOptions);
+        codeAreaParametersPanel.loadFromOptions(codeAreaOptions);
 
         charsetOptions.loadFromParameters(preferences.getCharsetParameters());
         layoutProfilesPanel.loadFromParameters(preferences.getLayoutParameters());
         colorProfilesPanel.loadFromParameters(preferences.getColorParameters());
         themeProfilesPanel.loadFromParameters(preferences.getThemeParameters());
-
-        editorParametersPanel.loadFromOptions(editorOptions);
-        codeAreaParametersPanel.loadFromOptions(codeAreaOptions);
         charsetParametersPanel.loadFromPreferences(preferences.getPreferences());
 
         // Layout
@@ -241,16 +247,17 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
     }
 
     public void store() {
+        editorParametersPanel.saveToOptions(editorOptions);
+        statusParametersPanel.saveToOptions(statusOptions);
+        codeAreaParametersPanel.saveToOptions(codeAreaOptions);
+
         editorOptions.saveToParameters(preferences.getEditorParameters());
+        statusOptions.saveToParameters(preferences.getStatusParameters());
         codeAreaOptions.saveToParameters(preferences.getCodeAreaParameters());
 
-        // TODO charsetParametersPanel.saveToPreferences(preferences);
         layoutProfilesPanel.saveToParameters(preferences.getLayoutParameters());
         colorProfilesPanel.saveToParameters(preferences.getColorParameters());
         themeProfilesPanel.saveToParameters(preferences.getThemeParameters());
-
-        editorParametersPanel.saveToOptions(editorOptions);
-        codeAreaParametersPanel.saveToOptions(codeAreaOptions);
         charsetParametersPanel.saveToPreferences(preferences.getPreferences());
 
         // Layout

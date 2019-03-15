@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
@@ -90,14 +91,15 @@ public class ColorProfilePanel extends javax.swing.JPanel {
     }
 
     public void setColorProfile(@Nonnull ExtendedCodeAreaColorProfile colorProfile) {
-        ExtendedCodeAreaColorProfile newColorProfile = new ExtendedCodeAreaColorProfile(colorProfile);
+        ExtendedCodeAreaColorProfile newColorProfile = colorProfile.createCopy();
         codeArea.setColorsProfile(newColorProfile);
         colorTableModel.setColorProfile(newColorProfile);
     }
 
     @Nonnull
     public ExtendedCodeAreaColorProfile getColorProfile() {
-        return new ExtendedCodeAreaColorProfile((ExtendedCodeAreaColorProfile) codeArea.getColorsProfile());
+        ExtendedCodeAreaColorProfile profile = (ExtendedCodeAreaColorProfile) codeArea.getColorsProfile();
+        return Objects.requireNonNull(profile).createCopy();
     }
 
     /**

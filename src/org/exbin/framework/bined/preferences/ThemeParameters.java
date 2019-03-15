@@ -69,11 +69,6 @@ public class ThemeParameters {
     }
 
     public void setThemeProfilesList(List<String> themesNames) {
-        int prevThemesCount = preferences.getInt(PREFERENCES_THEMES_COUNT, 0);
-        for (int i = 0; i < prevThemesCount; i++) {
-            clearTheme(i);
-        }
-
         int themesCount = themesNames.size();
         preferences.putInt(PREFERENCES_THEMES_COUNT, themesCount);
 

@@ -27,7 +27,7 @@ import org.openide.util.NbPreferences;
 /**
  * Hexadecimal editor preferences.
  *
- * @version 0.2.0 2019/03/02
+ * @version 0.2.0 2019/03/15
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -39,6 +39,7 @@ public class BinaryEditorPreferences {
     private final Preferences preferences;
 
     private final EditorParameters editorParameters;
+    private final StatusParameters statusParameters;
     private final CodeAreaParameters codeAreaParameters;
     private final CharsetParameters charsetParameters;
     private final LayoutParameters layoutParameters;
@@ -49,6 +50,7 @@ public class BinaryEditorPreferences {
         this.preferences = preferences;
 
         editorParameters = new EditorParameters(preferences);
+        statusParameters = new StatusParameters(preferences);
         codeAreaParameters = new CodeAreaParameters(preferences);
         charsetParameters = new CharsetParameters(preferences);
         layoutParameters = new LayoutParameters(preferences);
@@ -74,6 +76,11 @@ public class BinaryEditorPreferences {
     @Nonnull
     public EditorParameters getEditorParameters() {
         return editorParameters;
+    }
+
+    @Nonnull
+    public StatusParameters getStatusParameters() {
+        return statusParameters;
     }
 
     @Nonnull

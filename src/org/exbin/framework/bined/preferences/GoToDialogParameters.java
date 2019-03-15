@@ -26,15 +26,16 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
-public class EditorParameters {
+public class GoToDialogParameters {
 
     public static final String PREFERENCES_FILE_HANDLING_MODE = "fileHandlingMode";
     public static final String PREFERENCES_SHOW_VALUES_PANEL = "valuesPanel";
-    public static final String PREFERENCES_STATUS_POSITION_FORMAT = "statusPositionFormat";
+    public static final String PREFERENCES_STATUS_CURSOR_POSITION_FORMAT = "statusCursrPositionFormat";
+    public static final String PREFERENCES_STATUS_DOCUMENT_SIZE_FORMAT = "statusDocumentSizeFormat";
 
     private final Preferences preferences;
 
-    public EditorParameters(Preferences preferences) {
+    public GoToDialogParameters(Preferences preferences) {
         this.preferences = preferences;
     }
 
@@ -55,11 +56,21 @@ public class EditorParameters {
         preferences.putBoolean(PREFERENCES_SHOW_VALUES_PANEL, showValuesPanel);
     }
     
-    public String getStatusPositionFormat() {
-        return preferences.get(PREFERENCES_STATUS_POSITION_FORMAT, "HEX");
+    @Nonnull
+    public String getStatusCursorPositionFormat() {
+        return preferences.get(PREFERENCES_STATUS_CURSOR_POSITION_FORMAT, "HEX");
     }
 
-    public void setStatusPositionFormat(String statusPositionFormat) {
-        preferences.put(PREFERENCES_STATUS_POSITION_FORMAT, statusPositionFormat);
+    public void setStatusCursorPositionFormat(String statusCursorPositionFormat) {
+        preferences.put(PREFERENCES_STATUS_CURSOR_POSITION_FORMAT, statusCursorPositionFormat);
+    }
+
+    @Nonnull
+    public String getStatusDocumentSizeFormat() {
+        return preferences.get(PREFERENCES_STATUS_DOCUMENT_SIZE_FORMAT, "HEX");
+    }
+
+    public void setStatusDocumentSizeFormat(String statusDocumentSizeFormat) {
+        preferences.put(PREFERENCES_STATUS_DOCUMENT_SIZE_FORMAT, statusDocumentSizeFormat);
     }
 }

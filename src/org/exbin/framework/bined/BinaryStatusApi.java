@@ -19,6 +19,9 @@ package org.exbin.framework.bined;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.EditationMode;
 import org.exbin.bined.EditationOperation;
 
@@ -28,6 +31,7 @@ import org.exbin.bined.EditationOperation;
  * @version 0.2.1 2018/12/22
  * @author ExBin Project (http://exbin.org)
  */
+@ParametersAreNonnullByDefault
 public interface BinaryStatusApi {
 
     /**
@@ -65,6 +69,7 @@ public interface BinaryStatusApi {
      */
     void setMemoryMode(MemoryMode memoryMode);
 
+    @ParametersAreNonnullByDefault
     public static interface StatusControlHandler {
 
         /**
@@ -89,7 +94,7 @@ public interface BinaryStatusApi {
          *
          * @param mouseEvent mouse event
          */
-        void popupEncodingsMenu(MouseEvent mouseEvent);
+        void encodingsPopupEncodingsMenu(MouseEvent mouseEvent);
 
         /**
          * Requests change of memory mode.
@@ -99,6 +104,7 @@ public interface BinaryStatusApi {
         void changeMemoryMode(MemoryMode memoryMode);
     }
 
+    @ParametersAreNonnullByDefault
     public static enum MemoryMode {
 
         READ_ONLY("R", "read_only"),
@@ -114,14 +120,17 @@ public interface BinaryStatusApi {
             this.value = preferencesValue;
         }
 
+        @Nonnull
         public String getDisplayChar() {
             return displayChar;
         }
 
+        @Nonnull
         public String getPreferencesValue() {
             return value;
         }
 
+        @Nullable
         public static MemoryMode findByPreferencesValue(String matchValue) {
             for (MemoryMode value : values()) {
                 if (value.getPreferencesValue().equals(matchValue)) {

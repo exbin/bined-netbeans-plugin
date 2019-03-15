@@ -446,14 +446,14 @@ public class LayoutProfilesPanel extends javax.swing.JPanel implements ProfileLi
         for (int index = 0; index < profileNames.size(); index++) {
             parameters.clearLayout(index);
         }
-
         profileNames.clear();
+
         ProfilesListModel model = getProfilesListModel();
         List<LayoutProfile> profiles = model.getProfiles();
         for (int index = 0; index < profiles.size(); index++) {
             LayoutProfile profile = profiles.get(index);
             profileNames.add(profile.profileName);
-            parameters.LayoutProfile(index, profile.layoutProfile);
+            parameters.setLayoutProfile(index, profile.layoutProfile);
         }
         parameters.setLayoutProfilesList(profileNames);
     }

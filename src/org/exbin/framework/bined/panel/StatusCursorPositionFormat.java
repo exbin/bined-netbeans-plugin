@@ -14,24 +14,38 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along this application.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.exbin.framework.bined;
+package org.exbin.framework.bined.panel;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import javax.swing.JPopupMenu;
-import org.exbin.bined.swing.extended.ExtCodeArea;
+import org.exbin.bined.PositionCodeType;
 
 /**
- * Code area popup menu handler.
+ * Cursor position format for status.
  *
  * @version 0.2.0 2019/03/15
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
-public interface CodeAreaPopupMenuHandler {
+public class StatusCursorPositionFormat {
+
+    private PositionCodeType positionCodeType;
+    private boolean showOffset= true;
 
     @Nonnull
-    JPopupMenu createPopupMenu(ExtCodeArea codeArea, String menuPostfix);
+    public PositionCodeType getCodeType() {
+        return positionCodeType;
+    }
 
-    void dropPopupMenu(String menuPostfix);
+    public void setCodeType(PositionCodeType positionCodeType) {
+        this.positionCodeType = positionCodeType;
+    }
+
+    public boolean isShowOffset() {
+        return showOffset;
+    }
+
+    public void setShowOffset(boolean showOffset) {
+        this.showOffset = showOffset;
+    }
 }
