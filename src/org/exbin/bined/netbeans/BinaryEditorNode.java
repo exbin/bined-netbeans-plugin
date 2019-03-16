@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.EditationMode;
 import org.exbin.bined.delta.DeltaDocument;
 import org.exbin.bined.delta.FileDataSource;
@@ -37,9 +38,10 @@ import org.openide.util.Exceptions;
 /**
  * Hexadecimal editor node.
  *
- * @version 0.2.0 2018/09/10
+ * @version 0.2.0 2019/03/16
  * @author ExBin Project (http://exbin.org)
  */
+@ParametersAreNonnullByDefault
 public class BinaryEditorNode extends AbstractNode {
 
     private final BinaryEditorTopComponent editorTopComponent;
@@ -78,7 +80,7 @@ public class BinaryEditorNode extends AbstractNode {
                 BinaryData oldData = codeArea.getContentData();
                 codeArea.setEditationMode(editable ? EditationMode.EXPANDING : EditationMode.READ_ONLY);
                 File file = new File(fileUri);
-                if (editorTopComponent.isDeltaMemoryMode()) {
+                if (editorTopComponent.getFileHandlingMode() == FileHandlingMode.DELTA) {
                     FileDataSource fileSource = segmentsRepository.openFileSource(file, editable ? FileDataSource.EditationMode.READ_WRITE : FileDataSource.EditationMode.READ_ONLY);
                     DeltaDocument document = segmentsRepository.createDocument(fileSource);
                     codeArea.setContentData(document);

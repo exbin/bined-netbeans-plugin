@@ -509,7 +509,7 @@ public class BinarySearchPanel extends javax.swing.JPanel {
         replaceTypeToolBar.setFocusable(false);
         replaceTypeToolBar.setName("replaceTypeToolBar"); // NOI18N
 
-        replaceTypeButton.setText(resourceBundle.getString("BinarySearchPanel.replaceTypeButton.text")); // NOI18N
+        replaceTypeButton.setText(resourceBundle.getString("replaceTypeButton.text")); // NOI18N
         replaceTypeButton.setToolTipText(resourceBundle.getString("replaceTypeButton.toolTipText")); // NOI18N
         replaceTypeButton.setDefaultCapable(false);
         replaceTypeButton.setFocusable(false);

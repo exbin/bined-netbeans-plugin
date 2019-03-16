@@ -24,34 +24,38 @@ import org.exbin.framework.bined.preferences.StatusParameters;
 /**
  * Status panel options.
  *
- * @version 0.2.0 2019/03/15
+ * @version 0.2.0 2019/03/16
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
 public class StatusOptions {
-    
-    private StatusCursorPositionFormat statusCursorPositionFormat = new StatusCursorPositionFormat();
-    private StatusDocumentSizeFormat statusDocumentSizeFormat = new StatusDocumentSizeFormat();
-    private int octalSpaceGroupSize = 0;
-    private int decimalSpaceGroupSize = 0;
-    private int hexadecimalSpaceGroupSize = 0;
+
+    public static int DEFAULT_OCTAL_SPACE_GROUP_SIZE = 4;
+    public static int DEFAULT_DECIMAL_SPACE_GROUP_SIZE = 3;
+    public static int DEFAULT_HEXADECIMAL_SPACE_GROUP_SIZE = 4;
+
+    private StatusCursorPositionFormat cursorPositionFormat = new StatusCursorPositionFormat();
+    private StatusDocumentSizeFormat documentSizeFormat = new StatusDocumentSizeFormat();
+    private int octalSpaceGroupSize = DEFAULT_OCTAL_SPACE_GROUP_SIZE;
+    private int decimalSpaceGroupSize = DEFAULT_DECIMAL_SPACE_GROUP_SIZE;
+    private int hexadecimalSpaceGroupSize = DEFAULT_HEXADECIMAL_SPACE_GROUP_SIZE;
 
     @Nonnull
-    public StatusCursorPositionFormat getStatusCursorPositionFormat() {
-        return statusCursorPositionFormat;
+    public StatusCursorPositionFormat getCursorPositionFormat() {
+        return cursorPositionFormat;
     }
 
-    public void setStatusCursorPositionFormat(StatusCursorPositionFormat statusCursorPositionFormat) {
-        this.statusCursorPositionFormat = statusCursorPositionFormat;
+    public void setCursorPositionFormat(StatusCursorPositionFormat cursorPositionFormat) {
+        this.cursorPositionFormat = cursorPositionFormat;
     }
 
     @Nonnull
-    public StatusDocumentSizeFormat getStatusDocumentSizeFormat() {
-        return statusDocumentSizeFormat;
+    public StatusDocumentSizeFormat getDocumentSizeFormat() {
+        return documentSizeFormat;
     }
 
-    public void setStatusDocumentSizeFormat(StatusDocumentSizeFormat statusDocumentSizeFormat) {
-        this.statusDocumentSizeFormat = statusDocumentSizeFormat;
+    public void setDocumentSizeFormat(StatusDocumentSizeFormat documentSizeFormat) {
+        this.documentSizeFormat = documentSizeFormat;
     }
 
     public int getOctalSpaceGroupSize() {
@@ -79,22 +83,30 @@ public class StatusOptions {
     }
 
     public void loadFromParameters(StatusParameters parameters) {
-        statusCursorPositionFormat.setCodeType(parameters.getCursorPositionCodeType());
-        statusCursorPositionFormat.setShowOffset(parameters.isCursorShowOffset());
-        statusDocumentSizeFormat.setCodeType(parameters.getDocumentSizeCodeType());
-        statusDocumentSizeFormat.setShowRelative(parameters.isDocumentSizeShowRelative());
-        octalSpaceGroupSize = parameters.getOctalSpaceSize();
-        decimalSpaceGroupSize = parameters.getDecimalSpaceSize();
-        hexadecimalSpaceGroupSize = parameters.getHexadecimalSpaceSize();
+        cursorPositionFormat.setCodeType(parameters.getCursorPositionCodeType());
+        cursorPositionFormat.setShowOffset(parameters.isCursorShowOffset());
+        documentSizeFormat.setCodeType(parameters.getDocumentSizeCodeType());
+        documentSizeFormat.setShowRelative(parameters.isDocumentSizeShowRelative());
+        octalSpaceGroupSize = parameters.getOctalSpaceGroupSize();
+        decimalSpaceGroupSize = parameters.getDecimalSpaceGroupSize();
+        hexadecimalSpaceGroupSize = parameters.getHexadecimalSpaceGroupSize();
     }
 
     public void saveToParameters(StatusParameters parameters) {
-        parameters.setCursorPositionCodeType(statusCursorPositionFormat.getCodeType());
-        parameters.setCursorShowOffset(statusCursorPositionFormat.isShowOffset());
-        parameters.setDocumentSizeCodeType(statusDocumentSizeFormat.getCodeType());
-        parameters.setDocumentSizeShowRelative(statusDocumentSizeFormat.isShowRelative());
+        parameters.setCursorPositionCodeType(cursorPositionFormat.getCodeType());
+        parameters.setCursorShowOffset(cursorPositionFormat.isShowOffset());
+        parameters.setDocumentSizeCodeType(documentSizeFormat.getCodeType());
+        parameters.setDocumentSizeShowRelative(documentSizeFormat.isShowRelative());
         parameters.setOctalSpaceSize(octalSpaceGroupSize);
         parameters.setDecimalSpaceSize(decimalSpaceGroupSize);
         parameters.setHexadecimalSpaceSize(hexadecimalSpaceGroupSize);
+    }
+
+    public void setOptions(StatusOptions statusOptions) {
+        cursorPositionFormat = statusOptions.cursorPositionFormat;
+        documentSizeFormat = statusOptions.documentSizeFormat;
+        octalSpaceGroupSize = statusOptions.octalSpaceGroupSize;
+        decimalSpaceGroupSize = statusOptions.decimalSpaceGroupSize;
+        hexadecimalSpaceGroupSize = statusOptions.hexadecimalSpaceGroupSize;
     }
 }

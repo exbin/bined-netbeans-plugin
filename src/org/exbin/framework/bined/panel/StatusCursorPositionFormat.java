@@ -16,6 +16,7 @@
  */
 package org.exbin.framework.bined.panel;
 
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.PositionCodeType;
@@ -29,8 +30,8 @@ import org.exbin.bined.PositionCodeType;
 @ParametersAreNonnullByDefault
 public class StatusCursorPositionFormat {
 
-    private PositionCodeType positionCodeType;
-    private boolean showOffset= true;
+    private PositionCodeType positionCodeType = PositionCodeType.DECIMAL;
+    private boolean showOffset = true;
 
     @Nonnull
     public PositionCodeType getCodeType() {
@@ -38,7 +39,7 @@ public class StatusCursorPositionFormat {
     }
 
     public void setCodeType(PositionCodeType positionCodeType) {
-        this.positionCodeType = positionCodeType;
+        this.positionCodeType = Objects.requireNonNull(positionCodeType);
     }
 
     public boolean isShowOffset() {

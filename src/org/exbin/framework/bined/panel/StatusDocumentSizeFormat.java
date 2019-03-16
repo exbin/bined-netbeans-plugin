@@ -16,6 +16,7 @@
  */
 package org.exbin.framework.bined.panel;
 
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.PositionCodeType;
@@ -29,7 +30,7 @@ import org.exbin.bined.PositionCodeType;
 @ParametersAreNonnullByDefault
 public class StatusDocumentSizeFormat {
 
-    private PositionCodeType positionCodeType;
+    private PositionCodeType positionCodeType = PositionCodeType.DECIMAL;
     private boolean showRelative = true;
 
     @Nonnull
@@ -38,7 +39,7 @@ public class StatusDocumentSizeFormat {
     }
 
     public void setCodeType(PositionCodeType positionCodeType) {
-        this.positionCodeType = positionCodeType;
+        this.positionCodeType = Objects.requireNonNull(positionCodeType);
     }
 
     public boolean isShowRelative() {

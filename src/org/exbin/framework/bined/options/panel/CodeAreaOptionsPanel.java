@@ -36,7 +36,7 @@ import org.openide.DialogDisplayer;
 /**
  * Code area preference parameters panel.
  *
- * @version 0.2.0 2019/03/02
+ * @version 0.2.0 2019/03/16
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -53,7 +53,6 @@ public class CodeAreaOptionsPanel extends javax.swing.JPanel {
     @Nonnull
     public void saveToOptions(CodeAreaOptions options) {
         options.setCodeFont(codeFont);
-//        options.setRowWrapping(true);//    private boolean rowWrapping;
         options.setCodeType(CodeType.valueOf((String) codeTypeComboBox.getSelectedItem()));
         options.setShowUnprintables(showNonprintableCharactersCheckBox.isSelected());
         options.setCodeCharactersCase(CodeCharactersCase.valueOf((String) codeCharactersModeComboBox.getSelectedItem()));
@@ -61,6 +60,10 @@ public class CodeAreaOptionsPanel extends javax.swing.JPanel {
         options.setViewMode(CodeAreaViewMode.valueOf((String) viewModeComboBox.getSelectedItem()));
         options.setCodeColorization(codeColorizationCheckBox.isSelected());
         options.setUseDefaultFont(useDefaultFontCheckBox.isSelected());
+        options.setRowWrapping(wrapLineModeCheckBox.isSelected());
+        options.setMaxBytesPerRow((Integer) maxBytesPerRowSpinner.getValue());
+        options.setMinRowPositionLength((Integer) minRowPositionLengthSpinner.getValue());
+        options.setMaxRowPositionLength((Integer) maxRowPositionLengthSpinner.getValue());
     }
 
     public void loadFromOptions(CodeAreaOptions options) {
@@ -74,6 +77,10 @@ public class CodeAreaOptionsPanel extends javax.swing.JPanel {
         viewModeComboBox.setSelectedItem((String) options.getViewMode().name());
         codeColorizationCheckBox.setSelected(options.isCodeColorization());
         useDefaultFontCheckBox.setSelected(options.isUseDefaultFont());
+        wrapLineModeCheckBox.setSelected(options.isRowWrapping());
+        maxBytesPerRowSpinner.setValue(options.getMaxBytesPerRow());
+        minRowPositionLengthSpinner.setValue(options.getMinRowPositionLength());
+        maxRowPositionLengthSpinner.setValue(options.getMaxRowPositionLength());
     }
 
     /**
@@ -100,6 +107,13 @@ public class CodeAreaOptionsPanel extends javax.swing.JPanel {
         fontLabel = new javax.swing.JLabel();
         fontTextField = new javax.swing.JTextField();
         selectFontButton = new javax.swing.JButton();
+        maxBytesPerRowLabel = new javax.swing.JLabel();
+        maxBytesPerRowSpinner = new javax.swing.JSpinner();
+        minRowPositionLengthLabel = new javax.swing.JLabel();
+        minRowPositionLengthSpinner = new javax.swing.JSpinner();
+        maxRowPositionLengthLabel = new javax.swing.JLabel();
+        maxRowPositionLengthSpinner = new javax.swing.JSpinner();
+        wrapLineModeCheckBox = new javax.swing.JCheckBox();
 
         codeCharactersModeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "LOWER", "UPPER" }));
 
@@ -168,27 +182,50 @@ public class CodeAreaOptionsPanel extends javax.swing.JPanel {
                     .addComponent(selectFontButton)))
         );
 
+        org.openide.awt.Mnemonics.setLocalizedText(maxBytesPerRowLabel, resourceBundle.getString("maxBytesPerRowLabel.text")); // NOI18N
+
+        maxBytesPerRowSpinner.setModel(new javax.swing.SpinnerNumberModel(16, 0, null, 1));
+
+        org.openide.awt.Mnemonics.setLocalizedText(minRowPositionLengthLabel, resourceBundle.getString("minRowPositionLengthLabel.text")); // NOI18N
+
+        minRowPositionLengthSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        minRowPositionLengthSpinner.setValue(8);
+
+        org.openide.awt.Mnemonics.setLocalizedText(maxRowPositionLengthLabel, resourceBundle.getString("maxRowPositionLengthLabel.text")); // NOI18N
+
+        maxRowPositionLengthSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        maxRowPositionLengthSpinner.setValue(8);
+
+        org.openide.awt.Mnemonics.setLocalizedText(wrapLineModeCheckBox, resourceBundle.getString("wrapLineModeCheckBox.text")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(codeColorizationCheckBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(showNonprintableCharactersCheckBox, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(codeCharactersModeComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(positionCodeTypeComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(viewModeComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(codeTypeComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(codeColorizationCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(showNonprintableCharactersCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(codeCharactersModeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(positionCodeTypeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(viewModeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(codeTypeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(fontPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(maxBytesPerRowSpinner, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(minRowPositionLengthSpinner, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(maxRowPositionLengthSpinner, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(hexCharactersModeLabel)
                             .addComponent(positionCodeTypeLabel)
                             .addComponent(viewModeScrollModeLabel)
-                            .addComponent(codeTypeScrollModeLabel))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(fontPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(codeTypeScrollModeLabel)
+                            .addComponent(wrapLineModeCheckBox)
+                            .addComponent(maxBytesPerRowLabel)
+                            .addComponent(minRowPositionLengthLabel)
+                            .addComponent(maxRowPositionLengthLabel))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -211,11 +248,25 @@ public class CodeAreaOptionsPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(codeCharactersModeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(fontPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(showNonprintableCharactersCheckBox)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(codeColorizationCheckBox)
-                .addGap(1, 1, 1)
-                .addComponent(fontPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(wrapLineModeCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(maxBytesPerRowLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(maxBytesPerRowSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(minRowPositionLengthLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(minRowPositionLengthSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(maxRowPositionLengthLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(maxRowPositionLengthSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -261,6 +312,12 @@ public class CodeAreaOptionsPanel extends javax.swing.JPanel {
     private javax.swing.JPanel fontPanel;
     private javax.swing.JTextField fontTextField;
     private javax.swing.JLabel hexCharactersModeLabel;
+    private javax.swing.JLabel maxBytesPerRowLabel;
+    private javax.swing.JSpinner maxBytesPerRowSpinner;
+    private javax.swing.JLabel maxRowPositionLengthLabel;
+    private javax.swing.JSpinner maxRowPositionLengthSpinner;
+    private javax.swing.JLabel minRowPositionLengthLabel;
+    private javax.swing.JSpinner minRowPositionLengthSpinner;
     private javax.swing.JComboBox<String> positionCodeTypeComboBox;
     private javax.swing.JLabel positionCodeTypeLabel;
     private javax.swing.JButton selectFontButton;
@@ -268,6 +325,7 @@ public class CodeAreaOptionsPanel extends javax.swing.JPanel {
     private javax.swing.JCheckBox useDefaultFontCheckBox;
     private javax.swing.JComboBox<String> viewModeComboBox;
     private javax.swing.JLabel viewModeScrollModeLabel;
+    private javax.swing.JCheckBox wrapLineModeCheckBox;
     // End of variables declaration//GEN-END:variables
 
     private void updateFontTextField() {

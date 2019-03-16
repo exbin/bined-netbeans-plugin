@@ -17,6 +17,7 @@ package org.exbin.bined.netbeans;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
@@ -35,6 +36,7 @@ import org.openide.util.Exceptions;
  * @version 0.2.0 2018/09/10
  * @author ExBin Project (http://exbin.org)
  */
+@ParametersAreNonnullByDefault
 public class BinaryUndoSwingHandler implements BinaryDataUndoHandler {
 
     private final CodeAreaCore codeArea;

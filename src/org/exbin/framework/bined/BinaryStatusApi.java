@@ -22,13 +22,14 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import org.exbin.bined.CodeAreaCaretPosition;
 import org.exbin.bined.EditationMode;
 import org.exbin.bined.EditationOperation;
 
 /**
  * Hexadecimal editor status interface.
  *
- * @version 0.2.1 2018/12/22
+ * @version 0.2.1 2019/03/16
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -39,7 +40,7 @@ public interface BinaryStatusApi {
      *
      * @param cursorPosition cursor position
      */
-    void setCursorPosition(String cursorPosition);
+    void setCursorPosition(CodeAreaCaretPosition cursorPosition);
 
     /**
      * Reports currently active editation mode.
@@ -59,8 +60,9 @@ public interface BinaryStatusApi {
      * Sets current document size.
      *
      * @param documentSize document size
+     * @param initialdocumentSize document size when file was opened
      */
-    void setCurrentDocumentSize(String documentSize);
+    void setCurrentDocumentSize(long documentSize, long initialdocumentSize);
 
     /**
      * Sets current memory mode.

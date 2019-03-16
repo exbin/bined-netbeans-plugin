@@ -31,30 +31,27 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
+                              <Component id="halfSpaceGroupSizeLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="51" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="maxBytesPerRowLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="wrapLineModeCheckBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="halfSpaceGroupSizeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="doubleSpaceGroupSizeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="spaceGroupSizeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="doubleSpaceGroupSizeSpinner" alignment="0" max="32767" attributes="0"/>
                                   <Component id="halfSpaceGroupSizeSpinner" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="headerPanel" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="maxBytesPerRowSpinner" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="rowPositionPanel" alignment="0" max="32767" attributes="0"/>
                                   <Component id="spaceGroupSizeSpinner" alignment="0" max="32767" attributes="0"/>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="spaceGroupSizeLabel" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                                  </Group>
+                                  <Component id="doubleSpaceGroupSizeSpinner" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="headerPanel" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="rowPositionPanel" alignment="0" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -66,23 +63,17 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="wrapLineModeCheckBox" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="maxBytesPerRowLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="maxBytesPerRowSpinner" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="headerPanel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="rowPositionPanel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="spaceGroupSizeLabel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="spaceGroupSizeSpinner" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="halfSpaceGroupSizeLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="halfSpaceGroupSizeSpinner" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="spaceGroupSizeLabel" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="spaceGroupSizeSpinner" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="doubleSpaceGroupSizeLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -118,18 +109,14 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="rowPositionLeftSpaceSpinner" alignment="1" max="32767" attributes="0"/>
-                              <Component id="minRowPositionLengthSpinner" alignment="1" max="32767" attributes="0"/>
                               <Component id="showRowPositionCheckBox" alignment="0" max="32767" attributes="0"/>
-                              <Component id="maxRowPositionLengthSpinner" alignment="1" max="32767" attributes="0"/>
                               <Component id="rowPositionRightSpaceSpinner" alignment="1" max="32767" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="minRowPositionLengthLabel" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="maxRowPositionLengthLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Component id="rowPositionLeftSpaceLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                                       <Component id="rowPositionRightSpaceLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  <EmptySpace min="0" pref="27" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
@@ -140,14 +127,6 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <Component id="showRowPositionCheckBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="minRowPositionLengthLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="minRowPositionLengthSpinner" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="maxRowPositionLengthLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="maxRowPositionLengthSpinner" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="rowPositionLeftSpaceLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -170,46 +149,6 @@
                   </Properties>
                   <Events>
                     <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="showRowPositionCheckBoxItemStateChanged"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JLabel" name="minRowPositionLengthLabel">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="minRowPositionLengthLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
-                    </Property>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JSpinner" name="minRowPositionLengthSpinner">
-                  <Properties>
-                    <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                      <SpinnerModel initial="0" minimum="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
-                    </Property>
-                    <Property name="value" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="8" type="code"/>
-                    </Property>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="minRowPositionLengthSpinnerStateChanged"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JLabel" name="maxRowPositionLengthLabel">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                      <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="maxRowPositionLengthLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
-                    </Property>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JSpinner" name="maxRowPositionLengthSpinner">
-                  <Properties>
-                    <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                      <SpinnerModel initial="0" minimum="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
-                    </Property>
-                    <Property name="value" type="java.lang.Object" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                      <Connection code="8" type="code"/>
-                    </Property>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="maxRowPositionLengthSpinnerStateChanged"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="rowPositionLeftSpaceLabel">
@@ -265,23 +204,6 @@
                 </Property>
               </Properties>
             </Component>
-            <Component class="javax.swing.JCheckBox" name="wrapLineModeCheckBox">
-              <Properties>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="wrapLineModeCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
-                </Property>
-              </Properties>
-              <Events>
-                <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="wrapLineModeCheckBoxItemStateChanged"/>
-              </Events>
-            </Component>
-            <Component class="javax.swing.JLabel" name="maxBytesPerRowLabel">
-              <Properties>
-                <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="maxBytesPerRowLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
-                </Property>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JSpinner" name="spaceGroupSizeSpinner">
               <Properties>
                 <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
@@ -298,16 +220,6 @@
                   <ResourceString bundle="org/exbin/framework/bined/options/panel/resources/LayoutProfilePanel.properties" key="doubleSpaceGroupSizeLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
               </Properties>
-            </Component>
-            <Component class="javax.swing.JSpinner" name="maxBytesPerRowSpinner">
-              <Properties>
-                <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                  <SpinnerModel initial="16" minimum="0" numberType="java.lang.Integer" stepSize="1" type="number"/>
-                </Property>
-              </Properties>
-              <Events>
-                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="maxBytesPerRowSpinnerStateChanged"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JSpinner" name="doubleSpaceGroupSizeSpinner">
               <Properties>

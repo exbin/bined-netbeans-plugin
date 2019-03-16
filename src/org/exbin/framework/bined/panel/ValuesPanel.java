@@ -25,7 +25,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import org.exbin.bined.CaretMovedListener;
-import org.exbin.bined.CaretPosition;
+import org.exbin.bined.CodeAreaCaretPosition;
 import org.exbin.bined.DataChangedListener;
 import org.exbin.bined.netbeans.BinaryUndoSwingHandler;
 import org.exbin.bined.operation.BinaryDataCommand;
@@ -688,7 +688,7 @@ public class ValuesPanel extends javax.swing.JPanel {
             updateValues();
         };
         codeArea.addDataChangedListener(dataChangedListener);
-        caretMovedListener = (CaretPosition caretPosition) -> {
+        caretMovedListener = (CodeAreaCaretPosition caretPosition) -> {
             updateValues();
         };
         codeArea.addCaretMovedListener(caretMovedListener);
@@ -738,7 +738,7 @@ public class ValuesPanel extends javax.swing.JPanel {
     }
 
     public void updateValues() {
-        CaretPosition caretPosition = codeArea.getCaretPosition();
+        CodeAreaCaretPosition caretPosition = codeArea.getCaretPosition();
         dataPosition = caretPosition.getDataPosition();
         long dataSize = codeArea.getDataSize();
 

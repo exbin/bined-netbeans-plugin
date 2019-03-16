@@ -22,18 +22,21 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.border.EtchedBorder;
+import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
 
 /**
  * Color cell panel for color profile panel.
  *
- * @version 0.2.0 2019/03/01
+ * @version 0.2.0 2019/03/16
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
 public class ColorCellPanel extends javax.swing.JPanel {
 
     private final ColorHandler colorHandler;
+
+    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(ColorCellPanel.class);
 
     public ColorCellPanel(ColorHandler colorHandler) {
         initComponents();
@@ -57,11 +60,12 @@ public class ColorCellPanel extends javax.swing.JPanel {
 
         colorLabel = new javax.swing.JLabel();
         colorButton = new javax.swing.JButton();
+        clearButton = new javax.swing.JButton();
 
         colorLabel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         colorLabel.setOpaque(true);
 
-        colorButton.setText("Edit...");
+        colorButton.setText(resourceBundle.getString("editButton.text")); // NOI18N
         colorButton.setAlignmentY(0.0F);
         colorButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
         colorButton.addActionListener(new java.awt.event.ActionListener() {
@@ -70,20 +74,32 @@ public class ColorCellPanel extends javax.swing.JPanel {
             }
         });
 
+        clearButton.setText(resourceBundle.getString("clearButton.text")); // NOI18N
+        clearButton.setAlignmentY(0.0F);
+        clearButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        clearButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(colorLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(colorButton, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 0, 0)
+                .addComponent(clearButton))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(colorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
-            .addComponent(colorButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(colorButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addComponent(clearButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -96,6 +112,10 @@ public class ColorCellPanel extends javax.swing.JPanel {
         }, null);
         dialog.setVisible(true);
     }//GEN-LAST:event_colorButtonActionPerformed
+
+    private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
+        setColor(null);
+    }//GEN-LAST:event_clearButtonActionPerformed
 
     /**
      * Test method for this panel.
@@ -118,6 +138,7 @@ public class ColorCellPanel extends javax.swing.JPanel {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton clearButton;
     private javax.swing.JButton colorButton;
     private javax.swing.JLabel colorLabel;
     // End of variables declaration//GEN-END:variables

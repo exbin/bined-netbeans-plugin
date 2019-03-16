@@ -30,13 +30,14 @@ import org.exbin.bined.CodeAreaViewMode;
 import org.exbin.bined.CodeCharactersCase;
 import org.exbin.bined.CodeType;
 import org.exbin.bined.PositionCodeType;
+import org.exbin.bined.capability.RowWrappingCapable;
 import org.exbin.framework.editor.text.EncodingsHandler;
 import org.exbin.framework.editor.text.panel.TextFontOptionsPanel;
 
 /**
  * Code area preferences.
  *
- * @version 0.2.0 2019/03/11
+ * @version 0.2.0 2019/03/16
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -55,6 +56,10 @@ public class CodeAreaParameters {
     public static final String PREFERENCES_POSITION_CODE_TYPE = "positionCodeType";
     public static final String PREFERENCES_HEX_CHARACTERS_CASE = "hexCharactersCase";
     public static final String PREFERENCES_CODE_COLORIZATION = "codeColorization";
+    public static final String PREFERENCES_ROW_WRAPPING_MODE = "rowWrappingMode";
+    public static final String PREFERENCES_MAX_BYTES_PER_ROW = "maxBytesPerRow";
+    public static final String PREFERENCES_MIN_ROW_POSITION_LENGTH = "minRowPositionLength";
+    public static final String PREFERENCES_MAX_ROW_POSITION_LENGTH = "maxRowPositionLength";
 
     private final Preferences preferences;
 
@@ -260,5 +265,42 @@ public class CodeAreaParameters {
 
     public void setUseDefaultFont(boolean useDefaultFont) {
         preferences.putBoolean(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_DEFAULT, useDefaultFont);
+    }
+
+    @Nonnull
+    public RowWrappingCapable.RowWrappingMode getRowWrappingMode() {
+        try {
+            return RowWrappingCapable.RowWrappingMode.valueOf(preferences.get(PREFERENCES_ROW_WRAPPING_MODE, RowWrappingCapable.RowWrappingMode.NO_WRAPPING.name()));
+        } catch (Exception ex) {
+            return RowWrappingCapable.RowWrappingMode.NO_WRAPPING;
+        }
+    }
+
+    public void setRowWrappingMode(RowWrappingCapable.RowWrappingMode rowWrappingMode) {
+        preferences.put(PREFERENCES_ROW_WRAPPING_MODE, rowWrappingMode.name());
+    }
+
+    public int getMaxBytesPerRow() {
+        return preferences.getInt(PREFERENCES_MAX_BYTES_PER_ROW, 16);
+    }
+
+    public void setMaxBytesPerRow(int maxBytesPerRow) {
+        preferences.putInt(PREFERENCES_MAX_BYTES_PER_ROW, maxBytesPerRow);
+    }
+
+    public int getMinRowPositionLength() {
+        return preferences.getInt(PREFERENCES_MIN_ROW_POSITION_LENGTH, 0);
+    }
+
+    public void setMinRowPositionLength(int minRowPositionLength) {
+        preferences.putInt(PREFERENCES_MIN_ROW_POSITION_LENGTH, minRowPositionLength);
+    }
+
+    public int getMaxRowPositionLength() {
+        return preferences.getInt(PREFERENCES_MAX_ROW_POSITION_LENGTH, 0);
+    }
+
+    public void setMaxRowPositionLength(int maxRowPositionLength) {
+        preferences.putInt(PREFERENCES_MAX_ROW_POSITION_LENGTH, maxRowPositionLength);
     }
 }

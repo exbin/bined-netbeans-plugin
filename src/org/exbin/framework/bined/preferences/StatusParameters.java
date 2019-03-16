@@ -19,11 +19,12 @@ import javax.annotation.Nonnull;
 import org.exbin.framework.Preferences;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.PositionCodeType;
+import org.exbin.framework.bined.options.StatusOptions;
 
 /**
  * Status panel parameters.
  *
- * @version 0.2.0 2019/03/15
+ * @version 0.2.0 2019/03/16
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -33,9 +34,9 @@ public class StatusParameters {
     public static final String PREFERENCES_CURSOR_POSITION_SHOW_OFFSET = "statusCursorShowOffset";
     public static final String PREFERENCES_DOCUMENT_SIZE_CODE_TYPE = "statusDocumentSizeFormat";
     public static final String PREFERENCES_DOCUMENT_SIZE_SHOW_RELATIVE = "statusDocumentShowRelative";
-    public static final String PREFERENCES_OCTAL_SPACE_SIZE = "statusOctalSpaceSize";
-    public static final String PREFERENCES_DECIMAL_SPACE_SIZE = "statusDecimalSpaceSize";
-    public static final String PREFERENCES_HEXADECIMAL_SPACE_SIZE = "statusHexadecimalSpaceSize";
+    public static final String PREFERENCES_OCTAL_SPACE_GROUP_SIZE = "statusOctalSpaceGroupSize";
+    public static final String PREFERENCES_DECIMAL_SPACE_GROUP_SIZE = "statusDecimalSpaceGroupSize";
+    public static final String PREFERENCES_HEXADECIMAL_SPACE_GROUP_SIZE = "statusHexadecimalSpaceGroupSize";
 
     private final Preferences preferences;
 
@@ -85,27 +86,27 @@ public class StatusParameters {
         preferences.putBoolean(PREFERENCES_DOCUMENT_SIZE_SHOW_RELATIVE, statusDocumentSizeShowRelative);
     }
 
-    public int getOctalSpaceSize() {
-        return preferences.getInt(PREFERENCES_OCTAL_SPACE_SIZE, 4);
+    public int getOctalSpaceGroupSize() {
+        return preferences.getInt(PREFERENCES_OCTAL_SPACE_GROUP_SIZE, StatusOptions.DEFAULT_OCTAL_SPACE_GROUP_SIZE);
     }
 
     public void setOctalSpaceSize(int octalSpaceSize) {
-        preferences.putInt(PREFERENCES_OCTAL_SPACE_SIZE, octalSpaceSize);
+        preferences.putInt(PREFERENCES_OCTAL_SPACE_GROUP_SIZE, octalSpaceSize);
     }
 
-    public int getDecimalSpaceSize() {
-        return preferences.getInt(PREFERENCES_DECIMAL_SPACE_SIZE, 3);
+    public int getDecimalSpaceGroupSize() {
+        return preferences.getInt(PREFERENCES_DECIMAL_SPACE_GROUP_SIZE, StatusOptions.DEFAULT_DECIMAL_SPACE_GROUP_SIZE);
     }
 
     public void setDecimalSpaceSize(int decimalSpaceSize) {
-        preferences.putInt(PREFERENCES_DECIMAL_SPACE_SIZE, decimalSpaceSize);
+        preferences.putInt(PREFERENCES_DECIMAL_SPACE_GROUP_SIZE, decimalSpaceSize);
     }
 
-    public int getHexadecimalSpaceSize() {
-        return preferences.getInt(PREFERENCES_HEXADECIMAL_SPACE_SIZE, 4);
+    public int getHexadecimalSpaceGroupSize() {
+        return preferences.getInt(PREFERENCES_HEXADECIMAL_SPACE_GROUP_SIZE, StatusOptions.DEFAULT_HEXADECIMAL_SPACE_GROUP_SIZE);
     }
 
     public void setHexadecimalSpaceSize(int hexadecimalSpaceSize) {
-        preferences.putInt(PREFERENCES_HEXADECIMAL_SPACE_SIZE, hexadecimalSpaceSize);
+        preferences.putInt(PREFERENCES_HEXADECIMAL_SPACE_GROUP_SIZE, hexadecimalSpaceSize);
     }
 }

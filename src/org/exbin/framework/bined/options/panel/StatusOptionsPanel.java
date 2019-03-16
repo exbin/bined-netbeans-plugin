@@ -26,7 +26,7 @@ import org.exbin.framework.gui.utils.WindowUtils;
 /**
  * Editor preference parameters panel.
  *
- * @version 0.2.0 2019/03/02
+ * @version 0.2.0 2019/03/16
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -42,12 +42,12 @@ public class StatusOptionsPanel extends javax.swing.JPanel {
         StatusCursorPositionFormat cursorPositionFormat = new StatusCursorPositionFormat();
         cursorPositionFormat.setCodeType(PositionCodeType.valueOf((String) cursorPositionCodeTypeComboBox.getSelectedItem()));
         cursorPositionFormat.setShowOffset(cursorPositionShowOffsetCheckBox.isSelected());
-        options.setStatusCursorPositionFormat(cursorPositionFormat);
+        options.setCursorPositionFormat(cursorPositionFormat);
 
         StatusDocumentSizeFormat documentSizeFormat = new StatusDocumentSizeFormat();
         documentSizeFormat.setCodeType(PositionCodeType.valueOf((String) documentSizeCodeTypeComboBox.getSelectedItem()));
         documentSizeFormat.setShowRelative(cursorPositionShowOffsetCheckBox.isSelected());
-        options.setStatusDocumentSizeFormat(documentSizeFormat);
+        options.setDocumentSizeFormat(documentSizeFormat);
 
         options.setOctalSpaceGroupSize((int) octalGroupSizeSpinner.getValue());
         options.setDecimalSpaceGroupSize((int) decimalGroupSizeSpinner.getValue());
@@ -55,11 +55,11 @@ public class StatusOptionsPanel extends javax.swing.JPanel {
     }
 
     public void loadFromOptions(StatusOptions options) {
-        StatusCursorPositionFormat cursorPositionFormat = options.getStatusCursorPositionFormat();
+        StatusCursorPositionFormat cursorPositionFormat = options.getCursorPositionFormat();
         cursorPositionCodeTypeComboBox.setSelectedIndex(cursorPositionFormat.getCodeType().ordinal());
         cursorPositionShowOffsetCheckBox.setSelected(cursorPositionFormat.isShowOffset());
 
-        StatusDocumentSizeFormat documentSizeFormat = options.getStatusDocumentSizeFormat();
+        StatusDocumentSizeFormat documentSizeFormat = options.getDocumentSizeFormat();
         documentSizeCodeTypeComboBox.setSelectedIndex(documentSizeFormat.getCodeType().ordinal());
         cursorPositionShowOffsetCheckBox.setSelected(documentSizeFormat.isShowRelative());
 
@@ -127,19 +127,16 @@ public class StatusOptionsPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cursorPositionCodeTypeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(documentSizeCodeTypeComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cursorPositionCodeTypeLabel)
+                    .addComponent(cursorPositionShowOffsetCheckBox)
+                    .addComponent(documentSizeCodeTypeLabel)
+                    .addComponent(documentSizeShowRelativeCheckBox)
                     .addComponent(decimalGroupSizeSpinner)
                     .addComponent(octalGroupSizeSpinner)
                     .addComponent(hexadecimalGroupSizeSpinner)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cursorPositionCodeTypeLabel)
-                            .addComponent(cursorPositionShowOffsetCheckBox)
-                            .addComponent(documentSizeCodeTypeLabel)
-                            .addComponent(documentSizeShowRelativeCheckBox)
-                            .addComponent(decimalGroupSizeLabel)
-                            .addComponent(octalGroupSizeLabel)
-                            .addComponent(hexadecimalGroupSizeLabel))
-                        .addGap(0, 261, Short.MAX_VALUE)))
+                    .addComponent(decimalGroupSizeLabel)
+                    .addComponent(octalGroupSizeLabel)
+                    .addComponent(hexadecimalGroupSizeLabel))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -157,7 +154,7 @@ public class StatusOptionsPanel extends javax.swing.JPanel {
                 .addComponent(documentSizeCodeTypeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(documentSizeShowRelativeCheckBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(octalGroupSizeLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(octalGroupSizeSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)

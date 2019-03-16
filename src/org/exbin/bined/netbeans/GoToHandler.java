@@ -33,9 +33,9 @@ import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 
 /**
- * Encodings handler.
+ * Go to handler.
  *
- * @version 0.2.0 2018/10/27
+ * @version 0.2.0 2019/03/16
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -44,7 +44,7 @@ public class GoToHandler {
     private final ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(GoToHandler.class);
 
     private final ExtCodeArea codeArea;
-    private Action goToLineAction;
+    private Action goToRowAction;
 
     public GoToHandler(ExtCodeArea codeArea) {
         this.codeArea = codeArea;
@@ -55,17 +55,17 @@ public class GoToHandler {
     }
 
     @Nonnull
-    public Action getGoToLineAction() {
-        if (goToLineAction == null) {
-            goToLineAction = new AbstractAction() {
+    public Action getGoToRowAction() {
+        if (goToRowAction == null) {
+            goToRowAction = new AbstractAction() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
+                public void actionPerformed(ActionEvent event) {
                     final GoToBinaryPanel goToPanel = new GoToBinaryPanel();
                     DefaultControlPanel goToControlPanel = new DefaultControlPanel(goToPanel.getResourceBundle());
                     goToPanel.setCursorPosition(codeArea.getCaretPosition().getDataPosition());
                     goToPanel.setMaxPosition(codeArea.getDataSize());
                     JPanel dialogPanel = WindowUtils.createDialogPanel(goToPanel, goToControlPanel);
-                    DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Go To Position", true, new Object[0], null, 0, null, null);
+                    DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, resourceBundle.getString("goToRowAction.dialogTitle"), true, new Object[0], null, 0, null, null);
 
                     final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
                     goToPanel.initFocus();
@@ -82,6 +82,6 @@ public class GoToHandler {
                 }
             };
         }
-        return goToLineAction;
+        return goToRowAction;
     }
 }

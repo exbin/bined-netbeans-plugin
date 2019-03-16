@@ -15,14 +15,17 @@
  */
 package org.exbin.bined.netbeans.panel;
 
-import org.exbin.bined.swing.extended.ExtCodeArea;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+import org.exbin.bined.netbeans.BinEdApplyOptions;
 
 /**
  * Hexadecimal editor options panel with border.
  *
- * @version 0.2.0 2018/10/27
+ * @version 0.2.0 2019/03/16
  * @author ExBin Project (http://exbin.org)
  */
+@ParametersAreNonnullByDefault
 public class BinEdOptionsPanelBorder extends javax.swing.JPanel {
 
     public BinEdOptionsPanelBorder() {
@@ -51,31 +54,20 @@ public class BinEdOptionsPanelBorder extends javax.swing.JPanel {
     private org.exbin.bined.netbeans.panel.BinEdOptionsPanel optionsPanel;
     // End of variables declaration//GEN-END:variables
 
-    public void setFromCodeArea(ExtCodeArea codeArea) {
-        optionsPanel.setFromCodeArea(codeArea);
+    @Nonnull
+    public BinEdApplyOptions getApplyOptions() {
+        return optionsPanel.getApplyOptions();
     }
 
-    public void applyToCodeArea(ExtCodeArea codeArea) {
-        optionsPanel.applyToCodeArea(codeArea);
-        codeArea.repaint();
-    }
-
-    public boolean isShowValuesPanel() {
-        return true; // TODO optionsPanel.isShowValuesPanel();
-    }
-
-    public void setShowValuesPanel(boolean flag) {
-        // TODO optionsPanel.setShowValuesPanel(flag);
+    public void setApplyOptions(BinEdApplyOptions applyOptions) {
+        optionsPanel.setApplyOptions(applyOptions);;
     }
 
     public void load() {
         optionsPanel.load();
     }
+
     public void store() {
         optionsPanel.store();
-    }
-
-    public boolean isDeltaMemoryMode() {
-        return true; // TODO optionsPanel.isDeltaMemoryMode();
     }
 }

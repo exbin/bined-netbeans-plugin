@@ -17,6 +17,7 @@ package org.exbin.bined.netbeans;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JFileChooser;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -33,7 +34,7 @@ import org.openide.windows.WindowManager;
 /**
  * Open file in hexadecimal editor action.
  *
- * @version 0.2.0 2018/12/22
+ * @version 0.2.0 2019/03/16
  * @author ExBin Project (http://exbin.org)
  */
 @ActionID(
@@ -46,27 +47,28 @@ import org.openide.windows.WindowManager;
 )
 @ActionReference(path = "Menu/File", position = 850)
 @Messages("CTL_FileOpenAsBinaryAction=Open File as Binary...")
+@ParametersAreNonnullByDefault
 public final class FileOpenAsBinaryAction implements ActionListener {
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent event) {
         final Mode editorMode = WindowManager.getDefault().findMode("editor");
         if (editorMode == null) {
             return;
         }
 
-        final BinaryEditorTopComponent hexEditor = new BinaryEditorTopComponent();
-        editorMode.dockInto(hexEditor);
+        final BinaryEditorTopComponent editorComponent = new BinaryEditorTopComponent();
+        editorMode.dockInto(editorComponent);
 
         JFileChooser fileChooser = new JFileChooser();
-        int result = fileChooser.showOpenDialog(hexEditor);
+        int result = fileChooser.showOpenDialog(editorComponent);
         if (result == JFileChooser.APPROVE_OPTION) {
             FileObject fileObject = FileUtil.toFileObject(fileChooser.getSelectedFile());
             try {
                 DataObject dataObject = DataObject.find(fileObject);
-                hexEditor.openDataObject(dataObject);
-                hexEditor.open();
-                hexEditor.requestActive();
+                editorComponent.openDataObject(dataObject);
+                editorComponent.open();
+                editorComponent.requestActive();
             } catch (DataObjectNotFoundException ex) {
                 Exceptions.printStackTrace(ex);
             }

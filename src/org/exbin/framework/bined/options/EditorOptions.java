@@ -23,7 +23,7 @@ import org.exbin.framework.bined.preferences.EditorParameters;
 /**
  * Hexadecimal editor preferences.
  *
- * @version 0.2.0 2019/03/02
+ * @version 0.2.0 2019/03/16
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -57,5 +57,10 @@ public class EditorOptions {
     public void saveToParameters(EditorParameters parameters) {
         parameters.setFileHandlingMode(fileHandlingMode);
         parameters.setShowValuesPanel(isShowValuesPanel);
+    }
+
+    public void setOptions(EditorOptions editorOptions) {
+        fileHandlingMode = editorOptions.fileHandlingMode;
+        isShowValuesPanel = editorOptions.isShowValuesPanel;
     }
 }

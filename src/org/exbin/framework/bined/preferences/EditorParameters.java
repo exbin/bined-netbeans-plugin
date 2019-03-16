@@ -22,7 +22,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 /**
  * Hexadecimal editor preferences.
  *
- * @version 0.2.0 2019/03/15
+ * @version 0.2.0 2019/03/16
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -30,7 +30,6 @@ public class EditorParameters {
 
     public static final String PREFERENCES_FILE_HANDLING_MODE = "fileHandlingMode";
     public static final String PREFERENCES_SHOW_VALUES_PANEL = "valuesPanel";
-    public static final String PREFERENCES_STATUS_POSITION_FORMAT = "statusPositionFormat";
 
     private final Preferences preferences;
 
@@ -40,7 +39,7 @@ public class EditorParameters {
 
     @Nonnull
     public String getFileHandlingMode() {
-        return preferences.get(PREFERENCES_FILE_HANDLING_MODE, "MEMORY");
+        return preferences.get(PREFERENCES_FILE_HANDLING_MODE, "DELTA");
     }
 
     public void setFileHandlingMode(String fileHandlingMode) {
@@ -53,13 +52,5 @@ public class EditorParameters {
 
     public void setShowValuesPanel(boolean showValuesPanel) {
         preferences.putBoolean(PREFERENCES_SHOW_VALUES_PANEL, showValuesPanel);
-    }
-    
-    public String getStatusPositionFormat() {
-        return preferences.get(PREFERENCES_STATUS_POSITION_FORMAT, "HEX");
-    }
-
-    public void setStatusPositionFormat(String statusPositionFormat) {
-        preferences.put(PREFERENCES_STATUS_POSITION_FORMAT, statusPositionFormat);
     }
 }

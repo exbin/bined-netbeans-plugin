@@ -72,4 +72,10 @@ public class CharsetOptions {
     public void applyToCodeArea(ExtCodeArea codeArea) {
         ((CharsetCapable) codeArea).setCharset(Charset.forName(selectedEncoding));
     }
+
+    public void setOptions(CharsetOptions charsetOptions) {
+        selectedEncoding = charsetOptions.selectedEncoding;
+        encodings = new ArrayList<>();
+        encodings.addAll(charsetOptions.encodings);
+    }
 }

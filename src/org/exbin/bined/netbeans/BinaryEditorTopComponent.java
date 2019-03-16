@@ -44,9 +44,9 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import org.exbin.bined.BasicCodeAreaZone;
-import org.exbin.bined.CaretPosition;
 import org.exbin.bined.CodeAreaCaretPosition;
 import org.exbin.bined.CodeType;
+import org.exbin.bined.DefaultCodeAreaCaretPosition;
 import org.exbin.bined.EditationMode;
 import org.exbin.bined.EditationOperation;
 import org.exbin.bined.capability.RowWrappingCapable;
@@ -94,14 +94,16 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import org.exbin.framework.bined.BinaryStatusApi;
 import org.exbin.bined.netbeans.panel.BinarySearchPanelApi;
+import org.exbin.framework.bined.options.EditorOptions;
+import org.exbin.framework.bined.options.StatusOptions;
 import org.exbin.framework.gui.about.panel.AboutPanel;
 import org.exbin.framework.gui.utils.panel.CloseControlPanel;
 import org.openide.util.NbPreferences;
 
 /**
- * Hexadecimal editor top component.
+ * Hexadecimal editor top component. F
  *
- * @version 0.2.0 2019/03/01
+ * @version 0.2.0 2019/03/16
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.bined//BinaryEditor//EN", autostore = false)
@@ -118,6 +120,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     public static final String ACTION_CLIPBOARD_COPY = "copy-to-clipboard";
     public static final String ACTION_CLIPBOARD_PASTE = "paste-from-clipboard";
     private static final int FIND_MATCHES_LIMIT = 100;
+    private static final FileHandlingMode DEFAULT_FILE_HANDLING_MODE = FileHandlingMode.DELTA;
 
     private final BinaryEditorPreferences preferences;
     private final BinaryEditorNode node;
@@ -143,7 +146,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
     private boolean opened = false;
     private boolean modified = false;
-    private boolean deltaMemoryMode = false;
+    private FileHandlingMode fileHandlingMode = DEFAULT_FILE_HANDLING_MODE;
     protected String displayName;
     private long documentOriginalSize;
     private DataObject dataObject;
@@ -266,7 +269,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                             break;
                         }
                         case KeyEvent.VK_G: {
-                            goToHandler.getGoToLineAction().actionPerformed(null);
+                            goToHandler.getGoToRowAction().actionPerformed(null);
                             break;
                         }
                     }
@@ -280,15 +283,13 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     private void applyFromCodeArea() {
         codeTypeComboBox.setSelectedIndex(codeArea.getCodeType().ordinal());
         showUnprintablesToggleButton.setSelected(codeArea.isShowUnprintables());
-        lineWrappingToggleButton.setSelected(codeArea.getRowWrapping() == RowWrappingCapable.RowWrappingMode.WRAPPING);
+        rowWrappingToggleButton.setSelected(codeArea.getRowWrapping() == RowWrappingCapable.RowWrappingMode.WRAPPING);
     }
 
     public void registerHexStatus(BinaryStatusApi binaryStatusApi) {
         this.binaryStatus = binaryStatusApi;
-        codeArea.addCaretMovedListener((CaretPosition caretPosition) -> {
-            String position = String.valueOf(caretPosition.getDataPosition());
-            position += ":" + caretPosition.getCodeOffset();
-            binaryStatus.setCursorPosition(position);
+        codeArea.addCaretMovedListener((CodeAreaCaretPosition caretPosition) -> {
+            binaryStatus.setCursorPosition(caretPosition);
         });
 
         codeArea.addEditationModeChangedListener(binaryStatus::setEditationMode);
@@ -302,7 +303,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
             @Override
             public void changeCursorPosition() {
-                goToHandler.getGoToLineAction().actionPerformed(null);
+                goToHandler.getGoToRowAction().actionPerformed(null);
             }
 
             @Override
@@ -321,30 +322,37 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
             @Override
             public void changeMemoryMode(BinaryStatusApi.MemoryMode memoryMode) {
-                boolean newDeltaMode = memoryMode == BinaryStatusApi.MemoryMode.DELTA_MODE;
-                if (newDeltaMode != deltaMemoryMode) {
-                    switchDeltaMemoryMode(newDeltaMode);
-                    FileHandlingMode fileHandlingMode = deltaMemoryMode ? FileHandlingMode.DELTA : FileHandlingMode.MEMORY;
-                    preferences.getEditorParameters().setFileHandlingMode(fileHandlingMode.name());
+                FileHandlingMode newHandlingMode = memoryMode == BinaryStatusApi.MemoryMode.DELTA_MODE ? FileHandlingMode.DELTA : FileHandlingMode.MEMORY;
+                if (newHandlingMode != fileHandlingMode) {
+                    switchDeltaMemoryMode(newHandlingMode);
+                    preferences.getEditorParameters().setFileHandlingMode(newHandlingMode.name());
                 }
             }
         });
     }
 
-    private void switchDeltaMemoryMode(boolean newDeltaMode) {
-        if (newDeltaMode != deltaMemoryMode) {
+    private void switchShowValuesPanel(boolean showValuesPanel) {
+        if (showValuesPanel) {
+            showValuesPanel();
+        } else {
+            hideValuesPanel();
+        }
+    }
+
+    private void switchDeltaMemoryMode(FileHandlingMode newHandlingMode) {
+        if (newHandlingMode != fileHandlingMode) {
             // Switch memory mode
             if (dataObject != null) {
                 // If document is connected to file, attempt to release first if modified and then simply reload
                 if (isModified()) {
                     if (releaseFile()) {
-                        deltaMemoryMode = newDeltaMode;
+                        fileHandlingMode = newHandlingMode;
                         openDataObject(dataObject);
                         codeArea.clearSelection();
                         codeArea.setCaretPosition(0);
                     }
                 } else {
-                    deltaMemoryMode = newDeltaMode;
+                    fileHandlingMode = newHandlingMode;
                     openDataObject(dataObject);
                 }
             } else {
@@ -365,9 +373,9 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                 undoHandler.clear();
                 codeArea.notifyDataChanged();
                 updateCurrentMemoryMode();
-                deltaMemoryMode = newDeltaMode;
+                fileHandlingMode = newHandlingMode;
             }
-            deltaMemoryMode = newDeltaMode;
+            fileHandlingMode = newHandlingMode;
         }
     }
 
@@ -440,7 +448,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     }
 
     private void setNewData() {
-        if (deltaMemoryMode) {
+        if (fileHandlingMode == FileHandlingMode.DELTA) {
             codeArea.setContentData(segmentsRepository.createDocument());
         } else {
             codeArea.setContentData(new PagedData());
@@ -519,22 +527,18 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         return undoRedo;
     }
 
-    public void updatePosition() {
-        // hexSearchPanel.updatePosition(codeArea.getCaretPosition().getDataPosition(), codeArea.getDataSize());
-    }
-
     private void updateCurrentDocumentSize() {
         long dataSize = codeArea.getContentData().getDataSize();
-        long difference = dataSize - documentOriginalSize;
-        binaryStatus.setCurrentDocumentSize(dataSize + " (" + (difference > 0 ? "+" + difference : difference) + ")");
+        binaryStatus.setCurrentDocumentSize(dataSize, documentOriginalSize);
     }
 
-    public boolean isDeltaMemoryMode() {
-        return deltaMemoryMode;
+    @Nonnull
+    public FileHandlingMode getFileHandlingMode() {
+        return fileHandlingMode;
     }
 
-    public void setDeltaMemoryMode(boolean deltaMemoryMode) {
-        this.deltaMemoryMode = deltaMemoryMode;
+    public void setFileHandlingMode(FileHandlingMode fileHandlingMode) {
+        this.fileHandlingMode = fileHandlingMode;
     }
 
     private void updateCurrentMemoryMode() {
@@ -565,7 +569,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         codeAreaPanel = new javax.swing.JPanel();
         infoToolbar = new javax.swing.JPanel();
         controlToolBar = new javax.swing.JToolBar();
-        lineWrappingToggleButton = new javax.swing.JToggleButton();
+        rowWrappingToggleButton = new javax.swing.JToggleButton();
         showUnprintablesToggleButton = new javax.swing.JToggleButton();
         separator1 = new javax.swing.JToolBar.Separator();
         codeTypeComboBox = new javax.swing.JComboBox<>();
@@ -578,14 +582,14 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         controlToolBar.setFloatable(false);
         controlToolBar.setRollover(true);
 
-        lineWrappingToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/exbin/bined/netbeans/resources/icons/bined-linewrap.png"))); // NOI18N
-        lineWrappingToggleButton.setToolTipText(org.openide.util.NbBundle.getMessage(BinaryEditorTopComponent.class, "BinaryEditorTopComponent.lineWrappingToggleButton.toolTipText")); // NOI18N
-        lineWrappingToggleButton.addActionListener(new java.awt.event.ActionListener() {
+        rowWrappingToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/exbin/bined/netbeans/resources/icons/bined-linewrap.png"))); // NOI18N
+        rowWrappingToggleButton.setToolTipText(org.openide.util.NbBundle.getMessage(BinaryEditorTopComponent.class, "rowWrappingToggleButton.toolTipText")); // NOI18N
+        rowWrappingToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                lineWrappingToggleButtonActionPerformed(evt);
+                rowWrappingToggleButtonActionPerformed(evt);
             }
         });
-        controlToolBar.add(lineWrappingToggleButton);
+        controlToolBar.add(rowWrappingToggleButton);
 
         showUnprintablesToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/exbin/bined/netbeans/resources/icons/insert-pilcrow.png"))); // NOI18N
         showUnprintablesToggleButton.setToolTipText(org.openide.util.NbBundle.getMessage(BinaryEditorTopComponent.class, "BinaryEditorTopComponent.showUnprintablesToggleButton.toolTipText")); // NOI18N
@@ -627,14 +631,14 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         add(codeAreaPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void lineWrappingToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lineWrappingToggleButtonActionPerformed
-        codeArea.setRowWrapping(lineWrappingToggleButton.isSelected() ? RowWrappingCapable.RowWrappingMode.WRAPPING : RowWrappingCapable.RowWrappingMode.NO_WRAPPING);
-        preferences.getCodeAreaParameters().setRowWrapping(lineWrappingToggleButton.isSelected());
-    }//GEN-LAST:event_lineWrappingToggleButtonActionPerformed
+    private void rowWrappingToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rowWrappingToggleButtonActionPerformed
+        codeArea.setRowWrapping(rowWrappingToggleButton.isSelected() ? RowWrappingCapable.RowWrappingMode.WRAPPING : RowWrappingCapable.RowWrappingMode.NO_WRAPPING);
+        preferences.getCodeAreaParameters().setRowWrapping(rowWrappingToggleButton.isSelected());
+    }//GEN-LAST:event_rowWrappingToggleButtonActionPerformed
 
     private void showUnprintablesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showUnprintablesToggleButtonActionPerformed
         codeArea.setShowUnprintables(showUnprintablesToggleButton.isSelected());
-        preferences.getCodeAreaParameters().setShowUnprintables(lineWrappingToggleButton.isSelected());
+        preferences.getCodeAreaParameters().setShowUnprintables(rowWrappingToggleButton.isSelected());
     }//GEN-LAST:event_showUnprintablesToggleButtonActionPerformed
 
     private void codeTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_codeTypeComboBoxActionPerformed
@@ -648,7 +652,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     private javax.swing.JComboBox<String> codeTypeComboBox;
     private javax.swing.JToolBar controlToolBar;
     private javax.swing.JPanel infoToolbar;
-    private javax.swing.JToggleButton lineWrappingToggleButton;
+    private javax.swing.JToggleButton rowWrappingToggleButton;
     private javax.swing.JToolBar.Separator separator1;
     private javax.swing.JToggleButton showUnprintablesToggleButton;
     // End of variables declaration//GEN-END:variables
@@ -774,7 +778,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         final JMenuItem goToMenuItem = new JMenuItem("Go To...");
         goToMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, metaMask));
         goToMenuItem.addActionListener((ActionEvent e) -> {
-            goToHandler.getGoToLineAction().actionPerformed(null);
+            goToHandler.getGoToRowAction().actionPerformed(null);
         });
         result.add(goToMenuItem);
 
@@ -797,8 +801,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         optionsMenuItem.addActionListener((ActionEvent e) -> {
             final BinEdOptionsPanelBorder optionsPanel = new BinEdOptionsPanelBorder();
             optionsPanel.load();
-            optionsPanel.setFromCodeArea(codeArea);
-            optionsPanel.setShowValuesPanel(valuesPanelVisible);
+            optionsPanel.setApplyOptions(getApplyOptions());
             OptionsControlPanel optionsControlPanel = new OptionsControlPanel();
             JPanel dialogPanel = WindowUtils.createDialogPanel(optionsPanel, optionsControlPanel);
             DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Options", true, new Object[0], null, 0, null, null);
@@ -809,15 +812,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                     optionsPanel.store();
                 }
                 if (actionType != OptionsControlHandler.ControlActionType.CANCEL) {
-                    optionsPanel.applyToCodeArea(codeArea);
-                    boolean applyShowValuesPanel = optionsPanel.isShowValuesPanel();
-                    if (applyShowValuesPanel) {
-                        showValuesPanel();
-                    } else {
-                        hideValuesPanel();
-                    }
-                    applyFromCodeArea();
-                    switchDeltaMemoryMode(optionsPanel.isDeltaMemoryMode());
+                    setApplyOptions(optionsPanel.getApplyOptions());
                     codeArea.repaint();
                 }
 
@@ -849,6 +844,35 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         result.add(aboutMenuItem);
 
         return result;
+    }
+
+    @Nonnull
+    private BinEdApplyOptions getApplyOptions() {
+        BinEdApplyOptions applyOptions = new BinEdApplyOptions();
+        applyOptions.applyFromCodeArea(codeArea);
+        EditorOptions editorOptions = applyOptions.getEditorOptions();
+        editorOptions.setIsShowValuesPanel(valuesPanelVisible);
+        editorOptions.setFileHandlingMode(fileHandlingMode.name());
+        applyOptions.getStatusOptions().loadFromParameters(preferences.getStatusParameters());
+        return applyOptions;
+    }
+
+    private void setApplyOptions(BinEdApplyOptions applyOptions) {
+        applyOptions.applyToCodeArea(codeArea);
+        EditorOptions editorOptions = applyOptions.getEditorOptions();
+        switchShowValuesPanel(editorOptions.isIsShowValuesPanel());
+
+        FileHandlingMode newFileHandlingMode;
+        try {
+            newFileHandlingMode = FileHandlingMode.valueOf(editorOptions.getFileHandlingMode());
+        } catch (Exception ex) {
+            newFileHandlingMode = DEFAULT_FILE_HANDLING_MODE;
+        }
+        switchDeltaMemoryMode(newFileHandlingMode);
+
+        StatusOptions statusOptions = applyOptions.getStatusOptions();
+        statusPanel.setStatusOptions(statusOptions);
+        applyFromCodeArea();
     }
 
     public void showSearchPanel(boolean replace) {
@@ -903,7 +927,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                     ExtendedHighlightCodeAreaPainter painter = (ExtendedHighlightCodeAreaPainter) codeArea.getPainter();
                     painter.setCurrentMatchIndex(matchPosition);
                     ExtendedHighlightCodeAreaPainter.SearchMatch currentMatch = painter.getCurrentMatch();
-                    codeArea.revealPosition(new CodeAreaCaretPosition(currentMatch.getPosition(), 0, codeArea.getActiveSection()));
+                    codeArea.revealPosition(new DefaultCodeAreaCaretPosition(currentMatch.getPosition(), 0, codeArea.getActiveSection()));
                     codeArea.repaint();
                 }
 
@@ -1146,7 +1170,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         if (foundMatches.size() > 0) {
             painter.setCurrentMatchIndex(0);
             ExtendedHighlightCodeAreaPainter.SearchMatch firstMatch = painter.getCurrentMatch();
-            codeArea.revealPosition(new CodeAreaCaretPosition(firstMatch.getPosition(), 0, codeArea.getActiveSection()));
+            codeArea.revealPosition(new DefaultCodeAreaCaretPosition(firstMatch.getPosition(), 0, codeArea.getActiveSection()));
         }
         hexSearchPanel.setStatus(foundMatches.size(), 0);
         codeArea.repaint();
@@ -1203,7 +1227,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         if (foundMatches.size() > 0) {
             painter.setCurrentMatchIndex(0);
             ExtendedHighlightCodeAreaPainter.SearchMatch firstMatch = painter.getCurrentMatch();
-            codeArea.revealPosition(new CodeAreaCaretPosition(firstMatch.getPosition(), 0, codeArea.getActiveSection()));
+            codeArea.revealPosition(new DefaultCodeAreaCaretPosition(firstMatch.getPosition(), 0, codeArea.getActiveSection()));
         }
         hexSearchPanel.setStatus(foundMatches.size(), 0);
         codeArea.repaint();
@@ -1214,12 +1238,17 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     }
 
     private void loadFromPreferences() {
-        deltaMemoryMode = FileHandlingMode.DELTA.name().equals(preferences.getEditorParameters().getFileHandlingMode());
+        try {
+            fileHandlingMode = FileHandlingMode.valueOf(preferences.getEditorParameters().getFileHandlingMode());
+        } catch (Exception ex) {
+            fileHandlingMode = DEFAULT_FILE_HANDLING_MODE;
+        }
         CodeType codeType = preferences.getCodeAreaParameters().getCodeType();
         codeArea.setCodeType(codeType);
         codeTypeComboBox.setSelectedIndex(codeType.ordinal());
         String selectedEncoding = preferences.getCodeAreaParameters().getSelectedEncoding();
         statusPanel.setEncoding(selectedEncoding);
+        statusPanel.loadFromPreferences(preferences.getStatusParameters());
         codeArea.setCharset(Charset.forName(selectedEncoding));
 //        int bytesPerLine = preferences.getInt(BinaryEditorTopComponent.PREFERENCES_BYTES_PER_LINE, 16);
 // TODO        codeArea.setLineLength(bytesPerLine);
@@ -1230,7 +1259,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
         boolean lineWrapping = preferences.getCodeAreaParameters().isRowWrapping();
         codeArea.setRowWrapping(lineWrapping ? RowWrappingMode.WRAPPING : RowWrappingMode.NO_WRAPPING);
-        lineWrappingToggleButton.setSelected(lineWrapping);
+        rowWrappingToggleButton.setSelected(lineWrapping);
 
         encodingsHandler.loadFromPreferences(preferences);
 

@@ -37,7 +37,7 @@ import org.exbin.framework.bined.preferences.CodeAreaParameters;
 /**
  * Code area options.
  *
- * @version 0.2.0 2019/03/02
+ * @version 0.2.0 2019/03/16
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -52,6 +52,10 @@ public class CodeAreaOptions {
     private CodeAreaViewMode viewMode = CodeAreaViewMode.DUAL;
     private boolean codeColorization = true;
     private boolean useDefaultFont = true;
+    private RowWrappingMode rowWrappingMode;
+    private int maxBytesPerRow;
+    private int minRowPositionLength;
+    private int maxRowPositionLength;
 
     public static final Font DEFAULT_FONT = new Font(Font.MONOSPACED, Font.PLAIN, 12);
 
@@ -132,6 +136,39 @@ public class CodeAreaOptions {
         this.useDefaultFont = useDefaultFont;
     }
 
+    @Nonnull
+    public RowWrappingMode getRowWrappingMode() {
+        return rowWrappingMode;
+    }
+
+    public void setRowWrappingMode(RowWrappingMode rowWrappingMode) {
+        this.rowWrappingMode = rowWrappingMode;
+    }
+
+    public int getMaxBytesPerRow() {
+        return maxBytesPerRow;
+    }
+
+    public void setMaxBytesPerRow(int maxBytesPerRow) {
+        this.maxBytesPerRow = maxBytesPerRow;
+    }
+
+    public int getMinRowPositionLength() {
+        return minRowPositionLength;
+    }
+
+    public void setMinRowPositionLength(int minRowPositionLength) {
+        this.minRowPositionLength = minRowPositionLength;
+    }
+
+    public int getMaxRowPositionLength() {
+        return maxRowPositionLength;
+    }
+
+    public void setMaxRowPositionLength(int maxRowPositionLength) {
+        this.maxRowPositionLength = maxRowPositionLength;
+    }
+
     public void loadFromParameters(CodeAreaParameters parameters) {
         codeFont = parameters.getCodeFont(DEFAULT_FONT);
         rowWrapping = parameters.isRowWrapping();
@@ -142,6 +179,10 @@ public class CodeAreaOptions {
         viewMode = parameters.getViewMode();
         codeColorization = parameters.isCodeColorization();
         useDefaultFont = parameters.isUseDefaultFont();
+        rowWrappingMode = parameters.getRowWrappingMode();
+        maxBytesPerRow = parameters.getMaxBytesPerRow();
+        minRowPositionLength = parameters.getMinRowPositionLength();
+        maxRowPositionLength = parameters.getMaxRowPositionLength();
     }
 
     public void saveToParameters(CodeAreaParameters parameters) {
@@ -154,6 +195,10 @@ public class CodeAreaOptions {
         parameters.setViewMode(viewMode);
         parameters.setCodeColorization(codeColorization);
         parameters.setUseDefaultFont(useDefaultFont);
+        parameters.setRowWrappingMode(rowWrappingMode);
+        parameters.setMaxBytesPerRow(maxBytesPerRow);
+        parameters.setMinRowPositionLength(minRowPositionLength);
+        parameters.setMaxRowPositionLength(maxRowPositionLength);
     }
 
     public void applyFromCodeArea(ExtCodeArea codeArea) {
@@ -165,6 +210,10 @@ public class CodeAreaOptions {
         positionCodeType = ((PositionCodeTypeCapable) codeArea).getPositionCodeType();
         viewMode = ((ViewModeCapable) codeArea).getViewMode();
         codeColorization = ((ExtendedHighlightNonAsciiCodeAreaPainter) codeArea.getPainter()).isNonAsciiHighlightingEnabled();
+        rowWrappingMode = codeArea.getRowWrapping();
+        maxBytesPerRow = codeArea.getMaxBytesPerRow();
+        minRowPositionLength = codeArea.getMinRowPositionLength();
+        maxRowPositionLength = codeArea.getMaxRowPositionLength();
     }
 
     public void applyToCodeArea(ExtCodeArea codeArea) {
@@ -176,5 +225,25 @@ public class CodeAreaOptions {
         ((PositionCodeTypeCapable) codeArea).setPositionCodeType(positionCodeType);
         ((ViewModeCapable) codeArea).setViewMode(viewMode);
         ((ExtendedHighlightNonAsciiCodeAreaPainter) codeArea.getPainter()).setNonAsciiHighlightingEnabled(codeColorization);
+        codeArea.setRowWrapping(rowWrappingMode);
+        codeArea.setMaxBytesPerRow(maxBytesPerRow);
+        codeArea.setMinRowPositionLength(minRowPositionLength);
+        codeArea.setMaxRowPositionLength(maxRowPositionLength);
+    }
+
+    public void setOptions(CodeAreaOptions codeAreaOptions) {
+        codeFont = codeAreaOptions.codeFont;
+        rowWrapping = codeAreaOptions.rowWrapping;
+        codeType = codeAreaOptions.codeType;
+        showUnprintables = codeAreaOptions.showUnprintables;
+        codeCharactersCase = codeAreaOptions.codeCharactersCase;
+        positionCodeType = codeAreaOptions.positionCodeType;
+        viewMode = codeAreaOptions.viewMode;
+        codeColorization = codeAreaOptions.codeColorization;
+        useDefaultFont = codeAreaOptions.useDefaultFont;
+        rowWrappingMode = codeAreaOptions.rowWrappingMode;
+        maxBytesPerRow = codeAreaOptions.maxBytesPerRow;
+        minRowPositionLength = codeAreaOptions.minRowPositionLength;
+        maxRowPositionLength = codeAreaOptions.maxRowPositionLength;
     }
 }
