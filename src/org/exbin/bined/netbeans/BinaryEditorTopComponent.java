@@ -45,25 +45,22 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import org.exbin.bined.BasicCodeAreaZone;
 import org.exbin.bined.CodeAreaCaretPosition;
-import org.exbin.bined.CodeType;
 import org.exbin.bined.DefaultCodeAreaCaretPosition;
 import org.exbin.bined.EditationMode;
 import org.exbin.bined.EditationOperation;
-import org.exbin.bined.capability.RowWrappingCapable;
-import org.exbin.bined.capability.RowWrappingCapable.RowWrappingMode;
 import org.exbin.bined.delta.DeltaDocument;
 import org.exbin.bined.delta.FileDataSource;
 import org.exbin.bined.delta.SegmentsRepository;
 import org.exbin.bined.highlight.swing.extended.ExtendedHighlightCodeAreaPainter;
 import org.exbin.bined.highlight.swing.extended.ExtendedHighlightNonAsciiCodeAreaPainter;
 import org.exbin.bined.netbeans.panel.BinEdOptionsPanelBorder;
+import org.exbin.bined.netbeans.panel.BinEdToolbarPanel;
 import org.exbin.bined.netbeans.panel.BinarySearchPanel;
 import org.exbin.framework.bined.panel.ValuesPanel;
 import org.exbin.bined.operation.BinaryDataCommand;
 import org.exbin.bined.operation.swing.CodeAreaOperationCommandHandler;
 import org.exbin.bined.operation.undo.BinaryDataUndoUpdateListener;
 import org.exbin.bined.swing.extended.ExtCodeArea;
-import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
 import org.exbin.framework.bined.CodeAreaPopupMenuHandler;
 import org.exbin.framework.bined.panel.BinaryStatusPanel;
 import org.exbin.framework.bined.panel.ReplaceParameters;
@@ -94,6 +91,7 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import org.exbin.framework.bined.BinaryStatusApi;
 import org.exbin.bined.netbeans.panel.BinarySearchPanelApi;
+import org.exbin.framework.bined.options.CodeAreaOptions;
 import org.exbin.framework.bined.options.EditorOptions;
 import org.exbin.framework.bined.options.StatusOptions;
 import org.exbin.framework.gui.about.panel.AboutPanel;
@@ -101,9 +99,9 @@ import org.exbin.framework.gui.utils.panel.CloseControlPanel;
 import org.openide.util.NbPreferences;
 
 /**
- * Hexadecimal editor top component. F
+ * Hexadecimal editor top component.
  *
- * @version 0.2.0 2019/03/16
+ * @version 0.2.0 2019/03/17
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.bined//BinaryEditor//EN", autostore = false)
@@ -132,6 +130,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     private final InstanceContent content = new InstanceContent();
     private final int metaMask;
 
+    private BinEdToolbarPanel toolbarPanel;
     private BinaryStatusPanel statusPanel;
     private BinaryStatusApi binaryStatus;
     private TextEncodingStatusApi encodingStatus;
@@ -160,7 +159,10 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         codeArea.setPainter(new ExtendedHighlightNonAsciiCodeAreaPainter(codeArea));
         codeArea.setCodeFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         codeArea.getCaret().setBlinkRate(300);
+        
+        toolbarPanel = new BinEdToolbarPanel(preferences, codeArea);
         statusPanel = new BinaryStatusPanel();
+        codeAreaPanel.add(toolbarPanel, BorderLayout.NORTH);
         registerEncodingStatus(statusPanel);
         encodingsHandler = new EncodingsHandler(new TextEncodingStatusApi() {
             @Override
@@ -229,7 +231,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         setName(NbBundle.getMessage(BinaryEditorTopComponent.class, BINARY_EDITOR_TOP_COMPONENT_STRING));
         setToolTipText(NbBundle.getMessage(BinaryEditorTopComponent.class, BINARY_EDITOR_TOP_COMPONENT_HINT_STRING));
 
-        applyFromCodeArea();
+        toolbarPanel.applyFromCodeArea();
 
         getActionMap().put(ACTION_CLIPBOARD_COPY, new AbstractAction() {
             @Override
@@ -278,12 +280,6 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         });
 
         associateLookup(new AbstractLookup(content));
-    }
-
-    private void applyFromCodeArea() {
-        codeTypeComboBox.setSelectedIndex(codeArea.getCodeType().ordinal());
-        showUnprintablesToggleButton.setSelected(codeArea.isShowUnprintables());
-        rowWrappingToggleButton.setSelected(codeArea.getRowWrapping() == RowWrappingCapable.RowWrappingMode.WRAPPING);
     }
 
     public void registerHexStatus(BinaryStatusApi binaryStatusApi) {
@@ -567,94 +563,15 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     private void initComponents() {
 
         codeAreaPanel = new javax.swing.JPanel();
-        infoToolbar = new javax.swing.JPanel();
-        controlToolBar = new javax.swing.JToolBar();
-        rowWrappingToggleButton = new javax.swing.JToggleButton();
-        showUnprintablesToggleButton = new javax.swing.JToggleButton();
-        separator1 = new javax.swing.JToolBar.Separator();
-        codeTypeComboBox = new javax.swing.JComboBox<>();
 
         setLayout(new java.awt.BorderLayout());
 
         codeAreaPanel.setLayout(new java.awt.BorderLayout());
-
-        controlToolBar.setBorder(null);
-        controlToolBar.setFloatable(false);
-        controlToolBar.setRollover(true);
-
-        rowWrappingToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/exbin/bined/netbeans/resources/icons/bined-linewrap.png"))); // NOI18N
-        rowWrappingToggleButton.setToolTipText(org.openide.util.NbBundle.getMessage(BinaryEditorTopComponent.class, "rowWrappingToggleButton.toolTipText")); // NOI18N
-        rowWrappingToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rowWrappingToggleButtonActionPerformed(evt);
-            }
-        });
-        controlToolBar.add(rowWrappingToggleButton);
-
-        showUnprintablesToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/exbin/bined/netbeans/resources/icons/insert-pilcrow.png"))); // NOI18N
-        showUnprintablesToggleButton.setToolTipText(org.openide.util.NbBundle.getMessage(BinaryEditorTopComponent.class, "BinaryEditorTopComponent.showUnprintablesToggleButton.toolTipText")); // NOI18N
-        showUnprintablesToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showUnprintablesToggleButtonActionPerformed(evt);
-            }
-        });
-        controlToolBar.add(showUnprintablesToggleButton);
-        controlToolBar.add(separator1);
-
-        codeTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "BIN", "OCT", "DEC", "HEX" }));
-        codeTypeComboBox.setSelectedIndex(3);
-        codeTypeComboBox.setMaximumSize(new java.awt.Dimension(58, 25));
-        codeTypeComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                codeTypeComboBoxActionPerformed(evt);
-            }
-        });
-        controlToolBar.add(codeTypeComboBox);
-
-        javax.swing.GroupLayout infoToolbarLayout = new javax.swing.GroupLayout(infoToolbar);
-        infoToolbar.setLayout(infoToolbarLayout);
-        infoToolbarLayout.setHorizontalGroup(
-            infoToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(infoToolbarLayout.createSequentialGroup()
-                .addComponent(controlToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 579, Short.MAX_VALUE))
-        );
-        infoToolbarLayout.setVerticalGroup(
-            infoToolbarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(infoToolbarLayout.createSequentialGroup()
-                .addComponent(controlToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
-        );
-
-        codeAreaPanel.add(infoToolbar, java.awt.BorderLayout.PAGE_START);
-
         add(codeAreaPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void rowWrappingToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rowWrappingToggleButtonActionPerformed
-        codeArea.setRowWrapping(rowWrappingToggleButton.isSelected() ? RowWrappingCapable.RowWrappingMode.WRAPPING : RowWrappingCapable.RowWrappingMode.NO_WRAPPING);
-        preferences.getCodeAreaParameters().setRowWrapping(rowWrappingToggleButton.isSelected());
-    }//GEN-LAST:event_rowWrappingToggleButtonActionPerformed
-
-    private void showUnprintablesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showUnprintablesToggleButtonActionPerformed
-        codeArea.setShowUnprintables(showUnprintablesToggleButton.isSelected());
-        preferences.getCodeAreaParameters().setShowUnprintables(rowWrappingToggleButton.isSelected());
-    }//GEN-LAST:event_showUnprintablesToggleButtonActionPerformed
-
-    private void codeTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_codeTypeComboBoxActionPerformed
-        CodeType codeType = CodeType.values()[codeTypeComboBox.getSelectedIndex()];
-        codeArea.setCodeType(codeType);
-        preferences.getCodeAreaParameters().setCodeType(codeType);
-    }//GEN-LAST:event_codeTypeComboBoxActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel codeAreaPanel;
-    private javax.swing.JComboBox<String> codeTypeComboBox;
-    private javax.swing.JToolBar controlToolBar;
-    private javax.swing.JPanel infoToolbar;
-    private javax.swing.JToggleButton rowWrappingToggleButton;
-    private javax.swing.JToolBar.Separator separator1;
-    private javax.swing.JToggleButton showUnprintablesToggleButton;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -872,7 +789,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
         StatusOptions statusOptions = applyOptions.getStatusOptions();
         statusPanel.setStatusOptions(statusOptions);
-        applyFromCodeArea();
+        toolbarPanel.applyFromCodeArea();
     }
 
     public void showSearchPanel(boolean replace) {
@@ -1243,66 +1160,34 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         } catch (Exception ex) {
             fileHandlingMode = DEFAULT_FILE_HANDLING_MODE;
         }
-        CodeType codeType = preferences.getCodeAreaParameters().getCodeType();
-        codeArea.setCodeType(codeType);
-        codeTypeComboBox.setSelectedIndex(codeType.ordinal());
+        CodeAreaOptions codeAreaOptions = new CodeAreaOptions();
+        codeAreaOptions.loadFromParameters(preferences.getCodeAreaParameters());
+        codeAreaOptions.applyFromCodeArea(codeArea);
         String selectedEncoding = preferences.getCodeAreaParameters().getSelectedEncoding();
         statusPanel.setEncoding(selectedEncoding);
         statusPanel.loadFromPreferences(preferences.getStatusParameters());
+        toolbarPanel.loadFromPreferences();
+
         codeArea.setCharset(Charset.forName(selectedEncoding));
-//        int bytesPerLine = preferences.getInt(BinaryEditorTopComponent.PREFERENCES_BYTES_PER_LINE, 16);
-// TODO        codeArea.setLineLength(bytesPerLine);
-
-        boolean showNonprintables = preferences.getCodeAreaParameters().isShowNonprintables();
-        showUnprintablesToggleButton.setSelected(showNonprintables);
-        codeArea.setShowUnprintables(showNonprintables);
-
-        boolean lineWrapping = preferences.getCodeAreaParameters().isRowWrapping();
-        codeArea.setRowWrapping(lineWrapping ? RowWrappingMode.WRAPPING : RowWrappingMode.NO_WRAPPING);
-        rowWrappingToggleButton.setSelected(lineWrapping);
-
         encodingsHandler.loadFromPreferences(preferences);
 
-        // Layout
-//        ExtendedCodeAreaLayoutProfile layoutProfile = codeArea.getLayoutProfile();
-//        layoutProfile.setShowHeader(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_HEADER, true));
-//        String headerSpaceTypeName = preferences.get(BinaryEditorTopComponent.PREFERENCES_HEADER_SPACE_TYPE, CodeAreaSpace.SpaceType.HALF_UNIT.name());
-//        codeArea.setHeaderSpaceType(CodeAreaSpace.SpaceType.valueOf(headerSpaceTypeName));
-//        codeArea.setHeaderSpaceSize(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_HEADER_SPACE, 0));
-//        codeArea.setShowLineNumbers(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_LINE_NUMBERS, true));
-//        String lineNumbersSpaceTypeName = preferences.get(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE_TYPE, CodeAreaSpace.SpaceType.ONE_UNIT.name());
-//        codeArea.setLineNumberSpaceType(CodeAreaSpace.SpaceType.valueOf(lineNumbersSpaceTypeName));
-//        codeArea.setLineNumberSpaceSize(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE, 8));
-//        String lineNumbersLengthTypeName = preferences.get(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH_TYPE, CodeAreaLineNumberLength.LineNumberType.SPECIFIED.name());
-//        codeArea.setLineNumberType(CodeAreaLineNumberLength.LineNumberType.valueOf(lineNumbersLengthTypeName));
-//        codeArea.setLineNumberSpecifiedLength(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH, 8));
-//        codeArea.setByteGroupSize(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_BYTE_GROUP_SIZE, 1));
-//        codeArea.setSpaceGroupSize(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_SPACE_GROUP_SIZE, 0));
-//        codeArea.setLayoutProfile(layoutProfile);
-        // Mode
-        codeArea.setViewMode(preferences.getCodeAreaParameters().getViewMode());
-        codeArea.setCodeType(preferences.getCodeAreaParameters().getCodeType());
-        ((ExtendedHighlightNonAsciiCodeAreaPainter) codeArea.getPainter()).setNonAsciiHighlightingEnabled(preferences.getCodeAreaParameters().isCodeColorization());
-        // Memory mode handled from outside by isDeltaMemoryMode() method, worth fixing?
-        // Decoration
-        ExtendedCodeAreaThemeProfile themeProfile = codeArea.getThemeProfile();
-// TODO       themeProfile.setBackgroundPaintMode(preferences.getBackgroundPaintMode());
-// TODO        themeProfile.setPaintRowPosBackground(preferences.isPaintRowPosBackground());
-// TODO        int decorationMode = (preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_HEADER_LINE, true) ? CodeArea.DECORATION_HEADER_LINE : 0)
-// TODO                + (preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_PREVIEW_LINE, true) ? CodeArea.DECORATION_PREVIEW_LINE : 0)
-// TODO                + (preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_BOX, false) ? CodeArea.DECORATION_BOX : 0)
-// TODO                + (preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_LINENUM_LINE, true) ? CodeArea.DECORATION_LINENUM_LINE : 0);
-// TODO        codeArea.setDecorationMode(decorationMode);
-        codeArea.setThemeProfile(themeProfile);
-        codeArea.setCodeCharactersCase(preferences.getCodeAreaParameters().getCodeCharactersCase());
-        codeArea.setPositionCodeType(preferences.getCodeAreaParameters().getPositionCodeType());
-
-        // Font
-        Boolean useDefaultFont = preferences.getCodeAreaParameters().isUseDefaultFont();
-
-        if (!useDefaultFont) {
-            codeArea.setCodeFont(preferences.getCodeAreaParameters().getCodeFont(codeArea.getCodeFont()));
+        int selectedLayoutProfile = preferences.getLayoutParameters().getSelectedProfile();
+        if (selectedLayoutProfile >= 0) {
+            codeArea.setLayoutProfile(preferences.getLayoutParameters().getLayoutProfile(selectedLayoutProfile));
         }
+        
+        int selectedThemeProfile = preferences.getThemeParameters().getSelectedProfile();
+        if (selectedThemeProfile >= 0) {
+            codeArea.setThemeProfile(preferences.getThemeParameters().getThemeProfile(selectedThemeProfile));
+        }
+        
+        int selectedColorProfile = preferences.getColorParameters().getSelectedProfile();
+        if (selectedColorProfile >= 0) {
+            codeArea.setColorsProfile(preferences.getColorParameters().getColorsProfile(selectedColorProfile));
+        }
+
+        // Memory mode handled from outside by isDeltaMemoryMode() method, worth fixing?
+
         boolean showValuesPanel = preferences.getEditorParameters().isShowValuesPanel();
         if (showValuesPanel) {
             showValuesPanel();

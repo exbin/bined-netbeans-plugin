@@ -53,7 +53,7 @@ import org.openide.util.NbPreferences;
 /**
  * Hexadecimal editor options panel.
  *
- * @version 0.2.0 2019/03/16
+ * @version 0.2.0 2019/03/17
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -195,55 +195,6 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         colorProfilesPanel.loadFromParameters(preferences.getColorParameters());
         themeProfilesPanel.loadFromParameters(preferences.getThemeParameters());
         charsetParametersPanel.loadFromPreferences(preferences.getPreferences());
-
-        // Layout
-// TODO        wrapLineModeCheckBox.setSelected(preferences.isRowWrapping());
-//        lineLengthSpinner.setValue(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_BYTES_PER_LINE, 16));
-//        showHeaderCheckBox.setSelected(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_HEADER, true));
-// TODO        String headerSpaceTypeName = preferences.get(BinaryEditorTopComponent.PREFERENCES_HEADER_SPACE_TYPE, CodeAreaSpace.SpaceType.HALF_UNIT.name());
-// TODO        CodeAreaSpace.SpaceType headerSpaceType = CodeAreaSpace.SpaceType.valueOf(headerSpaceTypeName);
-// TODO        headerSpaceComboBox.setSelectedIndex(headerSpaceType.ordinal());
-//        headerSpaceSpinner.setValue(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_HEADER_SPACE, 0));
-//        showLineNumbersCheckBox.setSelected(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_SHOW_LINE_NUMBERS, true));
-// TODO        String lineNumbersSpaceTypeName = preferences.get(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE_TYPE, CodeAreaSpace.SpaceType.ONE_UNIT.name());
-// TODO        CodeAreaSpace.SpaceType lineNumbersSpaceType = CodeAreaSpace.SpaceType.valueOf(lineNumbersSpaceTypeName);
-// TODO        lineNumbersSpaceComboBox.setSelectedIndex(lineNumbersSpaceType.ordinal());
-//        lineNumbersSpaceSpinner.setValue(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_SPACE, 8));
-// TODO        String lineNumbersLengthTypeName = preferences.get(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH_TYPE, CodeAreaLineNumberLength.LineNumberType.SPECIFIED.name());
-// TODO        CodeAreaLineNumberLength.LineNumberType lineNumbersLengthType = CodeAreaLineNumberLength.LineNumberType.valueOf(lineNumbersLengthTypeName);
-// TODO        lineNumbersLengthComboBox.setSelectedIndex(lineNumbersLengthType.ordinal());
-//        lineNumbersLengthSpinner.setValue(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_LINE_NUMBERS_LENGTH, 8));
-//        byteGroupSizeSpinner.setValue(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_BYTE_GROUP_SIZE, 1));
-//        spaceGroupSizeSpinner.setValue(preferences.getInt(BinaryEditorTopComponent.PREFERENCES_SPACE_GROUP_SIZE, 0));
-        // Mode
-// TODO        CodeAreaViewMode viewMode = preferences.getViewMode();
-// TODO        viewModeComboBox.setSelectedIndex(viewMode.ordinal());
-// TODO        CodeType codeType = preferences.getCodeType();
-// TODO        codeTypeComboBox.setSelectedIndex(codeType.ordinal());
-// TODO        showNonprintableCharactersCheckBox.setSelected(preferences.isShowNonprintables());
-// TODO        codeColorizationCheckBox.setSelected(preferences.isCodeColorization());
-// TODO        showValuesPanelCheckBox.setSelected(preferences.isShowValuesPanel());
-// TODO        memoryModeComboBox.setSelectedIndex(preferences.isDeltaMemoryMode() ? 0 : 1);
-        // Decoration
-// TODO        ExtendedBackgroundPaintMode backgroundMode = preferences.getBackgroundPaintMode();
-// TODO        backgroundModeComboBox.setSelectedIndex(backgroundMode.ordinal());
-//        lineNumbersBackgroundCheckBox.setSelected(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_PAINT_LINE_NUMBERS_BACKGROUND, true));
-//        decoratorHeaderLineCheckBox.setSelected(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_HEADER_LINE, true));
-//        decoratorPreviewLineCheckBox.setSelected(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_PREVIEW_LINE, true));
-//        decoratorBoxCheckBox.setSelected(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_BOX, false));
-//        decoratorLineNumLineCheckBox.setSelected(preferences.getBoolean(BinaryEditorTopComponent.PREFERENCES_DECORATION_LINENUM_LINE, true));
-// TODO        CodeCharactersCase codeCharactersCase = preferences.getCodeCharactersCase();
-// TODO        hexCharactersModeComboBox.setSelectedIndex(codeCharactersCase.ordinal());
-// TODO        PositionCodeType positionCodeType = preferences.getPositionCodeType();
-// TODO        positionCodeTypeComboBox.setSelectedIndex(positionCodeType.ordinal());
-        // Font
-// TODO        Boolean useDefaultFont = preferences.isUseDefaultFont();
-// TODO        useDefaultFontCheckBox.setSelected(useDefaultFont);
-// TODO        Font codeFont = preferences.getCodeFont(binEdFont);
-// TODO        if (codeFont != null) {
-// TODO            binEdFont = codeFont;
-// TODO        }
-// TODO        updateFontTextField();
     }
 
     public void store() {
@@ -266,36 +217,6 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         charsetOptions.setOptions(applyOptions.getCharsetOptions());
         editorOptions.setOptions(applyOptions.getEditorOptions());
         statusOptions.setOptions(applyOptions.getStatusOptions());
-        // Layout
-// TODO        wrapLineModeCheckBox.setSelected(codeArea.getRowWrapping() == RowWrappingCapable.RowWrappingMode.WRAPPING);
-// TODO        lineLengthSpinner.setValue(codeArea.getLineLength());
-//        showHeaderCheckBox.setSelected(codeArea.isShowHeader());
-//        headerSpaceComboBox.setSelectedIndex(codeArea.getHeaderSpaceType().ordinal());
-//        headerSpaceSpinner.setValue(codeArea.getHeaderSpaceSize());
-//        showLineNumbersCheckBox.setSelected(codeArea.isShowLineNumbers());
-//        lineNumbersSpaceComboBox.setSelectedIndex(codeArea.getLineNumberSpaceType().ordinal());
-//        lineNumbersSpaceSpinner.setValue(codeArea.getLineNumberSpaceSize());
-//        lineNumbersLengthComboBox.setSelectedIndex(codeArea.getLineNumberType().ordinal());
-//        lineNumbersLengthSpinner.setValue(codeArea.getLineNumberSpecifiedLength());
-//        byteGroupSizeSpinner.setValue(codeArea.getByteGroupSize());
-//        spaceGroupSizeSpinner.setValue(codeArea.getSpaceGroupSize());
-        // Mode
-// TODO        viewModeComboBox.setSelectedIndex(codeArea.getViewMode().ordinal());
-// TODO        codeTypeComboBox.setSelectedIndex(codeArea.getCodeType().ordinal());
-// TODO        showNonprintableCharactersCheckBox.setSelected(codeArea.isShowUnprintables());
-// TODO        codeColorizationCheckBox.setSelected(((ExtendedHighlightNonAsciiCodeAreaPainter) codeArea.getPainter()).isNonAsciiHighlightingEnabled());
-// TODO        memoryModeComboBox.setSelectedIndex(codeArea.getContentData() instanceof DeltaDocument ? 0 : 1);
-        // Decoration
-//        ExtendedCodeAreaThemeProfile themeProfile = codeArea.getThemeProfile();
-// TODO        backgroundModeComboBox.setSelectedIndex(themeProfile.getBackgroundPaintMode().ordinal());
-// TODO        lineNumbersBackgroundCheckBox.setSelected(codeArea.isLineNumberBackground());
-// TODO        setDecorationMode(codeArea.getDecorationMode());
-// TODO        hexCharactersModeComboBox.setSelectedIndex(codeArea.getCodeCharactersCase().ordinal());
-// TODO        positionCodeTypeComboBox.setSelectedIndex(codeArea.getPositionCodeType().ordinal());
-        // Font
-//        binEdFont = codeArea.getCodeFont();
-//        updateFontTextField();
-// TODO        useDefaultFontCheckBox.setSelected(binEdFont.equals(binEdDefaultFont));
     }
 
     @Nonnull
@@ -309,68 +230,6 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         return options;
     }
 
-//    public void applyToCodeArea(ExtCodeArea codeArea) {
-//        codeAreaOptions.applyToCodeArea(codeArea);
-//        charsetOptions.applyToCodeArea(codeArea);
-//        
-//        int selectedLayoutProfile = layoutSelectionPanel.getDefaultProfile();
-//        if (selectedLayoutProfile >= 0) {
-//            DefaultExtendedCodeAreaLayoutProfile layoutProfile = layoutProfilesPanel.getProfile(selectedLayoutProfile);
-//            codeArea.setLayoutProfile(layoutProfile);
-//        }
-//        int selectedColorProfile = colorSelectionPanel.getDefaultProfile();
-//        if (selectedColorProfile >= 0) {
-//            ExtendedCodeAreaColorProfile colorProfile = colorProfilesPanel.getProfile(selectedColorProfile);
-//            codeArea.setColorsProfile(colorProfile);
-//        }
-//
-//        int selectedThemeProfile = themeSelectionPanel.getDefaultProfile();
-//        if (selectedThemeProfile >= 0) {
-//            ExtendedCodeAreaThemeProfile themeProfile = themeProfilesPanel.getProfile(selectedThemeProfile);
-//            codeArea.setThemeProfile(themeProfile);
-//        }
-    // Layout
-//        ExtendedCodeAreaLayoutProfile layoutProfile = codeArea.getLayoutProfile();
-// TODO        codeArea.setRowWrapping(wrapLineModeCheckBox.isSelected() ? RowWrappingCapable.RowWrappingMode.WRAPPING : RowWrappingCapable.RowWrappingMode.NO_WRAPPING);
-// TODO        codeArea.setLineLength((Integer) lineLengthSpinner.getValue());
-// TODO        layoutProfile.setShowHeader(showHeaderCheckBox.isSelected());
-//        codeArea.setHeaderSpaceType(CodeAreaSpace.SpaceType.values()[headerSpaceComboBox.getSelectedIndex()]);
-//        codeArea.setHeaderSpaceSize((Integer) headerSpaceSpinner.getValue());
-//        codeArea.setShowLineNumbers(showLineNumbersCheckBox.isSelected());
-//        codeArea.setLineNumberSpaceType(CodeAreaSpace.SpaceType.values()[lineNumbersSpaceComboBox.getSelectedIndex()]);
-//        codeArea.setLineNumberSpaceSize((Integer) lineNumbersSpaceSpinner.getValue());
-//        codeArea.setLineNumberType(CodeAreaLineNumberLength.LineNumberType.values()[lineNumbersLengthComboBox.getSelectedIndex()]);
-//        codeArea.setLineNumberSpecifiedLength((Integer) lineNumbersLengthSpinner.getValue());
-//        codeArea.setByteGroupSize((Integer) byteGroupSizeSpinner.getValue());
-//        codeArea.setSpaceGroupSize((Integer) spaceGroupSizeSpinner.getValue());
-    // Mode
-// TODO        codeArea.setViewMode(CodeAreaViewMode.values()[viewModeComboBox.getSelectedIndex()]);
-// TODO        codeArea.setCodeType(CodeType.values()[codeTypeComboBox.getSelectedIndex()]);
-// TODO        codeArea.setShowUnprintables(showNonprintableCharactersCheckBox.isSelected());
-// TODO        ((ExtendedHighlightNonAsciiCodeAreaPainter) codeArea.getPainter()).setNonAsciiHighlightingEnabled(codeColorizationCheckBox.isSelected());
-    // Memory mode handled from outside by isDeltaMemoryMode() method, worth fixing?
-    // Decoration
-//        ExtendedCodeAreaThemeProfile themeProfile = codeArea.getThemeProfile();
-// TODO        themeProfile.setBackgroundPaintMode(ExtendedBackgroundPaintMode.values()[backgroundModeComboBox.getSelectedIndex()]);
-// TODO        codeArea.setLineNumberBackground(lineNumbersBackgroundCheckBox.isSelected());
-// TODO        codeArea.setDecorationMode(getDecorationMode());
-// TODO        codeArea.setCodeCharactersCase(CodeCharactersCase.values()[hexCharactersModeComboBox.getSelectedIndex()]);
-// TODO        codeArea.setPositionCodeType(PositionCodeType.values()[positionCodeTypeComboBox.getSelectedIndex()]);
-    // Font
-//        if (useDefaultFontCheckBox.isSelected()) {
-//            codeArea.setCodeFont(binEdDefaultFont);
-//        } else {
-//            codeArea.setCodeFont(binEdFont);
-//        }
-//}
-//    public boolean isShowValuesPanel() {
-//        return showValuesPanelCheckBox.isSelected();
-//    }
-//
-//    public void setShowValuesPanel(boolean flag) {
-//        showValuesPanelCheckBox.setSelected(flag);
-//    }
-//
     boolean valid() {
         // TODO check whether form is consistent and complete
         return true;
