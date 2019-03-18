@@ -101,7 +101,7 @@ import org.openide.util.NbPreferences;
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.2.0 2019/03/17
+ * @version 0.2.0 2019/03/18
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.bined//BinaryEditor//EN", autostore = false)
@@ -159,7 +159,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         codeArea.setPainter(new ExtendedHighlightNonAsciiCodeAreaPainter(codeArea));
         codeArea.setCodeFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
         codeArea.getCaret().setBlinkRate(300);
-        
+
         toolbarPanel = new BinEdToolbarPanel(preferences, codeArea);
         statusPanel = new BinaryStatusPanel();
         codeAreaPanel.add(toolbarPanel, BorderLayout.NORTH);
@@ -790,6 +790,22 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         StatusOptions statusOptions = applyOptions.getStatusOptions();
         statusPanel.setStatusOptions(statusOptions);
         toolbarPanel.applyFromCodeArea();
+        
+        int selectedLayoutProfile = preferences.getLayoutParameters().getSelectedProfile();
+        if (selectedLayoutProfile >= 0) {
+            codeArea.setLayoutProfile(preferences.getLayoutParameters().getLayoutProfile(selectedLayoutProfile));
+        }
+
+        int selectedThemeProfile = preferences.getThemeParameters().getSelectedProfile();
+        if (selectedThemeProfile >= 0) {
+            codeArea.setThemeProfile(preferences.getThemeParameters().getThemeProfile(selectedThemeProfile));
+        }
+
+        int selectedColorProfile = preferences.getColorParameters().getSelectedProfile();
+        if (selectedColorProfile >= 0) {
+            codeArea.setColorsProfile(preferences.getColorParameters().getColorsProfile(selectedColorProfile));
+        }
+
     }
 
     public void showSearchPanel(boolean replace) {
@@ -1162,7 +1178,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         }
         CodeAreaOptions codeAreaOptions = new CodeAreaOptions();
         codeAreaOptions.loadFromParameters(preferences.getCodeAreaParameters());
-        codeAreaOptions.applyFromCodeArea(codeArea);
+        codeAreaOptions.applyToCodeArea(codeArea);
         String selectedEncoding = preferences.getCodeAreaParameters().getSelectedEncoding();
         statusPanel.setEncoding(selectedEncoding);
         statusPanel.loadFromPreferences(preferences.getStatusParameters());
@@ -1175,19 +1191,18 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         if (selectedLayoutProfile >= 0) {
             codeArea.setLayoutProfile(preferences.getLayoutParameters().getLayoutProfile(selectedLayoutProfile));
         }
-        
+
         int selectedThemeProfile = preferences.getThemeParameters().getSelectedProfile();
         if (selectedThemeProfile >= 0) {
             codeArea.setThemeProfile(preferences.getThemeParameters().getThemeProfile(selectedThemeProfile));
         }
-        
+
         int selectedColorProfile = preferences.getColorParameters().getSelectedProfile();
         if (selectedColorProfile >= 0) {
             codeArea.setColorsProfile(preferences.getColorParameters().getColorsProfile(selectedColorProfile));
         }
 
         // Memory mode handled from outside by isDeltaMemoryMode() method, worth fixing?
-
         boolean showValuesPanel = preferences.getEditorParameters().isShowValuesPanel();
         if (showValuesPanel) {
             showValuesPanel();

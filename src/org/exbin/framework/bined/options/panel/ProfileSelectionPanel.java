@@ -29,7 +29,7 @@ import org.exbin.framework.gui.utils.WindowUtils;
 /**
  * Wrapper panel for named profile.
  *
- * @version 0.2.0 2019/03/12
+ * @version 0.2.0 2019/03/18
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -106,7 +106,7 @@ public class ProfileSelectionPanel extends javax.swing.JPanel {
     }
 
     public void setDefaultProfile(int profileIndex) {
-        defaultProfileComboBox.setSelectedItem(profileIndex);
+        defaultProfileComboBox.setSelectedIndex(profileIndex);
     }
 
     @Nonnull

@@ -53,7 +53,7 @@ import org.openide.util.NbPreferences;
 /**
  * Hexadecimal editor options panel.
  *
- * @version 0.2.0 2019/03/17
+ * @version 0.2.0 2019/03/18
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -192,8 +192,11 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
 
         charsetOptions.loadFromParameters(preferences.getCharsetParameters());
         layoutProfilesPanel.loadFromParameters(preferences.getLayoutParameters());
+        layoutSelectionPanel.setDefaultProfile(preferences.getLayoutParameters().getSelectedProfile());
         colorProfilesPanel.loadFromParameters(preferences.getColorParameters());
+        colorSelectionPanel.setDefaultProfile(preferences.getColorParameters().getSelectedProfile());
         themeProfilesPanel.loadFromParameters(preferences.getThemeParameters());
+        themeSelectionPanel.setDefaultProfile(preferences.getThemeParameters().getSelectedProfile());
         charsetParametersPanel.loadFromPreferences(preferences.getPreferences());
     }
 
@@ -207,8 +210,11 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         codeAreaOptions.saveToParameters(preferences.getCodeAreaParameters());
 
         layoutProfilesPanel.saveToParameters(preferences.getLayoutParameters());
+        preferences.getLayoutParameters().setSelectedProfile(layoutSelectionPanel.getDefaultProfile());
         colorProfilesPanel.saveToParameters(preferences.getColorParameters());
+        preferences.getColorParameters().setSelectedProfile(colorSelectionPanel.getDefaultProfile());
         themeProfilesPanel.saveToParameters(preferences.getThemeParameters());
+        preferences.getThemeParameters().setSelectedProfile(themeSelectionPanel.getDefaultProfile());
         charsetParametersPanel.saveToPreferences(preferences.getPreferences());
     }
 
