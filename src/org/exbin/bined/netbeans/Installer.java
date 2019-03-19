@@ -38,7 +38,7 @@ public class Installer extends ModuleInstall {
 
     @Override
     public void restored() {
-        WindowManager.getDefault().invokeWhenUIReady(new ActionInstaller());
+        WindowManager.getDefault().invokeWhenUIReady(new ActionInstaller());  
     }
 
     @Override
