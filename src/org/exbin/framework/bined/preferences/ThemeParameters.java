@@ -78,7 +78,7 @@ public class ThemeParameters {
     }
 
     public int getSelectedProfile() {
-        return preferences.getInt(PREFERENCES_THEME_PROFILE_SELECTED, 0);
+        return preferences.getInt(PREFERENCES_THEME_PROFILE_SELECTED, -1);
     }
 
     public void setSelectedProfile(int profileIndex) {

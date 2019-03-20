@@ -77,7 +77,7 @@ public class LayoutParameters {
     }
 
     public int getSelectedProfile() {
-        return preferences.getInt(PREFERENCES_LAYOUT_PROFILE_SELECTED, 0);
+        return preferences.getInt(PREFERENCES_LAYOUT_PROFILE_SELECTED, -1);
     }
 
     public void setSelectedProfile(int profileIndex) {

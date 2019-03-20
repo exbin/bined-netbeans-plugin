@@ -29,9 +29,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
-import java.util.ArrayList;
-import java.util.List;
 import javax.annotation.Nonnull;
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -45,13 +42,11 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import org.exbin.bined.BasicCodeAreaZone;
 import org.exbin.bined.CodeAreaCaretPosition;
-import org.exbin.bined.DefaultCodeAreaCaretPosition;
 import org.exbin.bined.EditationMode;
 import org.exbin.bined.EditationOperation;
 import org.exbin.bined.delta.DeltaDocument;
 import org.exbin.bined.delta.FileDataSource;
 import org.exbin.bined.delta.SegmentsRepository;
-import org.exbin.bined.highlight.swing.extended.ExtendedHighlightCodeAreaPainter;
 import org.exbin.bined.highlight.swing.extended.ExtendedHighlightNonAsciiCodeAreaPainter;
 import org.exbin.bined.netbeans.panel.BinEdOptionsPanelBorder;
 import org.exbin.bined.netbeans.panel.BinEdToolbarPanel;
@@ -61,18 +56,13 @@ import org.exbin.bined.operation.BinaryDataCommand;
 import org.exbin.bined.operation.swing.CodeAreaOperationCommandHandler;
 import org.exbin.bined.operation.undo.BinaryDataUndoUpdateListener;
 import org.exbin.bined.swing.extended.ExtCodeArea;
-import org.exbin.framework.bined.CodeAreaPopupMenuHandler;
 import org.exbin.framework.bined.panel.BinaryStatusPanel;
-import org.exbin.framework.bined.panel.ReplaceParameters;
-import org.exbin.framework.bined.panel.SearchCondition;
-import org.exbin.framework.bined.panel.SearchParameters;
 import org.exbin.framework.editor.text.TextEncodingStatusApi;
 import org.exbin.framework.gui.utils.WindowUtils;
 import org.exbin.framework.gui.utils.handler.OptionsControlHandler;
 import org.exbin.framework.gui.utils.panel.OptionsControlPanel;
 import org.exbin.utils.binary_data.BinaryData;
 import org.exbin.utils.binary_data.ByteArrayData;
-import org.exbin.utils.binary_data.EditableBinaryData;
 import org.exbin.utils.binary_data.PagedData;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.netbeans.core.spi.multiview.CloseOperationState;
@@ -90,7 +80,6 @@ import org.openide.util.lookup.InstanceContent;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 import org.exbin.framework.bined.BinaryStatusApi;
-import org.exbin.bined.netbeans.panel.BinarySearchPanelApi;
 import org.exbin.framework.bined.options.CodeAreaOptions;
 import org.exbin.framework.bined.options.EditorOptions;
 import org.exbin.framework.bined.options.StatusOptions;
@@ -117,7 +106,6 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     public static final String ACTION_CLIPBOARD_CUT = "cut-to-clipboard";
     public static final String ACTION_CLIPBOARD_COPY = "copy-to-clipboard";
     public static final String ACTION_CLIPBOARD_PASTE = "paste-from-clipboard";
-    private static final int FIND_MATCHES_LIMIT = 100;
     private static final FileHandlingMode DEFAULT_FILE_HANDLING_MODE = FileHandlingMode.DELTA;
 
     private final BinaryEditorPreferences preferences;
@@ -137,11 +125,10 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     private CharsetChangeListener charsetChangeListener = null;
     private GoToHandler goToHandler;
     private EncodingsHandler encodingsHandler;
-    private boolean findTextPanelVisible = false;
-    private BinarySearchPanel hexSearchPanel = null;
     private ValuesPanel valuesPanel = null;
     private JScrollPane valuesPanelScrollPane = null;
     private boolean valuesPanelVisible = false;
+    private final SearchAction searchAction;
 
     private boolean opened = false;
     private boolean modified = false;
@@ -221,10 +208,17 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             }
         });
 
+        int metaMaskValue;
+        try {
+            metaMaskValue = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+        } catch (java.awt.HeadlessException ex) {
+            metaMaskValue = java.awt.Event.CTRL_MASK;
+        }
+        metaMask = metaMaskValue;
+
+        searchAction = new SearchAction(codeArea, codeAreaPanel, metaMask);
         codeArea.addDataChangedListener(() -> {
-            if (hexSearchPanel != null && hexSearchPanel.isVisible()) {
-                hexSearchPanel.dataChanged();
-            }
+            searchAction.codeAreaDataChanged();
             updateCurrentDocumentSize();
         });
 
@@ -252,14 +246,6 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             }
         });
 
-        int metaMaskValue;
-        try {
-            metaMaskValue = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-        } catch (java.awt.HeadlessException ex) {
-            metaMaskValue = java.awt.Event.CTRL_MASK;
-        }
-        metaMask = metaMaskValue;
-
         codeArea.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent keyEvent) {
@@ -267,7 +253,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                     int keyCode = keyEvent.getKeyCode();
                     switch (keyCode) {
                         case KeyEvent.VK_F: {
-                            showSearchPanel(false);
+                            searchAction.actionPerformed(null);
+                            searchAction.switchReplaceMode(BinarySearchPanel.SearchOperation.FIND);
                             break;
                         }
                         case KeyEvent.VK_G: {
@@ -702,7 +689,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         final JMenuItem findMenuItem = new JMenuItem("Find...");
         findMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, metaMask));
         findMenuItem.addActionListener((ActionEvent e) -> {
-            showSearchPanel(false);
+            searchAction.actionPerformed(e);
+            searchAction.switchReplaceMode(BinarySearchPanel.SearchOperation.FIND);
         });
         result.add(findMenuItem);
 
@@ -710,7 +698,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         replaceMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, metaMask));
         replaceMenuItem.setEnabled(codeArea.isEditable());
         replaceMenuItem.addActionListener((ActionEvent e) -> {
-            showSearchPanel(true);
+            searchAction.actionPerformed(e);
+            searchAction.switchReplaceMode(BinarySearchPanel.SearchOperation.REPLACE);
         });
         result.add(replaceMenuItem);
         result.addSeparator();
@@ -790,7 +779,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         StatusOptions statusOptions = applyOptions.getStatusOptions();
         statusPanel.setStatusOptions(statusOptions);
         toolbarPanel.applyFromCodeArea();
-        
+
         int selectedLayoutProfile = preferences.getLayoutParameters().getSelectedProfile();
         if (selectedLayoutProfile >= 0) {
             codeArea.setLayoutProfile(preferences.getLayoutParameters().getLayoutProfile(selectedLayoutProfile));
@@ -806,125 +795,6 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             codeArea.setColorsProfile(preferences.getColorParameters().getColorsProfile(selectedColorProfile));
         }
 
-    }
-
-    public void showSearchPanel(boolean replace) {
-        if (hexSearchPanel == null) {
-            hexSearchPanel = new BinarySearchPanel(new BinarySearchPanelApi() {
-                @Override
-                public void performFind(SearchParameters searchParameters) {
-                    ExtendedHighlightCodeAreaPainter painter = (ExtendedHighlightCodeAreaPainter) codeArea.getPainter();
-                    SearchCondition condition = searchParameters.getCondition();
-                    hexSearchPanel.clearStatus();
-                    if (condition.isEmpty()) {
-                        painter.clearMatches();
-                        codeArea.repaint();
-                        return;
-                    }
-
-                    long position;
-                    if (searchParameters.isSearchFromCursor()) {
-                        position = codeArea.getCaretPosition().getDataPosition();
-                    } else {
-                        switch (searchParameters.getSearchDirection()) {
-                            case FORWARD: {
-                                position = 0;
-                                break;
-                            }
-                            case BACKWARD: {
-                                position = codeArea.getDataSize() - 1;
-                                break;
-                            }
-                            default:
-                                throw new IllegalStateException("Illegal search type " + searchParameters.getSearchDirection().name());
-                        }
-                    }
-                    searchParameters.setStartPosition(position);
-
-                    switch (condition.getSearchMode()) {
-                        case TEXT: {
-                            searchForText(searchParameters);
-                            break;
-                        }
-                        case BINARY: {
-                            searchForBinaryData(searchParameters);
-                            break;
-                        }
-                        default:
-                            throw new IllegalStateException("Unexpected search mode " + condition.getSearchMode().name());
-                    }
-                }
-
-                @Override
-                public void setMatchPosition(int matchPosition) {
-                    ExtendedHighlightCodeAreaPainter painter = (ExtendedHighlightCodeAreaPainter) codeArea.getPainter();
-                    painter.setCurrentMatchIndex(matchPosition);
-                    ExtendedHighlightCodeAreaPainter.SearchMatch currentMatch = painter.getCurrentMatch();
-                    codeArea.revealPosition(new DefaultCodeAreaCaretPosition(currentMatch.getPosition(), 0, codeArea.getActiveSection()));
-                    codeArea.repaint();
-                }
-
-                @Override
-                public void updatePosition() {
-                    hexSearchPanel.updatePosition(codeArea.getCaretPosition().getDataPosition(), codeArea.getDataSize());
-                }
-
-                @Override
-                public void performReplace(SearchParameters searchParameters, ReplaceParameters replaceParameters) {
-                    SearchCondition replaceCondition = replaceParameters.getCondition();
-                    ExtendedHighlightCodeAreaPainter painter = (ExtendedHighlightCodeAreaPainter) codeArea.getPainter();
-                    ExtendedHighlightCodeAreaPainter.SearchMatch currentMatch = painter.getCurrentMatch();
-                    if (currentMatch != null) {
-                        EditableBinaryData editableData = ((EditableBinaryData) codeArea.getContentData());
-                        editableData.remove(currentMatch.getPosition(), currentMatch.getLength());
-                        if (replaceCondition.getSearchMode() == SearchCondition.SearchMode.BINARY) {
-                            editableData.insert(currentMatch.getPosition(), replaceCondition.getBinaryData());
-                        } else {
-                            editableData.insert(currentMatch.getPosition(), replaceCondition.getSearchText().getBytes(codeArea.getCharset()));
-                        }
-                        painter.getMatches().remove(currentMatch);
-                        codeArea.repaint();
-                    }
-                }
-
-                @Override
-                public void clearMatches() {
-                    ExtendedHighlightCodeAreaPainter painter = (ExtendedHighlightCodeAreaPainter) codeArea.getPainter();
-                    painter.clearMatches();
-                }
-            });
-            hexSearchPanel.setHexCodePopupMenuHandler(new CodeAreaPopupMenuHandler() {
-                @Override
-                public JPopupMenu createPopupMenu(ExtCodeArea codeArea, String menuPostfix) {
-                    return createCodeAreaPopupMenu(codeArea, menuPostfix);
-                }
-
-                @Override
-                public void dropPopupMenu(String menuPostfix) {
-                }
-            });
-            hexSearchPanel.setClosePanelListener(this::hideSearchPanel);
-        }
-
-        if (!findTextPanelVisible) {
-            codeAreaPanel.add(hexSearchPanel, BorderLayout.SOUTH);
-            codeAreaPanel.revalidate();
-            revalidate();
-            findTextPanelVisible = true;
-            hexSearchPanel.requestSearchFocus();
-        }
-        hexSearchPanel.switchReplaceMode(replace);
-    }
-
-    public void hideSearchPanel() {
-        if (findTextPanelVisible) {
-            hexSearchPanel.cancelSearch();
-            hexSearchPanel.clearSearch();
-            codeAreaPanel.remove(hexSearchPanel);
-            codeAreaPanel.revalidate();
-            revalidate();
-            findTextPanelVisible = false;
-        }
     }
 
     public void showValuesPanel() {
@@ -952,218 +822,6 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             codeAreaPanel.revalidate();
             revalidate();
         }
-    }
-
-    private JPopupMenu createCodeAreaPopupMenu(final ExtCodeArea codeArea, String menuPostfix) {
-        JPopupMenu popupMenu = new JPopupMenu();
-
-        JMenuItem cutMenuItem = new JMenuItem(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                codeArea.cut();
-            }
-
-            @Override
-            public boolean isEnabled() {
-                return codeArea.hasSelection();
-            }
-        });
-        cutMenuItem.setText("Cut");
-        cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, metaMask));
-        popupMenu.add(cutMenuItem);
-        JMenuItem copyMenuItem = new JMenuItem(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                codeArea.copy();
-            }
-
-            @Override
-            public boolean isEnabled() {
-                return codeArea.hasSelection();
-            }
-        });
-        copyMenuItem.setText("Copy");
-        copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, metaMask));
-        popupMenu.add(copyMenuItem);
-        JMenuItem pasteMenuItem = new JMenuItem(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                codeArea.paste();
-            }
-
-            @Override
-            public boolean isEnabled() {
-                return codeArea.canPaste();
-            }
-        });
-        pasteMenuItem.setText("Paste");
-        pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, metaMask));
-        popupMenu.add(pasteMenuItem);
-        JMenuItem deleteMenuItem = new JMenuItem(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                codeArea.delete();
-            }
-
-            @Override
-            public boolean isEnabled() {
-                return codeArea.hasSelection();
-            }
-        });
-        deleteMenuItem.setText("Delete");
-        deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
-        popupMenu.add(deleteMenuItem);
-        JMenuItem selectAllMenuItem = new JMenuItem(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                codeArea.selectAll();
-            }
-        });
-        selectAllMenuItem.setText("Select All");
-        selectAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, metaMask));
-        popupMenu.add(selectAllMenuItem);
-
-        return popupMenu;
-    }
-
-    /**
-     * Performs search by text/characters.
-     */
-    private void searchForText(SearchParameters searchParameters) {
-        ExtendedHighlightCodeAreaPainter painter = (ExtendedHighlightCodeAreaPainter) codeArea.getPainter();
-        SearchCondition condition = searchParameters.getCondition();
-
-        long position = searchParameters.getStartPosition();
-        String findText;
-        if (searchParameters.isMatchCase()) {
-            findText = condition.getSearchText();
-        } else {
-            findText = condition.getSearchText().toLowerCase();
-        }
-        BinaryData data = codeArea.getContentData();
-
-        List<ExtendedHighlightCodeAreaPainter.SearchMatch> foundMatches = new ArrayList<>();
-
-        Charset charset = codeArea.getCharset();
-        CharsetEncoder encoder = charset.newEncoder();
-        int maxBytesPerChar = (int) encoder.maxBytesPerChar();
-        byte[] charData = new byte[maxBytesPerChar];
-        long dataSize = data.getDataSize();
-        while (position <= dataSize - findText.length()) {
-            int matchCharLength = 0;
-            int matchLength = 0;
-            while (matchCharLength < findText.length()) {
-                long searchPosition = position + matchLength;
-                int bytesToUse = maxBytesPerChar;
-                if (searchPosition + bytesToUse > dataSize) {
-                    bytesToUse = (int) (dataSize - searchPosition);
-                }
-                data.copyToArray(searchPosition, charData, 0, bytesToUse);
-                char singleChar = new String(charData, charset).charAt(0);
-                String singleCharString = String.valueOf(singleChar);
-                int characterLength = singleCharString.getBytes(charset).length;
-
-                if (searchParameters.isMatchCase()) {
-                    if (singleChar != findText.charAt(matchCharLength)) {
-                        break;
-                    }
-                } else if (singleCharString.toLowerCase().charAt(0) != findText.charAt(matchCharLength)) {
-                    break;
-                }
-                matchCharLength++;
-                matchLength += characterLength;
-            }
-
-            if (matchCharLength == findText.length()) {
-                ExtendedHighlightCodeAreaPainter.SearchMatch match = new ExtendedHighlightCodeAreaPainter.SearchMatch();
-                match.setPosition(position);
-                match.setLength(matchLength);
-                foundMatches.add(match);
-
-                if (foundMatches.size() == FIND_MATCHES_LIMIT || !searchParameters.isMultipleMatches()) {
-                    break;
-                }
-            }
-
-            switch (searchParameters.getSearchDirection()) {
-                case FORWARD: {
-                    position++;
-                    break;
-                }
-                case BACKWARD: {
-                    position--;
-                    break;
-                }
-                default:
-                    throw new IllegalStateException("Illegal search type " + searchParameters.getSearchDirection().name());
-            }
-        }
-
-        painter.setMatches(foundMatches);
-        if (foundMatches.size() > 0) {
-            painter.setCurrentMatchIndex(0);
-            ExtendedHighlightCodeAreaPainter.SearchMatch firstMatch = painter.getCurrentMatch();
-            codeArea.revealPosition(new DefaultCodeAreaCaretPosition(firstMatch.getPosition(), 0, codeArea.getActiveSection()));
-        }
-        hexSearchPanel.setStatus(foundMatches.size(), 0);
-        codeArea.repaint();
-    }
-
-    /**
-     * Performs search by binary data.
-     */
-    private void searchForBinaryData(SearchParameters searchParameters) {
-        ExtendedHighlightCodeAreaPainter painter = (ExtendedHighlightCodeAreaPainter) codeArea.getPainter();
-        SearchCondition condition = searchParameters.getCondition();
-        long position = codeArea.getCaretPosition().getDataPosition();
-        ExtendedHighlightCodeAreaPainter.SearchMatch currentMatch = painter.getCurrentMatch();
-
-        if (currentMatch != null) {
-            if (currentMatch.getPosition() == position) {
-                position++;
-            }
-            painter.clearMatches();
-        } else if (!searchParameters.isSearchFromCursor()) {
-            position = 0;
-        }
-
-        BinaryData searchData = condition.getBinaryData();
-        BinaryData data = codeArea.getContentData();
-
-        List<ExtendedHighlightCodeAreaPainter.SearchMatch> foundMatches = new ArrayList<>();
-
-        long dataSize = data.getDataSize();
-        while (position < dataSize - searchData.getDataSize()) {
-            int matchLength = 0;
-            while (matchLength < searchData.getDataSize()) {
-                if (data.getByte(position + matchLength) != searchData.getByte(matchLength)) {
-                    break;
-                }
-                matchLength++;
-            }
-
-            if (matchLength == searchData.getDataSize()) {
-                ExtendedHighlightCodeAreaPainter.SearchMatch match = new ExtendedHighlightCodeAreaPainter.SearchMatch();
-                match.setPosition(position);
-                match.setLength(searchData.getDataSize());
-                foundMatches.add(match);
-
-                if (foundMatches.size() == FIND_MATCHES_LIMIT || !searchParameters.isMultipleMatches()) {
-                    break;
-                }
-            }
-
-            position++;
-        }
-
-        painter.setMatches(foundMatches);
-        if (foundMatches.size() > 0) {
-            painter.setCurrentMatchIndex(0);
-            ExtendedHighlightCodeAreaPainter.SearchMatch firstMatch = painter.getCurrentMatch();
-            codeArea.revealPosition(new DefaultCodeAreaCaretPosition(firstMatch.getPosition(), 0, codeArea.getActiveSection()));
-        }
-        hexSearchPanel.setStatus(foundMatches.size(), 0);
-        codeArea.repaint();
     }
 
     public ExtCodeArea getCodeArea() {

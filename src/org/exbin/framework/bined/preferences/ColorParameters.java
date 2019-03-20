@@ -97,7 +97,7 @@ public class ColorParameters {
     }
 
     public int getSelectedProfile() {
-        return preferences.getInt(PREFERENCES_COLOR_PROFILE_SELECTED, 0);
+        return preferences.getInt(PREFERENCES_COLOR_PROFILE_SELECTED, -1);
     }
 
     public void setSelectedProfile(int profileIndex) {

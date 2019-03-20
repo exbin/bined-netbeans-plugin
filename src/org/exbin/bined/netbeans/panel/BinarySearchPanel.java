@@ -57,7 +57,7 @@ import org.openide.DialogDisplayer;
 /**
  * Hexadecimal editor search panel.
  *
- * @version 0.2.0 2018/12/05
+ * @version 0.2.0 2019/03/20
  * @author ExBin Project (http://exbin.org)
  */
 public class BinarySearchPanel extends javax.swing.JPanel {
@@ -73,7 +73,7 @@ public class BinarySearchPanel extends javax.swing.JPanel {
     private int matchPosition;
     private final ExtCodeArea hexadecimalRenderer = new ExtCodeArea();
 
-    private boolean replaceMode = true;
+    private SearchOperation searchOperation = SearchOperation.REPLACE;
     private ComboBoxEditor findComboBoxEditor;
     private BinarySearchComboBoxPanel findComboBoxEditorComponent;
     private ComboBoxEditor replaceComboBoxEditor;
@@ -289,10 +289,10 @@ public class BinarySearchPanel extends javax.swing.JPanel {
         replaceComboBox.setModel(new SearchHistoryModel(replaceHistory));
     }
 
-    public void switchReplaceMode(boolean replaceMode) {
-        if (this.replaceMode != replaceMode) {
-            this.replaceMode = replaceMode;
-            if (replaceMode) {
+    public void switchReplaceMode(SearchOperation searchOperation) {
+        if (this.searchOperation != searchOperation) {
+            this.searchOperation = searchOperation;
+            if (searchOperation == SearchOperation.REPLACE) {
                 add(replacePanel, BorderLayout.SOUTH);
             } else {
                 remove(replacePanel);
@@ -594,7 +594,7 @@ public class BinarySearchPanel extends javax.swing.JPanel {
         findHexPanel.setSelected();
         findHexPanel.setSearchHistory(searchHistory);
         findHexPanel.setSearchParameters(searchParameters);
-        replaceParameters.setPerformReplace(replaceMode);
+        replaceParameters.setPerformReplace(searchOperation == SearchOperation.REPLACE);
         findHexPanel.setReplaceParameters(replaceParameters);
         findHexPanel.setHexCodePopupMenuHandler(hexCodePopupMenuHandler);
         DefaultControlPanel controlPanel = new DefaultControlPanel(findHexPanel.getResourceBundle());
@@ -646,7 +646,7 @@ public class BinarySearchPanel extends javax.swing.JPanel {
                     updateFindStatus();
 
                     ReplaceParameters dialogReplaceParameters = findHexPanel.getReplaceParameters();
-                    switchReplaceMode(dialogReplaceParameters.isPerformReplace());
+                    switchReplaceMode(dialogReplaceParameters.isPerformReplace() ? SearchOperation.REPLACE : SearchOperation.FIND);
                     hexSearchPanelApi.performFind(dialogSearchParameters);
                 }
                 findHexPanel.detachMenu();
@@ -974,5 +974,9 @@ public class BinarySearchPanel extends javax.swing.JPanel {
     public static interface ClosePanelListener {
 
         void panelClosed();
+    }
+
+    public enum SearchOperation {
+        FIND, REPLACE
     }
 }
