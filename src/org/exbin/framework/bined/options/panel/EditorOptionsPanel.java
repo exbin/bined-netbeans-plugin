@@ -58,11 +58,11 @@ public class EditorOptionsPanel extends javax.swing.JPanel {
         fileHandlingModeComboBox = new javax.swing.JComboBox<>();
         showValuesPanelCheckBox = new javax.swing.JCheckBox();
 
-        org.openide.awt.Mnemonics.setLocalizedText(fileHandlingModeLabel, resourceBundle.getString("fileHandlingModeLabel.text")); // NOI18N
+        fileHandlingModeLabel.setText(resourceBundle.getString("fileHandlingModeLabel.text")); // NOI18N
 
         fileHandlingModeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "DELTA", "MEMORY" }));
 
-        org.openide.awt.Mnemonics.setLocalizedText(showValuesPanelCheckBox, resourceBundle.getString("showValuesPanelCheckBox.text")); // NOI18N
+        showValuesPanelCheckBox.setText(resourceBundle.getString("showValuesPanelCheckBox.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

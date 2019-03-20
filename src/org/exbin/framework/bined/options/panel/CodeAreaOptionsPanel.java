@@ -119,33 +119,33 @@ public class CodeAreaOptionsPanel extends javax.swing.JPanel {
 
         viewModeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "DUAL", "HEXADECIMAL", "PREVIEW" }));
 
-        org.openide.awt.Mnemonics.setLocalizedText(showNonprintableCharactersCheckBox, resourceBundle.getString("showNonprintableCharactersCheckBox.text")); // NOI18N
+        showNonprintableCharactersCheckBox.setText(resourceBundle.getString("showNonprintableCharactersCheckBox.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(viewModeScrollModeLabel, resourceBundle.getString("viewModeScrollModeLabel.text")); // NOI18N
+        viewModeScrollModeLabel.setText(resourceBundle.getString("viewModeScrollModeLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(codeColorizationCheckBox, resourceBundle.getString("codeColorizationCheckBox.text")); // NOI18N
+        codeColorizationCheckBox.setText(resourceBundle.getString("codeColorizationCheckBox.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(positionCodeTypeLabel, resourceBundle.getString("positionCodeTypeLabel.text")); // NOI18N
+        positionCodeTypeLabel.setText(resourceBundle.getString("positionCodeTypeLabel.text")); // NOI18N
 
         positionCodeTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "OCTAL", "DECIMAL", "HEXADECIMAL" }));
         positionCodeTypeComboBox.setSelectedIndex(2);
 
-        org.openide.awt.Mnemonics.setLocalizedText(codeTypeScrollModeLabel, resourceBundle.getString("codeTypeScrollModeLabel.text")); // NOI18N
+        codeTypeScrollModeLabel.setText(resourceBundle.getString("codeTypeScrollModeLabel.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(hexCharactersModeLabel, resourceBundle.getString("hexCharactersModeLabel.text")); // NOI18N
+        hexCharactersModeLabel.setText(resourceBundle.getString("hexCharactersModeLabel.text")); // NOI18N
 
         codeTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "BINARY", "OCTAL", "DECIMAL", "HEXADECIMAL" }));
         codeTypeComboBox.setSelectedIndex(3);
 
         fontPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceBundle.getString("fontPanel.border.title"))); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(useDefaultFontCheckBox, resourceBundle.getString("useDefaultFontCheckBox.text")); // NOI18N
+        useDefaultFontCheckBox.setText(resourceBundle.getString("useDefaultFontCheckBox.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(fontLabel, resourceBundle.getString("fontLabel.text")); // NOI18N
+        fontLabel.setText(resourceBundle.getString("fontLabel.text")); // NOI18N
 
         fontTextField.setEditable(false);
 
-        org.openide.awt.Mnemonics.setLocalizedText(selectFontButton, resourceBundle.getString("selectFontButton.text")); // NOI18N
+        selectFontButton.setText(resourceBundle.getString("selectFontButton.text")); // NOI18N
         selectFontButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 selectFontButtonActionPerformed(evt);
@@ -182,21 +182,21 @@ public class CodeAreaOptionsPanel extends javax.swing.JPanel {
                     .addComponent(selectFontButton)))
         );
 
-        org.openide.awt.Mnemonics.setLocalizedText(maxBytesPerRowLabel, resourceBundle.getString("maxBytesPerRowLabel.text")); // NOI18N
+        maxBytesPerRowLabel.setText(resourceBundle.getString("maxBytesPerRowLabel.text")); // NOI18N
 
         maxBytesPerRowSpinner.setModel(new javax.swing.SpinnerNumberModel(16, 0, null, 1));
 
-        org.openide.awt.Mnemonics.setLocalizedText(minRowPositionLengthLabel, resourceBundle.getString("minRowPositionLengthLabel.text")); // NOI18N
+        minRowPositionLengthLabel.setText(resourceBundle.getString("minRowPositionLengthLabel.text")); // NOI18N
 
         minRowPositionLengthSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         minRowPositionLengthSpinner.setValue(8);
 
-        org.openide.awt.Mnemonics.setLocalizedText(maxRowPositionLengthLabel, resourceBundle.getString("maxRowPositionLengthLabel.text")); // NOI18N
+        maxRowPositionLengthLabel.setText(resourceBundle.getString("maxRowPositionLengthLabel.text")); // NOI18N
 
         maxRowPositionLengthSpinner.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
         maxRowPositionLengthSpinner.setValue(8);
 
-        org.openide.awt.Mnemonics.setLocalizedText(wrapLineModeCheckBox, resourceBundle.getString("wrapLineModeCheckBox.text")); // NOI18N
+        wrapLineModeCheckBox.setText(resourceBundle.getString("wrapLineModeCheckBox.text")); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);

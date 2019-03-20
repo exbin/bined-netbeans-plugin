@@ -3,7 +3,8 @@
 - Updated to newer version of library
 - Support for half-size space
 - Support for layout, theme and colors profiles
-- Added support for different numerical types in status bar 
+- Added support for different numerical types in status bar
+- Context aware popup menu
 
 0.1.7 (2017-10-10)
 - Values panel made editable

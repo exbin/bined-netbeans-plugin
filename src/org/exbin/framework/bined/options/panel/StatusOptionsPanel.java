@@ -90,31 +90,31 @@ public class StatusOptionsPanel extends javax.swing.JPanel {
         hexadecimalGroupSizeLabel = new javax.swing.JLabel();
         hexadecimalGroupSizeSpinner = new javax.swing.JSpinner();
 
-        org.openide.awt.Mnemonics.setLocalizedText(cursorPositionCodeTypeLabel, resourceBundle.getString("cursorPositionCodeTypeLabel.text")); // NOI18N
+        cursorPositionCodeTypeLabel.setText(resourceBundle.getString("cursorPositionCodeTypeLabel.text")); // NOI18N
 
         cursorPositionCodeTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "OCTAL", "DECIMAL", "HEXADECIMAL" }));
         cursorPositionCodeTypeComboBox.setSelectedIndex(1);
 
         cursorPositionShowOffsetCheckBox.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(cursorPositionShowOffsetCheckBox, resourceBundle.getString("cursorPositionShowOffsetCheckBox.text")); // NOI18N
+        cursorPositionShowOffsetCheckBox.setText(resourceBundle.getString("cursorPositionShowOffsetCheckBox.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(documentSizeCodeTypeLabel, resourceBundle.getString("documentSizeCodeTypeLabel.text")); // NOI18N
+        documentSizeCodeTypeLabel.setText(resourceBundle.getString("documentSizeCodeTypeLabel.text")); // NOI18N
 
         documentSizeCodeTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "OCTAL", "DECIMAL", "HEXADECIMAL" }));
         documentSizeCodeTypeComboBox.setSelectedIndex(1);
 
         documentSizeShowRelativeCheckBox.setSelected(true);
-        org.openide.awt.Mnemonics.setLocalizedText(documentSizeShowRelativeCheckBox, resourceBundle.getString("documentSizeShowRelativeCheckBox.text")); // NOI18N
+        documentSizeShowRelativeCheckBox.setText(resourceBundle.getString("documentSizeShowRelativeCheckBox.text")); // NOI18N
 
-        org.openide.awt.Mnemonics.setLocalizedText(octalGroupSizeLabel, resourceBundle.getString("octalGroupSizeLabel.text")); // NOI18N
+        octalGroupSizeLabel.setText(resourceBundle.getString("octalGroupSizeLabel.text")); // NOI18N
 
         octalGroupSizeSpinner.setModel(new javax.swing.SpinnerNumberModel(4, 0, null, 1));
 
-        org.openide.awt.Mnemonics.setLocalizedText(decimalGroupSizeLabel, resourceBundle.getString("decimalGroupSizeLabel.text")); // NOI18N
+        decimalGroupSizeLabel.setText(resourceBundle.getString("decimalGroupSizeLabel.text")); // NOI18N
 
         decimalGroupSizeSpinner.setModel(new javax.swing.SpinnerNumberModel(3, 0, null, 1));
 
-        org.openide.awt.Mnemonics.setLocalizedText(hexadecimalGroupSizeLabel, resourceBundle.getString("hexadecimalGroupSizeLabel.text")); // NOI18N
+        hexadecimalGroupSizeLabel.setText(resourceBundle.getString("hexadecimalGroupSizeLabel.text")); // NOI18N
 
         hexadecimalGroupSizeSpinner.setModel(new javax.swing.SpinnerNumberModel(4, 0, null, 1));
 

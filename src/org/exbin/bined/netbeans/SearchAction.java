@@ -54,7 +54,7 @@ public final class SearchAction implements ActionListener {
 
     private final int metaMask;
     private boolean findTextPanelVisible = false;
-    private BinarySearchPanel hexSearchPanel = null;
+    private BinarySearchPanel binarySearchPanel = null;
     private final JPanel codeAreaPanel;
     private final ExtCodeArea codeArea;
 
@@ -66,13 +66,13 @@ public final class SearchAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (hexSearchPanel == null) {
-            hexSearchPanel = new BinarySearchPanel(new BinarySearchPanelApi() {
+        if (binarySearchPanel == null) {
+            binarySearchPanel = new BinarySearchPanel(new BinarySearchPanelApi() {
                 @Override
                 public void performFind(SearchParameters searchParameters) {
                     ExtendedHighlightCodeAreaPainter painter = (ExtendedHighlightCodeAreaPainter) codeArea.getPainter();
                     SearchCondition condition = searchParameters.getCondition();
-                    hexSearchPanel.clearStatus();
+                    binarySearchPanel.clearStatus();
                     if (condition.isEmpty()) {
                         painter.clearMatches();
                         codeArea.repaint();
@@ -123,7 +123,7 @@ public final class SearchAction implements ActionListener {
 
                 @Override
                 public void updatePosition() {
-                    hexSearchPanel.updatePosition(codeArea.getCaretPosition().getDataPosition(), codeArea.getDataSize());
+                    binarySearchPanel.updatePosition(codeArea.getCaretPosition().getDataPosition(), codeArea.getDataSize());
                 }
 
                 @Override
@@ -150,7 +150,7 @@ public final class SearchAction implements ActionListener {
                     painter.clearMatches();
                 }
             });
-            hexSearchPanel.setHexCodePopupMenuHandler(new CodeAreaPopupMenuHandler() {
+            binarySearchPanel.setBinaryCodePopupMenuHandler(new CodeAreaPopupMenuHandler() {
                 @Override
                 public JPopupMenu createPopupMenu(ExtCodeArea codeArea, String menuPostfix) {
                     return createCodeAreaPopupMenu(codeArea, menuPostfix);
@@ -160,27 +160,27 @@ public final class SearchAction implements ActionListener {
                 public void dropPopupMenu(String menuPostfix) {
                 }
             });
-            hexSearchPanel.setClosePanelListener(this::hideSearchPanel);
+            binarySearchPanel.setClosePanelListener(this::hideSearchPanel);
         }
 
         if (!findTextPanelVisible) {
-            codeAreaPanel.add(hexSearchPanel, BorderLayout.SOUTH);
+            codeAreaPanel.add(binarySearchPanel, BorderLayout.SOUTH);
             codeAreaPanel.revalidate();
 //            revalidate();
             findTextPanelVisible = true;
-            hexSearchPanel.requestSearchFocus();
+            binarySearchPanel.requestSearchFocus();
         }
     }
     
     public void switchReplaceMode(BinarySearchPanel.SearchOperation searchOperation) {
-        hexSearchPanel.switchReplaceMode(searchOperation);
+        binarySearchPanel.switchReplaceMode(searchOperation);
     }
 
     public void hideSearchPanel() {
         if (findTextPanelVisible) {
-            hexSearchPanel.cancelSearch();
-            hexSearchPanel.clearSearch();
-            codeAreaPanel.remove(hexSearchPanel);
+            binarySearchPanel.cancelSearch();
+            binarySearchPanel.clearSearch();
+            codeAreaPanel.remove(binarySearchPanel);
             codeAreaPanel.revalidate();
 //            revalidate();
             findTextPanelVisible = false;
@@ -266,7 +266,7 @@ public final class SearchAction implements ActionListener {
             ExtendedHighlightCodeAreaPainter.SearchMatch firstMatch = painter.getCurrentMatch();
             codeArea.revealPosition(new DefaultCodeAreaCaretPosition(firstMatch.getPosition(), 0, codeArea.getActiveSection()));
         }
-        hexSearchPanel.setStatus(foundMatches.size(), 0);
+        binarySearchPanel.setStatus(foundMatches.size(), 0);
         codeArea.repaint();
     }
 
@@ -323,13 +323,13 @@ public final class SearchAction implements ActionListener {
             ExtendedHighlightCodeAreaPainter.SearchMatch firstMatch = painter.getCurrentMatch();
             codeArea.revealPosition(new DefaultCodeAreaCaretPosition(firstMatch.getPosition(), 0, codeArea.getActiveSection()));
         }
-        hexSearchPanel.setStatus(foundMatches.size(), 0);
+        binarySearchPanel.setStatus(foundMatches.size(), 0);
         codeArea.repaint();
     }
 
     public void codeAreaDataChanged() {
-        if (hexSearchPanel != null && hexSearchPanel.isVisible()) {
-            hexSearchPanel.dataChanged();
+        if (binarySearchPanel != null && binarySearchPanel.isVisible()) {
+            binarySearchPanel.dataChanged();
         }
     }
 

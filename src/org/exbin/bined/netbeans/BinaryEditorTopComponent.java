@@ -794,7 +794,6 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         if (selectedColorProfile >= 0) {
             codeArea.setColorsProfile(preferences.getColorParameters().getColorsProfile(selectedColorProfile));
         }
-
     }
 
     public void showValuesPanel() {

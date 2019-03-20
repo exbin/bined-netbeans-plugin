@@ -963,9 +963,9 @@ public class BinarySearchPanel extends javax.swing.JPanel {
         return true;
     }
 
-    public void setHexCodePopupMenuHandler(CodeAreaPopupMenuHandler hexCodePopupMenuHandler) {
-        this.hexCodePopupMenuHandler = hexCodePopupMenuHandler;
-        findComboBoxEditorComponent.setHexCodePopupMenuHandler(hexCodePopupMenuHandler, "");
+    public void setBinaryCodePopupMenuHandler(CodeAreaPopupMenuHandler binaryCodePopupMenuHandler) {
+        this.hexCodePopupMenuHandler = binaryCodePopupMenuHandler;
+        findComboBoxEditorComponent.setHexCodePopupMenuHandler(binaryCodePopupMenuHandler, "");
     }
 
     /**
