@@ -153,7 +153,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
         categoriesList = new javax.swing.JList<>();
         mainPane = new javax.swing.JScrollPane();
 
-        org.openide.awt.Mnemonics.setLocalizedText(categoriesLabel, "Categories:");
+        categoriesLabel.setText("Categories:");
 
         categoriesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         categoriesScrollPane.setViewportView(categoriesList);

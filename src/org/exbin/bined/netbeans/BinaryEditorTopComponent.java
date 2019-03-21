@@ -176,7 +176,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         codeArea.setCommandHandler(commandHandler);
         codeAreaPanel.add(codeArea, BorderLayout.CENTER);
         add(statusPanel, BorderLayout.SOUTH);
-        registerHexStatus(statusPanel);
+        registerBinaryStatus(statusPanel);
         goToHandler = new GoToHandler(codeArea);
 
         codeArea.setComponentPopupMenu(new JPopupMenu() {
@@ -269,7 +269,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         associateLookup(new AbstractLookup(content));
     }
 
-    public void registerHexStatus(BinaryStatusApi binaryStatusApi) {
+    public void registerBinaryStatus(BinaryStatusApi binaryStatusApi) {
         this.binaryStatus = binaryStatusApi;
         codeArea.addCaretMovedListener((CodeAreaCaretPosition caretPosition) -> {
             binaryStatus.setCursorPosition(caretPosition);
