@@ -46,13 +46,12 @@ import org.exbin.framework.bined.panel.SearchHistoryModel;
 import org.exbin.framework.bined.panel.SearchParameters;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
+import org.exbin.framework.gui.utils.WindowUtils.DialogWrapper;
 import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
 import org.exbin.framework.gui.utils.panel.DefaultControlPanel;
 import org.exbin.utils.binary_data.BinaryData;
 import org.exbin.utils.binary_data.ByteArrayEditableData;
 import org.exbin.utils.binary_data.EditableBinaryData;
-import org.openide.DialogDescriptor;
-import org.openide.DialogDisplayer;
 
 /**
  * Hexadecimal editor search panel.
@@ -599,8 +598,7 @@ public class BinarySearchPanel extends javax.swing.JPanel {
         findHexPanel.setHexCodePopupMenuHandler(hexCodePopupMenuHandler);
         DefaultControlPanel controlPanel = new DefaultControlPanel(findHexPanel.getResourceBundle());
         JPanel dialogPanel = WindowUtils.createDialogPanel(findHexPanel, controlPanel);
-        DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Find Text", true, new Object[0], null, 0, null, null);
-        final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
+        final DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, null, "Find Text", Dialog.ModalityType.APPLICATION_MODAL);
         findHexPanel.setMultilineEditorListener(new FindBinaryPanel.MultilineEditorListener() {
             @Override
             public SearchCondition multilineEdit(SearchCondition condition) {
@@ -609,8 +607,7 @@ public class BinarySearchPanel extends javax.swing.JPanel {
                 multilinePanel.setCondition(condition);
                 DefaultControlPanel controlPanel = new DefaultControlPanel();
                 JPanel dialogPanel = WindowUtils.createDialogPanel(multilinePanel, controlPanel);
-                DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Multiline Hex/Text", true, new Object[0], null, 0, null, null);
-                final Dialog multilineDialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
+                final DialogWrapper multilineDialog = WindowUtils.createDialog(dialogPanel, null, "Multiline Hex/Text", Dialog.ModalityType.APPLICATION_MODAL);
                 final SearchConditionResult result = new SearchConditionResult();
                 controlPanel.setHandler(new DefaultControlHandler() {
                     @Override
@@ -620,12 +617,12 @@ public class BinarySearchPanel extends javax.swing.JPanel {
                             updateFindStatus();
                         }
 
-                        WindowUtils.closeWindow(multilineDialog);
+                        multilineDialog.close();
                     }
                 });
-                WindowUtils.assignGlobalKeyListener(multilineDialog, controlPanel.createOkCancelListener());
-                multilineDialog.setLocationRelativeTo(dialog);
-                multilineDialog.setVisible(true);
+                WindowUtils.assignGlobalKeyListener(multilineDialog.getWindow(), controlPanel.createOkCancelListener());
+                multilineDialog.center();
+                multilineDialog.show();
                 multilinePanel.detachMenu();
                 return result.searchCondition;
             }
@@ -650,12 +647,12 @@ public class BinarySearchPanel extends javax.swing.JPanel {
                     hexSearchPanelApi.performFind(dialogSearchParameters);
                 }
                 findHexPanel.detachMenu();
-                WindowUtils.closeWindow(dialog);
+                dialog.close();
             }
         });
-        WindowUtils.assignGlobalKeyListener(dialog, controlPanel.createOkCancelListener());
+        WindowUtils.assignGlobalKeyListener(dialog.getWindow(), controlPanel.createOkCancelListener());
 //        dialog.setLocationRelativeTo(frameModule.getFrame());
-        dialog.setVisible(true);
+        dialog.show();
     }//GEN-LAST:event_optionsButtonActionPerformed
 
     private void prevButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevButtonActionPerformed

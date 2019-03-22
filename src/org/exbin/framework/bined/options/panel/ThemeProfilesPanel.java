@@ -35,6 +35,7 @@ import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
 import org.exbin.framework.bined.preferences.ThemeParameters;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
+import org.exbin.framework.gui.utils.WindowUtils.DialogWrapper;
 import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
 import org.exbin.framework.gui.utils.panel.DefaultControlPanel;
 
@@ -292,8 +293,7 @@ public class ThemeProfilesPanel extends javax.swing.JPanel implements ProfileLis
         DefaultControlPanel controlPanel = new DefaultControlPanel();
         JPanel dialogPanel = WindowUtils.createDialogPanel(namedProfilePanel, controlPanel);
 
-        final Dialog dialog = WindowUtils.createDialog(dialogPanel, null, Dialog.ModalityType.APPLICATION_MODAL);
-        dialog.setTitle("Add Theme Profile");
+        final DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, null, "Add Theme Profile", Dialog.ModalityType.APPLICATION_MODAL);
         controlPanel.setHandler((DefaultControlHandler.ControlActionType actionType) -> {
             if (actionType != DefaultControlHandler.ControlActionType.CANCEL) {
                 if (!isValidProfileName(namedProfilePanel.getProfileName())) {
@@ -314,10 +314,10 @@ public class ThemeProfilesPanel extends javax.swing.JPanel implements ProfileLis
                 wasModified();
             }
 
-            WindowUtils.closeWindow(dialog);
+            dialog.close();
         });
-        dialog.setLocationByPlatform(true);
-        dialog.setVisible(true);
+        dialog.center();
+        dialog.show();
         dialog.dispose();
     }//GEN-LAST:event_addButtonActionPerformed
 
@@ -345,8 +345,7 @@ public class ThemeProfilesPanel extends javax.swing.JPanel implements ProfileLis
         DefaultControlPanel controlPanel = new DefaultControlPanel();
         JPanel dialogPanel = WindowUtils.createDialogPanel(namedProfilePanel, controlPanel);
 
-        final Dialog dialog = WindowUtils.createDialog(dialogPanel, null, Dialog.ModalityType.APPLICATION_MODAL);
-        dialog.setTitle("Edit Theme Profile");
+        final DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, null, "Edit Theme Profile", Dialog.ModalityType.APPLICATION_MODAL);
         namedProfilePanel.setProfileName(profileRecord.profileName);
         themeProfilePanel.setThemeProfile(profileRecord.themeProfile);
         controlPanel.setHandler((DefaultControlHandler.ControlActionType actionType) -> {
@@ -363,10 +362,10 @@ public class ThemeProfilesPanel extends javax.swing.JPanel implements ProfileLis
                 wasModified();
             }
 
-            WindowUtils.closeWindow(dialog);
+            dialog.close();
         });
-        dialog.setLocationByPlatform(true);
-        dialog.setVisible(true);
+        dialog.center();
+        dialog.show();
         dialog.dispose();
     }//GEN-LAST:event_editButtonActionPerformed
 
@@ -384,8 +383,7 @@ public class ThemeProfilesPanel extends javax.swing.JPanel implements ProfileLis
         DefaultControlPanel controlPanel = new DefaultControlPanel();
         JPanel dialogPanel = WindowUtils.createDialogPanel(namedProfilePanel, controlPanel);
 
-        final Dialog dialog = WindowUtils.createDialog(dialogPanel, null, Dialog.ModalityType.APPLICATION_MODAL);
-        dialog.setTitle("Copy Theme Profile");
+        final DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, null, "Copy Theme Profile", Dialog.ModalityType.APPLICATION_MODAL);
         themeProfilePanel.setThemeProfile(profileRecord.themeProfile);
         controlPanel.setHandler((DefaultControlHandler.ControlActionType actionType) -> {
             if (actionType != DefaultControlHandler.ControlActionType.CANCEL) {
@@ -408,10 +406,10 @@ public class ThemeProfilesPanel extends javax.swing.JPanel implements ProfileLis
                 wasModified();
             }
 
-            WindowUtils.closeWindow(dialog);
+            dialog.close();
         });
-        dialog.setLocationByPlatform(true);
-        dialog.setVisible(true);
+        dialog.center();
+        dialog.show();
         dialog.dispose();
     }//GEN-LAST:event_copyButtonActionPerformed
 

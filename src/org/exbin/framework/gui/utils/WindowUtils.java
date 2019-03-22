@@ -32,6 +32,7 @@ import java.awt.event.WindowEvent;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.Nonnull;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -112,14 +113,40 @@ public class WindowUtils {
         });
     }
 
-    public static Dialog createDialog(final Component component, Window parent, Dialog.ModalityType modalityType) {
-        DialogDescriptor dialogDescriptor1 = new DialogDescriptor(component, "Dialog", true, new Object[0], null, 0, null, null);
-        final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor1);
-//        JDialog dialog = new JDialog(parent, modalityType);
+    @Nonnull
+    public static DialogWrapper createDialog(final Component component, Window parent, String dialogTitle, Dialog.ModalityType modalityType) {
+        DialogDescriptor dialogDescriptor = new DialogDescriptor(component, dialogTitle, modalityType != Dialog.ModalityType.MODELESS, new Object[0], null, 0, null, null);
+        final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
         Dimension size = component.getPreferredSize();
-//        dialog.add(component);
         dialog.setSize(size.width + 8, size.height + 24);
-        return dialog;
+        //        JDialog dialog = new JDialog(parent, modalityType);
+        //        dialog.add(component);
+        return new DialogWrapper() {
+            @Override
+            public void show() {
+                dialog.setVisible(true);
+            }
+
+            @Override
+            public void close() {
+                closeWindow(dialog);
+            }
+
+            @Override
+            public Window getWindow() {
+                return dialog;
+            }
+
+            @Override
+            public void dispose() {
+                dialog.dispose();
+            }
+
+            @Override
+            public void center() {
+                dialog.setLocationByPlatform(true);
+            }
+        };
     }
 
     public static JDialog createDialog(final Component component) {
@@ -362,10 +389,23 @@ public class WindowUtils {
         return dialogPanel;
     }
 
-    public static interface OkCancelListener {
+    public interface OkCancelListener {
 
         void okEvent();
 
         void cancelEvent();
+    }
+
+    public interface DialogWrapper {
+
+        void show();
+
+        void close();
+        
+        void dispose();
+
+        Window getWindow();
+
+        void center();
     }
 }

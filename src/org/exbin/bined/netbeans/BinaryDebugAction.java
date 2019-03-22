@@ -20,9 +20,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import javax.swing.JPanel;
+import org.exbin.framework.gui.utils.WindowUtils;
+import org.exbin.framework.gui.utils.WindowUtils.DialogWrapper;
 import org.netbeans.api.debugger.jpda.ObjectVariable;
-import org.openide.DialogDescriptor;
-import org.openide.DialogDisplayer;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
 
@@ -51,8 +51,7 @@ public final class BinaryDebugAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         // new UIPanel(context);
-        DialogDescriptor dd = new DialogDescriptor(new JPanel(), "Selected Variables");
-        Dialog dlg = DialogDisplayer.getDefault().createDialog(dd);
-        dlg.setVisible(true);
+        DialogWrapper dialog = WindowUtils.createDialog(new JPanel(), null, "Selected Variables", Dialog.ModalityType.APPLICATION_MODAL);
+        dialog.show();
     }
 }

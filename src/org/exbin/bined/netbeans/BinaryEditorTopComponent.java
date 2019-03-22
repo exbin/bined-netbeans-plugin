@@ -68,8 +68,6 @@ import org.netbeans.api.settings.ConvertAsProperties;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.MultiViewElementCallback;
-import org.openide.DialogDescriptor;
-import org.openide.DialogDisplayer;
 import org.openide.awt.UndoRedo;
 import org.openide.loaders.DataObject;
 import org.openide.nodes.Node;
@@ -84,6 +82,7 @@ import org.exbin.framework.bined.options.CodeAreaOptions;
 import org.exbin.framework.bined.options.EditorOptions;
 import org.exbin.framework.bined.options.StatusOptions;
 import org.exbin.framework.gui.about.panel.AboutPanel;
+import org.exbin.framework.gui.utils.WindowUtils.DialogWrapper;
 import org.exbin.framework.gui.utils.panel.CloseControlPanel;
 import org.openide.util.NbPreferences;
 
@@ -123,7 +122,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     private BinaryStatusApi binaryStatus;
     private TextEncodingStatusApi encodingStatus;
     private CharsetChangeListener charsetChangeListener = null;
-    private GoToHandler goToHandler;
+    private GoToPositionAction goToRowAction;
     private EncodingsHandler encodingsHandler;
     private ValuesPanel valuesPanel = null;
     private JScrollPane valuesPanelScrollPane = null;
@@ -177,7 +176,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         codeAreaPanel.add(codeArea, BorderLayout.CENTER);
         add(statusPanel, BorderLayout.SOUTH);
         registerBinaryStatus(statusPanel);
-        goToHandler = new GoToHandler(codeArea);
+        goToRowAction = new GoToPositionAction(codeArea);
 
         codeArea.setComponentPopupMenu(new JPopupMenu() {
             @Override
@@ -258,7 +257,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                             break;
                         }
                         case KeyEvent.VK_G: {
-                            goToHandler.getGoToRowAction().actionPerformed(null);
+                            goToRowAction.actionPerformed(null);
                             break;
                         }
                     }
@@ -286,7 +285,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
             @Override
             public void changeCursorPosition() {
-                goToHandler.getGoToRowAction().actionPerformed(null);
+                goToRowAction.actionPerformed(null);
             }
 
             @Override
@@ -681,9 +680,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
         final JMenuItem goToMenuItem = new JMenuItem("Go To...");
         goToMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, metaMask));
-        goToMenuItem.addActionListener((ActionEvent e) -> {
-            goToHandler.getGoToRowAction().actionPerformed(null);
-        });
+        goToMenuItem.addActionListener(goToRowAction);
         result.add(goToMenuItem);
 
         final JMenuItem findMenuItem = new JMenuItem("Find...");
@@ -710,9 +707,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             optionsPanel.setApplyOptions(getApplyOptions());
             OptionsControlPanel optionsControlPanel = new OptionsControlPanel();
             JPanel dialogPanel = WindowUtils.createDialogPanel(optionsPanel, optionsControlPanel);
-            DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Options", true, new Object[0], null, 0, null, null);
-
-            final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
+            DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, null, "Options", Dialog.ModalityType.MODELESS);
             optionsControlPanel.setHandler((OptionsControlHandler.ControlActionType actionType) -> {
                 if (actionType == OptionsControlHandler.ControlActionType.SAVE) {
                     optionsPanel.store();
@@ -722,11 +717,11 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                     codeArea.repaint();
                 }
 
-                WindowUtils.closeWindow(dialog);
+                dialog.close();
             });
-            WindowUtils.assignGlobalKeyListener(dialog, optionsControlPanel.createOkCancelListener());
-            dialog.setSize(650, 460);
-            dialog.setVisible(true);
+            WindowUtils.assignGlobalKeyListener(dialog.getWindow(), optionsControlPanel.createOkCancelListener());
+            dialog.getWindow().setSize(650, 460);
+            dialog.show();
         });
         result.add(optionsMenuItem);
         result.addSeparator();
@@ -737,15 +732,13 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             aboutPanel.setupFields();
             CloseControlPanel closeControlPanel = new CloseControlPanel();
             JPanel dialogPanel = WindowUtils.createDialogPanel(aboutPanel, closeControlPanel);
-            DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "About Plugin", true, new Object[0], null, 0, null, null);
-
-            final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
+            DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, null, "About Plugin", Dialog.ModalityType.APPLICATION_MODAL);
             closeControlPanel.setHandler(() -> {
-                WindowUtils.closeWindow(dialog);
+                dialog.close();
             });
-            WindowUtils.assignGlobalKeyListener(dialog, closeControlPanel.createOkCancelListener());
-            dialog.setSize(650, 460);
-            dialog.setVisible(true);
+            WindowUtils.assignGlobalKeyListener(dialog.getWindow(), closeControlPanel.createOkCancelListener());
+//            dialog.setSize(650, 460);
+            dialog.show();;
         });
         result.add(aboutMenuItem);
 

@@ -17,7 +17,6 @@ package org.exbin.bined.netbeans.panel;
 
 import org.exbin.bined.netbeans.BinEdApplyOptions;
 import java.awt.Component;
-import java.awt.Dialog;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nonnull;
@@ -44,10 +43,9 @@ import org.exbin.framework.editor.text.panel.AddEncodingPanel;
 import org.exbin.framework.editor.text.panel.TextEncodingPanel;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
+import org.exbin.framework.gui.utils.WindowUtils.DialogWrapper;
 import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
 import org.exbin.framework.gui.utils.panel.DefaultControlPanel;
-import org.openide.DialogDescriptor;
-import org.openide.DialogDisplayer;
 import org.openide.util.NbPreferences;
 
 /**
@@ -126,16 +124,15 @@ public class BinEdOptionsPanel extends javax.swing.JPanel {
             addEncodingPanel.setUsedEncodings(usedEncodings);
             DefaultControlPanel encodingsControlPanel = new DefaultControlPanel(addEncodingPanel.getResourceBundle());
             JPanel dialogPanel = WindowUtils.createDialogPanel(addEncodingPanel, encodingsControlPanel);
-            DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Add Encodings", true, new Object[0], null, 0, null, null);
-            final Dialog addEncodingDialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
+            final DialogWrapper addEncodingDialog = WindowUtils.createDialog(dialogPanel, null, "Add Encodings", java.awt.Dialog.ModalityType.APPLICATION_MODAL);
             encodingsControlPanel.setHandler((DefaultControlHandler.ControlActionType actionType) -> {
                 if (actionType == DefaultControlHandler.ControlActionType.OK) {
                     result.addAll(addEncodingPanel.getEncodings());
                 }
 
-                WindowUtils.closeWindow(addEncodingDialog);
+                addEncodingDialog.close();
             });
-            addEncodingDialog.setVisible(true);
+            addEncodingDialog.show();
             return result;
         });
     }

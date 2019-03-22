@@ -15,7 +15,6 @@
  */
 package org.exbin.framework.bined.options.panel;
 
-import java.awt.Dialog;
 import java.awt.Font;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -28,10 +27,9 @@ import org.exbin.framework.bined.options.CodeAreaOptions;
 import org.exbin.framework.editor.text.panel.TextFontPanel;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
+import org.exbin.framework.gui.utils.WindowUtils.DialogWrapper;
 import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
 import org.exbin.framework.gui.utils.panel.DefaultControlPanel;
-import org.openide.DialogDescriptor;
-import org.openide.DialogDisplayer;
 
 /**
  * Code area preference parameters panel.
@@ -72,9 +70,9 @@ public class CodeAreaOptionsPanel extends javax.swing.JPanel {
         updateFontTextField();
         codeTypeComboBox.setSelectedItem(options.getCodeType().name());
         showNonprintableCharactersCheckBox.setSelected(options.isShowUnprintables());
-        codeCharactersModeComboBox.setSelectedItem((String) options.getCodeCharactersCase().name());
-        positionCodeTypeComboBox.setSelectedItem((String) options.getPositionCodeType().name());
-        viewModeComboBox.setSelectedItem((String) options.getViewMode().name());
+        codeCharactersModeComboBox.setSelectedItem(options.getCodeCharactersCase().name());
+        positionCodeTypeComboBox.setSelectedItem(options.getPositionCodeType().name());
+        viewModeComboBox.setSelectedItem(options.getViewMode().name());
         codeColorizationCheckBox.setSelected(options.isCodeColorization());
         useDefaultFontCheckBox.setSelected(options.isUseDefaultFont());
         wrapLineModeCheckBox.setSelected(options.isRowWrapping());
@@ -278,9 +276,7 @@ public class CodeAreaOptionsPanel extends javax.swing.JPanel {
         textFontPanel.setStoredFont(codeFont);
         textFontPanel.setVisible(true);
         JPanel dialogPanel = WindowUtils.createDialogPanel(textFontPanel, textFontControlPanel);
-        DialogDescriptor dialogDescriptor = new DialogDescriptor(dialogPanel, "Select Font", true, new Object[0], null, 0, null, null);
-
-        final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
+        final DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, null, "Select Font", java.awt.Dialog.ModalityType.APPLICATION_MODAL);
         textFontControlPanel.setHandler((DefaultControlHandler.ControlActionType actionType) -> {
             if (actionType == DefaultControlHandler.ControlActionType.OK) {
                 codeFont = textFontPanel.getStoredFont();
@@ -288,10 +284,10 @@ public class CodeAreaOptionsPanel extends javax.swing.JPanel {
                 useDefaultFontCheckBox.setSelected(false);
             }
 
-            WindowUtils.closeWindow(dialog);
+            dialog.close();
         });
-        WindowUtils.assignGlobalKeyListener(dialog, textFontControlPanel.createOkCancelListener());
-        dialog.setVisible(true);
+        WindowUtils.assignGlobalKeyListener(dialog.getWindow(), textFontControlPanel.createOkCancelListener());
+        dialog.show();
     }//GEN-LAST:event_selectFontButtonActionPerformed
 
     /**
