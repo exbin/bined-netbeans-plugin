@@ -24,7 +24,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.EditationMode;
 import org.exbin.bined.SelectionRange;
-import org.exbin.bined.capability.EditationModeCapable;
 import org.exbin.bined.capability.RowWrappingCapable;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.bined.swing.extended.layout.DefaultExtendedCodeAreaLayoutProfile;
@@ -57,7 +56,7 @@ public class LayoutProfilePanel extends javax.swing.JPanel {
     }
 
     private void initPreviewCodeArea() {
-        ((EditationModeCapable) codeArea).setEditationMode(EditationMode.READ_ONLY);
+        codeArea.setEditationMode(EditationMode.READ_ONLY);
         ByteArrayEditableData exampleData = new ByteArrayEditableData();
         try {
             exampleData.loadFromStream(getClass().getResourceAsStream("/org/exbin/framework/bined/resources/preview/lorem.txt"));
@@ -65,7 +64,7 @@ public class LayoutProfilePanel extends javax.swing.JPanel {
             Logger.getLogger(LayoutProfilePanel.class.getName()).log(Level.SEVERE, null, ex);
         }
         codeArea.setContentData(exampleData);
-        ((RowWrappingCapable) codeArea).setRowWrapping(RowWrappingCapable.RowWrappingMode.WRAPPING);
+        codeArea.setRowWrapping(RowWrappingCapable.RowWrappingMode.WRAPPING);
         codeArea.setEnabled(false);
         codeArea.setSelection(new SelectionRange(200, 300));
     }
