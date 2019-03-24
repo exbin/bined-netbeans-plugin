@@ -35,6 +35,7 @@ import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
@@ -114,7 +115,7 @@ public class WindowUtils {
     }
 
     @Nonnull
-    public static DialogWrapper createDialog(final Component component, Window parent, String dialogTitle, Dialog.ModalityType modalityType) {
+    public static DialogWrapper createDialog(final JComponent component, Window parent, String dialogTitle, Dialog.ModalityType modalityType) {
         DialogDescriptor dialogDescriptor = new DialogDescriptor(component, dialogTitle, modalityType != Dialog.ModalityType.MODELESS, new Object[0], null, 0, null, null);
         final Dialog dialog = DialogDisplayer.getDefault().createDialog(dialogDescriptor);
         Dimension size = component.getPreferredSize();
@@ -149,7 +150,7 @@ public class WindowUtils {
         };
     }
 
-    public static JDialog createDialog(final Component component) {
+    public static JDialog createDialog(final JComponent component) {
         JDialog dialog = new JDialog();
         Dimension size = component.getPreferredSize();
         dialog.add(component);
@@ -157,7 +158,7 @@ public class WindowUtils {
         return dialog;
     }
 
-    public static void invokeDialog(final Component component) {
+    public static void invokeDialog(final JComponent component) {
         JDialog dialog = createDialog(component);
         invokeWindow(dialog);
     }

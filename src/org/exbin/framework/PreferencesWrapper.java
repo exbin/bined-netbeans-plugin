@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.bined.netbeans;
+package org.exbin.framework;
 
-import org.exbin.framework.Preferences;
 import java.util.prefs.BackingStoreException;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;

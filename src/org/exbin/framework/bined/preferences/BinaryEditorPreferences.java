@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.netbeans.FileHandlingMode;
-import org.exbin.bined.netbeans.PreferencesWrapper;
+import org.exbin.framework.PreferencesWrapper;
 import org.exbin.framework.bined.options.CodeAreaOptions;
 import org.openide.util.NbPreferences;
 

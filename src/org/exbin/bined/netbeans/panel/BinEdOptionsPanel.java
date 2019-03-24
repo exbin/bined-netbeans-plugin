@@ -27,7 +27,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
-import org.exbin.bined.netbeans.PreferencesWrapper;
+import org.exbin.framework.PreferencesWrapper;
 import org.exbin.framework.bined.options.CharsetOptions;
 import org.exbin.framework.bined.options.CodeAreaOptions;
 import org.exbin.framework.bined.options.EditorOptions;

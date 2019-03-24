@@ -15,6 +15,7 @@
  */
 package org.exbin.bined.netbeans;
 
+import org.exbin.framework.PreferencesWrapper;
 import org.exbin.framework.editor.text.EncodingsHandler;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
 import java.awt.BorderLayout;
@@ -275,7 +276,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         });
 
         codeArea.addEditationModeChangedListener(binaryStatus::setEditationMode);
-        binaryStatus.setEditationMode(codeArea.getEditationMode(), codeArea.getEditationOperation());
+        binaryStatus.setEditationMode(codeArea.getEditationMode(), codeArea.getActiveOperation());
 
         binaryStatus.setControlHandler(new BinaryStatusApi.StatusControlHandler() {
             @Override
