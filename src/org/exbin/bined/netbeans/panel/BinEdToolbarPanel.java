@@ -15,12 +15,15 @@
  */
 package org.exbin.bined.netbeans.panel;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.CodeType;
 import org.exbin.bined.capability.RowWrappingCapable;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
 import org.exbin.framework.gui.utils.LanguageUtils;
+import org.gpl.JSplitButton.JSplitButton;
 
 /**
  * Hexadecimal editor toolbar panel.
@@ -36,10 +39,24 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     private final BinaryEditorPreferences preferences;
     private final ExtCodeArea codeArea;
 
+//    private JSplitButton codeTypeButton;
+
     public BinEdToolbarPanel(BinaryEditorPreferences preferences, ExtCodeArea codeArea) {
         this.preferences = preferences;
         this.codeArea = codeArea;
         initComponents();
+        init();
+    }
+    
+    private void init() {
+//        codeTypeButton = new JSplitButton("HEX");
+//        codeTypeButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                throw new UnsupportedOperationException("Not supported yet.");
+//            }
+//        });
+//        controlToolBar.add(codeTypeButton);
     }
 
     public void applyFromCodeArea() {
