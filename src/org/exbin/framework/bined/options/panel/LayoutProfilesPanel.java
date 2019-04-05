@@ -98,7 +98,7 @@ public class LayoutProfilesPanel extends javax.swing.JPanel implements ProfileLi
     private ProfilesListModel getProfilesListModel() {
         return ((ProfilesListModel) profilesList.getModel());
     }
-    
+
     public DefaultExtendedCodeAreaLayoutProfile getProfile(int profileIndex) {
         return getProfilesListModel().getElementAt(profileIndex).layoutProfile;
     }
@@ -290,6 +290,7 @@ public class LayoutProfilesPanel extends javax.swing.JPanel implements ProfileLi
         LayoutProfilePanel layoutProfilePanel = new LayoutProfilePanel();
         layoutProfilePanel.setLayoutProfile(new DefaultExtendedCodeAreaLayoutProfile());
         NamedProfilePanel namedProfilePanel = new NamedProfilePanel(layoutProfilePanel);
+        namedProfilePanel.setProfileName(getNewProfileName());
         DefaultControlPanel controlPanel = new DefaultControlPanel();
         JPanel dialogPanel = WindowUtils.createDialogPanel(namedProfilePanel, controlPanel);
 
@@ -577,5 +578,20 @@ public class LayoutProfilesPanel extends javax.swing.JPanel implements ProfileLi
         public Component getListCellRendererComponent(JList<? extends LayoutProfile> list, LayoutProfile value, int index, boolean isSelected, boolean cellHasFocus) {
             return defaultListCellRenderer.getListCellRendererComponent(list, value.profileName, index, isSelected, cellHasFocus);
         }
+    }
+
+    @Nonnull
+    private String getNewProfileName() {
+        String profileName = "Profile ";
+        int profileIndex = 1;
+        while (hasProfileWithName(profileName + profileIndex)) {
+            profileIndex++;
+        }
+
+        return profileName + profileIndex;
+    }
+
+    private boolean hasProfileWithName(String profileName) {
+        return getProfilesListModel().getProfiles().stream().anyMatch((profile) -> (profileName.equals(profile.profileName)));
     }
 }

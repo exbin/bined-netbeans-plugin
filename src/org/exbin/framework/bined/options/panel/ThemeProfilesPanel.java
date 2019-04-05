@@ -290,6 +290,7 @@ public class ThemeProfilesPanel extends javax.swing.JPanel implements ProfileLis
         ThemeProfilePanel themeProfilePanel = new ThemeProfilePanel();
         themeProfilePanel.setThemeProfile(new ExtendedCodeAreaThemeProfile());
         NamedProfilePanel namedProfilePanel = new NamedProfilePanel(themeProfilePanel);
+        namedProfilePanel.setProfileName(getNewProfileName());
         DefaultControlPanel controlPanel = new DefaultControlPanel();
         JPanel dialogPanel = WindowUtils.createDialogPanel(namedProfilePanel, controlPanel);
 
@@ -581,5 +582,20 @@ public class ThemeProfilesPanel extends javax.swing.JPanel implements ProfileLis
         public Component getListCellRendererComponent(JList<? extends ThemeProfile> list, ThemeProfile value, int index, boolean isSelected, boolean cellHasFocus) {
             return defaultListCellRenderer.getListCellRendererComponent(list, value.profileName, index, isSelected, cellHasFocus);
         }
+    }
+
+    @Nonnull
+    private String getNewProfileName() {
+        String profileName = "Profile ";
+        int profileIndex = 1;
+        while (hasProfileWithName(profileName + profileIndex)) {
+            profileIndex++;
+        }
+
+        return profileName + profileIndex;
+    }
+
+    private boolean hasProfileWithName(String profileName) {
+        return getProfilesListModel().getProfiles().stream().anyMatch((profile) -> (profileName.equals(profile.profileName)));
     }
 }

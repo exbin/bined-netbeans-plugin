@@ -291,6 +291,7 @@ public class ColorProfilesPanel extends javax.swing.JPanel implements ProfileLis
         ColorProfilePanel colorProfilePanel = new ColorProfilePanel();
         colorProfilePanel.setColorProfile(new ExtendedCodeAreaColorProfile());
         NamedProfilePanel namedProfilePanel = new NamedProfilePanel(colorProfilePanel);
+        namedProfilePanel.setProfileName(getNewProfileName());
         DefaultControlPanel controlPanel = new DefaultControlPanel();
         JPanel dialogPanel = WindowUtils.createDialogPanel(namedProfilePanel, controlPanel);
 
@@ -579,5 +580,20 @@ public class ColorProfilesPanel extends javax.swing.JPanel implements ProfileLis
         public Component getListCellRendererComponent(JList<? extends ColorProfile> list, ColorProfile value, int index, boolean isSelected, boolean cellHasFocus) {
             return defaultListCellRenderer.getListCellRendererComponent(list, value.profileName, index, isSelected, cellHasFocus);
         }
+    }
+
+    @Nonnull
+    private String getNewProfileName() {
+        String profileName = "Profile ";
+        int profileIndex = 1;
+        while (hasProfileWithName(profileName + profileIndex)) {
+            profileIndex++;
+        }
+
+        return profileName + profileIndex;
+    }
+
+    private boolean hasProfileWithName(String profileName) {
+        return getProfilesListModel().getProfiles().stream().anyMatch((profile) -> (profileName.equals(profile.profileName)));
     }
 }
