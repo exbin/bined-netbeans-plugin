@@ -298,7 +298,7 @@ public class TextEncodingPanel extends javax.swing.JPanel implements OptionsPane
     @Override
     public List<PathItem> getPath() {
         ArrayList<OptionsPanel.PathItem> path = new ArrayList<>();
-        path.add(new PathItem("apperance", ""));
+        path.add(new PathItem("appearance", ""));
         path.add(new PathItem("encoding", resourceBundle.getString("options.Path.0")));
         return path;
     }

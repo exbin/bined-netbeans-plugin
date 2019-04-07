@@ -85,12 +85,13 @@ import org.exbin.framework.bined.options.StatusOptions;
 import org.exbin.framework.gui.about.panel.AboutPanel;
 import org.exbin.framework.gui.utils.WindowUtils.DialogWrapper;
 import org.exbin.framework.gui.utils.panel.CloseControlPanel;
+import org.netbeans.api.queries.FileEncodingQuery;
 import org.openide.util.NbPreferences;
 
 /**
  * Hexadecimal editor top component.
  *
- * @version 0.2.0 2019/03/18
+ * @version 0.2.0 2019/04/07
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.bined//BinaryEditor//EN", autostore = false)
@@ -162,6 +163,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                 codeArea.setCharset(Charset.forName(encodingName));
                 encodingStatus.setEncoding(encodingName);
                 preferences.getCodeAreaParameters().setSelectedEncoding(encodingName);
+                charsetChangeListener.charsetChanged();
             }
         });
 

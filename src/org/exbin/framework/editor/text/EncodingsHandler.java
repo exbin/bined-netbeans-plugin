@@ -57,6 +57,7 @@ public class EncodingsHandler implements TextEncodingPanelApi {
 
     private TextEncodingStatusApi textEncodingStatus;
     private List<String> encodings = null;
+    private String selectedEncoding;
     private ActionListener encodingActionListener;
     private ButtonGroup encodingButtonGroup;
     private javax.swing.JMenu toolsEncodingMenu;
@@ -65,8 +66,8 @@ public class EncodingsHandler implements TextEncodingPanelApi {
 
     public static final String ENCODING_UTF8 = "UTF-8";
 
-    public static final String UTF_ENCODING_TEXT = "UTF-8 (default)";
-    public static final String UTF_ENCODING_TOOLTIP = "Set encoding UTF-8";
+    public static final String DEFAULT_ENCODING_TEXT = "UTF-8 (default)";
+    public static final String ENCODING_TOOLTIP_PREFIX = "Set encoding ";
 
     private Action manageEncodingsAction;
     private BinaryEditorPreferences preferences;
@@ -88,11 +89,9 @@ public class EncodingsHandler implements TextEncodingPanelApi {
 
         utfEncodingRadioButtonMenuItem = new JRadioButtonMenuItem();
         utfEncodingRadioButtonMenuItem.setSelected(true);
-        utfEncodingRadioButtonMenuItem.setText(UTF_ENCODING_TEXT);
-        utfEncodingRadioButtonMenuItem.setToolTipText(UTF_ENCODING_TOOLTIP);
-        utfEncodingActionListener = (java.awt.event.ActionEvent evt) -> {
-            setSelectedEncoding(ENCODING_UTF8);
-        };
+        utfEncodingRadioButtonMenuItem.setText(DEFAULT_ENCODING_TEXT);
+        utfEncodingRadioButtonMenuItem.setToolTipText(ENCODING_TOOLTIP_PREFIX + ENCODING_UTF8);
+        utfEncodingActionListener = (java.awt.event.ActionEvent evt) -> setSelectedEncoding(ENCODING_UTF8);
         utfEncodingRadioButtonMenuItem.addActionListener(utfEncodingActionListener);
 
         encodingButtonGroup.add(utfEncodingRadioButtonMenuItem);
@@ -141,7 +140,6 @@ public class EncodingsHandler implements TextEncodingPanelApi {
         manageEncodingsAction.putValue(Action.NAME, manageEncodingsAction.getValue(Action.NAME) + ActionUtils.DIALOG_MENUITEM_EXT);
 
         toolsEncodingMenu = new JMenu();
-        toolsEncodingMenu.add(utfEncodingRadioButtonMenuItem);
         toolsEncodingMenu.addSeparator();
         toolsEncodingMenu.add(manageEncodingsAction);
         toolsEncodingMenu.setText(resourceBundle.getString("toolsEncodingMenu.text"));
@@ -160,13 +158,13 @@ public class EncodingsHandler implements TextEncodingPanelApi {
 
     @Override
     public String getSelectedEncoding() {
-        return textEncodingStatus.getEncoding(); // ((TextCharsetApi) editorProvider.getPanel()).getCharset().name();
+        return selectedEncoding;
     }
 
     @Override
     public void setSelectedEncoding(String encoding) {
         if (encoding != null) {
-//            ((TextCharsetApi) editorProvider.getPanel()).setCharset(Charset.forName(encoding));
+            selectedEncoding = encoding;
             textEncodingStatus.setEncoding(encoding);
         }
     }
@@ -180,28 +178,23 @@ public class EncodingsHandler implements TextEncodingPanelApi {
     }
 
     public void rebuildEncodings() {
-        String encodingToolTip = "Set encoding ";
-        for (int i = toolsEncodingMenu.getItemCount() - 2; i > 1; i--) {
+        for (int i = toolsEncodingMenu.getItemCount() - 2; i >= 0; i--) {
             toolsEncodingMenu.remove(i);
         }
 
-        if (encodings.size() > 0) {
+        if (encodings.isEmpty()) {
+            toolsEncodingMenu.add(utfEncodingRadioButtonMenuItem, 0);
+            setSelectedEncoding(ENCODING_UTF8);
+            utfEncodingRadioButtonMenuItem.setSelected(true);
+        } else {
             int selectedEncoding = encodings.indexOf(getSelectedEncoding());
-            if (selectedEncoding < 0) {
-                setSelectedEncoding(ENCODING_UTF8);
-                utfEncodingRadioButtonMenuItem.setSelected(true);
-            }
-            toolsEncodingMenu.add(new JSeparator(), 1);
             for (int index = 0; index < encodings.size(); index++) {
                 String encoding = encodings.get(index);
-                JRadioButtonMenuItem item = new JRadioButtonMenuItem(encoding, false);
+                JRadioButtonMenuItem item = new JRadioButtonMenuItem(encoding, index == selectedEncoding);
                 item.addActionListener(encodingActionListener);
-                item.setToolTipText(encodingToolTip + encoding);
-                toolsEncodingMenu.add(item, index + 2);
+                item.setToolTipText(ENCODING_TOOLTIP_PREFIX + encoding);
+                toolsEncodingMenu.add(item, index);
                 encodingButtonGroup.add(item);
-                if (index == selectedEncoding) {
-                    item.setSelected(true);
-                }
             }
         }
     }
@@ -224,16 +217,13 @@ public class EncodingsHandler implements TextEncodingPanelApi {
 
     public void cycleEncodings() {
         int menuIndex = 0;
-        if (encodings.size() > 0) {
+        if (!encodings.isEmpty()) {
             int selectedEncoding = encodings.indexOf(getSelectedEncoding());
-            if (selectedEncoding < 0) {
+            if (selectedEncoding < 0 || selectedEncoding == encodings.size() - 1) {
                 setSelectedEncoding(encodings.get(0));
-                menuIndex = 1;
-            } else if (selectedEncoding < encodings.size() - 1) {
-                setSelectedEncoding(encodings.get(selectedEncoding + 1));
-                menuIndex = selectedEncoding + 2;
             } else {
-                setSelectedEncoding(ENCODING_UTF8);
+                setSelectedEncoding(encodings.get(selectedEncoding + 1));
+                menuIndex = selectedEncoding;
             }
         }
 
@@ -243,28 +233,19 @@ public class EncodingsHandler implements TextEncodingPanelApi {
     public void popupEncodingsMenu(MouseEvent mouseEvent) {
         JPopupMenu popupMenu = new JPopupMenu();
 
-        int selectedEncoding = encodings.indexOf(getSelectedEncoding());
-        String encodingToolTip = "Set encoding ";
-        JRadioButtonMenuItem utfEncoding = new JRadioButtonMenuItem("", false);
-        utfEncoding.setText(UTF_ENCODING_TEXT);
-        utfEncoding.setToolTipText(UTF_ENCODING_TOOLTIP);
-        utfEncoding.addActionListener(utfEncodingActionListener);
-        if (selectedEncoding < 0) {
-            utfEncoding.setSelected(true);
-        }
-        popupMenu.add(utfEncoding);
-        if (encodings.size() > 0) {
-
-            popupMenu.add(new JSeparator(), 1);
+        if (encodings.isEmpty()) {
+            JRadioButtonMenuItem utfEncoding = new JRadioButtonMenuItem(DEFAULT_ENCODING_TEXT, ENCODING_UTF8.equals(selectedEncoding));
+            utfEncoding.setToolTipText(ENCODING_TOOLTIP_PREFIX + ENCODING_UTF8);
+            utfEncoding.addActionListener(utfEncodingActionListener);
+            popupMenu.add(utfEncoding);
+        } else {
+            int selectedEncoding = encodings.indexOf(getSelectedEncoding());
             for (int index = 0; index < encodings.size(); index++) {
                 String encoding = encodings.get(index);
-                JRadioButtonMenuItem item = new JRadioButtonMenuItem(encoding, false);
+                JRadioButtonMenuItem item = new JRadioButtonMenuItem(encoding, index == selectedEncoding);
                 item.addActionListener(encodingActionListener);
-                item.setToolTipText(encodingToolTip + encoding);
-                popupMenu.add(item, index + 2);
-                if (index == selectedEncoding) {
-                    item.setSelected(true);
-                }
+                item.setToolTipText(ENCODING_TOOLTIP_PREFIX + encoding);
+                popupMenu.add(item, index);
             }
         }
 
