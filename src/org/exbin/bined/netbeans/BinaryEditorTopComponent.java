@@ -741,7 +741,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             });
             WindowUtils.assignGlobalKeyListener(dialog.getWindow(), closeControlPanel.createOkCancelListener());
 //            dialog.setSize(650, 460);
-            dialog.show();;
+            dialog.show();
         });
         result.add(aboutMenuItem);
 
