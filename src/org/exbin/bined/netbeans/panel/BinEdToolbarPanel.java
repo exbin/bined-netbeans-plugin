@@ -17,7 +17,6 @@ package org.exbin.bined.netbeans.panel;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.CodeType;
-import org.exbin.bined.capability.RowWrappingCapable;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
 import org.exbin.framework.gui.utils.LanguageUtils;
@@ -25,7 +24,7 @@ import org.exbin.framework.gui.utils.LanguageUtils;
 /**
  * Hexadecimal editor toolbar panel.
  *
- * @version 0.2.0 2019/03/17
+ * @version 0.2.0 2019/04/12
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -37,14 +36,13 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     private final ExtCodeArea codeArea;
 
 //    private JSplitButton codeTypeButton;
-
     public BinEdToolbarPanel(BinaryEditorPreferences preferences, ExtCodeArea codeArea) {
         this.preferences = preferences;
         this.codeArea = codeArea;
         initComponents();
         init();
     }
-    
+
     private void init() {
 //        codeTypeButton = new JSplitButton("HEX");
 //        codeTypeButton.addActionListener(new ActionListener() {
@@ -59,20 +57,17 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     public void applyFromCodeArea() {
         codeTypeComboBox.setSelectedIndex(codeArea.getCodeType().ordinal());
         showUnprintablesToggleButton.setSelected(codeArea.isShowUnprintables());
-        rowWrappingToggleButton.setSelected(codeArea.getRowWrapping() == RowWrappingCapable.RowWrappingMode.WRAPPING);
     }
 
     public void loadFromPreferences() {
         codeTypeComboBox.setSelectedIndex(preferences.getCodeAreaParameters().getCodeType().ordinal());
         showUnprintablesToggleButton.setSelected(preferences.getCodeAreaParameters().isShowNonprintables());
-        rowWrappingToggleButton.setSelected(preferences.getCodeAreaParameters().isRowWrapping());
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         controlToolBar = new javax.swing.JToolBar();
-        rowWrappingToggleButton = new javax.swing.JToggleButton();
         showUnprintablesToggleButton = new javax.swing.JToggleButton();
         separator1 = new javax.swing.JToolBar.Separator();
         codeTypeComboBox = new javax.swing.JComboBox<>();
@@ -80,15 +75,6 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         controlToolBar.setBorder(null);
         controlToolBar.setFloatable(false);
         controlToolBar.setRollover(true);
-
-        rowWrappingToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/exbin/bined/netbeans/resources/icons/bined-linewrap.png"))); // NOI18N
-        rowWrappingToggleButton.setToolTipText(resourceBundle.getString("rowWrappingToggleButton.toolTipText")); // NOI18N
-        rowWrappingToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rowWrappingToggleButtonActionPerformed(evt);
-            }
-        });
-        controlToolBar.add(rowWrappingToggleButton);
 
         showUnprintablesToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/exbin/bined/netbeans/resources/icons/insert-pilcrow.png"))); // NOI18N
         showUnprintablesToggleButton.setToolTipText(resourceBundle.getString("showUnprintablesToggleButton.toolTipText")); // NOI18N
@@ -117,7 +103,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(controlToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 252, Short.MAX_VALUE))
+                .addGap(0, 280, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -127,14 +113,8 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void rowWrappingToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rowWrappingToggleButtonActionPerformed
-        codeArea.setRowWrapping(rowWrappingToggleButton.isSelected() ? RowWrappingCapable.RowWrappingMode.WRAPPING : RowWrappingCapable.RowWrappingMode.NO_WRAPPING);
-        preferences.getCodeAreaParameters().setRowWrapping(rowWrappingToggleButton.isSelected());
-    }//GEN-LAST:event_rowWrappingToggleButtonActionPerformed
-
     private void showUnprintablesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showUnprintablesToggleButtonActionPerformed
         codeArea.setShowUnprintables(showUnprintablesToggleButton.isSelected());
-        preferences.getCodeAreaParameters().setShowUnprintables(rowWrappingToggleButton.isSelected());
     }//GEN-LAST:event_showUnprintablesToggleButtonActionPerformed
 
     private void codeTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_codeTypeComboBoxActionPerformed
@@ -146,7 +126,6 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> codeTypeComboBox;
     private javax.swing.JToolBar controlToolBar;
-    private javax.swing.JToggleButton rowWrappingToggleButton;
     private javax.swing.JToolBar.Separator separator1;
     private javax.swing.JToggleButton showUnprintablesToggleButton;
     // End of variables declaration//GEN-END:variables
