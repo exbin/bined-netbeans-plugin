@@ -44,7 +44,6 @@ import org.exbin.framework.editor.text.panel.TextFontOptionsPanel;
 public class CodeAreaParameters {
 
     public static final String PREFERENCES_CODE_TYPE = "codeType";
-    public static final String PREFERENCES_LINE_WRAPPING = "lineWrapping";
     public static final String PREFERENCES_SHOW_UNPRINTABLES = "showNonpritables";
     public static final String PREFERENCES_ENCODING_SELECTED = "selectedEncoding";
     public static final String PREFERENCES_ENCODING_PREFIX = "textEncoding.";
@@ -165,14 +164,6 @@ public class CodeAreaParameters {
             preferences.remove(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SUBSCRIPT);
             preferences.remove(TextFontOptionsPanel.PREFERENCES_TEXT_FONT_SUPERSCRIPT);
         }
-    }
-
-    public boolean isRowWrapping() {
-        return preferences.getBoolean(PREFERENCES_LINE_WRAPPING, false);
-    }
-
-    public void setRowWrapping(boolean rowWrapping) {
-        preferences.putBoolean(PREFERENCES_LINE_WRAPPING, rowWrapping);
     }
 
     @Nonnull

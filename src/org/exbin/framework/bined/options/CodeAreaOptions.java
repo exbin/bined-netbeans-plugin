@@ -24,7 +24,6 @@ import org.exbin.bined.CodeType;
 import org.exbin.bined.PositionCodeType;
 import org.exbin.bined.capability.CodeCharactersCaseCapable;
 import org.exbin.bined.capability.CodeTypeCapable;
-import org.exbin.bined.capability.RowWrappingCapable;
 import org.exbin.bined.capability.RowWrappingCapable.RowWrappingMode;
 import org.exbin.bined.capability.ViewModeCapable;
 import org.exbin.bined.extended.capability.PositionCodeTypeCapable;
@@ -44,7 +43,6 @@ import org.exbin.framework.bined.preferences.CodeAreaParameters;
 public class CodeAreaOptions {
 
     private Font codeFont = null;
-    private boolean rowWrapping = false;
     private CodeType codeType = CodeType.HEXADECIMAL;
     private boolean showUnprintables = true;
     private CodeCharactersCase codeCharactersCase = CodeCharactersCase.UPPER;
@@ -66,14 +64,6 @@ public class CodeAreaOptions {
 
     public void setCodeFont(Font codeFont) {
         this.codeFont = codeFont;
-    }
-
-    public boolean isRowWrapping() {
-        return rowWrapping;
-    }
-
-    public void setRowWrapping(boolean rowWrapping) {
-        this.rowWrapping = rowWrapping;
     }
 
     @Nonnull
@@ -171,7 +161,6 @@ public class CodeAreaOptions {
 
     public void loadFromParameters(CodeAreaParameters parameters) {
         codeFont = parameters.getCodeFont(DEFAULT_FONT);
-        rowWrapping = parameters.isRowWrapping();
         codeType = parameters.getCodeType();
         showUnprintables = parameters.isShowNonprintables();
         codeCharactersCase = parameters.getCodeCharactersCase();
@@ -187,7 +176,6 @@ public class CodeAreaOptions {
 
     public void saveToParameters(CodeAreaParameters parameters) {
         parameters.setCodeFont(codeFont);
-        parameters.setRowWrapping(rowWrapping);
         parameters.setCodeType(codeType);
         parameters.setShowUnprintables(showUnprintables);
         parameters.setCodeCharactersCase(codeCharactersCase);
@@ -203,7 +191,6 @@ public class CodeAreaOptions {
 
     public void applyFromCodeArea(ExtCodeArea codeArea) {
         codeFont = ((FontCapable) codeArea).getCodeFont();
-        rowWrapping = ((RowWrappingCapable) codeArea).getRowWrapping() == RowWrappingMode.WRAPPING;
         codeType = ((CodeTypeCapable) codeArea).getCodeType();
         showUnprintables = ((ShowUnprintablesCapable) codeArea).isShowUnprintables();
         codeCharactersCase = ((CodeCharactersCaseCapable) codeArea).getCodeCharactersCase();
@@ -218,7 +205,6 @@ public class CodeAreaOptions {
 
     public void applyToCodeArea(ExtCodeArea codeArea) {
         ((FontCapable) codeArea).setCodeFont(useDefaultFont ? DEFAULT_FONT : codeFont);
-        ((RowWrappingCapable) codeArea).setRowWrapping(rowWrapping ? RowWrappingMode.WRAPPING : RowWrappingMode.NO_WRAPPING);
         ((CodeTypeCapable) codeArea).setCodeType(codeType);
         ((ShowUnprintablesCapable) codeArea).setShowUnprintables(showUnprintables);
         ((CodeCharactersCaseCapable) codeArea).setCodeCharactersCase(codeCharactersCase);
@@ -233,7 +219,6 @@ public class CodeAreaOptions {
 
     public void setOptions(CodeAreaOptions codeAreaOptions) {
         codeFont = codeAreaOptions.codeFont;
-        rowWrapping = codeAreaOptions.rowWrapping;
         codeType = codeAreaOptions.codeType;
         showUnprintables = codeAreaOptions.showUnprintables;
         codeCharactersCase = codeAreaOptions.codeCharactersCase;

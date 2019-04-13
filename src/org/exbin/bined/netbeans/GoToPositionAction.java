@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JPanel;
+import org.exbin.bined.basic.PositionScrollVisibility;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.panel.GoToBinaryPanel;
 import org.exbin.framework.gui.utils.LanguageUtils;
@@ -33,7 +34,7 @@ import org.exbin.framework.gui.utils.panel.DefaultControlPanel;
 /**
  * Go to handler.
  *
- * @version 0.2.0 2019/03/22
+ * @version 0.2.0 2019/04/13
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -60,6 +61,10 @@ public class GoToPositionAction implements ActionListener {
             if (actionType == DefaultControlHandler.ControlActionType.OK) {
                 goToPanel.acceptInput();
                 codeArea.setCaretPosition(goToPanel.getGoToPosition());
+                PositionScrollVisibility visibility = codeArea.getPainter().computePositionScrollVisibility(codeArea.getCaretPosition());
+                if (visibility != PositionScrollVisibility.VISIBLE) {
+                    codeArea.centerOnCursor();
+                }
             }
 
             dialog.close();

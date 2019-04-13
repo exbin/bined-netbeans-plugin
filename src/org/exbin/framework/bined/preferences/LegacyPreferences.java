@@ -324,7 +324,7 @@ public class LegacyPreferences {
     }
 
     public int getSpaceGroupSize() {
-        return preferences.getInt(PREFERENCES_BYTE_GROUP_SIZE, 1);
+        return preferences.getInt(PREFERENCES_SPACE_GROUP_SIZE, 0);
     }
 
     public void setSpaceGroupSize(int spaceGroupSize) {

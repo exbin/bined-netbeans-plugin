@@ -23,6 +23,7 @@ import org.exbin.bined.CodeAreaViewMode;
 import org.exbin.bined.CodeCharactersCase;
 import org.exbin.bined.CodeType;
 import org.exbin.bined.PositionCodeType;
+import org.exbin.bined.capability.RowWrappingCapable;
 import org.exbin.framework.bined.options.CodeAreaOptions;
 import org.exbin.framework.editor.text.panel.TextFontPanel;
 import org.exbin.framework.gui.utils.LanguageUtils;
@@ -58,7 +59,7 @@ public class CodeAreaOptionsPanel extends javax.swing.JPanel {
         options.setViewMode(CodeAreaViewMode.valueOf((String) viewModeComboBox.getSelectedItem()));
         options.setCodeColorization(codeColorizationCheckBox.isSelected());
         options.setUseDefaultFont(useDefaultFontCheckBox.isSelected());
-        options.setRowWrapping(rowWrappingModeCheckBox.isSelected());
+        options.setRowWrappingMode(rowWrappingModeCheckBox.isSelected() ? RowWrappingCapable.RowWrappingMode.WRAPPING : RowWrappingCapable.RowWrappingMode.NO_WRAPPING);
         options.setMaxBytesPerRow((Integer) maxBytesPerRowSpinner.getValue());
         options.setMinRowPositionLength((Integer) minRowPositionLengthSpinner.getValue());
         options.setMaxRowPositionLength((Integer) maxRowPositionLengthSpinner.getValue());
@@ -75,7 +76,7 @@ public class CodeAreaOptionsPanel extends javax.swing.JPanel {
         viewModeComboBox.setSelectedItem(options.getViewMode().name());
         codeColorizationCheckBox.setSelected(options.isCodeColorization());
         useDefaultFontCheckBox.setSelected(options.isUseDefaultFont());
-        rowWrappingModeCheckBox.setSelected(options.isRowWrapping());
+        rowWrappingModeCheckBox.setSelected(options.getRowWrappingMode() == RowWrappingCapable.RowWrappingMode.WRAPPING);
         maxBytesPerRowSpinner.setValue(options.getMaxBytesPerRow());
         minRowPositionLengthSpinner.setValue(options.getMinRowPositionLength());
         maxRowPositionLengthSpinner.setValue(options.getMaxRowPositionLength());

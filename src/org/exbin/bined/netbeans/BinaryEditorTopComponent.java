@@ -85,7 +85,6 @@ import org.exbin.framework.bined.options.StatusOptions;
 import org.exbin.framework.gui.about.panel.AboutPanel;
 import org.exbin.framework.gui.utils.WindowUtils.DialogWrapper;
 import org.exbin.framework.gui.utils.panel.CloseControlPanel;
-import org.netbeans.api.queries.FileEncodingQuery;
 import org.openide.util.NbPreferences;
 
 /**
@@ -717,6 +716,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                 }
                 if (actionType != OptionsControlHandler.ControlActionType.CANCEL) {
                     setApplyOptions(optionsPanel.getApplyOptions());
+                    encodingsHandler.setEncodings(optionsPanel.getApplyOptions().getCharsetOptions().getEncodings());
                     codeArea.repaint();
                 }
 

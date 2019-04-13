@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import org.exbin.bined.capability.RowWrappingCapable;
 import org.exbin.bined.netbeans.FileHandlingMode;
 import org.exbin.bined.swing.extended.layout.DefaultExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.swing.extended.layout.ExtendedCodeAreaDecorations;
@@ -63,8 +64,9 @@ public class BinaryEditorPreferences {
         themeParameters = new ThemeParameters(preferences);
         colorParameters = new ColorParameters(preferences);
 
-        String storedVersion = preferences.get(PREFERENCES_VERSION, "");
-        if ("".equals(storedVersion)) {
+        final String legacyDef = "LEGACY";
+        String storedVersion = preferences.get(PREFERENCES_VERSION, legacyDef);
+        if (legacyDef.equals(storedVersion)) {
             try {
                 importLegacyPreferences();
             } finally {
@@ -120,7 +122,7 @@ public class BinaryEditorPreferences {
         codeAreaParameters.setUseDefaultFont(legacyPreferences.isUseDefaultFont());
         codeAreaParameters.setCodeFont(legacyPreferences.getCodeFont(CodeAreaOptions.DEFAULT_FONT));
         codeAreaParameters.setCodeType(legacyPreferences.getCodeType());
-        codeAreaParameters.setRowWrapping(legacyPreferences.isLineWrapping());
+        codeAreaParameters.setRowWrappingMode(legacyPreferences.isLineWrapping() ? RowWrappingCapable.RowWrappingMode.WRAPPING : RowWrappingCapable.RowWrappingMode.NO_WRAPPING);
         codeAreaParameters.setShowUnprintables(legacyPreferences.isShowNonprintables());
         codeAreaParameters.setCodeCharactersCase(legacyPreferences.getCodeCharactersCase());
         codeAreaParameters.setPositionCodeType(legacyPreferences.getPositionCodeType());
