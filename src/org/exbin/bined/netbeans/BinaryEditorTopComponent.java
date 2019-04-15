@@ -32,12 +32,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import javax.annotation.Nonnull;
 import javax.swing.AbstractAction;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -48,6 +51,7 @@ import org.exbin.bined.EditationOperation;
 import org.exbin.bined.delta.DeltaDocument;
 import org.exbin.bined.delta.FileDataSource;
 import org.exbin.bined.delta.SegmentsRepository;
+import org.exbin.bined.extended.layout.ExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.highlight.swing.extended.ExtendedHighlightNonAsciiCodeAreaPainter;
 import org.exbin.bined.netbeans.panel.BinEdOptionsPanelBorder;
 import org.exbin.bined.netbeans.panel.BinEdToolbarPanel;
@@ -124,6 +128,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     private TextEncodingStatusApi encodingStatus;
     private CharsetChangeListener charsetChangeListener = null;
     private GoToPositionAction goToRowAction;
+    private AbstractAction showHeaderAction;
+    private AbstractAction showRowNumbersAction;
     private EncodingsHandler encodingsHandler;
     private ValuesPanel valuesPanel = null;
     private JScrollPane valuesPanelScrollPane = null;
@@ -179,6 +185,30 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         add(statusPanel, BorderLayout.SOUTH);
         registerBinaryStatus(statusPanel);
         goToRowAction = new GoToPositionAction(codeArea);
+        showHeaderAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ExtendedCodeAreaLayoutProfile layoutProfile = codeArea.getLayoutProfile();
+                if (layoutProfile == null) {
+                    throw new IllegalStateException();
+                }
+                boolean showHeader = layoutProfile.isShowHeader();
+                layoutProfile.setShowHeader(!showHeader);
+                codeArea.setLayoutProfile(layoutProfile);
+            }
+        };
+        showRowNumbersAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ExtendedCodeAreaLayoutProfile layoutProfile = codeArea.getLayoutProfile();
+                if (layoutProfile == null) {
+                    throw new IllegalStateException();
+                }
+                boolean showRowPosition = layoutProfile.isShowRowPosition();
+                layoutProfile.setShowRowPosition(!showRowPosition);
+                codeArea.setLayoutProfile(layoutProfile);
+            }
+        };
 
         codeArea.setComponentPopupMenu(new JPopupMenu() {
             @Override
@@ -614,94 +644,129 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
         BasicCodeAreaZone positionZone = codeArea.getPositionZone(x, y);
 
-        final JMenuItem cutMenuItem = new JMenuItem("Cut");
-        cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, metaMask));
-        cutMenuItem.setEnabled(codeArea.hasSelection() && codeArea.isEditable());
-        cutMenuItem.addActionListener((ActionEvent e) -> {
-            codeArea.cut();
-            result.setVisible(false);
-        });
-        result.add(cutMenuItem);
-
-        final JMenuItem copyMenuItem = new JMenuItem("Copy");
-        copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, metaMask));
-        copyMenuItem.setEnabled(codeArea.hasSelection());
-        copyMenuItem.addActionListener((ActionEvent e) -> {
-            codeArea.copy();
-            result.setVisible(false);
-        });
-        result.add(copyMenuItem);
-
-        final JMenuItem copyAsCodeMenuItem = new JMenuItem("Copy as Code");
-        copyAsCodeMenuItem.setEnabled(codeArea.hasSelection());
-        copyAsCodeMenuItem.addActionListener((ActionEvent e) -> {
-            codeArea.copyAsCode();
-            result.setVisible(false);
-        });
-        result.add(copyAsCodeMenuItem);
-
-        final JMenuItem pasteMenuItem = new JMenuItem("Paste");
-        pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, metaMask));
-        pasteMenuItem.setEnabled(codeArea.canPaste() && codeArea.isEditable());
-        pasteMenuItem.addActionListener((ActionEvent e) -> {
-            codeArea.paste();
-            result.setVisible(false);
-        });
-        result.add(pasteMenuItem);
-
-        final JMenuItem pasteFromCodeMenuItem = new JMenuItem("Paste from Code");
-        pasteFromCodeMenuItem.setEnabled(codeArea.canPaste() && codeArea.isEditable());
-        pasteFromCodeMenuItem.addActionListener((ActionEvent e) -> {
-            try {
-                codeArea.pasteFromCode();
-            } catch (IllegalArgumentException ex) {
-                JOptionPane.showMessageDialog(codeArea, ex.getMessage(), "Unable to Paste Code", JOptionPane.ERROR_MESSAGE);
+        switch (positionZone) {
+            case TOP_LEFT_CORNER:
+            case HEADER: {
+                JMenuItem showHeader = createShowHeaderMenuItem();
+                result.add(showHeader);
+                break;
             }
-            result.setVisible(false);
-        });
-        result.add(pasteFromCodeMenuItem);
+            case ROW_POSITIONS: {
+                JMenuItem showRowPosition = createShowRowPositionMenuItem();
+                result.add(showRowPosition);
+                result.add(new JSeparator());
+                JMenuItem goToMenuItem = createGoToMenuItem();
+                result.add(goToMenuItem);
 
-        final JMenuItem deleteMenuItem = new JMenuItem("Delete");
-        deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
-        deleteMenuItem.setEnabled(codeArea.hasSelection() && codeArea.isEditable());
-        deleteMenuItem.addActionListener((ActionEvent e) -> {
-            codeArea.delete();
-            result.setVisible(false);
-        });
-        result.add(deleteMenuItem);
+                break;
+            }
+            default: {
+                final JMenuItem cutMenuItem = new JMenuItem("Cut");
+                cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, metaMask));
+                cutMenuItem.setEnabled(codeArea.hasSelection() && codeArea.isEditable());
+                cutMenuItem.addActionListener((ActionEvent e) -> {
+                    codeArea.cut();
+                    result.setVisible(false);
+                });
+                result.add(cutMenuItem);
+
+                final JMenuItem copyMenuItem = new JMenuItem("Copy");
+                copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, metaMask));
+                copyMenuItem.setEnabled(codeArea.hasSelection());
+                copyMenuItem.addActionListener((ActionEvent e) -> {
+                    codeArea.copy();
+                    result.setVisible(false);
+                });
+                result.add(copyMenuItem);
+
+                final JMenuItem copyAsCodeMenuItem = new JMenuItem("Copy as Code");
+                copyAsCodeMenuItem.setEnabled(codeArea.hasSelection());
+                copyAsCodeMenuItem.addActionListener((ActionEvent e) -> {
+                    codeArea.copyAsCode();
+                    result.setVisible(false);
+                });
+                result.add(copyAsCodeMenuItem);
+
+                final JMenuItem pasteMenuItem = new JMenuItem("Paste");
+                pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, metaMask));
+                pasteMenuItem.setEnabled(codeArea.canPaste() && codeArea.isEditable());
+                pasteMenuItem.addActionListener((ActionEvent e) -> {
+                    codeArea.paste();
+                    result.setVisible(false);
+                });
+                result.add(pasteMenuItem);
+
+                final JMenuItem pasteFromCodeMenuItem = new JMenuItem("Paste from Code");
+                pasteFromCodeMenuItem.setEnabled(codeArea.canPaste() && codeArea.isEditable());
+                pasteFromCodeMenuItem.addActionListener((ActionEvent e) -> {
+                    try {
+                        codeArea.pasteFromCode();
+                    } catch (IllegalArgumentException ex) {
+                        JOptionPane.showMessageDialog(codeArea, ex.getMessage(), "Unable to Paste Code", JOptionPane.ERROR_MESSAGE);
+                    }
+                    result.setVisible(false);
+                });
+                result.add(pasteFromCodeMenuItem);
+
+                final JMenuItem deleteMenuItem = new JMenuItem("Delete");
+                deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
+                deleteMenuItem.setEnabled(codeArea.hasSelection() && codeArea.isEditable());
+                deleteMenuItem.addActionListener((ActionEvent e) -> {
+                    codeArea.delete();
+                    result.setVisible(false);
+                });
+                result.add(deleteMenuItem);
+                result.addSeparator();
+
+                final JMenuItem selectAllMenuItem = new JMenuItem("Select All");
+                selectAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, metaMask));
+                selectAllMenuItem.addActionListener((ActionEvent e) -> {
+                    codeArea.selectAll();
+                    result.setVisible(false);
+                });
+                result.add(selectAllMenuItem);
+                result.addSeparator();
+
+                JMenuItem goToMenuItem = createGoToMenuItem();
+                result.add(goToMenuItem);
+
+                final JMenuItem findMenuItem = new JMenuItem("Find...");
+                findMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, metaMask));
+                findMenuItem.addActionListener((ActionEvent e) -> {
+                    searchAction.actionPerformed(e);
+                    searchAction.switchReplaceMode(BinarySearchPanel.SearchOperation.FIND);
+                });
+                result.add(findMenuItem);
+
+                final JMenuItem replaceMenuItem = new JMenuItem("Replace...");
+                replaceMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, metaMask));
+                replaceMenuItem.setEnabled(codeArea.isEditable());
+                replaceMenuItem.addActionListener((ActionEvent e) -> {
+                    searchAction.actionPerformed(e);
+                    searchAction.switchReplaceMode(BinarySearchPanel.SearchOperation.REPLACE);
+                });
+                result.add(replaceMenuItem);
+            }
+        }
+
         result.addSeparator();
 
-        final JMenuItem selectAllMenuItem = new JMenuItem("Select All");
-        selectAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, metaMask));
-        selectAllMenuItem.addActionListener((ActionEvent e) -> {
-            codeArea.selectAll();
-            result.setVisible(false);
-        });
-        result.add(selectAllMenuItem);
-        result.addSeparator();
+        switch (positionZone) {
+            case TOP_LEFT_CORNER:
+            case HEADER:
+            case ROW_POSITIONS: {
+                break;
+            }
+            default: {
+                JMenu showMenu = new JMenu("Show");
+                JMenuItem showHeader = createShowHeaderMenuItem();
+                showMenu.add(showHeader);
+                JMenuItem showRowPosition = createShowRowPositionMenuItem();
+                showMenu.add(showRowPosition);
+                result.add(showMenu);
+            }
+        }
 
-        final JMenuItem goToMenuItem = new JMenuItem("Go To...");
-        goToMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, metaMask));
-        goToMenuItem.addActionListener(goToRowAction);
-        result.add(goToMenuItem);
-
-        final JMenuItem findMenuItem = new JMenuItem("Find...");
-        findMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, metaMask));
-        findMenuItem.addActionListener((ActionEvent e) -> {
-            searchAction.actionPerformed(e);
-            searchAction.switchReplaceMode(BinarySearchPanel.SearchOperation.FIND);
-        });
-        result.add(findMenuItem);
-
-        final JMenuItem replaceMenuItem = new JMenuItem("Replace...");
-        replaceMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, metaMask));
-        replaceMenuItem.setEnabled(codeArea.isEditable());
-        replaceMenuItem.addActionListener((ActionEvent e) -> {
-            searchAction.actionPerformed(e);
-            searchAction.switchReplaceMode(BinarySearchPanel.SearchOperation.REPLACE);
-        });
-        result.add(replaceMenuItem);
-        result.addSeparator();
         final JMenuItem optionsMenuItem = new JMenuItem("Options...");
         optionsMenuItem.addActionListener((ActionEvent e) -> {
             final BinEdOptionsPanelBorder optionsPanel = new BinEdOptionsPanelBorder();
@@ -727,25 +792,58 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             dialog.show();
         });
         result.add(optionsMenuItem);
-        result.addSeparator();
 
-        final JMenuItem aboutMenuItem = new JMenuItem("About...");
-        aboutMenuItem.addActionListener((ActionEvent e) -> {
-            AboutPanel aboutPanel = new AboutPanel();
-            aboutPanel.setupFields();
-            CloseControlPanel closeControlPanel = new CloseControlPanel();
-            JPanel dialogPanel = WindowUtils.createDialogPanel(aboutPanel, closeControlPanel);
-            DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, null, "About Plugin", Dialog.ModalityType.APPLICATION_MODAL);
-            closeControlPanel.setHandler(() -> {
-                dialog.close();
-            });
-            WindowUtils.assignGlobalKeyListener(dialog.getWindow(), closeControlPanel.createOkCancelListener());
-//            dialog.setSize(650, 460);
-            dialog.show();
-        });
-        result.add(aboutMenuItem);
+        switch (positionZone) {
+            case TOP_LEFT_CORNER:
+            case HEADER:
+            case ROW_POSITIONS: {
+                break;
+            }
+            default: {
+                result.addSeparator();
+                final JMenuItem aboutMenuItem = new JMenuItem("About...");
+                aboutMenuItem.addActionListener((ActionEvent e) -> {
+                    AboutPanel aboutPanel = new AboutPanel();
+                    aboutPanel.setupFields();
+                    CloseControlPanel closeControlPanel = new CloseControlPanel();
+                    JPanel dialogPanel = WindowUtils.createDialogPanel(aboutPanel, closeControlPanel);
+                    DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, null, "About Plugin", Dialog.ModalityType.APPLICATION_MODAL);
+                    closeControlPanel.setHandler(() -> {
+                        dialog.close();
+                    });
+                    WindowUtils.assignGlobalKeyListener(dialog.getWindow(), closeControlPanel.createOkCancelListener());
+                    //            dialog.setSize(650, 460);
+                    dialog.show();
+                });
+                result.add(aboutMenuItem);
+            }
+        }
 
         return result;
+    }
+
+    @Nonnull
+    private JMenuItem createGoToMenuItem() {
+        final JMenuItem goToMenuItem = new JMenuItem("Go To...");
+        goToMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, metaMask));
+        goToMenuItem.addActionListener(goToRowAction);
+        return goToMenuItem;
+    }
+
+    @Nonnull
+    private JMenuItem createShowHeaderMenuItem() {
+        final JCheckBoxMenuItem showHeader = new JCheckBoxMenuItem("Show Header");
+        showHeader.setSelected(codeArea.getLayoutProfile().isShowHeader());
+        showHeader.addActionListener(showHeaderAction);
+        return showHeader;
+    }
+
+    @Nonnull
+    private JMenuItem createShowRowPositionMenuItem() {
+        final JCheckBoxMenuItem showRowPosition = new JCheckBoxMenuItem("Show Row Position");
+        showRowPosition.setSelected(codeArea.getLayoutProfile().isShowRowPosition());
+        showRowPosition.addActionListener(showRowNumbersAction);
+        return showRowPosition;
     }
 
     @Nonnull
