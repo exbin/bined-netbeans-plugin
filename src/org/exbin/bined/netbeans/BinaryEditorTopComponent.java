@@ -39,6 +39,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
@@ -48,6 +49,7 @@ import org.exbin.bined.BasicCodeAreaZone;
 import org.exbin.bined.CodeAreaCaretPosition;
 import org.exbin.bined.EditationMode;
 import org.exbin.bined.EditationOperation;
+import org.exbin.bined.PositionCodeType;
 import org.exbin.bined.delta.DeltaDocument;
 import org.exbin.bined.delta.FileDataSource;
 import org.exbin.bined.delta.SegmentsRepository;
@@ -647,16 +649,15 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         switch (positionZone) {
             case TOP_LEFT_CORNER:
             case HEADER: {
-                JMenuItem showHeader = createShowHeaderMenuItem();
-                result.add(showHeader);
+                result.add(createShowHeaderMenuItem());
+                result.add(createPositionCodeTypeMenuItem());
                 break;
             }
             case ROW_POSITIONS: {
-                JMenuItem showRowPosition = createShowRowPositionMenuItem();
-                result.add(showRowPosition);
+                result.add(createShowRowPositionMenuItem());
+                result.add(createPositionCodeTypeMenuItem());
                 result.add(new JSeparator());
-                JMenuItem goToMenuItem = createGoToMenuItem();
-                result.add(goToMenuItem);
+                result.add(createGoToMenuItem());
 
                 break;
             }
@@ -844,6 +845,47 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         showRowPosition.setSelected(codeArea.getLayoutProfile().isShowRowPosition());
         showRowPosition.addActionListener(showRowNumbersAction);
         return showRowPosition;
+    }
+
+    @Nonnull
+    private JMenuItem createPositionCodeTypeMenuItem() {
+        JMenu menu = new JMenu("Position Code Type");
+        PositionCodeType codeType = codeArea.getPositionCodeType();
+
+        final JRadioButtonMenuItem octalCodeTypeMenuItem = new JRadioButtonMenuItem("Octal");
+        octalCodeTypeMenuItem.setSelected(codeType == PositionCodeType.OCTAL);
+        octalCodeTypeMenuItem.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                codeArea.setPositionCodeType(PositionCodeType.OCTAL);
+                preferences.getCodeAreaParameters().setPositionCodeType(PositionCodeType.OCTAL);
+            }
+        });
+        menu.add(octalCodeTypeMenuItem);
+
+        final JRadioButtonMenuItem decimalCodeTypeMenuItem = new JRadioButtonMenuItem("Decimal");
+        decimalCodeTypeMenuItem.setSelected(codeType == PositionCodeType.DECIMAL);
+        decimalCodeTypeMenuItem.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                codeArea.setPositionCodeType(PositionCodeType.DECIMAL);
+                preferences.getCodeAreaParameters().setPositionCodeType(PositionCodeType.DECIMAL);
+            }
+        });
+        menu.add(decimalCodeTypeMenuItem);
+
+        final JRadioButtonMenuItem hexadecimalCodeTypeMenuItem = new JRadioButtonMenuItem("Hexadecimal");
+        hexadecimalCodeTypeMenuItem.setSelected(codeType == PositionCodeType.HEXADECIMAL);
+        hexadecimalCodeTypeMenuItem.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                codeArea.setPositionCodeType(PositionCodeType.HEXADECIMAL);
+                preferences.getCodeAreaParameters().setPositionCodeType(PositionCodeType.HEXADECIMAL);
+            }
+        });
+        menu.add(hexadecimalCodeTypeMenuItem);
+
+        return menu;
     }
 
     @Nonnull
