@@ -45,7 +45,7 @@ public interface BinaryStatusApi {
     /**
      * Reports currently active editation mode.
      *
-     * @param editationMode editation mode
+     * @param mode editation mode
      */
     void setEditationMode(EditationMode mode, EditationOperation operation);
 
@@ -75,9 +75,9 @@ public interface BinaryStatusApi {
     public static interface StatusControlHandler {
 
         /**
-         * Requests change of editation mode from given mode.
+         * Requests change of editation operation from given mode.
          *
-         * @param editationMode editation mode
+         * @param operation editation operation
          */
         void changeEditationOperation(EditationOperation operation);
 
