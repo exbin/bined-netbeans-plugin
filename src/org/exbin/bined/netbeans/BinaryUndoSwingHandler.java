@@ -24,6 +24,7 @@ import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoableEdit;
 import org.exbin.bined.operation.BinaryDataCommand;
 import org.exbin.bined.operation.BinaryDataOperationException;
+import org.exbin.bined.operation.swing.CodeAreaUndoHandler;
 import org.exbin.bined.operation.undo.BinaryDataUndoHandler;
 import org.exbin.bined.operation.undo.BinaryDataUndoUpdateListener;
 import org.exbin.bined.swing.CodeAreaCore;
@@ -31,7 +32,7 @@ import org.openide.awt.UndoRedo;
 import org.openide.util.Exceptions;
 
 /**
- * Undo handler for hexadecimal editor using Swing undo.
+ * Undo handler for binary editor using Swing undo.
  *
  * @version 0.2.0 2018/09/10
  * @author ExBin Project (http://exbin.org)

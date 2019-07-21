@@ -25,7 +25,7 @@ import org.netbeans.spi.actions.AbstractSavable;
 import org.openide.loaders.DataObject;
 
 /**
- * Saving capability for hexadecimal editor.
+ * Saving capability for binary editor.
  *
  * @version 0.2.0 2018/09/10
  * @author ExBin Project (http://exbin.org)

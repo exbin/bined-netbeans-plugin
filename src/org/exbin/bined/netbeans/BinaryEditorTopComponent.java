@@ -15,7 +15,7 @@
  */
 package org.exbin.bined.netbeans;
 
-import org.exbin.framework.PreferencesWrapper;
+import org.exbin.framework.preferences.PreferencesWrapper;
 import org.exbin.framework.editor.text.EncodingsHandler;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
 import java.awt.BorderLayout;
@@ -92,11 +92,13 @@ import org.exbin.framework.gui.about.panel.AboutPanel;
 import org.exbin.framework.gui.utils.WindowUtils.DialogWrapper;
 import org.exbin.framework.gui.utils.panel.CloseControlPanel;
 import org.openide.util.NbPreferences;
+import org.exbin.framework.bined.FileHandlingMode;
+import org.exbin.framework.gui.utils.ActionUtils;
 
 /**
- * Hexadecimal editor top component.
+ * Binary editor top component.
  *
- * @version 0.2.0 2019/04/07
+ * @version 0.2.1 2019/07/21
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.bined//BinaryEditor//EN", autostore = false)
@@ -122,7 +124,6 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     private final BinaryUndoSwingHandler undoHandler;
     private final Savable savable;
     private final InstanceContent content = new InstanceContent();
-    private final int metaMask;
 
     private BinEdToolbarPanel toolbarPanel;
     private BinaryStatusPanel statusPanel;
@@ -159,7 +160,9 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         statusPanel = new BinaryStatusPanel();
         codeAreaPanel.add(toolbarPanel, BorderLayout.NORTH);
         registerEncodingStatus(statusPanel);
-        encodingsHandler = new EncodingsHandler(new TextEncodingStatusApi() {
+        encodingsHandler = new EncodingsHandler();
+        encodingsHandler.init();
+        encodingsHandler.setTextEncodingStatus(new TextEncodingStatusApi() {
             @Override
             public String getEncoding() {
                 return encodingStatus.getEncoding();
@@ -169,7 +172,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             public void setEncoding(String encodingName) {
                 codeArea.setCharset(Charset.forName(encodingName));
                 encodingStatus.setEncoding(encodingName);
-                preferences.getCodeAreaParameters().setSelectedEncoding(encodingName);
+                preferences.getEncodingPreferences().setSelectedEncoding(encodingName);
                 charsetChangeListener.charsetChanged();
             }
         });
@@ -241,15 +244,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             }
         });
 
-        int metaMaskValue;
-        try {
-            metaMaskValue = java.awt.Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-        } catch (java.awt.HeadlessException ex) {
-            metaMaskValue = java.awt.Event.CTRL_MASK;
-        }
-        metaMask = metaMaskValue;
-
-        searchAction = new SearchAction(codeArea, codeAreaPanel, metaMask);
+        searchAction = new SearchAction(codeArea, codeAreaPanel);
         codeArea.addDataChangedListener(() -> {
             searchAction.codeAreaDataChanged();
             updateCurrentDocumentSize();
@@ -282,7 +277,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         codeArea.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent keyEvent) {
-                if (keyEvent.getModifiers() == metaMask) {
+                if (keyEvent.getModifiers() == ActionUtils.getMetaMask()) {
                     int keyCode = keyEvent.getKeyCode();
                     switch (keyCode) {
                         case KeyEvent.VK_F: {
@@ -341,7 +336,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                 FileHandlingMode newHandlingMode = memoryMode == BinaryStatusApi.MemoryMode.DELTA_MODE ? FileHandlingMode.DELTA : FileHandlingMode.MEMORY;
                 if (newHandlingMode != fileHandlingMode) {
                     switchDeltaMemoryMode(newHandlingMode);
-                    preferences.getEditorParameters().setFileHandlingMode(newHandlingMode.name());
+                    preferences.getEditorPreferences().setFileHandlingMode(newHandlingMode);
                 }
             }
         });
@@ -663,7 +658,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             }
             default: {
                 final JMenuItem cutMenuItem = new JMenuItem("Cut");
-                cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, metaMask));
+                cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionUtils.getMetaMask()));
                 cutMenuItem.setEnabled(codeArea.hasSelection() && codeArea.isEditable());
                 cutMenuItem.addActionListener((ActionEvent e) -> {
                     codeArea.cut();
@@ -672,7 +667,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                 result.add(cutMenuItem);
 
                 final JMenuItem copyMenuItem = new JMenuItem("Copy");
-                copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, metaMask));
+                copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionUtils.getMetaMask()));
                 copyMenuItem.setEnabled(codeArea.hasSelection());
                 copyMenuItem.addActionListener((ActionEvent e) -> {
                     codeArea.copy();
@@ -689,7 +684,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                 result.add(copyAsCodeMenuItem);
 
                 final JMenuItem pasteMenuItem = new JMenuItem("Paste");
-                pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, metaMask));
+                pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionUtils.getMetaMask()));
                 pasteMenuItem.setEnabled(codeArea.canPaste() && codeArea.isEditable());
                 pasteMenuItem.addActionListener((ActionEvent e) -> {
                     codeArea.paste();
@@ -720,7 +715,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                 result.addSeparator();
 
                 final JMenuItem selectAllMenuItem = new JMenuItem("Select All");
-                selectAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, metaMask));
+                selectAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionUtils.getMetaMask()));
                 selectAllMenuItem.addActionListener((ActionEvent e) -> {
                     codeArea.selectAll();
                     result.setVisible(false);
@@ -732,7 +727,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                 result.add(goToMenuItem);
 
                 final JMenuItem findMenuItem = new JMenuItem("Find...");
-                findMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, metaMask));
+                findMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionUtils.getMetaMask()));
                 findMenuItem.addActionListener((ActionEvent e) -> {
                     searchAction.actionPerformed(e);
                     searchAction.switchReplaceMode(BinarySearchPanel.SearchOperation.FIND);
@@ -740,7 +735,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                 result.add(findMenuItem);
 
                 final JMenuItem replaceMenuItem = new JMenuItem("Replace...");
-                replaceMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, metaMask));
+                replaceMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionUtils.getMetaMask()));
                 replaceMenuItem.setEnabled(codeArea.isEditable());
                 replaceMenuItem.addActionListener((ActionEvent e) -> {
                     searchAction.actionPerformed(e);
@@ -760,10 +755,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             }
             default: {
                 JMenu showMenu = new JMenu("Show");
-                JMenuItem showHeader = createShowHeaderMenuItem();
-                showMenu.add(showHeader);
-                JMenuItem showRowPosition = createShowRowPositionMenuItem();
-                showMenu.add(showRowPosition);
+                showMenu.add(createShowHeaderMenuItem());
+                showMenu.add(createShowRowPositionMenuItem());
                 result.add(showMenu);
             }
         }
@@ -775,22 +768,21 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             optionsPanel.setApplyOptions(getApplyOptions());
             OptionsControlPanel optionsControlPanel = new OptionsControlPanel();
             JPanel dialogPanel = WindowUtils.createDialogPanel(optionsPanel, optionsControlPanel);
-            DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, null, "Options", Dialog.ModalityType.MODELESS);
+            DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, (Component) e.getSource(), "Options", Dialog.ModalityType.MODELESS);
             optionsControlPanel.setHandler((OptionsControlHandler.ControlActionType actionType) -> {
                 if (actionType == OptionsControlHandler.ControlActionType.SAVE) {
                     optionsPanel.store();
                 }
                 if (actionType != OptionsControlHandler.ControlActionType.CANCEL) {
                     setApplyOptions(optionsPanel.getApplyOptions());
-                    encodingsHandler.setEncodings(optionsPanel.getApplyOptions().getCharsetOptions().getEncodings());
+                    encodingsHandler.setEncodings(optionsPanel.getApplyOptions().getEncodingOptions().getEncodings());
                     codeArea.repaint();
                 }
 
                 dialog.close();
             });
-            WindowUtils.assignGlobalKeyListener(dialog.getWindow(), optionsControlPanel.createOkCancelListener());
             dialog.getWindow().setSize(650, 460);
-            dialog.show();
+            dialog.showCentered((Component) e.getSource());
         });
         result.add(optionsMenuItem);
 
@@ -808,13 +800,12 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                     aboutPanel.setupFields();
                     CloseControlPanel closeControlPanel = new CloseControlPanel();
                     JPanel dialogPanel = WindowUtils.createDialogPanel(aboutPanel, closeControlPanel);
-                    DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, null, "About Plugin", Dialog.ModalityType.APPLICATION_MODAL);
+                    DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, (Component) e.getSource(), "About Plugin", Dialog.ModalityType.APPLICATION_MODAL);
                     closeControlPanel.setHandler(() -> {
                         dialog.close();
                     });
-                    WindowUtils.assignGlobalKeyListener(dialog.getWindow(), closeControlPanel.createOkCancelListener());
                     //            dialog.setSize(650, 460);
-                    dialog.show();
+                    dialog.showCentered((Component) e.getSource());
                 });
                 result.add(aboutMenuItem);
             }
@@ -826,7 +817,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     @Nonnull
     private JMenuItem createGoToMenuItem() {
         final JMenuItem goToMenuItem = new JMenuItem("Go To...");
-        goToMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, metaMask));
+        goToMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionUtils.getMetaMask()));
         goToMenuItem.addActionListener(goToRowAction);
         return goToMenuItem;
     }
@@ -858,7 +849,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             @Override
             public void actionPerformed(ActionEvent e) {
                 codeArea.setPositionCodeType(PositionCodeType.OCTAL);
-                preferences.getCodeAreaParameters().setPositionCodeType(PositionCodeType.OCTAL);
+                preferences.getCodeAreaPreferences().setPositionCodeType(PositionCodeType.OCTAL);
             }
         });
         menu.add(octalCodeTypeMenuItem);
@@ -869,7 +860,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             @Override
             public void actionPerformed(ActionEvent e) {
                 codeArea.setPositionCodeType(PositionCodeType.DECIMAL);
-                preferences.getCodeAreaParameters().setPositionCodeType(PositionCodeType.DECIMAL);
+                preferences.getCodeAreaPreferences().setPositionCodeType(PositionCodeType.DECIMAL);
             }
         });
         menu.add(decimalCodeTypeMenuItem);
@@ -880,7 +871,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             @Override
             public void actionPerformed(ActionEvent e) {
                 codeArea.setPositionCodeType(PositionCodeType.HEXADECIMAL);
-                preferences.getCodeAreaParameters().setPositionCodeType(PositionCodeType.HEXADECIMAL);
+                preferences.getCodeAreaPreferences().setPositionCodeType(PositionCodeType.HEXADECIMAL);
             }
         });
         menu.add(hexadecimalCodeTypeMenuItem);
@@ -894,8 +885,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         applyOptions.applyFromCodeArea(codeArea);
         EditorOptions editorOptions = applyOptions.getEditorOptions();
         editorOptions.setIsShowValuesPanel(valuesPanelVisible);
-        editorOptions.setFileHandlingMode(fileHandlingMode.name());
-        applyOptions.getStatusOptions().loadFromParameters(preferences.getStatusParameters());
+        editorOptions.setFileHandlingMode(fileHandlingMode);
+        applyOptions.getStatusOptions().loadFromParameters(preferences.getStatusPreferences());
         return applyOptions;
     }
 
@@ -906,7 +897,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
         FileHandlingMode newFileHandlingMode;
         try {
-            newFileHandlingMode = FileHandlingMode.valueOf(editorOptions.getFileHandlingMode());
+            newFileHandlingMode = editorOptions.getFileHandlingMode();
         } catch (Exception ex) {
             newFileHandlingMode = DEFAULT_FILE_HANDLING_MODE;
         }
@@ -916,19 +907,19 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         statusPanel.setStatusOptions(statusOptions);
         toolbarPanel.applyFromCodeArea();
 
-        int selectedLayoutProfile = preferences.getLayoutParameters().getSelectedProfile();
+        int selectedLayoutProfile = preferences.getLayoutPreferences().getSelectedProfile();
         if (selectedLayoutProfile >= 0) {
-            codeArea.setLayoutProfile(preferences.getLayoutParameters().getLayoutProfile(selectedLayoutProfile));
+            codeArea.setLayoutProfile(preferences.getLayoutPreferences().getLayoutProfile(selectedLayoutProfile));
         }
 
-        int selectedThemeProfile = preferences.getThemeParameters().getSelectedProfile();
+        int selectedThemeProfile = preferences.getThemePreferences().getSelectedProfile();
         if (selectedThemeProfile >= 0) {
-            codeArea.setThemeProfile(preferences.getThemeParameters().getThemeProfile(selectedThemeProfile));
+            codeArea.setThemeProfile(preferences.getThemePreferences().getThemeProfile(selectedThemeProfile));
         }
 
-        int selectedColorProfile = preferences.getColorParameters().getSelectedProfile();
+        int selectedColorProfile = preferences.getColorPreferences().getSelectedProfile();
         if (selectedColorProfile >= 0) {
-            codeArea.setColorsProfile(preferences.getColorParameters().getColorsProfile(selectedColorProfile));
+            codeArea.setColorsProfile(preferences.getColorPreferences().getColorsProfile(selectedColorProfile));
         }
     }
 
@@ -965,38 +956,38 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
     private void loadFromPreferences() {
         try {
-            fileHandlingMode = FileHandlingMode.valueOf(preferences.getEditorParameters().getFileHandlingMode());
+            fileHandlingMode = preferences.getEditorPreferences().getFileHandlingMode();
         } catch (Exception ex) {
             fileHandlingMode = DEFAULT_FILE_HANDLING_MODE;
         }
         CodeAreaOptions codeAreaOptions = new CodeAreaOptions();
-        codeAreaOptions.loadFromParameters(preferences.getCodeAreaParameters());
+        codeAreaOptions.loadFromParameters(preferences.getCodeAreaPreferences());
         codeAreaOptions.applyToCodeArea(codeArea);
-        String selectedEncoding = preferences.getCodeAreaParameters().getSelectedEncoding();
+        String selectedEncoding = preferences.getEncodingPreferences().getSelectedEncoding();
         statusPanel.setEncoding(selectedEncoding);
-        statusPanel.loadFromPreferences(preferences.getStatusParameters());
+        statusPanel.loadFromPreferences(preferences.getStatusPreferences());
         toolbarPanel.loadFromPreferences();
 
         codeArea.setCharset(Charset.forName(selectedEncoding));
-        encodingsHandler.loadFromPreferences(preferences);
+        encodingsHandler.loadFromPreferences(preferences.getEncodingPreferences());
 
-        int selectedLayoutProfile = preferences.getLayoutParameters().getSelectedProfile();
+        int selectedLayoutProfile = preferences.getLayoutPreferences().getSelectedProfile();
         if (selectedLayoutProfile >= 0) {
-            codeArea.setLayoutProfile(preferences.getLayoutParameters().getLayoutProfile(selectedLayoutProfile));
+            codeArea.setLayoutProfile(preferences.getLayoutPreferences().getLayoutProfile(selectedLayoutProfile));
         }
 
-        int selectedThemeProfile = preferences.getThemeParameters().getSelectedProfile();
+        int selectedThemeProfile = preferences.getThemePreferences().getSelectedProfile();
         if (selectedThemeProfile >= 0) {
-            codeArea.setThemeProfile(preferences.getThemeParameters().getThemeProfile(selectedThemeProfile));
+            codeArea.setThemeProfile(preferences.getThemePreferences().getThemeProfile(selectedThemeProfile));
         }
 
-        int selectedColorProfile = preferences.getColorParameters().getSelectedProfile();
+        int selectedColorProfile = preferences.getColorPreferences().getSelectedProfile();
         if (selectedColorProfile >= 0) {
-            codeArea.setColorsProfile(preferences.getColorParameters().getColorsProfile(selectedColorProfile));
+            codeArea.setColorsProfile(preferences.getColorPreferences().getColorsProfile(selectedColorProfile));
         }
 
         // Memory mode handled from outside by isDeltaMemoryMode() method, worth fixing?
-        boolean showValuesPanel = preferences.getEditorParameters().isShowValuesPanel();
+        boolean showValuesPanel = preferences.getEditorPreferences().isShowValuesPanel();
         if (showValuesPanel) {
             showValuesPanel();
         }

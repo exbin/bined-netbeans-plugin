@@ -15,6 +15,7 @@
  */
 package org.exbin.bined.netbeans;
 
+import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -51,7 +52,7 @@ public final class BinaryDebugAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         // new UIPanel(context);
-        DialogWrapper dialog = WindowUtils.createDialog(new JPanel(), null, "Selected Variables", Dialog.ModalityType.APPLICATION_MODAL);
+        DialogWrapper dialog = WindowUtils.createDialog(new JPanel(), (Component) e.getSource(), "Selected Variables", Dialog.ModalityType.APPLICATION_MODAL);
         dialog.show();
     }
 }

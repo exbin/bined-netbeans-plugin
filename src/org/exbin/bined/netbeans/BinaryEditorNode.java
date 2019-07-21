@@ -34,11 +34,12 @@ import org.openide.loaders.DataObject;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.util.Exceptions;
+import org.exbin.framework.bined.FileHandlingMode;
 
 /**
- * Hexadecimal editor node.
+ * Binary editor node.
  *
- * @version 0.2.0 2019/03/16
+ * @version 0.2.1 2019/07/21
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault

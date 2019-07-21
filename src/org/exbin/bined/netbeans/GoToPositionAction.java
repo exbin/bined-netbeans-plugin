@@ -15,6 +15,7 @@
  */
 package org.exbin.bined.netbeans;
 
+import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,7 +35,7 @@ import org.exbin.framework.gui.utils.panel.DefaultControlPanel;
 /**
  * Go to handler.
  *
- * @version 0.2.0 2019/04/13
+ * @version 0.2.1 2019/07/21
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -54,7 +55,7 @@ public class GoToPositionAction implements ActionListener {
         goToPanel.setCursorPosition(codeArea.getCaretPosition().getDataPosition());
         goToPanel.setMaxPosition(codeArea.getDataSize());
         JPanel dialogPanel = WindowUtils.createDialogPanel(goToPanel, goToControlPanel);
-        final DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, null, resourceBundle.getString("dialog.title"), Dialog.ModalityType.APPLICATION_MODAL);
+        final DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, (Component) event.getSource(), resourceBundle.getString("dialog.title"), Dialog.ModalityType.APPLICATION_MODAL);
 
         goToPanel.initFocus();
         goToControlPanel.setHandler((DefaultControlHandler.ControlActionType actionType) -> {
@@ -69,7 +70,6 @@ public class GoToPositionAction implements ActionListener {
 
             dialog.close();
         });
-        WindowUtils.assignGlobalKeyListener(dialog.getWindow(), goToControlPanel.createOkCancelListener());
-        dialog.show();
+        dialog.showCentered((Component) event.getSource());
     }
 }

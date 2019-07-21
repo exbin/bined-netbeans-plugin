@@ -34,10 +34,11 @@ import org.exbin.bined.highlight.swing.extended.ExtendedHighlightCodeAreaPainter
 import org.exbin.bined.netbeans.panel.BinarySearchPanel;
 import org.exbin.bined.netbeans.panel.BinarySearchPanelApi;
 import org.exbin.bined.swing.extended.ExtCodeArea;
-import org.exbin.framework.bined.CodeAreaPopupMenuHandler;
-import org.exbin.framework.bined.panel.ReplaceParameters;
-import org.exbin.framework.bined.panel.SearchCondition;
-import org.exbin.framework.bined.panel.SearchParameters;
+import org.exbin.framework.bined.handler.CodeAreaPopupMenuHandler;
+import org.exbin.framework.bined.ReplaceParameters;
+import org.exbin.framework.bined.SearchCondition;
+import org.exbin.framework.bined.SearchParameters;
+import org.exbin.framework.gui.utils.ActionUtils;
 import org.exbin.utils.binary_data.BinaryData;
 import org.exbin.utils.binary_data.EditableBinaryData;
 
@@ -52,16 +53,14 @@ public final class SearchAction implements ActionListener {
 
     private static final int FIND_MATCHES_LIMIT = 100;
 
-    private final int metaMask;
     private boolean findTextPanelVisible = false;
     private BinarySearchPanel binarySearchPanel = null;
     private final JPanel codeAreaPanel;
     private final ExtCodeArea codeArea;
 
-    public SearchAction(ExtCodeArea codeArea, JPanel codeAreaPanel, int metaMask) {
+    public SearchAction(ExtCodeArea codeArea, JPanel codeAreaPanel) {
         this.codeArea = codeArea;
         this.codeAreaPanel = codeAreaPanel;
-        this.metaMask = metaMask;
     }
 
     @Override
@@ -152,7 +151,7 @@ public final class SearchAction implements ActionListener {
             });
             binarySearchPanel.setBinaryCodePopupMenuHandler(new CodeAreaPopupMenuHandler() {
                 @Override
-                public JPopupMenu createPopupMenu(ExtCodeArea codeArea, String menuPostfix) {
+                public JPopupMenu createPopupMenu(ExtCodeArea codeArea, String menuPostfix, int x, int y) {
                     return createCodeAreaPopupMenu(codeArea, menuPostfix);
                 }
 
@@ -348,7 +347,7 @@ public final class SearchAction implements ActionListener {
             }
         });
         cutMenuItem.setText("Cut");
-        cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, metaMask));
+        cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionUtils.getMetaMask()));
         popupMenu.add(cutMenuItem);
         JMenuItem copyMenuItem = new JMenuItem(new AbstractAction() {
             @Override
@@ -362,7 +361,7 @@ public final class SearchAction implements ActionListener {
             }
         });
         copyMenuItem.setText("Copy");
-        copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, metaMask));
+        copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionUtils.getMetaMask()));
         popupMenu.add(copyMenuItem);
         JMenuItem pasteMenuItem = new JMenuItem(new AbstractAction() {
             @Override
@@ -376,7 +375,7 @@ public final class SearchAction implements ActionListener {
             }
         });
         pasteMenuItem.setText("Paste");
-        pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, metaMask));
+        pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionUtils.getMetaMask()));
         popupMenu.add(pasteMenuItem);
         JMenuItem deleteMenuItem = new JMenuItem(new AbstractAction() {
             @Override
@@ -399,7 +398,7 @@ public final class SearchAction implements ActionListener {
             }
         });
         selectAllMenuItem.setText("Select All");
-        selectAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, metaMask));
+        selectAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionUtils.getMetaMask()));
         popupMenu.add(selectAllMenuItem);
 
         return popupMenu;

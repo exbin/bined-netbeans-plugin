@@ -32,7 +32,7 @@ import org.openide.windows.Mode;
 import org.openide.windows.WindowManager;
 
 /**
- * Open file in hexadecimal editor action.
+ * Open file in binary editor action.
  *
  * @version 0.2.0 2019/03/16
  * @author ExBin Project (http://exbin.org)

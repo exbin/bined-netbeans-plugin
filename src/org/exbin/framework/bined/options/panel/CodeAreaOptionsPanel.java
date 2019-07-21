@@ -16,6 +16,7 @@
 package org.exbin.framework.bined.options.panel;
 
 import java.awt.Font;
+import java.util.ResourceBundle;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JPanel;
@@ -31,15 +32,17 @@ import org.exbin.framework.gui.utils.WindowUtils;
 import org.exbin.framework.gui.utils.WindowUtils.DialogWrapper;
 import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
 import org.exbin.framework.gui.utils.panel.DefaultControlPanel;
+import org.exbin.framework.gui.options.api.OptionsCapable;
+import org.exbin.framework.gui.options.api.OptionsModifiedListener;
 
 /**
  * Code area preference parameters panel.
  *
- * @version 0.2.0 2019/03/16
+ * @version 0.2.1 2019/07/20
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
-public class CodeAreaOptionsPanel extends javax.swing.JPanel {
+public class CodeAreaOptionsPanel extends javax.swing.JPanel implements OptionsCapable<CodeAreaOptions> {
 
     private Font codeFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
 
@@ -50,6 +53,12 @@ public class CodeAreaOptionsPanel extends javax.swing.JPanel {
     }
 
     @Nonnull
+    @Override
+    public ResourceBundle getResourceBundle() {
+        return resourceBundle;
+    }
+
+    @Override
     public void saveToOptions(CodeAreaOptions options) {
         options.setCodeFont(codeFont);
         options.setCodeType(CodeType.valueOf((String) codeTypeComboBox.getSelectedItem()));
@@ -65,8 +74,8 @@ public class CodeAreaOptionsPanel extends javax.swing.JPanel {
         options.setMaxRowPositionLength((Integer) maxRowPositionLengthSpinner.getValue());
     }
 
+    @Override
     public void loadFromOptions(CodeAreaOptions options) {
-        // TODO
         codeFont = options.getCodeFont();
         updateFontTextField();
         codeTypeComboBox.setSelectedItem(options.getCodeType().name());
@@ -277,7 +286,7 @@ public class CodeAreaOptionsPanel extends javax.swing.JPanel {
         textFontPanel.setStoredFont(codeFont);
         textFontPanel.setVisible(true);
         JPanel dialogPanel = WindowUtils.createDialogPanel(textFontPanel, textFontControlPanel);
-        final DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, null, "Select Font", java.awt.Dialog.ModalityType.APPLICATION_MODAL);
+        final DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, WindowUtils.getWindow(this), "Select Font", java.awt.Dialog.ModalityType.APPLICATION_MODAL);
         textFontControlPanel.setHandler((DefaultControlHandler.ControlActionType actionType) -> {
             if (actionType == DefaultControlHandler.ControlActionType.OK) {
                 codeFont = textFontPanel.getStoredFont();
@@ -287,8 +296,8 @@ public class CodeAreaOptionsPanel extends javax.swing.JPanel {
 
             dialog.close();
         });
-        WindowUtils.assignGlobalKeyListener(dialog.getWindow(), textFontControlPanel.createOkCancelListener());
-        dialog.show();
+        dialog.showCentered(this);
+        dialog.dispose();
     }//GEN-LAST:event_selectFontButtonActionPerformed
 
     /**
@@ -338,5 +347,9 @@ public class CodeAreaOptionsPanel extends javax.swing.JPanel {
             fontStyleName = "Plain";
         }
         fontTextField.setText(codeFont.getFamily() + " " + String.valueOf(codeFont.getSize()) + " " + fontStyleName);
+    }
+
+    @Override
+    public void setOptionsModifiedListener(OptionsModifiedListener listener) {
     }
 }
