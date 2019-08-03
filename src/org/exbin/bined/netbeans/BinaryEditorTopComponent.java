@@ -98,7 +98,7 @@ import org.exbin.framework.gui.utils.ActionUtils;
 /**
  * Binary editor top component.
  *
- * @version 0.2.1 2019/07/21
+ * @version 0.2.1 2019/08/04
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.bined//BinaryEditor//EN", autostore = false)
@@ -161,6 +161,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         codeAreaPanel.add(toolbarPanel, BorderLayout.NORTH);
         registerEncodingStatus(statusPanel);
         encodingsHandler = new EncodingsHandler();
+        encodingsHandler.setParentComponent(this);
         encodingsHandler.init();
         encodingsHandler.setTextEncodingStatus(new TextEncodingStatusApi() {
             @Override
@@ -281,12 +282,12 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                     int keyCode = keyEvent.getKeyCode();
                     switch (keyCode) {
                         case KeyEvent.VK_F: {
-                            searchAction.actionPerformed(null);
+                            searchAction.actionPerformed(new ActionEvent(keyEvent.getSource(), keyEvent.getID(), ""));
                             searchAction.switchReplaceMode(BinarySearchPanel.SearchOperation.FIND);
                             break;
                         }
                         case KeyEvent.VK_G: {
-                            goToRowAction.actionPerformed(null);
+                            goToRowAction.actionPerformed(new ActionEvent(keyEvent.getSource(), keyEvent.getID(), ""));
                             break;
                         }
                     }
