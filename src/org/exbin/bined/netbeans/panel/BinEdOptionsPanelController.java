@@ -24,9 +24,9 @@ import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 
 /**
- * Hexadecimal editor options panel.
+ * Binary editor options panel.
  *
- * @version 0.2.0 2018/09/09
+ * @version 0.2.1 2019/08/06
  * @author ExBin Project (http://exbin.org)
  */
 @OptionsPanelController.SubRegistration(
@@ -44,14 +44,14 @@ public final class BinEdOptionsPanelController extends OptionsPanelController {
 
     @Override
     public void update() {
-        getPanel().load();
+        getPanel().loadFromPreferences();
         changed = false;
     }
 
     @Override
     public void applyChanges() {
         SwingUtilities.invokeLater(() -> {
-            getPanel().store();
+            getPanel().saveToPreferences();
             changed = false;
         });
     }

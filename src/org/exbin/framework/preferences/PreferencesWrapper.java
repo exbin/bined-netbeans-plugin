@@ -56,6 +56,15 @@ public class PreferencesWrapper implements Preferences {
     }
 
     @Override
+    public void put(String key, @Nullable String value) {
+        if (value == null) {
+            preferences.remove(key);
+        } else {
+            preferences.put(key, value);
+        }
+    }
+
+    @Override
     public void remove(String key) {
         preferences.remove(key);
     }
@@ -118,15 +127,6 @@ public class PreferencesWrapper implements Preferences {
     @Override
     public byte[] getByteArray(String key, byte[] def) {
         return preferences.getByteArray(key, def);
-    }
-
-    @Override
-    public void put(String key, @Nullable String value) {
-        if (value == null) {
-            preferences.remove(key);
-        } else {
-            preferences.put(key, value);
-        }
     }
 
     /**

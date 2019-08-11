@@ -617,8 +617,9 @@ public class BinarySearchPanel extends javax.swing.JPanel {
 
                     multilineDialog.close();
                 });
-                multilineDialog.showCentered((Component) evt.getSource());
+                multilineDialog.showCentered(dialog.getWindow());
                 multilinePanel.detachMenu();
+                multilineDialog.dispose();
                 return result.searchCondition;
             }
 
@@ -642,7 +643,8 @@ public class BinarySearchPanel extends javax.swing.JPanel {
             findBinaryPanel.detachMenu();
             dialog.close();
         });
-        dialog.showCentered((Component) evt.getSource());
+        dialog.showCentered(WindowUtils.getWindow(this));
+        dialog.dispose();
     }//GEN-LAST:event_optionsButtonActionPerformed
 
     private void prevButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prevButtonActionPerformed
