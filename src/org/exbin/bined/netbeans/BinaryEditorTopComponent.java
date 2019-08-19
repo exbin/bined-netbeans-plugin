@@ -43,6 +43,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
+import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import org.exbin.bined.BasicCodeAreaZone;
@@ -235,7 +236,13 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         codeArea.setComponentPopupMenu(new JPopupMenu() {
             @Override
             public void show(Component invoker, int x, int y) {
-                JPopupMenu popupMenu = createContextMenu(x, y);
+                int clickedX = x;
+                int clickedY = y;
+                if (invoker instanceof JViewport) {
+                    clickedX += ((JViewport) invoker).getParent().getX();
+                    clickedY += ((JViewport) invoker).getParent().getY();
+                }
+                JPopupMenu popupMenu = createContextMenu(clickedX, clickedY);
                 popupMenu.show(invoker, x, y);
             }
         });
