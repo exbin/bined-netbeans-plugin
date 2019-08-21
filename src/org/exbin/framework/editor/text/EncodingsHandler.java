@@ -138,11 +138,10 @@ public class EncodingsHandler {
         };
         ActionUtils.setupAction(manageEncodingsAction, resourceBundle, "manageEncodingsAction");
         manageEncodingsAction.putValue(ActionUtils.ACTION_DIALOG_MODE, true);
-        manageEncodingsAction.putValue(Action.NAME, manageEncodingsAction.getValue(Action.NAME) + ActionUtils.DIALOG_MENUITEM_EXT);
 
         toolsEncodingMenu = new JMenu();
         toolsEncodingMenu.addSeparator();
-        toolsEncodingMenu.add(manageEncodingsAction);
+        toolsEncodingMenu.add(ActionUtils.actionToMenuItem(manageEncodingsAction));
         toolsEncodingMenu.setText(resourceBundle.getString("toolsEncodingMenu.text"));
         toolsEncodingMenu.setToolTipText(resourceBundle.getString("toolsEncodingMenu.shortDescription"));
         EncodingsHandler.this.rebuildEncodings();
@@ -232,7 +231,7 @@ public class EncodingsHandler {
         }
 
         popupMenu.add(new JSeparator());
-        popupMenu.add(manageEncodingsAction);
+        popupMenu.add(ActionUtils.actionToMenuItem(manageEncodingsAction));
 
         popupMenu.show((Component) mouseEvent.getSource(), mouseEvent.getX(), mouseEvent.getY());
     }

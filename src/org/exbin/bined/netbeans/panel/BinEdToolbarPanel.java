@@ -15,16 +15,23 @@
  */
 package org.exbin.bined.netbeans.panel;
 
+import java.awt.event.ActionEvent;
 import javax.annotation.ParametersAreNonnullByDefault;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.ButtonGroup;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import org.exbin.bined.CodeType;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
+import org.exbin.framework.gui.menu.component.DropDownButton;
 import org.exbin.framework.gui.utils.LanguageUtils;
 
 /**
  * Binary editor toolbar panel.
  *
- * @version 0.2.0 2019/04/12
+ * @version 0.2.0 2019/08/21
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -34,16 +41,77 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
 
     private final BinaryEditorPreferences preferences;
     private final ExtCodeArea codeArea;
+    private final AbstractAction cycleCodeTypesAction;
+    private final JRadioButtonMenuItem binaryCodeTypeAction;
+    private final JRadioButtonMenuItem octalCodeTypeAction;
+    private final JRadioButtonMenuItem decimalCodeTypeAction;
+    private final JRadioButtonMenuItem hexadecimalCodeTypeAction;
+    private final ButtonGroup codeTypeButtonGroup;
+    private DropDownButton codeTypeDropDown;
 
 //    private JSplitButton codeTypeButton;
     public BinEdToolbarPanel(BinaryEditorPreferences preferences, ExtCodeArea codeArea) {
         this.preferences = preferences;
         this.codeArea = codeArea;
+
+        codeTypeButtonGroup = new ButtonGroup();
+        binaryCodeTypeAction = new JRadioButtonMenuItem(new AbstractAction("Binary") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                codeArea.setCodeType(CodeType.BINARY);
+                updateCycleButtonName();
+            }
+        });
+        codeTypeButtonGroup.add(binaryCodeTypeAction);
+        octalCodeTypeAction = new JRadioButtonMenuItem(new AbstractAction("Octal") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                codeArea.setCodeType(CodeType.OCTAL);
+                updateCycleButtonName();
+            }
+        });
+        codeTypeButtonGroup.add(octalCodeTypeAction);
+        decimalCodeTypeAction = new JRadioButtonMenuItem(new AbstractAction("Decimal") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                codeArea.setCodeType(CodeType.DECIMAL);
+                updateCycleButtonName();
+            }
+        });
+        codeTypeButtonGroup.add(decimalCodeTypeAction);
+        hexadecimalCodeTypeAction = new JRadioButtonMenuItem(new AbstractAction("Hexadecimal") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                codeArea.setCodeType(CodeType.HEXADECIMAL);
+                updateCycleButtonName();
+            }
+        });
+        codeTypeButtonGroup.add(hexadecimalCodeTypeAction);
+        cycleCodeTypesAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int codeTypePos = codeArea.getCodeType().ordinal();
+                CodeType[] values = CodeType.values();
+                CodeType next = codeTypePos + 1 >= values.length ? values[0] : values[codeTypePos + 1];
+                codeArea.setCodeType(next);
+                updateCycleButtonName();
+            }
+        };
+
         initComponents();
         init();
     }
 
     private void init() {
+        cycleCodeTypesAction.putValue(Action.SHORT_DESCRIPTION, "Cycle thru code types");
+        JPopupMenu cycleCodeTypesPopupMenu = new JPopupMenu();
+        cycleCodeTypesPopupMenu.add(binaryCodeTypeAction);
+        cycleCodeTypesPopupMenu.add(octalCodeTypeAction);
+        cycleCodeTypesPopupMenu.add(decimalCodeTypeAction);
+        cycleCodeTypesPopupMenu.add(hexadecimalCodeTypeAction);
+        codeTypeDropDown = new DropDownButton(cycleCodeTypesAction, cycleCodeTypesPopupMenu);
+        updateCycleButtonName();
+        controlToolBar.add(codeTypeDropDown);
 //        codeTypeButton = new JSplitButton("HEX");
 //        codeTypeButton.addActionListener(new ActionListener() {
 //            @Override
@@ -54,13 +122,44 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
 //        controlToolBar.add(codeTypeButton);
     }
 
+    private void updateCycleButtonName() {
+        CodeType codeType = codeArea.getCodeType();
+        codeTypeDropDown.setActionText(codeType.name().substring(0, 3));
+        switch (codeType) {
+            case BINARY: {
+                if (!binaryCodeTypeAction.isSelected()) {
+                    binaryCodeTypeAction.setSelected(true);
+                }
+                break;
+            }
+            case OCTAL: {
+                if (!octalCodeTypeAction.isSelected()) {
+                    octalCodeTypeAction.setSelected(true);
+                }
+                break;
+            }
+            case DECIMAL: {
+                if (!decimalCodeTypeAction.isSelected()) {
+                    decimalCodeTypeAction.setSelected(true);
+                }
+                break;
+            }
+            case HEXADECIMAL: {
+                if (!hexadecimalCodeTypeAction.isSelected()) {
+                    hexadecimalCodeTypeAction.setSelected(true);
+                }
+                break;
+            }
+        }
+    }
+
     public void applyFromCodeArea() {
-        codeTypeComboBox.setSelectedIndex(codeArea.getCodeType().ordinal());
+        updateCycleButtonName();
         showUnprintablesToggleButton.setSelected(codeArea.isShowUnprintables());
     }
 
     public void loadFromPreferences() {
-        codeTypeComboBox.setSelectedIndex(preferences.getCodeAreaPreferences().getCodeType().ordinal());
+        updateCycleButtonName();
         showUnprintablesToggleButton.setSelected(preferences.getCodeAreaPreferences().isShowUnprintables());
     }
 
@@ -70,7 +169,6 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         controlToolBar = new javax.swing.JToolBar();
         showUnprintablesToggleButton = new javax.swing.JToggleButton();
         separator1 = new javax.swing.JToolBar.Separator();
-        codeTypeComboBox = new javax.swing.JComboBox<>();
 
         controlToolBar.setBorder(null);
         controlToolBar.setFloatable(false);
@@ -86,24 +184,13 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         controlToolBar.add(showUnprintablesToggleButton);
         controlToolBar.add(separator1);
 
-        codeTypeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "BIN", "OCT", "DEC", "HEX" }));
-        codeTypeComboBox.setSelectedIndex(3);
-        codeTypeComboBox.setToolTipText(resourceBundle.getString("codeTypeComboBox.toolTipText")); // NOI18N
-        codeTypeComboBox.setMaximumSize(new java.awt.Dimension(58, 25));
-        codeTypeComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                codeTypeComboBoxActionPerformed(evt);
-            }
-        });
-        controlToolBar.add(codeTypeComboBox);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(controlToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 280, Short.MAX_VALUE))
+                .addGap(0, 338, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -117,14 +204,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         codeArea.setShowUnprintables(showUnprintablesToggleButton.isSelected());
     }//GEN-LAST:event_showUnprintablesToggleButtonActionPerformed
 
-    private void codeTypeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_codeTypeComboBoxActionPerformed
-        CodeType codeType = CodeType.values()[codeTypeComboBox.getSelectedIndex()];
-        codeArea.setCodeType(codeType);
-        preferences.getCodeAreaPreferences().setCodeType(codeType);
-    }//GEN-LAST:event_codeTypeComboBoxActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> codeTypeComboBox;
     private javax.swing.JToolBar controlToolBar;
     private javax.swing.JToolBar.Separator separator1;
     private javax.swing.JToggleButton showUnprintablesToggleButton;

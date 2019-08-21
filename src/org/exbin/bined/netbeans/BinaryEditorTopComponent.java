@@ -22,6 +22,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -32,6 +33,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import javax.annotation.Nonnull;
 import javax.swing.AbstractAction;
+import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -66,6 +68,7 @@ import org.exbin.bined.operation.BinaryDataCommand;
 import org.exbin.bined.operation.swing.CodeAreaOperationCommandHandler;
 import org.exbin.bined.operation.undo.BinaryDataUndoUpdateListener;
 import org.exbin.bined.swing.basic.color.CodeAreaColorsProfile;
+import org.exbin.bined.swing.capability.FontCapable;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
 import org.exbin.framework.bined.panel.BinaryStatusPanel;
@@ -103,12 +106,14 @@ import org.exbin.framework.bined.options.CodeAreaLayoutOptions;
 import org.exbin.framework.bined.options.CodeAreaThemeOptions;
 import org.exbin.framework.bined.options.impl.CodeAreaOptionsImpl;
 import org.exbin.framework.editor.text.options.TextEncodingOptions;
+import org.exbin.framework.editor.text.options.TextFontOptions;
+import org.exbin.framework.editor.text.service.TextFontService;
 import org.exbin.framework.gui.utils.ActionUtils;
 
 /**
  * Binary editor top component.
  *
- * @version 0.2.1 2019/08/07
+ * @version 0.2.1 2019/08/21
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.bined//BinaryEditor//EN", autostore = false)
@@ -125,6 +130,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     public static final String ACTION_CLIPBOARD_COPY = "copy-to-clipboard";
     public static final String ACTION_CLIPBOARD_PASTE = "paste-from-clipboard";
     private static final FileHandlingMode DEFAULT_FILE_HANDLING_MODE = FileHandlingMode.DELTA;
+    private final Image editorIcon = new ImageIcon(getClass().getResource("/org/exbin/bined/netbeans/resources/icons/icon.png")).getImage();
 
     private final BinaryEditorPreferences preferences;
     private final BinaryEditorNode node;
@@ -155,6 +161,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     private boolean opened = false;
     private boolean modified = false;
     private FileHandlingMode fileHandlingMode = DEFAULT_FILE_HANDLING_MODE;
+    private final Font defaultFont;
     protected String displayName;
     private long documentOriginalSize;
     private DataObject dataObject;
@@ -166,7 +173,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
         codeArea = new ExtCodeArea();
         codeArea.setPainter(new ExtendedHighlightNonAsciiCodeAreaPainter(codeArea));
-        codeArea.setCodeFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        defaultFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
+        codeArea.setCodeFont(defaultFont);
         codeArea.getCaret().setBlinkRate(300);
         defaultLayoutProfile = codeArea.getLayoutProfile();
         defaultThemeProfile = codeArea.getThemeProfile();
@@ -534,6 +542,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         this.dataObject = dataObject;
         displayName = dataObject.getPrimaryFile().getNameExt();
         setHtmlDisplayName(displayName);
+        setIcon(editorIcon);
         node.openFile(dataObject);
         savable.setDataObject(dataObject);
         opened = true;
@@ -682,6 +691,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             }
             default: {
                 final JMenuItem cutMenuItem = new JMenuItem("Cut");
+                cutMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/menu/resources/icons/tango-icon-theme/16x16/actions/edit-cut.png")));
                 cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionUtils.getMetaMask()));
                 cutMenuItem.setEnabled(codeArea.hasSelection() && codeArea.isEditable());
                 cutMenuItem.addActionListener((ActionEvent e) -> {
@@ -691,6 +701,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                 result.add(cutMenuItem);
 
                 final JMenuItem copyMenuItem = new JMenuItem("Copy");
+                copyMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/menu/resources/icons/tango-icon-theme/16x16/actions/edit-copy.png")));
                 copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionUtils.getMetaMask()));
                 copyMenuItem.setEnabled(codeArea.hasSelection());
                 copyMenuItem.addActionListener((ActionEvent e) -> {
@@ -708,6 +719,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                 result.add(copyAsCodeMenuItem);
 
                 final JMenuItem pasteMenuItem = new JMenuItem("Paste");
+                pasteMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/menu/resources/icons/tango-icon-theme/16x16/actions/edit-paste.png")));
                 pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionUtils.getMetaMask()));
                 pasteMenuItem.setEnabled(codeArea.canPaste() && codeArea.isEditable());
                 pasteMenuItem.addActionListener((ActionEvent e) -> {
@@ -729,6 +741,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                 result.add(pasteFromCodeMenuItem);
 
                 final JMenuItem deleteMenuItem = new JMenuItem("Delete");
+                deleteMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/menu/resources/icons/tango-icon-theme/16x16/actions/edit-delete.png")));
                 deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
                 deleteMenuItem.setEnabled(codeArea.hasSelection() && codeArea.isEditable());
                 deleteMenuItem.addActionListener((ActionEvent e) -> {
@@ -739,6 +752,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                 result.addSeparator();
 
                 final JMenuItem selectAllMenuItem = new JMenuItem("Select All");
+                selectAllMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/menu/resources/icons/tango-icon-theme/16x16/actions/edit-select-all.png")));
                 selectAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionUtils.getMetaMask()));
                 selectAllMenuItem.addActionListener((ActionEvent e) -> {
                     codeArea.selectAll();
@@ -751,6 +765,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                 result.add(goToMenuItem);
 
                 final JMenuItem findMenuItem = new JMenuItem("Find...");
+                findMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/bined/resources/icons/tango-icon-theme/16x16/actions/edit-find.png")));
                 findMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionUtils.getMetaMask()));
                 findMenuItem.addActionListener((ActionEvent e) -> {
                     searchAction.actionPerformed(e);
@@ -759,6 +774,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                 result.add(findMenuItem);
 
                 final JMenuItem replaceMenuItem = new JMenuItem("Replace...");
+                replaceMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/bined/resources/icons/tango-icon-theme/16x16/actions/edit-find-replace.png")));
                 replaceMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionUtils.getMetaMask()));
                 replaceMenuItem.setEnabled(codeArea.isEditable());
                 replaceMenuItem.addActionListener((ActionEvent e) -> {
@@ -786,10 +802,27 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         }
 
         final JMenuItem optionsMenuItem = new JMenuItem("Options...");
+        optionsMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/options/resources/icons/Preferences16.gif")));
         optionsMenuItem.addActionListener((ActionEvent e) -> {
             final BinEdOptionsPanelBorder optionsPanelWrapper = new BinEdOptionsPanelBorder();
             BinEdOptionsPanel optionsPanel = optionsPanelWrapper.getOptionsPanel();
             optionsPanel.setPreferences(preferences);
+            optionsPanel.setTextFontService(new TextFontService() {
+                @Override
+                public Font getCurrentFont() {
+                    return codeArea.getCodeFont();
+                }
+
+                @Override
+                public Font getDefaultFont() {
+                    return defaultFont;
+                }
+
+                @Override
+                public void setCurrentFont(Font font) {
+                    codeArea.setCodeFont(font);
+                }
+            });
             optionsPanel.loadFromPreferences();
             updateApplyOptions(optionsPanel);
             OptionsControlPanel optionsControlPanel = new OptionsControlPanel();
@@ -923,6 +956,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
         ((CharsetCapable) codeArea).setCharset(Charset.forName(applyOptions.getEncodingOptions().getSelectedEncoding()));
         encodingsHandler.setEncodings(applyOptions.getEncodingOptions().getEncodings());
+        ((FontCapable) codeArea).setCodeFont(applyOptions.getFontOptions().isUseDefaultFont() ? defaultFont : applyOptions.getFontOptions().getFont(defaultFont));
 
         EditorOptions editorOptions = applyOptions.getEditorOptions();
         switchShowValuesPanel(editorOptions.isShowValuesPanel());
@@ -999,6 +1033,11 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             @Override
             public TextEncodingOptions getEncodingOptions() {
                 return preferences.getEncodingPreferences();
+            }
+
+            @Override
+            public TextFontOptions getFontOptions() {
+                return preferences.getFontPreferences();
             }
 
             @Override

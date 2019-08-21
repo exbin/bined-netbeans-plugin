@@ -19,14 +19,17 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
+import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
+import org.exbin.framework.preferences.PreferencesWrapper;
 import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
+import org.openide.util.NbPreferences;
 
 /**
  * Binary editor options panel.
  *
- * @version 0.2.1 2019/08/06
+ * @version 0.2.1 2019/08/21
  * @author ExBin Project (http://exbin.org)
  */
 @OptionsPanelController.SubRegistration(
@@ -94,6 +97,7 @@ public final class BinEdOptionsPanelController extends OptionsPanelController {
     private BinEdOptionsPanel getPanel() {
         if (panel == null) {
             panel = new BinEdOptionsPanel(this);
+            panel.setPreferences(new BinaryEditorPreferences(new PreferencesWrapper(NbPreferences.forModule(BinaryEditorPreferences.class))));
         }
         return panel;
     }

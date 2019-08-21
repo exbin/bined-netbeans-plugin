@@ -24,11 +24,12 @@ import org.exbin.framework.bined.options.CodeAreaThemeOptions;
 import org.exbin.framework.bined.options.EditorOptions;
 import org.exbin.framework.bined.options.StatusOptions;
 import org.exbin.framework.editor.text.options.TextEncodingOptions;
+import org.exbin.framework.editor.text.options.TextFontOptions;
 
 /**
  * Options for apply operation.
  *
- * @version 0.2.1 2019/08/06
+ * @version 0.2.1 2019/08/21
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -39,6 +40,9 @@ public interface BinEdApplyOptions {
 
     @Nonnull
     TextEncodingOptions getEncodingOptions();
+
+    @Nonnull
+    TextFontOptions getFontOptions();
 
     @Nonnull
     EditorOptions getEditorOptions();
