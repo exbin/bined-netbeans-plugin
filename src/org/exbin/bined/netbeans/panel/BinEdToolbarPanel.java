@@ -159,6 +159,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     }
 
     public void loadFromPreferences() {
+        codeArea.setCodeType(preferences.getCodeAreaPreferences().getCodeType());
         updateCycleButtonName();
         showUnprintablesToggleButton.setSelected(preferences.getCodeAreaPreferences().isShowUnprintables());
     }

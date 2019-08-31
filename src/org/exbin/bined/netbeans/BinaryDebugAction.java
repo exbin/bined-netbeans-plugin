@@ -20,7 +20,7 @@ import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import javax.swing.JPanel;
+import org.exbin.bined.netbeans.panel.DebugViewPanel;
 import org.exbin.framework.gui.utils.WindowUtils;
 import org.exbin.framework.gui.utils.WindowUtils.DialogWrapper;
 import org.netbeans.api.debugger.jpda.ObjectVariable;
@@ -52,7 +52,8 @@ public final class BinaryDebugAction implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         // new UIPanel(context);
-        DialogWrapper dialog = WindowUtils.createDialog(new JPanel(), (Component) e.getSource(), "Selected Variables", Dialog.ModalityType.APPLICATION_MODAL);
+        DebugViewPanel debugViewPanel = new DebugViewPanel();
+        DialogWrapper dialog = WindowUtils.createDialog(debugViewPanel, (Component) e.getSource(), "View as Binary Data", Dialog.ModalityType.APPLICATION_MODAL);
         dialog.show();
     }
 }

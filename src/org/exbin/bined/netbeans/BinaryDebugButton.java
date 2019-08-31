@@ -19,6 +19,9 @@ import java.awt.event.ActionEvent;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import org.exbin.bined.netbeans.panel.DebugViewPanel;
+import org.netbeans.api.debugger.DebuggerManager;
+import org.netbeans.spi.debugger.ui.DebuggingView;
 import org.openide.util.ImageUtilities;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
@@ -27,7 +30,7 @@ import org.openide.windows.WindowManager;
 /**
  * Debug view button.
  *
- * @version 0.2.0 2019/03/19
+ * @version 0.2.0 2019/08/25
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
@@ -40,11 +43,15 @@ public final class BinaryDebugButton extends JButton {
             public void actionPerformed(ActionEvent e) {
                 final Mode editorMode = WindowManager.getDefault().findMode("LocalsView");
                 TopComponent activeTC = TopComponent.getRegistry().getActivated();
+                DebuggingView debuggingView = DebuggingView.getDefault();
+//                DebuggerManager.getDebuggerManager().get
+//                TopComponent outputWindow = WindowManager.getDefault().findTopComponent();
 //                activeTC.
 //                ViewFactory viewFactory = activeTC.getLookup().lookup(ViewFactory.class);
 //                viewFactory.View.LOCALS_VIEW_NAME
 //                JOptionPane optionPane = new JOptionPane("Test");
 //                optionPane.setVisible(true);
+                DebugViewPanel debugViewPanel = new DebugViewPanel();
             }
         });
         setToolTipText("Show as Binary");

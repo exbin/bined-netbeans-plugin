@@ -24,7 +24,6 @@ import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoableEdit;
 import org.exbin.bined.operation.BinaryDataCommand;
 import org.exbin.bined.operation.BinaryDataOperationException;
-import org.exbin.bined.operation.swing.CodeAreaUndoHandler;
 import org.exbin.bined.operation.undo.BinaryDataUndoHandler;
 import org.exbin.bined.operation.undo.BinaryDataUndoUpdateListener;
 import org.exbin.bined.swing.CodeAreaCore;
@@ -49,7 +48,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoHandler {
     /**
      * Creates a new instance.
      *
-     * @param codeArea hexadecimal component
+     * @param codeArea code area component
      * @param undoManager undo manager
      */
     public BinaryUndoSwingHandler(CodeAreaCore codeArea, UndoRedo.Manager undoManager) {
