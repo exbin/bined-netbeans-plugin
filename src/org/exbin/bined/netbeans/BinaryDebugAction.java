@@ -22,13 +22,16 @@ import java.awt.event.ActionListener;
 import java.util.List;
 import org.exbin.bined.netbeans.panel.DebugViewPanel;
 import org.exbin.framework.gui.utils.WindowUtils;
-import org.netbeans.api.debugger.DebuggerManager;
+import org.exbin.utils.binary_data.ByteArrayEditableData;
+import org.netbeans.api.debugger.jpda.ClassVariable;
+import org.netbeans.api.debugger.jpda.Field;
+import org.netbeans.api.debugger.jpda.JPDAClassType;
 import org.netbeans.api.debugger.jpda.ObjectVariable;
-import org.netbeans.modules.debugger.ui.views.VariablesViewButtons;
-import org.netbeans.spi.debugger.ui.DebuggingView;
+import org.netbeans.api.debugger.jpda.Variable;
+import org.netbeans.spi.debugger.ContextProvider;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
-import org.openide.nodes.Node;
+import org.openide.util.NbPreferences;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -36,7 +39,7 @@ import org.openide.windows.WindowManager;
 /**
  * Debug view action.
  *
- * @version 0.2.1 2019/09/01
+ * @version 0.2.1 2019/09/02
  * @author ExBin Project (http://exbin.org)
  */
 @ActionID(
@@ -49,6 +52,10 @@ import org.openide.windows.WindowManager;
 //@Messages("CTL_BinaryDebugAction=Show as Binary")
 public final class BinaryDebugAction implements ActionListener {
 
+    public static final String SHOW_WATCHES = "show_watches"; // NOI18N
+
+    public static final String PREFERENCES_NAME = "variables_view"; // NOI18N
+
     private final List<ObjectVariable> context;
 
     public BinaryDebugAction(List<ObjectVariable> context) {
@@ -57,20 +64,23 @@ public final class BinaryDebugAction implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String viewName = VariablesViewButtons.isWatchesViewNested() ? "localsView" : "watchesView";
+        String viewName = isWatchesViewNested() ? "localsView" : "watchesView";
         TopComponent watchesView = WindowManager.getDefault().findTopComponent(viewName);
-        Node[] nodes = watchesView.getActivatedNodes();
-        // new UIPanel(context);
-//        Lookup.getDefault().lookup("");
 
+        // TODO There is probably better way how to handle this
+        Object selectedObject = watchesView.getLookup().lookup(Object.class);
+
+        // AccessibleContext accessibleContext = watchesView.getAccessibleContext();
+        //OutlineTable outlineTable = watchesView.getLookup().lookup(OutlineTable.class);
+        // OutlineTable outlineTable = accessibleContext.getAccessibleChild(0).getAccessibleChild(0).getAccessibleChild(0);
+        // Node[] nodes = watchesView.getActivatedNodes();
 //        DebuggerManager.getDebuggerManager().getCurrentSession().
-        final Mode editorMode = WindowManager.getDefault().findMode("LocalsView");
-        TopComponent localsView = WindowManager.getDefault().findTopComponent("LocalsView");
-        TopComponent breakpointsView = WindowManager.getDefault().findTopComponent("BreakpointsView");
-        TopComponent activeTC = TopComponent.getRegistry().getActivated();
-        DebuggingView debuggingView = DebuggingView.getDefault();
-        TopComponent debuggingViewTC = debuggingView.getViewTC();
-
+//        final Mode editorMode = WindowManager.getDefault().findMode(viewName);
+//        TopComponent localsView = WindowManager.getDefault().findTopComponent("LocalsView");
+//        TopComponent breakpointsView = WindowManager.getDefault().findTopComponent("BreakpointsView");
+//        TopComponent activeTC = TopComponent.getRegistry().getActivated();
+//        DebuggingView debuggingView = DebuggingView.getDefault();
+//        TopComponent debuggingViewTC = debuggingView.getViewTC();
         // VariablesView variablesView = VariablesView.
 //        DebuggerManager.getDebuggerManager().get
 //        TopComponent outputWindow = WindowManager.getDefault().findTopComponent();
@@ -80,6 +90,30 @@ public final class BinaryDebugAction implements ActionListener {
 //        VariablesViewButtons
         DebugViewPanel debugViewPanel = new DebugViewPanel();
         WindowUtils.DialogWrapper dialog = WindowUtils.createDialog(debugViewPanel, (Component) e.getSource(), "View as Binary Data", Dialog.ModalityType.APPLICATION_MODAL);
+
+        ByteArrayEditableData data = new ByteArrayEditableData();
+        if (selectedObject instanceof ObjectVariable) {
+//            JPDAClassType classType = ((ObjectVariable) selectedObject).getClassType();
+//            ClassVariable classObject = classType.classObject();
+            // classObject.getToStringValue();
+//            int fieldsCount = ((ObjectVariable) selectedObject).getFieldsCount();
+
+//            Field[] fields = ((ObjectVariable) selectedObject).getFields(0, 0);
+            
+
+            String value = ((ObjectVariable) selectedObject).getValue();
+            if (value != null) {
+                data.insert(0, value.getBytes());
+                debugViewPanel.setData(data);
+            }
+        } else if (selectedObject instanceof Variable) {
+//            String type = ((Variable) selectedObject).getType();
+            String value = ((Variable) selectedObject).getValue();
+            if (value != null) {
+                data.insert(0, value.getBytes());
+                debugViewPanel.setData(data);
+            }
+        }
         dialog.show();
     }
 
@@ -92,7 +126,7 @@ public final class BinaryDebugAction implements ActionListener {
                 return; // Watches is already selected
             }
         }
-        String viewName = VariablesViewButtons.isWatchesViewNested() ? "localsView" : "watchesView";
+        String viewName = isWatchesViewNested() ? "localsView" : "watchesView";
         openComponent(viewName, false).requestVisible();
     }
 
@@ -106,5 +140,10 @@ public final class BinaryDebugAction implements ActionListener {
             view.requestActive();
         }
         return view;
+    }
+
+    public static boolean isWatchesViewNested() {
+        java.util.prefs.Preferences preferences = NbPreferences.forModule(ContextProvider.class).node(PREFERENCES_NAME); // NOI18N
+        return preferences.getBoolean(SHOW_WATCHES, true);
     }
 }
