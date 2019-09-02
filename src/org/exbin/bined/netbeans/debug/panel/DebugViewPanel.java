@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.bined.netbeans.panel;
+package org.exbin.bined.netbeans.debug.panel;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -44,6 +44,7 @@ import org.exbin.bined.extended.layout.ExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.highlight.swing.extended.ExtendedHighlightNonAsciiCodeAreaPainter;
 import org.exbin.bined.netbeans.BinEdApplyOptions;
 import org.exbin.bined.netbeans.GoToPositionAction;
+import org.exbin.bined.netbeans.panel.BinarySearchPanel;
 import org.exbin.bined.swing.basic.DefaultCodeAreaCommandHandler;
 import org.exbin.bined.swing.basic.color.CodeAreaColorsProfile;
 import org.exbin.bined.swing.extended.ExtCodeArea;

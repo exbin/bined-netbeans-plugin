@@ -20,14 +20,21 @@ import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import org.exbin.bined.netbeans.panel.DebugViewPanel;
+import javax.swing.JPanel;
+import org.exbin.bined.netbeans.debug.DebugViewDataSource;
+import org.exbin.bined.netbeans.debug.array.ByteArrayPageProvider;
+import org.exbin.bined.netbeans.debug.panel.DebugViewPanel;
 import org.exbin.framework.gui.utils.WindowUtils;
+import org.exbin.framework.gui.utils.panel.CloseControlPanel;
+import org.exbin.utils.binary_data.BinaryData;
 import org.exbin.utils.binary_data.ByteArrayEditableData;
 import org.netbeans.api.debugger.jpda.ClassVariable;
 import org.netbeans.api.debugger.jpda.Field;
+import org.netbeans.api.debugger.jpda.JPDAArrayType;
 import org.netbeans.api.debugger.jpda.JPDAClassType;
 import org.netbeans.api.debugger.jpda.ObjectVariable;
 import org.netbeans.api.debugger.jpda.Variable;
+import org.netbeans.api.debugger.jpda.VariableType;
 import org.netbeans.spi.debugger.ContextProvider;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
@@ -89,31 +96,51 @@ public final class BinaryDebugAction implements ActionListener {
 //        optionPane.setVisible(true);
 //        VariablesViewButtons
         DebugViewPanel debugViewPanel = new DebugViewPanel();
-        WindowUtils.DialogWrapper dialog = WindowUtils.createDialog(debugViewPanel, (Component) e.getSource(), "View as Binary Data", Dialog.ModalityType.APPLICATION_MODAL);
+        CloseControlPanel controlPanel = new CloseControlPanel();
+        JPanel dialogPanel = WindowUtils.createDialogPanel(debugViewPanel, controlPanel);
+        WindowUtils.DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, (Component) e.getSource(), "View as Binary Data", Dialog.ModalityType.APPLICATION_MODAL);
 
-        ByteArrayEditableData data = new ByteArrayEditableData();
+        BinaryData data;
+        boolean fallback = true;
         if (selectedObject instanceof ObjectVariable) {
-//            JPDAClassType classType = ((ObjectVariable) selectedObject).getClassType();
-//            ClassVariable classObject = classType.classObject();
-            // classObject.getToStringValue();
-//            int fieldsCount = ((ObjectVariable) selectedObject).getFieldsCount();
+            fallback = false;
+            JPDAClassType classType = ((ObjectVariable) selectedObject).getClassType();
+            ClassVariable classObject = classType.classObject();
+//            JPDAClassType reflectedType = classObject.getReflectedType();
 
-//            Field[] fields = ((ObjectVariable) selectedObject).getFields(0, 0);
-            
-
-            String value = ((ObjectVariable) selectedObject).getValue();
-            if (value != null) {
-                data.insert(0, value.getBytes());
+            if (classObject instanceof JPDAArrayType) {
+                VariableType componentType = ((JPDAArrayType) classObject).getComponentType();
+                data = new DebugViewDataSource(new ByteArrayPageProvider((ObjectVariable) selectedObject));
                 debugViewPanel.setData(data);
+            } else if (classType instanceof JPDAArrayType) {
+                VariableType componentType = ((JPDAArrayType) classType).getComponentType();
+                data = new DebugViewDataSource(new ByteArrayPageProvider((ObjectVariable) selectedObject));
+                debugViewPanel.setData(data);
+            } else {
+                // classObject.getToStringValue();
+                int fieldsCount = ((ObjectVariable) selectedObject).getFieldsCount();
+
+                Field[] fields = ((ObjectVariable) selectedObject).getFields(0, 0);
+                String value = ((ObjectVariable) selectedObject).getValue();
+                if (value != null) {
+                    data = new ByteArrayEditableData(value.getBytes());
+                    debugViewPanel.setData(data);
+                }
             }
-        } else if (selectedObject instanceof Variable) {
+        }
+
+        if (fallback && selectedObject instanceof Variable) {
 //            String type = ((Variable) selectedObject).getType();
             String value = ((Variable) selectedObject).getValue();
             if (value != null) {
-                data.insert(0, value.getBytes());
+                data = new ByteArrayEditableData(value.getBytes());
                 debugViewPanel.setData(data);
             }
         }
+
+        controlPanel.setHandler(() -> {
+            dialog.close();
+        });
         dialog.show();
     }
 
