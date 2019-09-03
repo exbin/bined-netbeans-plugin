@@ -3,7 +3,7 @@
 <filesystem>
     <folder name="Actions">
         <folder name="Debugger">
-            <file name="org-exbin-bined-netbeans-BinaryDebugAction.instance">
+            <file name="org-exbin-bined-netbeans-debug-BinaryDebugAction.instance">
                 <attr name="delegate" methodvalue="org.openide.awt.Actions.inject"/>
                 <attr name="displayName" bundlevalue="org.exbin.bined.netbeans.Bundle#CTL_BinaryDebugAction"/>
                 <attr name="injectable" stringvalue="org.exbin.bined.netbeans.BinaryDebugAction"/>
@@ -18,7 +18,7 @@
     <folder name="Debugger">
         <folder name="LocalsView">
             <folder name="Toolbar">
-                <file name="org-exbin-bined-netbeans-BinaryDebugButton.instance">
+                <file name="org-exbin-bined-netbeans-debug-BinaryDebugButton.instance">
                     <attr name="serviceClass" stringvalue="java.awt.Component"/>
                     <attr name="instanceOf" stringvalue="java.awt.Component"/>
                     <attr intvalue="300" name="position"/>

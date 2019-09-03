@@ -19,14 +19,20 @@ import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import javax.annotation.Nullable;
 import javax.swing.JPanel;
 import org.exbin.bined.netbeans.debug.DebugViewDataSource;
 import org.exbin.bined.netbeans.debug.array.ByteArrayPageProvider;
+import org.exbin.bined.netbeans.debug.array.IntegerArrayPageProvider;
 import org.exbin.bined.netbeans.debug.panel.DebugViewPanel;
+import org.exbin.framework.bined.panel.ValuesPanel;
 import org.exbin.framework.gui.utils.WindowUtils;
 import org.exbin.framework.gui.utils.panel.CloseControlPanel;
 import org.exbin.utils.binary_data.BinaryData;
+import org.exbin.utils.binary_data.ByteArrayData;
 import org.exbin.utils.binary_data.ByteArrayEditableData;
 import org.netbeans.api.debugger.jpda.ClassVariable;
 import org.netbeans.api.debugger.jpda.Field;
@@ -51,7 +57,7 @@ import org.openide.windows.WindowManager;
  */
 @ActionID(
         category = "Debug",
-        id = "org.exbin.bined.netbeans.BinaryDebugAction"
+        id = "org.exbin.bined.netbeans.debug.BinaryDebugAction"
 )
 @ActionRegistration(
         displayName = "#CTL_BinaryDebugAction"
@@ -63,10 +69,10 @@ public final class BinaryDebugAction implements ActionListener {
 
     public static final String PREFERENCES_NAME = "variables_view"; // NOI18N
 
-    private final List<ObjectVariable> context;
+    private static final byte[] valuesCache = new byte[8];
+    private static final ByteBuffer byteBuffer = ByteBuffer.wrap(valuesCache);
 
-    public BinaryDebugAction(List<ObjectVariable> context) {
-        this.context = context;
+    public BinaryDebugAction() {
     }
 
     @Override
@@ -95,53 +101,160 @@ public final class BinaryDebugAction implements ActionListener {
 //        viewFactory.View.LOCALS_VIEW_NAME JOptionPane optionPane = new JOptionPane("Test");
 //        optionPane.setVisible(true);
 //        VariablesViewButtons
+        actionPerformed((Component) e.getSource(), selectedObject);
+    }
+
+    public static void actionPerformed(Component parent, Object variableObject) {
         DebugViewPanel debugViewPanel = new DebugViewPanel();
         CloseControlPanel controlPanel = new CloseControlPanel();
         JPanel dialogPanel = WindowUtils.createDialogPanel(debugViewPanel, controlPanel);
-        WindowUtils.DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, (Component) e.getSource(), "View as Binary Data", Dialog.ModalityType.APPLICATION_MODAL);
+        WindowUtils.DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, parent, "View as Binary", Dialog.ModalityType.APPLICATION_MODAL);
 
         BinaryData data;
         boolean fallback = true;
-        if (selectedObject instanceof ObjectVariable) {
-            fallback = false;
-            JPDAClassType classType = ((ObjectVariable) selectedObject).getClassType();
-            ClassVariable classObject = classType.classObject();
+        if (variableObject instanceof ObjectVariable) {
+            JPDAClassType classType = ((ObjectVariable) variableObject).getClassType();
+            ClassVariable classObject = classType == null ? null : classType.classObject();
 //            JPDAClassType reflectedType = classObject.getReflectedType();
 
             if (classObject instanceof JPDAArrayType) {
-                VariableType componentType = ((JPDAArrayType) classObject).getComponentType();
-                data = new DebugViewDataSource(new ByteArrayPageProvider((ObjectVariable) selectedObject));
-                debugViewPanel.setData(data);
+                data = processArrayValue((ObjectVariable) variableObject, (JPDAArrayType) classObject);
+                if (data != null) {
+                    fallback = false;
+                    debugViewPanel.setData(data);
+                }
             } else if (classType instanceof JPDAArrayType) {
-                VariableType componentType = ((JPDAArrayType) classType).getComponentType();
-                data = new DebugViewDataSource(new ByteArrayPageProvider((ObjectVariable) selectedObject));
-                debugViewPanel.setData(data);
+                data = processArrayValue((ObjectVariable) variableObject, (JPDAArrayType) classType);
+                if (data != null) {
+                    fallback = false;
+                    debugViewPanel.setData(data);
+                }
             } else {
                 // classObject.getToStringValue();
-                int fieldsCount = ((ObjectVariable) selectedObject).getFieldsCount();
-
-                Field[] fields = ((ObjectVariable) selectedObject).getFields(0, 0);
-                String value = ((ObjectVariable) selectedObject).getValue();
-                if (value != null) {
-                    data = new ByteArrayEditableData(value.getBytes());
-                    debugViewPanel.setData(data);
+                int fieldsCount = ((ObjectVariable) variableObject).getFieldsCount();
+                if (fieldsCount == 1) {
+                    Field[] fields = ((ObjectVariable) variableObject).getFields(0, 0);
+                    data = processSimpleValue(fields[0]);
+                    if (data != null) {
+                        fallback = false;
+                        debugViewPanel.setData(data);
+                    }
                 }
             }
         }
 
-        if (fallback && selectedObject instanceof Variable) {
-//            String type = ((Variable) selectedObject).getType();
-            String value = ((Variable) selectedObject).getValue();
-            if (value != null) {
-                data = new ByteArrayEditableData(value.getBytes());
-                debugViewPanel.setData(data);
+        if (fallback && variableObject instanceof Variable) {
+            data = processSimpleValue((Variable) variableObject);
+            if (data == null) {
+                String value = ((Variable) variableObject).getValue();
+                if (value != null) {
+                    data = new ByteArrayData(value.getBytes(Charset.defaultCharset()));
+                } else {
+                    data = new ByteArrayData();
+                }
             }
+            debugViewPanel.setData(data);
         }
 
         controlPanel.setHandler(() -> {
             dialog.close();
         });
         dialog.show();
+    }
+
+    @Nullable
+    private static BinaryData processSimpleValue(Variable variableObject) {
+        String variableValue = ((Variable) variableObject).getValue();
+        String variableType = ((Variable) variableObject).getType();
+
+        switch (variableType) {
+            case "byte":
+            case "java.lang.Byte": {
+                byte[] byteArray = new byte[1];
+                byte value = Byte.valueOf(variableValue);
+                byteArray[0] = value;
+                return new ByteArrayData(byteArray);
+            }
+            case "short": {
+                byte[] byteArray = new byte[2];
+                short value = Short.valueOf(variableValue);
+                byteArray[0] = (byte) (value >> 8);
+                byteArray[1] = (byte) (value & 0xff);
+                return new ByteArrayData(byteArray);
+            }
+            case "int": {
+                byte[] byteArray = new byte[4];
+                int value = Integer.valueOf(variableValue);
+                byteArray[0] = (byte) (value >> 24);
+                byteArray[1] = (byte) ((value >> 16) & 0xff);
+                byteArray[2] = (byte) ((value >> 8) & 0xff);
+                byteArray[3] = (byte) (value & 0xff);
+                return new ByteArrayData(byteArray);
+            }
+            case "long": {
+                byte[] byteArray = new byte[8];
+                long value = Long.valueOf(variableValue);;
+                BigInteger bigInteger = BigInteger.valueOf(value);
+                for (int bit = 0; bit < 7; bit++) {
+                    BigInteger nextByte = bigInteger.and(ValuesPanel.BIG_INTEGER_BYTE_MASK);
+                    byteArray[7 - bit] = nextByte.byteValue();
+                    bigInteger = bigInteger.shiftRight(8);
+                }
+                return new ByteArrayData(byteArray);
+            }
+            case "float": {
+                byte[] byteArray = new byte[4];
+                float value = Float.valueOf(variableValue);
+                byteBuffer.rewind();
+                byteBuffer.putFloat(value);
+                System.arraycopy(valuesCache, 0, byteArray, 0, 4);
+                return new ByteArrayData(byteArray);
+            }
+            case "double": {
+                byte[] byteArray = new byte[8];
+                double value = Double.valueOf(variableValue);
+                byteBuffer.rewind();
+                byteBuffer.putDouble(value);
+                System.arraycopy(valuesCache, 0, byteArray, 0, 8);
+                return new ByteArrayData(byteArray);
+            }
+            case "char": {
+                if (variableValue.length() == 3) {
+                    byte[] byteArray = new byte[2];
+                    char value = variableValue.charAt(1);
+                    byteBuffer.rewind();
+                    byteBuffer.putChar(value);
+                    System.arraycopy(valuesCache, 0, byteArray, 0, 2);
+                    return new ByteArrayData(byteArray);
+                }
+
+                break;
+            }
+            case "string": {
+                if (variableValue.length() > 2) {
+                    return new ByteArrayData(variableValue.substring(1, variableValue.length() - 2).getBytes(Charset.defaultCharset()));
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Nullable
+    private static BinaryData processArrayValue(ObjectVariable variableObject, JPDAArrayType arrayType) {
+        String type = arrayType.getComponentTypeName();
+        switch (type) {
+            case "byte":
+            case "java.lang.Byte": {
+                return new DebugViewDataSource(new ByteArrayPageProvider(variableObject));
+            }
+            case "int":
+            case "java.lang.Integer": {
+                return new DebugViewDataSource(new IntegerArrayPageProvider(variableObject));
+            }
+        }
+
+        return null;
     }
 
     private static void openWatchesView() {

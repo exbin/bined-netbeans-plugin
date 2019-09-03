@@ -16,62 +16,48 @@
 package org.exbin.bined.netbeans.debug.array;
 
 import org.exbin.bined.netbeans.debug.DebugViewDataSource;
-
+import org.netbeans.api.debugger.jpda.Field;
+import org.netbeans.api.debugger.jpda.ObjectVariable;
 
 /**
  * Integer array data source for debugger view.
  *
  * @author ExBin Project (http://exbin.org)
- * @version 0.2.1 2019/09/02
+ * @version 0.2.1 2019/09/03
  */
 public class IntegerArrayPageProvider implements DebugViewDataSource.PageProvider {
 
+    private final ObjectVariable arrayRef;
+
+    public IntegerArrayPageProvider(ObjectVariable arrayRef) {
+        this.arrayRef = arrayRef;
+    }
+
     @Override
     public byte[] getPage(long pageIndex) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        int pageSize = DebugViewDataSource.PAGE_SIZE / 4;
+        int startPos = (int) (pageIndex * pageSize);
+        int length = pageSize;
+        if (arrayRef.getFieldsCount() - startPos < pageSize) {
+            length = arrayRef.getFieldsCount() - startPos;
+        }
+        final Field[] values = arrayRef.getFields(startPos, startPos + length);
+        byte[] result = new byte[length * 4];
+        for (int i = 0; i < values.length; i++) {
+            Field rawValue = values[i];
+            int value = Integer.valueOf(rawValue.getValue());
+
+            result[i * 4] = (byte) (value >> 24);
+            result[i * 4 + 1] = (byte) ((value >> 16) & 0xff);
+            result[i * 4 + 2] = (byte) ((value >> 8) & 0xff);
+            result[i * 4 + 3] = (byte) (value & 0xff);
+        }
+
+        return result;
     }
 
     @Override
     public long getDocumentSize() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return arrayRef.getFieldsCount() * 4;
     }
-
-//    private final ArrayReference arrayRef;
-//
-//    public IntegerArrayPageProvider(ArrayReference arrayRef) {
-//        this.arrayRef = arrayRef;
-//    }
-//
-//    @Override
-//    public byte[] getPage(long pageIndex) {
-//        int pageSize = DebugViewDataSource.PAGE_SIZE / 4;
-//        int startPos = (int) (pageIndex * pageSize);
-//        int length = pageSize;
-//        if (arrayRef.length() - startPos < pageSize) {
-//            length = arrayRef.length() - startPos;
-//        }
-//        final List<Value> values = arrayRef.getValues(startPos, length);
-//        byte[] result = new byte[length * 4];
-//        for (int i = 0; i < values.size(); i++) {
-//            Value rawValue = values.get(i);
-//            if (rawValue instanceof ObjectReference) {
-//                Field field = ((ObjectReference) rawValue).referenceType().fieldByName("value");
-//                rawValue = ((ObjectReference) rawValue).getValue(field);
-//            }
-//
-//            int value = rawValue instanceof IntegerValue ? ((IntegerValue) rawValue).value() : 0;
-//
-//            result[i * 4] = (byte) (value >> 24);
-//            result[i * 4 + 1] = (byte) ((value >> 16) & 0xff);
-//            result[i * 4 + 2] = (byte) ((value >> 8) & 0xff);
-//            result[i * 4 + 3] = (byte) (value & 0xff);
-//        }
-//
-//        return result;
-//    }
-//
-//    @Override
-//    public long getDocumentSize() {
-//        return arrayRef.length() * 4;
-//    }
 }

@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.bined.netbeans;
+package org.exbin.bined.netbeans.debug;
 
+import org.exbin.bined.netbeans.BinaryDebugAction;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JButton;
 import org.openide.util.ImageUtilities;
@@ -30,7 +31,7 @@ public final class BinaryDebugButton extends JButton {
 
     public BinaryDebugButton() {
         super(ImageUtilities.loadImageIcon("org/exbin/bined/netbeans/resources/icons/icon.png", false));
-        addActionListener(new BinaryDebugAction(null));
+        addActionListener(new BinaryDebugAction());
         setToolTipText("Show as Binary");
     }
 }

@@ -1,4 +1,6 @@
 0.2.1
+- Action to show debug variables as binary data
+- Minor GUI improvements
 - Context aware popup menu
 - Go-to dialog position to support position from end
 - Go-to dialog position to support different numerical bases
