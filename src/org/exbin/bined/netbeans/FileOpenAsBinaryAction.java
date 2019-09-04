@@ -27,7 +27,7 @@ import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.util.Exceptions;
-import org.openide.util.NbBundle.Messages;
+import org.openide.util.NbBundle;
 import org.openide.windows.Mode;
 import org.openide.windows.WindowManager;
 
@@ -46,7 +46,7 @@ import org.openide.windows.WindowManager;
         displayName = "#CTL_FileOpenAsBinaryAction"
 )
 @ActionReference(path = "Menu/File", position = 850)
-@Messages("CTL_FileOpenAsBinaryAction=Open File as Binary...")
+@NbBundle.Messages("CTL_FileOpenAsBinaryAction=Open File as Binary...")
 @ParametersAreNonnullByDefault
 public final class FileOpenAsBinaryAction implements ActionListener {
 

@@ -22,7 +22,7 @@ import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataShadow;
-import org.openide.util.NbBundle.Messages;
+import org.openide.util.NbBundle;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
@@ -36,7 +36,7 @@ import org.openide.windows.WindowManager;
 @ParametersAreNonnullByDefault
 @ActionID(category = "File", id = "org.exbin.bined.OpenAsBinaryAction")
 @ActionRegistration(displayName = "#CTL_OpenAsBinaryAction")
-@Messages("CTL_OpenAsBinaryAction=Open as Binary")
+@NbBundle.Messages("CTL_OpenAsBinaryAction=Open as Binary")
 public final class OpenAsBinaryAction implements ActionListener {
 
     public OpenAsBinaryAction() {

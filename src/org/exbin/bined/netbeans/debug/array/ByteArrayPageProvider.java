@@ -24,7 +24,7 @@ import org.netbeans.api.debugger.jpda.ObjectVariable;
  * Byte array data source for debugger view.
  *
  * @author ExBin Project (http://exbin.org)
- * @version 0.2.1 2019/09/02
+ * @version 0.2.1 2019/09/04
  */
 public class ByteArrayPageProvider implements DebugViewDataSource.PageProvider {
 
@@ -45,16 +45,11 @@ public class ByteArrayPageProvider implements DebugViewDataSource.PageProvider {
         byte[] result = new byte[length];
         for (int i = 0; i < values.length; i++) {
             Field rawValue = values[i];
-            byte value = Byte.valueOf(rawValue.getValue());
-//            if (rawValue instanceof ObjectReference) {
-//                Field field = ((ObjectReference) rawValue).referenceType().fieldByName("value");
-//                rawValue = ((ObjectReference) rawValue).getValue(field);
-//            }
-//
-//            if (rawValue instanceof ByteValue) {
-//                value = ((ByteValue) rawValue).value();
+//            if (rawValue instanceof ObjectVariable) {
+//                rawValue = ((ObjectVariable) rawValue).getFields(0, 0)[0];
 //            }
 
+            byte value = Byte.valueOf(rawValue.getValue());
             result[i] = value;
         }
 

@@ -26,21 +26,24 @@ import javax.annotation.Nullable;
 import javax.swing.JPanel;
 import org.exbin.bined.netbeans.debug.DebugViewDataSource;
 import org.exbin.bined.netbeans.debug.array.ByteArrayPageProvider;
+import org.exbin.bined.netbeans.debug.array.CharArrayPageProvider;
+import org.exbin.bined.netbeans.debug.array.DoubleArrayPageProvider;
+import org.exbin.bined.netbeans.debug.array.FloatArrayPageProvider;
 import org.exbin.bined.netbeans.debug.array.IntegerArrayPageProvider;
+import org.exbin.bined.netbeans.debug.array.LongArrayPageProvider;
+import org.exbin.bined.netbeans.debug.array.ShortArrayPageProvider;
 import org.exbin.bined.netbeans.debug.panel.DebugViewPanel;
 import org.exbin.framework.bined.panel.ValuesPanel;
 import org.exbin.framework.gui.utils.WindowUtils;
 import org.exbin.framework.gui.utils.panel.CloseControlPanel;
 import org.exbin.utils.binary_data.BinaryData;
 import org.exbin.utils.binary_data.ByteArrayData;
-import org.exbin.utils.binary_data.ByteArrayEditableData;
 import org.netbeans.api.debugger.jpda.ClassVariable;
 import org.netbeans.api.debugger.jpda.Field;
 import org.netbeans.api.debugger.jpda.JPDAArrayType;
 import org.netbeans.api.debugger.jpda.JPDAClassType;
 import org.netbeans.api.debugger.jpda.ObjectVariable;
 import org.netbeans.api.debugger.jpda.Variable;
-import org.netbeans.api.debugger.jpda.VariableType;
 import org.netbeans.spi.debugger.ContextProvider;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
@@ -123,28 +126,40 @@ public final class BinaryDebugAction implements ActionListener {
                     fallback = false;
                     debugViewPanel.setData(data);
                 }
-            } else if (classType instanceof JPDAArrayType) {
-                data = processArrayValue((ObjectVariable) variableObject, (JPDAArrayType) classType);
+            } else if (classObject != null && classObject.getReflectedType() instanceof JPDAArrayType) {
+                data = processArrayValue((ObjectVariable) variableObject, (JPDAArrayType) classObject.getReflectedType());
                 if (data != null) {
                     fallback = false;
                     debugViewPanel.setData(data);
                 }
+            } else if (classType instanceof JPDAArrayType) {
+// TODO support for java.lang.*[] wrappers for native types
+// (Throws java.lang.AssertionError: Debugger communication in AWT Event Queue!)
+//                data = processArrayValue((ObjectVariable) variableObject, (JPDAArrayType) classType);
+//                if (data != null) {
+//                    fallback = false;
+//                    debugViewPanel.setData(data);
+//                }
             } else {
                 // classObject.getToStringValue();
-                int fieldsCount = ((ObjectVariable) variableObject).getFieldsCount();
-                if (fieldsCount == 1) {
-                    Field[] fields = ((ObjectVariable) variableObject).getFields(0, 0);
-                    data = processSimpleValue(fields[0]);
-                    if (data != null) {
-                        fallback = false;
-                        debugViewPanel.setData(data);
-                    }
-                }
+// TODO support for java.lang.* wrappers for native types
+//                int fieldsCount = ((ObjectVariable) variableObject).getFieldsCount();
+//                if (fieldsCount == 1) {
+//                    Field[] fields = ((ObjectVariable) variableObject).getFields(0, 0);
+//                    Field field = fields[0];
+//                    data = processSimpleValue(field.getDeclaredType(), ((ObjectVariable) variableObject).getValue());
+//                    if (data != null) {
+//                        fallback = false;
+//                        debugViewPanel.setData(data);
+//                    }
+//                }
             }
         }
 
         if (fallback && variableObject instanceof Variable) {
-            data = processSimpleValue((Variable) variableObject);
+            String variableValue = ((Variable) variableObject).getValue();
+            String variableType = ((Variable) variableObject).getType();
+            data = processSimpleValue(variableType, variableValue);
             if (data == null) {
                 String value = ((Variable) variableObject).getValue();
                 if (value != null) {
@@ -163,13 +178,9 @@ public final class BinaryDebugAction implements ActionListener {
     }
 
     @Nullable
-    private static BinaryData processSimpleValue(Variable variableObject) {
-        String variableValue = ((Variable) variableObject).getValue();
-        String variableType = ((Variable) variableObject).getType();
-
+    private static BinaryData processSimpleValue(String variableType, String variableValue) {
         switch (variableType) {
-            case "byte":
-            case "java.lang.Byte": {
+            case "byte": {
                 byte[] byteArray = new byte[1];
                 byte value = Byte.valueOf(variableValue);
                 byteArray[0] = value;
@@ -244,13 +255,27 @@ public final class BinaryDebugAction implements ActionListener {
     private static BinaryData processArrayValue(ObjectVariable variableObject, JPDAArrayType arrayType) {
         String type = arrayType.getComponentTypeName();
         switch (type) {
-            case "byte":
-            case "java.lang.Byte": {
+            case "java.lang.Byte":
+            case "byte": {
                 return new DebugViewDataSource(new ByteArrayPageProvider(variableObject));
             }
-            case "int":
-            case "java.lang.Integer": {
+            case "short": {
+                return new DebugViewDataSource(new ShortArrayPageProvider(variableObject));
+            }
+            case "int": {
                 return new DebugViewDataSource(new IntegerArrayPageProvider(variableObject));
+            }
+            case "long": {
+                return new DebugViewDataSource(new LongArrayPageProvider(variableObject));
+            }
+            case "float": {
+                return new DebugViewDataSource(new FloatArrayPageProvider(variableObject));
+            }
+            case "double": {
+                return new DebugViewDataSource(new DoubleArrayPageProvider(variableObject));
+            }
+            case "char": {
+                return new DebugViewDataSource(new CharArrayPageProvider(variableObject));
             }
         }
 

@@ -16,59 +16,45 @@
 package org.exbin.bined.netbeans.debug.array;
 
 import org.exbin.bined.netbeans.debug.DebugViewDataSource;
-
+import org.netbeans.api.debugger.jpda.Field;
+import org.netbeans.api.debugger.jpda.ObjectVariable;
 
 /**
  * Short array data source for debugger view.
  *
  * @author ExBin Project (http://exbin.org)
- * @version 0.2.1 2019/09/02
+ * @version 0.2.1 2019/09/04
  */
 public class ShortArrayPageProvider implements DebugViewDataSource.PageProvider {
 
+    private final ObjectVariable arrayRef;
+
+    public ShortArrayPageProvider(ObjectVariable arrayRef) {
+        this.arrayRef = arrayRef;
+    }
+
     @Override
     public byte[] getPage(long pageIndex) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        int pageSize = DebugViewDataSource.PAGE_SIZE / 2;
+        int startPos = (int) (pageIndex * pageSize);
+        int length = pageSize;
+        if (arrayRef.getFieldsCount() - startPos < pageSize) {
+            length = arrayRef.getFieldsCount() - startPos;
+        }
+        final Field[] values = arrayRef.getFields(startPos, startPos + length);
+        byte[] result = new byte[length * 2];
+        for (int i = 0; i < values.length; i++) {
+            Field rawValue = values[i];
+            short value = Short.valueOf(rawValue.getValue());
+            result[i * 2] = (byte) (value >> 8);
+            result[i * 2 + 1] = (byte) (value & 0xff);
+        }
+
+        return result;
     }
 
     @Override
     public long getDocumentSize() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return arrayRef.getFieldsCount() * 2;
     }
-
-//    private final ArrayReference arrayRef;
-//
-//    public ShortArrayPageProvider(ArrayReference arrayRef) {
-//        this.arrayRef = arrayRef;
-//    }
-//
-//    @Override
-//    public byte[] getPage(long pageIndex) {
-//        int pageSize = DebugViewDataSource.PAGE_SIZE / 2;
-//        int startPos = (int) (pageIndex * pageSize);
-//        int length = pageSize;
-//        if (arrayRef.length() - startPos < pageSize) {
-//            length = arrayRef.length() - startPos;
-//        }
-//        final List<Value> values = arrayRef.getValues(startPos, length);
-//        byte[] result = new byte[length * 2];
-//        for (int i = 0; i < values.size(); i++) {
-//            Value rawValue = values.get(i);
-//            if (rawValue instanceof ObjectReference) {
-//                Field field = ((ObjectReference) rawValue).referenceType().fieldByName("value");
-//                rawValue = ((ObjectReference) rawValue).getValue(field);
-//            }
-//
-//            short value = rawValue instanceof ShortValue ? ((ShortValue) rawValue).value() : 0;
-//            result[i * 2] = (byte) (value >> 8);
-//            result[i * 2 + 1] = (byte) (value & 0xff);
-//        }
-//
-//        return result;
-//    }
-//
-//    @Override
-//    public long getDocumentSize() {
-//        return arrayRef.length() * 2;
-//    }
 }

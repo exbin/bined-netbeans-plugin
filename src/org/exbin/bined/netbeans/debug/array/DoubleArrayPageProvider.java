@@ -15,65 +15,53 @@
  */
 package org.exbin.bined.netbeans.debug.array;
 
+import java.nio.ByteBuffer;
 import org.exbin.bined.netbeans.debug.DebugViewDataSource;
+import org.netbeans.api.debugger.jpda.Field;
+import org.netbeans.api.debugger.jpda.ObjectVariable;
 
 
 /**
  * Double array data source for debugger view.
  *
  * @author ExBin Project (http://exbin.org)
- * @version 0.2.1 2019/09/02
+ * @version 0.2.1 2019/09/04
  */
 public class DoubleArrayPageProvider implements DebugViewDataSource.PageProvider {
 
+    private final byte[] valuesCache = new byte[8];
+    private final ByteBuffer byteBuffer = ByteBuffer.wrap(valuesCache);
+
+    private final ObjectVariable arrayRef;
+
+    public DoubleArrayPageProvider(ObjectVariable arrayRef) {
+        this.arrayRef = arrayRef;
+    }
+
     @Override
     public byte[] getPage(long pageIndex) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        int pageSize = DebugViewDataSource.PAGE_SIZE / 8;
+        int startPos = (int) (pageIndex * pageSize);
+        int length = pageSize;
+        if (arrayRef.getFieldsCount() - startPos < pageSize) {
+            length = arrayRef.getFieldsCount() - startPos;
+        }
+        final Field[] values = arrayRef.getFields(startPos, startPos + length);
+        byte[] result = new byte[length * 8];
+        for (int i = 0; i < values.length; i++) {
+            Field rawValue = values[i];
+            double value = Double.valueOf(rawValue.getValue());
+
+            byteBuffer.rewind();
+            byteBuffer.putDouble(value);
+            System.arraycopy(valuesCache, 0, result, i * 8, 8);
+        }
+
+        return result;
     }
 
     @Override
     public long getDocumentSize() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return arrayRef.getFieldsCount() * 8;
     }
-
-//    private final byte[] valuesCache = new byte[8];
-//    private final ByteBuffer byteBuffer = ByteBuffer.wrap(valuesCache);
-//
-//    private final ArrayReference arrayRef;
-//
-//    public DoubleArrayPageProvider(ArrayReference arrayRef) {
-//        this.arrayRef = arrayRef;
-//    }
-//
-//    @Override
-//    public byte[] getPage(long pageIndex) {
-//        int pageSize = DebugViewDataSource.PAGE_SIZE / 8;
-//        int startPos = (int) (pageIndex * pageSize);
-//        int length = pageSize;
-//        if (arrayRef.length() - startPos < pageSize) {
-//            length = arrayRef.length() - startPos;
-//        }
-//        final List<Value> values = arrayRef.getValues(startPos, length);
-//        byte[] result = new byte[length * 8];
-//        for (int i = 0; i < values.size(); i++) {
-//            Value rawValue = values.get(i);
-//            if (rawValue instanceof ObjectReference) {
-//                Field field = ((ObjectReference) rawValue).referenceType().fieldByName("value");
-//                rawValue = ((ObjectReference) rawValue).getValue(field);
-//            }
-//
-//            double value = rawValue instanceof DoubleValue ? ((DoubleValue) rawValue).value() : 0;
-//
-//            byteBuffer.rewind();
-//            byteBuffer.putDouble(value);
-//            System.arraycopy(valuesCache, 0, result, i * 8, 8);
-//        }
-//
-//        return result;
-//    }
-//
-//    @Override
-//    public long getDocumentSize() {
-//        return arrayRef.length() * 8;
-//    }
 }
