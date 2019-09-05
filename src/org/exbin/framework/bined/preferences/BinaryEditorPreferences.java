@@ -33,14 +33,14 @@ import org.exbin.framework.editor.text.preferences.TextFontPreferences;
 /**
  * Binary editor preferences.
  *
- * @version 0.2.1 2019/08/20
+ * @version 0.2.1 2019/09/05
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
 public class BinaryEditorPreferences {
 
     private final static String PREFERENCES_VERSION = "version";
-    private final static String PREFERENCES_VERSION_VALUE = "0.2.1";
+    private final static String PREFERENCES_VERSION_VALUE = "0.2.2";
 
     private final Preferences preferences;
 
@@ -65,17 +65,29 @@ public class BinaryEditorPreferences {
         themePreferences = new CodeAreaThemePreferences(preferences);
         colorPreferences = new CodeAreaColorPreferences(preferences);
 
+        convertOlderPreferences();
+    }
+
+    private void convertOlderPreferences() {
         final String legacyDef = "LEGACY";
         String storedVersion = preferences.get(PREFERENCES_VERSION, legacyDef);
-        if ("0.2.0".equals(storedVersion)) {
-            convertPreferences_0_2_0();
-        } else if (legacyDef.equals(storedVersion)) {
+        if (PREFERENCES_VERSION_VALUE.equals(storedVersion)) {
+            return;
+        }
+
+        if (legacyDef.equals(storedVersion)) {
             try {
                 importLegacyPreferences();
             } finally {
                 preferences.put(PREFERENCES_VERSION, PREFERENCES_VERSION_VALUE);
                 preferences.flush();
             }
+        }
+
+        if ("0.2.0".equals(storedVersion)) {
+            convertPreferences_0_2_0();
+            preferences.put(PREFERENCES_VERSION, PREFERENCES_VERSION_VALUE);
+            preferences.flush();
         }
     }
 

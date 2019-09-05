@@ -1,3 +1,5 @@
+0.2.2
+
 0.2.1 (2019-09-04)
 - Action to show debug variables as binary data
 - Minor GUI improvements
