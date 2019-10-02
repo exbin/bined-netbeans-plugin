@@ -18,6 +18,7 @@ package org.exbin.bined.netbeans.debug;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.Action;
 import org.exbin.bined.netbeans.BinaryDebugAction;
+import org.netbeans.api.debugger.Watch;
 import org.netbeans.spi.debugger.DebuggerServiceRegistration;
 import org.netbeans.spi.viewmodel.Models;
 import org.netbeans.spi.viewmodel.NodeActionsProvider;
@@ -31,13 +32,13 @@ import org.openide.windows.WindowManager;
  * Register view as binary action for debugger tree nodes.
  *
  * @author ExBin Project (http://exbin.org)
- * @version 0.2.1 2019/09/03
+ * @version 0.2.2 2019/10/01
  */
-@DebuggerServiceRegistration(path = "netbeans-JPDASession/LocalsView",
+@DebuggerServiceRegistration(path = "netbeans-JPDASession/ResultsView",
         types = NodeActionsProviderFilter.class,
         position = 720)
 @ParametersAreNonnullByDefault
-public class BinedLocalsActionsProviderFilter implements NodeActionsProviderFilter {
+public class BinedResultsActionsProviderFilter implements NodeActionsProviderFilter {
 
     private final Action BINARY_DEBUG_ACTION = Models.createAction("View as Binary...", new Models.ActionPerformer() {
         @Override
@@ -57,7 +58,7 @@ public class BinedLocalsActionsProviderFilter implements NodeActionsProviderFilt
         }
     }, Models.MULTISELECTION_TYPE_EXACTLY_ONE);
 
-    public BinedLocalsActionsProviderFilter() {
+    public BinedResultsActionsProviderFilter() {
     }
 
     @Override
@@ -68,7 +69,7 @@ public class BinedLocalsActionsProviderFilter implements NodeActionsProviderFilt
     @Override
     public Action[] getActions(NodeActionsProvider original, Object node) throws UnknownTypeException {
         Action[] originalActions = original.getActions(node);
-        if (node == TreeModel.ROOT) {
+        if (node == TreeModel.ROOT || (node instanceof Watch && (((Watch) node).getExpression() == null || ((Watch) node).getExpression().isEmpty()))) {
             return originalActions;
         }
 

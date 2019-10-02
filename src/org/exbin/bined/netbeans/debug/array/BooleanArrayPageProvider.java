@@ -19,39 +19,49 @@ import org.exbin.bined.netbeans.debug.DebugViewDataSource;
 
 import org.netbeans.api.debugger.jpda.Field;
 import org.netbeans.api.debugger.jpda.ObjectVariable;
-// import org.netbeans.modules.debugger.jpda.models.FieldVariable;
 
 /**
- * Byte array data source for debugger view.
+ * Boolean array data source for debugger view.
  *
  * @author ExBin Project (http://exbin.org)
- * @version 0.2.1 2019/09/04
+ * @version 0.2.2 2019/10/01
  */
-public class ByteArrayPageProvider implements DebugViewDataSource.PageProvider {
+public class BooleanArrayPageProvider implements DebugViewDataSource.PageProvider {
 
     private final ObjectVariable arrayRef;
 
-    public ByteArrayPageProvider(ObjectVariable arrayRef) {
+    public BooleanArrayPageProvider(ObjectVariable arrayRef) {
         this.arrayRef = arrayRef;
     }
 
     @Override
     public byte[] getPage(long pageIndex) {
-        int startPos = (int) (pageIndex * DebugViewDataSource.PAGE_SIZE);
-        int length = DebugViewDataSource.PAGE_SIZE;
-        if (arrayRef.getFieldsCount() - startPos < DebugViewDataSource.PAGE_SIZE) {
-            length = arrayRef.getFieldsCount() - startPos;
+        int startPos = (int) (pageIndex * DebugViewDataSource.PAGE_SIZE * 8);
+        int length = DebugViewDataSource.PAGE_SIZE * 8;
+        long documentSize = getDocumentSize();
+        if (documentSize - startPos < DebugViewDataSource.PAGE_SIZE * 8) {
+            length = (int) (documentSize - startPos);
         }
         final Field[] values = arrayRef.getFields(startPos, startPos + length);
-        byte[] result = new byte[length];
+        byte[] result = new byte[(length + 7) / 8];
+        int bitMask = 0x80;
+        int bytePos = 0;
         for (int i = 0; i < values.length; i++) {
             Field rawValue = values[i];
-            if (rawValue instanceof ObjectVariable) {
-                rawValue = ((ObjectVariable) rawValue).getFields(0, 1)[0];
-            }
+            boolean value = Boolean.valueOf(rawValue.getValue());
+//            if (rawValue instanceof ObjectVariable) {
+//                rawValue = ((ObjectVariable) rawValue).getFields(0, 0)[0];
+//            }
 
-            byte value = Byte.valueOf(rawValue.getValue());
-            result[i] = value;
+            if (value) {
+                result[bytePos] += bitMask;
+            }
+            if (bitMask == 1) {
+                bitMask = 0x80;
+                bytePos++;
+            } else {
+                bitMask = bitMask >> 1;
+            }
         }
 
         return result;
@@ -60,5 +70,9 @@ public class ByteArrayPageProvider implements DebugViewDataSource.PageProvider {
     @Override
     public long getDocumentSize() {
         return arrayRef.getFieldsCount();
+    }
+    
+    private int getBytesSize() {
+        return (arrayRef.getFieldsCount() + 7) / 8;
     }
 }

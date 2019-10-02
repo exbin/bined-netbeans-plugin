@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 import javax.annotation.Nullable;
 import javax.swing.JPanel;
 import org.exbin.bined.netbeans.debug.DebugViewDataSource;
+import org.exbin.bined.netbeans.debug.array.BooleanArrayPageProvider;
 import org.exbin.bined.netbeans.debug.array.ByteArrayPageProvider;
 import org.exbin.bined.netbeans.debug.array.CharArrayPageProvider;
 import org.exbin.bined.netbeans.debug.array.DoubleArrayPageProvider;
@@ -204,7 +205,7 @@ public final class BinaryDebugAction implements ActionListener {
             }
             case "long": {
                 byte[] byteArray = new byte[8];
-                long value = Long.valueOf(variableValue);;
+                long value = Long.valueOf(variableValue);
                 BigInteger bigInteger = BigInteger.valueOf(value);
                 for (int bit = 0; bit < 7; bit++) {
                     BigInteger nextByte = bigInteger.and(ValuesPanel.BIG_INTEGER_BYTE_MASK);
@@ -255,7 +256,12 @@ public final class BinaryDebugAction implements ActionListener {
     private static BinaryData processArrayValue(ObjectVariable variableObject, JPDAArrayType arrayType) {
         String type = arrayType.getComponentTypeName();
         switch (type) {
-            case "java.lang.Byte":
+            case "boolean": {
+                return new DebugViewDataSource(new BooleanArrayPageProvider(variableObject));
+            }
+//            case "java.lang.Byte": {
+//                loadChildValues(variableObject);
+//            }
             case "byte": {
                 return new DebugViewDataSource(new ByteArrayPageProvider(variableObject));
             }
@@ -280,6 +286,18 @@ public final class BinaryDebugAction implements ActionListener {
         }
 
         return null;
+    }
+
+    private static void loadChildValues(ObjectVariable variableObject) {
+        int fieldsCount = variableObject.getFieldsCount();
+        for (int i = 0; i < fieldsCount; i++) {
+            final Field[] values = variableObject.getFields(i, i + 1);
+            Field rawValue = values[0];
+            if (rawValue instanceof ObjectVariable) {
+                rawValue = ((ObjectVariable) rawValue).getFields(0, 1)[0];
+                rawValue.getValue();
+            }
+        }
     }
 
     private static void openWatchesView() {

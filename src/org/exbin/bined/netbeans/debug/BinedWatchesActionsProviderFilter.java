@@ -15,12 +15,10 @@
  */
 package org.exbin.bined.netbeans.debug;
 
-import java.util.List;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.Action;
 import org.exbin.bined.netbeans.BinaryDebugAction;
 import org.netbeans.api.debugger.Watch;
-import org.netbeans.api.debugger.jpda.ObjectVariable;
 import org.netbeans.spi.debugger.DebuggerServiceRegistration;
 import org.netbeans.spi.viewmodel.Models;
 import org.netbeans.spi.viewmodel.NodeActionsProvider;

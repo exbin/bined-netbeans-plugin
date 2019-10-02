@@ -1,4 +1,5 @@
 0.2.2
+- Action to show debug variables as binary data in ToolTip view
 
 0.2.1 (2019-09-04)
 - Action to show debug variables as binary data
