@@ -1,4 +1,5 @@
 0.2.2
+- Switched to Maven building for NetBeans 11
 - Action to show debug variables as binary data in ToolTip view
 
 0.2.1 (2019-09-04)
