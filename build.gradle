@@ -30,7 +30,9 @@ ext {
     netbeansVersion = 'RELEASE82'
     binedVersion = '0.2.0-SNAPSHOT'
     repositoryName = "bined-netbeans-plugin"
-    deployUrl = 'https://bined.exbin.org/netbeans-plugin'
+    nbmVersion = version.endsWith('-SNAPSHOT') ? version.substring(0, version.length() - 9) : version
+    homePageUrl = 'https://bined.exbin.org/netbeans-plugin'
+    deployUrl = homePageUrl
     deployName = 'BinEd NetBeans Plugin'
     deployDescription = 'Binary/Hexadecimal editor plugin for NetBeans platform'
 }
@@ -136,19 +138,26 @@ jar.manifest {
     attributes(['OpenIDE-Module-Layer': 'org/exbin/bined/netbeans/layer.xml'])
 }
 
+task nbmFile (type: Jar, dependsOn: tasks.nbm) {
+    classifier = 'nbm'
+    from tasks.nbm.outputFile
+}
+
 nbm {
     moduleAuthor = 'ExBin Project'
     licenseFile = 'license.txt'
-    moduleName = 'org.exbin.bined.netbeans'
-    implementationVersion = specificationVersion
-    moduleInstall = 'org.netbeans.gradle.project.NbGradleModuleInstall'
+    homePage = ext.homePageUrl
+    moduleName = group
+    specificationVersion = ext.nbmVersion
+    implementationVersion = ext.nbmVersion
+    //    moduleInstall = 'org.netbeans.gradle.project.NbGradleModuleInstall'
     localizingBundle = 'org/exbin/bined/netbeans/Bundle.properties'
 
-    //    keyStore {
-    //        keyStoreFile = tryGetProperty('nbGradlePluginKeyStore', null)
-    //        username = tryGetProperty('nbGradlePluginKeyStoreUser', 'kelemen')
-    //        password = tryGetProperty('nbGradlePluginKeyStorePass', '')
-    //    }
+//    keyStore {
+//        keyStoreFile = tryGetProperty('nbGradlePluginKeyStore', null)
+//        username = tryGetProperty('nbGradlePluginKeyStoreUser', 'hajdam')
+//        password = tryGetProperty('nbGradlePluginKeyStorePass', '')
+//    }
 }
 
 def netbeansModule = { String groupName, String moduleName ->
@@ -212,14 +221,12 @@ task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from 
     from sourceSets.main.allSource
 }
 
+uploadArchives.dependsOn tasks.nbm
+publish.dependsOn tasks.nbm
 artifacts {
     archives jar
     archives sourcesJar
     tests testJar
-}
-
-uploadArchives.dependsOn tasks.nbm
-artifacts {
     archives (tasks.nbm.outputFile) {
         name = "${project.name}-${project.version}"
         extension = 'nbm'
@@ -253,14 +260,21 @@ publishing {
                 classifier 'sources'
             }
             artifact (javadocJar) {
-                classifier = 'javadoc'
+                classifier 'javadoc'
+            }
+//            artifact (nbmFile) {
+//                classifier 'nbm'
+//                extension = 'nbm'
+//            }
+            artifact (tasks.nbm.outputFile) {
+                extension = 'nbm'
             }
 
+            pom.packaging 'nbm'
             pom.withXml {
                 asNode().children().last() + {
                     resolveStrategy = Closure.DELEGATE_FIRST
                     name deployName
-                    packaging 'nbm'
                     description deployDescription
                     url deployUrl
                     scm {
@@ -299,6 +313,11 @@ publishing {
 if (gradle.startParameter.taskNames.contains("uploadArchives") && !version.endsWith('-SNAPSHOT')) {
     artifacts {
         archives javadocJar, sourcesJar
+        archives (tasks.nbm.outputFile) {
+            name = "${project.name}-${project.version}"
+            extension = 'nbm'
+            type = 'nbm'
+        }
     }
 
     signing {
@@ -320,12 +339,11 @@ if (gradle.startParameter.taskNames.contains("uploadArchives") && !version.endsW
                     authentication(userName: ossrhUsername, password: ossrhPassword)
                 }
 
+                pom.packaging 'nbm'
                 pom.project {
                     name deployName
-                    packaging 'nbm'
                     description deployDescription
                     url deployUrl
-                    organization 'ExBin Project'
 
                     scm {
                         url "https://github.com/exbin/${repositoryName}"
