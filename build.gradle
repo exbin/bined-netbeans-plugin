@@ -1,0 +1,357 @@
+import java.nio.file.*
+import org.gradle.util.VersionNumber
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "cz.kubacki.gradle.plugins:gradle-nbm-plugin:1.17.0"
+        gradleApi()
+    }
+}
+
+['java', 'distribution', 'maven', 'maven-publish', 'signing', 'cz.kubacki.nbm'].each {
+    apply plugin: it
+}
+
+ext.scriptFile = { String fileName ->
+    return new File(new File(rootDir, 'gradle'), fileName)
+}
+
+version = '0.2.2-SNAPSHOT'
+group = 'org.exbin.bined.netbeans'
+
+sourceCompatibility = '1.8'
+targetCompatibility = sourceCompatibility
+
+ext {
+    //    netbeansVersion = 'dev-SNAPSHOT'
+    netbeansVersion = 'RELEASE82'
+    binedVersion = '0.2.0-SNAPSHOT'
+    repositoryName = "bined-netbeans-plugin"
+    deployUrl = 'https://bined.exbin.org/netbeans-plugin'
+    deployName = 'BinEd NetBeans Plugin'
+    deployDescription = 'Binary/Hexadecimal editor plugin for NetBeans platform'
+}
+
+repositories {
+    mavenCentral()
+    String nbRepo = netbeansVersion.endsWith('-SNAPSHOT')
+    ? 'http://bits.netbeans.org/netbeans/trunk/new-maven-snapshot'
+: 'http://bits.netbeans.org/nexus/content/groups/netbeans'
+    maven { url nbRepo }
+    maven { url 'http://repo.gradle.org/gradle/libs-releases-local' }
+    jcenter()
+    flatDir {
+        dirs "lib"
+    }
+}
+
+// apply plugin: 'nb-gradle-nbm'
+// apply plugin: 'custom-java-compilers'
+// apply plugin: 'nb-gradle-maven-publish'
+// apply plugin: 'nbm-dependency-verifier'
+
+compileJava.options.sourcepath = sourceSets.main.resources.sourceDirectories
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+def configureExec(task) {
+    task.main = mainClass
+    task.classpath = sourceSets.main.runtimeClasspath
+    if (hasProperty('appArgs')) {
+        task.args appArgs
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+    doFirst {
+        options.fork = true
+        if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+            if (VersionNumber.parse(gradle.gradleVersion) >= VersionNumber.parse('5.0')) {
+                options.bootstrapClasspath = files("${System.properties['java.home']}/lib/rt.jar", "$File.pathSeparator${System.properties['java.home']}/jre/lib/jsse.jar")
+            } else {
+                options.bootClasspath = "${System.properties['java.home']}/lib/rt.jar"
+                options.bootClasspath += "$File.pathSeparator${System.properties['java.home']}/jre/lib/jsse.jar"
+            }
+        }
+    }
+}
+
+// Disable tests on build
+if (!gradle.startParameter.taskNames.any {it.endsWith("test")}) {
+    tasks.withType(Test) {enabled = false}
+}
+
+task testJar(type: Jar, dependsOn: testClasses) {
+    classifier "tests"
+    baseName = "test-${project.archivesBaseName}"
+    from sourceSets.test.output
+}
+
+compileTestJava.dependsOn(jar)
+
+//def manifestClassPath() {
+//    try {
+//        return (configurations.runtime.collect { 'lib/' + it.getName() }).join(' ')
+//    } catch (Exception) {
+//        return ""
+//    }
+//}
+//
+//jar {
+//    attributes(
+////        'Main-Class': mainClass,
+//        'Class-Path': manifestClassPath()
+//    )
+////    from sourceSets.modelBuilders.output
+////    ext {
+////        netBeansSourceSets = [sourceSets.main, sourceSets.modelBuilders]
+////    }
+//}
+
+configurations {
+    tests
+}
+
+javadoc {
+    if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+        options.addBooleanOption('html5', true)
+    }
+}
+
+task javadocJar (type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+//def tryGetProperty = { String name, String defaultValue ->
+//    return org.netbeans.gradle.build.PropertyUtils.getStringProperty(project, name, defaultValue)
+//}
+//
+//
+jar.manifest {
+    attributes(['OpenIDE-Module-Layer': 'org/exbin/bined/netbeans/layer.xml'])
+}
+
+nbm {
+    moduleAuthor = 'ExBin Project'
+    licenseFile = 'license.txt'
+    moduleName = 'org.exbin.bined.netbeans'
+    implementationVersion = specificationVersion
+    moduleInstall = 'org.netbeans.gradle.project.NbGradleModuleInstall'
+    localizingBundle = 'org/exbin/bined/netbeans/Bundle.properties'
+
+    //    keyStore {
+    //        keyStoreFile = tryGetProperty('nbGradlePluginKeyStore', null)
+    //        username = tryGetProperty('nbGradlePluginKeyStoreUser', 'kelemen')
+    //        password = tryGetProperty('nbGradlePluginKeyStorePass', '')
+    //    }
+}
+
+def netbeansModule = { String groupName, String moduleName ->
+    return [
+        group: groupName,
+        name: moduleName,
+        version: netbeansVersion
+    ]
+}
+
+def netbeansApi = { String moduleName ->
+    return netbeansModule('org.netbeans.api', moduleName)
+}
+
+def binedLibrary = { String libName ->
+    return ":${libName}-${binedVersion}"
+}
+
+dependencies {
+    providedCompile netbeansApi('org-netbeans-api-annotations-common')
+    providedCompile netbeansApi('org-netbeans-api-debugger')
+    providedCompile netbeansApi('org-netbeans-api-debugger-jpda')
+    providedCompile netbeansApi('org-netbeans-core-multiview')
+    providedCompile netbeansApi('org-netbeans-modules-options-api')
+    providedCompile netbeansApi('org-netbeans-modules-queries')
+    providedCompile netbeansApi('org-netbeans-modules-settings')
+    providedCompile netbeansApi('org-netbeans-spi-debugger-ui')
+    providedCompile netbeansApi('org-netbeans-spi-debugger-jpda-ui')
+    providedCompile netbeansApi('org-netbeans-spi-viewmodel')
+    providedCompile netbeansApi('org-openide-actions')
+    providedCompile netbeansApi('org-openide-awt')
+    providedCompile netbeansApi('org-openide-dialogs')
+    providedCompile netbeansApi('org-openide-filesystems')
+    providedCompile netbeansApi('org-openide-loaders')
+    providedCompile netbeansApi('org-openide-modules')
+    providedCompile netbeansApi('org-openide-nodes')
+    providedCompile netbeansApi('org-openide-util')
+    providedCompile netbeansApi('org-openide-util-lookup')
+    providedCompile netbeansApi('org-openide-util-ui')
+    providedCompile netbeansApi('org-openide-windows')
+
+    compile binedLibrary("bined-core")
+    compile binedLibrary("bined-delta")
+    compile binedLibrary("bined-extended")
+    compile binedLibrary("bined-highlight-swing")
+    compile binedLibrary("bined-operation")
+    compile binedLibrary("bined-operation-swing")
+    compile binedLibrary("bined-swing")
+    compile binedLibrary("bined-swing-extended")
+    compile ':exbin-binary_data-0.1.3-20190716.202906-16'
+
+    compile 'com.google.code.findbugs:jsr305:3.0.2'
+
+    testCompile 'junit:junit:4.12'
+    providedRuntime netbeansModule('org.netbeans.modules', 'org-netbeans-modules-projectapi-nb')
+
+}
+
+task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from the source files.') {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+    tests testJar
+}
+
+uploadArchives.dependsOn tasks.nbm
+artifacts {
+    archives (tasks.nbm.outputFile) {
+        name = "${project.name}-${project.version}"
+        extension = 'nbm'
+        type = 'nbm'
+    }
+}
+
+task netBeansRun(type: Exec) {
+    doFirst {
+        def confFile = project.file("$project.buildDir/testuserdir/etc/netbeans.conf")
+        confFile.parentFile.mkdirs()
+        confFile.write "netbeans_extraclusters=\"$project.buildDir/module\""
+    }
+
+    workingDir "${project.buildDir}"
+
+    def executable = System.getProperty('os.name').toLowerCase().contains('windows') ? 'netbeans.exe' : 'netbeans'
+    if (project.hasProperty('netBeansInstallDir')) {
+        executable = netBeansInstallDir + '/bin/' + executable
+    } else {
+        logger.warn('netBeansInstallDir property is not specified. Assuming \'netbeans\' executable is on PATH.')
+    }
+    commandLine executable, '--userdir', "$project.buildDir/testuserdir"
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            artifact sourcesJar {
+                classifier 'sources'
+            }
+            artifact (javadocJar) {
+                classifier = 'javadoc'
+            }
+
+            pom.withXml {
+                asNode().children().last() + {
+                    resolveStrategy = Closure.DELEGATE_FIRST
+                    name deployName
+                    packaging 'nbm'
+                    description deployDescription
+                    url deployUrl
+                    scm {
+                        url "https://github.com/exbin/${repositoryName}"
+                        connection "cm:git:git://github.com/exbin/${repositoryName}.git"
+                        developerConnection "scm:git:git@github.com:exbin/${repositoryName}.git"
+                    }
+                    licenses {
+                        license {
+                            name 'Apache License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution 'repo'
+                        }
+                    }
+                    organization {
+                        name 'ExBin Project'
+                        url 'https://exbin.org/'
+                    }
+                    developers {
+                        developer {
+                            id 'HajdaM'
+                            name 'Miroslav Hajda'
+                            email 'hajdam@users.sf.net'
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    repositories {
+        mavenLocal()
+    }
+}
+
+if (gradle.startParameter.taskNames.contains("uploadArchives") && !version.endsWith('-SNAPSHOT')) {
+    artifacts {
+        archives javadocJar, sourcesJar
+    }
+
+    signing {
+        sign configurations.archives
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment {
+                    MavenDeployment deployment -> signing.signPom(deployment)
+                }
+
+                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                }
+
+                pom.project {
+                    name deployName
+                    packaging 'nbm'
+                    description deployDescription
+                    url deployUrl
+                    organization 'ExBin Project'
+
+                    scm {
+                        url "https://github.com/exbin/${repositoryName}"
+                        connection "cm:git:git://github.com/exbin/${repositoryName}.git"
+                        developerConnection "scm:git:git@github.com:exbin/${repositoryName}.git"
+                    }
+                    licenses {
+                        license {
+                            name 'Apache License, Version 2.0'
+                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            distribution 'repo'
+                        }
+                    }
+                    organization {
+                        name 'ExBin Project'
+                        url 'https://exbin.org/'
+                    }
+                    developers {
+                        developer {
+                            id 'HajdaM'
+                            name 'Miroslav Hajda'
+                            email 'hajdam@users.sf.net'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
