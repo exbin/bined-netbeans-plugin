@@ -1,5 +1,11 @@
 import java.nio.file.*
 import org.gradle.util.VersionNumber
+import java.util.jar.Pack200
+import java.util.zip.GZIPOutputStream
+import java.util.jar.JarFile
+import java.util.jar.JarOutputStream
+import java.security.MessageDigest
+import java.util.zip.ZipFile
 
 buildscript {
     repositories {
@@ -36,6 +42,9 @@ ext {
     deployName = 'BinEd NetBeans Plugin'
     deployDescription = 'Binary/Hexadecimal editor plugin for NetBeans platform'
 }
+
+ext.packer = Pack200.newPacker()
+packer.properties()["pack.effort"] = "9"
 
 repositories {
     mavenCentral()
@@ -143,9 +152,39 @@ task nbmFile (type: Jar, dependsOn: tasks.nbm) {
     from tasks.nbm.outputFile
 }
 
+def packGZ(File jarToPack) {
+    println jarToPack.getAbsolutePath()
+    def targetPath = project.buildDir.getAbsolutePath() + "/libs"
+    def name = jarToPack.getName()
+    def newName = name.substring(0, name.length() - 4) + ".jar.pack.gz"
+    def newFile = new File(targetPath, newName)
+    def os = new GZIPOutputStream(new FileOutputStream(newFile))
+    packer.pack new JarFile(jarToPack), os
+    os.close()
+    
+    def messageDigest = MessageDigest.getInstance("SHA1")
+    newFile.eachByte 1024 * 1024, { byte[] buf, int bytesRead ->
+        messageDigest.update(buf, 0, bytesRead);
+    }
+    def sha1Hex = new BigInteger(1, messageDigest.digest()).toString(16).padLeft(40, '0')
+    def shaName = name.substring(0, name.length() - 4) + ".jar.pack.gz.sha1"
+    def shaFile = new File(targetPath, shaName)
+    if (!shaFile.exists()) shaFile.createNewFile()
+    shaFile.append sha1Hex
+}
+
+task nbmPack (type: Jar, dependsOn: jar) {
+    dependsOn nbmFile
+    doLast {
+        jar.outputs.files.each { packGZ(it) }
+        from configurations.runtime.findAll { !configurations.providedCompile.contains(it) }.each { packGZ(it) }
+        //        packGZ(tasks.nbm.outputFile)
+    }
+}
+
 nbm {
     moduleAuthor = 'ExBin Project'
-    licenseFile = 'license.txt'
+    licenseFile = 'LICENSE.txt'
     homePage = ext.homePageUrl
     moduleName = group
     specificationVersion = ext.nbmVersion
@@ -153,11 +192,11 @@ nbm {
     //    moduleInstall = 'org.netbeans.gradle.project.NbGradleModuleInstall'
     localizingBundle = 'org/exbin/bined/netbeans/Bundle.properties'
 
-//    keyStore {
-//        keyStoreFile = tryGetProperty('nbGradlePluginKeyStore', null)
-//        username = tryGetProperty('nbGradlePluginKeyStoreUser', 'hajdam')
-//        password = tryGetProperty('nbGradlePluginKeyStorePass', '')
-//    }
+    //    keyStore {
+    //        keyStoreFile = tryGetProperty('nbGradlePluginKeyStore', null)
+    //        username = tryGetProperty('nbGradlePluginKeyStoreUser', 'hajdam')
+    //        password = tryGetProperty('nbGradlePluginKeyStorePass', '')
+    //    }
 }
 
 def netbeansModule = { String groupName, String moduleName ->
@@ -262,10 +301,10 @@ publishing {
             artifact (javadocJar) {
                 classifier 'javadoc'
             }
-//            artifact (nbmFile) {
-//                classifier 'nbm'
-//                extension = 'nbm'
-//            }
+            //            artifact (nbmFile) {
+            //                classifier 'nbm'
+            //                extension = 'nbm'
+            //            }
             artifact (tasks.nbm.outputFile) {
                 extension = 'nbm'
             }
