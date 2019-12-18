@@ -36,7 +36,6 @@ import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import org.exbin.bined.BasicCodeAreaZone;
 import org.exbin.bined.CodeType;
-import static org.exbin.bined.CodeType.BINARY;
 import org.exbin.bined.EditationMode;
 import org.exbin.bined.EditationOperation;
 import org.exbin.bined.capability.CharsetCapable;
@@ -67,13 +66,13 @@ import org.exbin.framework.editor.text.options.TextFontOptions;
 import org.exbin.framework.gui.menu.component.DropDownButton;
 import org.exbin.framework.gui.utils.ActionUtils;
 import org.exbin.framework.preferences.PreferencesWrapper;
-import org.exbin.utils.binary_data.BinaryData;
+import org.exbin.auxiliary.paged_data.BinaryData;
 import org.openide.util.NbPreferences;
 
 /**
  * Panel to show debug view.
  *
- * @version 0.2.1 2019/08/31
+ * @version 0.2.2 2019/11/24
  * @author ExBin Project (http://exbin.org)
  */
 public class DebugViewPanel extends javax.swing.JPanel {
@@ -277,11 +276,17 @@ public class DebugViewPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jComboBox1 = new javax.swing.JComboBox<>();
+
         setLayout(new java.awt.BorderLayout());
+
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        add(jComboBox1, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> jComboBox1;
     // End of variables declaration//GEN-END:variables
 
     private void updateCycleButtonName() {

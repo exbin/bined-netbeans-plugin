@@ -239,14 +239,14 @@ dependencies {
     providedCompile netbeansApi('org-openide-windows')
 
     compile binedLibrary("bined-core")
-    compile binedLibrary("bined-delta")
     compile binedLibrary("bined-extended")
     compile binedLibrary("bined-highlight-swing")
     compile binedLibrary("bined-operation")
     compile binedLibrary("bined-operation-swing")
     compile binedLibrary("bined-swing")
     compile binedLibrary("bined-swing-extended")
-    compile ':exbin-binary_data-0.1.3-20190716.202906-16'
+    compile ':paged_data-0.2.0-20191217.095305-1'
+    compile ':paged_data-delta-0.2.0-20191217.095305-1'
 
     compile 'com.google.code.findbugs:jsr305:3.0.2'
 
