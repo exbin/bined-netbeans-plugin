@@ -54,10 +54,6 @@ import org.exbin.bined.capability.CharsetCapable;
 import org.exbin.bined.extended.layout.ExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.highlight.swing.extended.ExtendedHighlightNonAsciiCodeAreaPainter;
 import org.exbin.bined.netbeans.BinEdApplyOptions;
-import org.exbin.bined.netbeans.BinaryEditorTopComponent;
-import static org.exbin.bined.netbeans.BinaryEditorTopComponent.ACTION_CLIPBOARD_COPY;
-import static org.exbin.bined.netbeans.BinaryEditorTopComponent.ACTION_CLIPBOARD_CUT;
-import static org.exbin.bined.netbeans.BinaryEditorTopComponent.ACTION_CLIPBOARD_PASTE;
 import org.exbin.bined.netbeans.BinaryUndoSwingHandler;
 import org.exbin.bined.netbeans.GoToPositionAction;
 import org.exbin.bined.netbeans.SearchAction;
@@ -100,7 +96,7 @@ import org.openide.util.NbPreferences;
 /**
  * Binary editor component panel.
  *
- * @version 0.2.1 2019/12/21
+ * @version 0.2.2 2020/01/05
  * @author ExBin Project (http://exbin.org)
  */
 public class BinEdComponentPanel extends javax.swing.JPanel {
@@ -120,7 +116,8 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
     private BinaryStatusPanel statusPanel;
     private BinaryStatusApi binaryStatus;
     private TextEncodingStatusApi encodingStatus;
-    private BinaryEditorTopComponent.CharsetChangeListener charsetChangeListener = null;
+    private CharsetChangeListener charsetChangeListener = null;
+    private ModifiedStateListener modifiedChangeListener = null;
     private GoToPositionAction goToRowAction;
     private AbstractAction showHeaderAction;
     private AbstractAction showRowNumbersAction;
@@ -130,8 +127,6 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
     private boolean valuesPanelVisible = false;
     private final SearchAction searchAction;
 
-    private boolean opened = false;
-    private boolean modified = false;
     private FileHandlingMode fileHandlingMode = DEFAULT_FILE_HANDLING_MODE;
     private final Font defaultFont;
     protected String displayName;
@@ -186,7 +181,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         initialLoadFromPreferences();
 
         this.add(codeArea, BorderLayout.CENTER);
-        add(statusPanel, BorderLayout.SOUTH);
+        this.add(statusPanel, BorderLayout.SOUTH);
         goToRowAction = new GoToPositionAction(codeArea);
         showHeaderAction = new AbstractAction() {
             @Override
@@ -232,13 +227,13 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
             public void undoCommandPositionChanged() {
                 codeArea.repaint();
                 updateCurrentDocumentSize();
-                updateModified();
+                notifyModified();
             }
 
             @Override
             public void undoCommandAdded(final BinaryDataCommand command) {
                 updateCurrentDocumentSize();
-                updateModified();
+                notifyModified();
             }
         });
 
@@ -249,25 +244,6 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         });
 
         toolbarPanel.applyFromCodeArea();
-
-        getActionMap().put(ACTION_CLIPBOARD_COPY, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                codeArea.copy();
-            }
-        });
-        getActionMap().put(ACTION_CLIPBOARD_CUT, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                codeArea.cut();
-            }
-        });
-        getActionMap().put(ACTION_CLIPBOARD_PASTE, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                codeArea.paste();
-            }
-        });
 
         codeArea.addKeyListener(new KeyAdapter() {
             @Override
@@ -391,8 +367,12 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         });
     }
 
-    public void setCharsetChangeListener(BinaryEditorTopComponent.CharsetChangeListener charsetChangeListener) {
+    public void setCharsetChangeListener(CharsetChangeListener charsetChangeListener) {
         this.charsetChangeListener = charsetChangeListener;
+    }
+
+    public void setModifiedChangeListener(ModifiedStateListener modifiedChangeListener) {
+        this.modifiedChangeListener = modifiedChangeListener;
     }
 
 //    public boolean canClose() {
@@ -419,35 +399,8 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
 //
 //        return true;
 //    }
-
     public boolean isModified() {
         return undoHandler.getCommandPosition() != undoHandler.getSyncPoint();
-    }
-
-    void setModified(boolean modified) {
-//        this.modified = modified;
-//        final String htmlDisplayName;
-//        if (modified && opened) {
-//            savable.activate();
-//            content.add(savable);
-//            htmlDisplayName = "<html><b>" + displayName + "</b></html>";
-//        } else {
-//            savable.deactivate();
-//            content.remove(savable);
-//            htmlDisplayName = displayName;
-//        }
-//
-//        if (SwingUtilities.isEventDispatchThread()) {
-//            setHtmlDisplayName(htmlDisplayName);
-//        } else {
-//            try {
-//                SwingUtilities.invokeAndWait(() -> {
-//                    setHtmlDisplayName(htmlDisplayName);
-//                });
-//            } catch (InterruptedException | InvocationTargetException ex) {
-//                Exceptions.printStackTrace(ex);
-//            }
-//        }
     }
 
     private void setNewData() {
@@ -505,7 +458,6 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
 //        setIcon(editorIcon);
 //        node.openFile(dataObject);
 //        savable.setDataObject(dataObject);
-        opened = true;
         documentOriginalSize = codeArea.getDataSize();
         updateCurrentDocumentSize();
         updateCurrentMemoryMode();
@@ -530,7 +482,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         return undoRedo;
     }
 
-    private void updateCurrentDocumentSize() {
+    public void updateCurrentDocumentSize() {
         long dataSize = codeArea.getDataSize();
         binaryStatus.setCurrentDocumentSize(dataSize, documentOriginalSize);
     }
@@ -557,8 +509,10 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         }
     }
 
-    private void updateModified() {
-        setModified(undoHandler.getSyncPoint() != undoHandler.getCommandPosition());
+    private void notifyModified() {
+        if (modifiedChangeListener != null) {
+            modifiedChangeListener.modifiedChanged();
+        }
     }
 
     /**
@@ -573,11 +527,19 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         setLayout(new java.awt.BorderLayout());
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Test method for this panel.
+     *
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        WindowUtils.invokeDialog(new BinEdComponentPanel());
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
-
-    private void closeData() {
+    public void closeData() {
         BinaryData data = codeArea.getContentData();
         codeArea.setContentData(new ByteArrayData());
         if (data instanceof DeltaDocument) {
@@ -591,6 +553,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
             }
         }
     }
+
     public static synchronized SegmentsRepository getSegmentsRepository() {
         if (segmentsRepository == null) {
             segmentsRepository = new SegmentsRepository();
@@ -1004,8 +967,33 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         fileHandlingMode = preferences.getEditorPreferences().getFileHandlingMode();
     }
 
+    public void setUndoHandler(BinaryUndoSwingHandler undoHandler) {
+        CodeAreaOperationCommandHandler commandHandler = new CodeAreaOperationCommandHandler(codeArea, undoHandler);
+        codeArea.setCommandHandler(commandHandler);
+
+        undoHandler.addUndoUpdateListener(new BinaryDataUndoUpdateListener() {
+            @Override
+            public void undoCommandPositionChanged() {
+                codeArea.repaint();
+                updateCurrentDocumentSize();
+                notifyModified();
+            }
+
+            @Override
+            public void undoCommandAdded(final BinaryDataCommand command) {
+                updateCurrentDocumentSize();
+                notifyModified();
+            }
+        });
+    }
+
     public static interface CharsetChangeListener {
 
         public void charsetChanged();
+    }
+
+    public static interface ModifiedStateListener {
+
+        public void modifiedChanged();
     }
 }
