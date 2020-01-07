@@ -20,7 +20,6 @@ import java.awt.Component;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,15 +33,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import org.exbin.auxiliary.paged_data.BinaryData;
-import org.exbin.auxiliary.paged_data.EditableBinaryData;
-import org.exbin.auxiliary.paged_data.PagedData;
 import org.exbin.auxiliary.paged_data.delta.DeltaDocument;
-import org.exbin.auxiliary.paged_data.delta.FileDataSource;
-import org.exbin.auxiliary.paged_data.delta.SegmentsRepository;
 import org.exbin.bined.EditationMode;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.bined.netbeans.panel.BinEdComponentPanel;
-import org.exbin.framework.bined.FileHandlingMode;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
@@ -52,6 +46,7 @@ import org.openide.loaders.DataObject;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
+import org.openide.util.Utilities;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.windows.TopComponent;
@@ -60,7 +55,7 @@ import org.openide.windows.WindowManager;
 /**
  * Binary editor top component.
  *
- * @version 0.2.2 2020/01/05
+ * @version 0.2.2 2020/01/07
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.bined//BinaryEditor//EN", autostore = false)
@@ -94,9 +89,10 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         initComponents();
 
         componentPanel = new BinEdComponentPanel();
-        undoRedo = new UndoRedo.Manager();
         ExtCodeArea codeArea = componentPanel.getCodeArea();
+        undoRedo = new UndoRedo.Manager();
         BinaryUndoSwingHandler undoHandler = new BinaryUndoSwingHandler(codeArea, undoRedo);
+
         componentPanel.setUndoHandler(undoHandler);
         add(componentPanel, BorderLayout.CENTER);
 
@@ -187,48 +183,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         }
     }
 
-    /**
-     * Attempts to release current file and warn if document was modified.
-     *
-     * @return true if successful
-     */
-    private boolean releaseFile() {
-
-        if (dataObject == null) {
-            return true;
-        }
-
-        while (componentPanel.isModified()) {
-            Object[] options = {
-                "Save",
-                "Discard",
-                "Cancel"
-            };
-            int result = JOptionPane.showOptionDialog(this,
-                    "Document was modified! Do you wish to save it?",
-                    "Save File?",
-                    JOptionPane.YES_NO_CANCEL_OPTION,
-                    JOptionPane.QUESTION_MESSAGE,
-                    null, options, options[0]);
-            if (result == JOptionPane.NO_OPTION) {
-                return true;
-            }
-            if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
-                return false;
-            }
-
-            try {
-                saveDataObject(dataObject);
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        }
-
-        return true;
-    }
-
     public void openDataObject(DataObject dataObject) {
-        componentPanel.openDataObject(dataObject);
         this.dataObject = dataObject;
         displayName = dataObject.getPrimaryFile().getNameExt();
         setHtmlDisplayName(displayName);
@@ -247,14 +202,13 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     private void openFile(DataObject dataObject) {
         ExtCodeArea codeArea = componentPanel.getCodeArea();
         boolean editable = dataObject.getPrimaryFile().canWrite();
-        SegmentsRepository segmentsRepository = BinEdComponentPanel.getSegmentsRepository();
         URI fileUri = dataObject.getPrimaryFile().toURI();
         if (fileUri == null) {
             InputStream stream = null;
             try {
                 stream = dataObject.getPrimaryFile().getInputStream();
                 if (stream != null) {
-                    ((EditableBinaryData) codeArea.getContentData()).loadFromStream(stream);
+                    componentPanel.openDocument(stream);
                     codeArea.setEditationMode(editable ? EditationMode.EXPANDING : EditationMode.READ_ONLY);
                 }
             } catch (IOException ex) {
@@ -270,25 +224,9 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             }
         } else {
             try {
-                BinaryData oldData = codeArea.getContentData();
                 codeArea.setEditationMode(editable ? EditationMode.EXPANDING : EditationMode.READ_ONLY);
-                File file = new File(fileUri);
-                if (componentPanel.getFileHandlingMode() == FileHandlingMode.DELTA) {
-                    FileDataSource fileSource = segmentsRepository.openFileSource(file, editable ? FileDataSource.EditationMode.READ_WRITE : FileDataSource.EditationMode.READ_ONLY);
-                    DeltaDocument document = segmentsRepository.createDocument(fileSource);
-                    codeArea.setContentData(document);
-                    oldData.dispose();
-                } else {
-                    try (FileInputStream fileStream = new FileInputStream(file)) {
-                        BinaryData data = codeArea.getContentData();
-                        if (!(data instanceof PagedData)) {
-                            data = new PagedData();
-                            oldData.dispose();
-                        }
-                        ((EditableBinaryData) data).loadFromStream(fileStream);
-                        codeArea.setContentData(data);
-                    }
-                }
+                File file = Utilities.toFile(fileUri);
+                componentPanel.openDocument(file, editable);
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
@@ -296,18 +234,16 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     }
 
     public void saveDataObject(DataObject dataObject) throws IOException {
-        componentPanel.saveDataObject(dataObject);
         saveFile(dataObject);
         updateModified();
     }
 
     public void saveFile(DataObject dataObject) {
         ExtCodeArea codeArea = componentPanel.getCodeArea();
-        SegmentsRepository segmentsRepository = BinEdComponentPanel.getSegmentsRepository();
         BinaryData data = codeArea.getContentData();
         if (data instanceof DeltaDocument) {
             try {
-                segmentsRepository.saveDocument((DeltaDocument) data);
+                componentPanel.saveDocument();
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
@@ -316,7 +252,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             try {
                 stream = dataObject.getPrimaryFile().getOutputStream();
                 try {
-                    codeArea.getContentData().saveToStream(stream);
+                    componentPanel.saveDocument(stream);
                     stream.flush();
                 } catch (IOException ex) {
                     Exceptions.printStackTrace(ex);

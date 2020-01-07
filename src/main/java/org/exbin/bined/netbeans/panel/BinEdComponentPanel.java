@@ -23,7 +23,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import javax.annotation.Nonnull;
 import javax.swing.AbstractAction;
@@ -41,6 +45,7 @@ import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import org.exbin.auxiliary.paged_data.BinaryData;
 import org.exbin.auxiliary.paged_data.ByteArrayData;
+import org.exbin.auxiliary.paged_data.EditableBinaryData;
 import org.exbin.auxiliary.paged_data.PagedData;
 import org.exbin.auxiliary.paged_data.delta.DeltaDocument;
 import org.exbin.auxiliary.paged_data.delta.FileDataSource;
@@ -88,15 +93,13 @@ import org.exbin.framework.gui.utils.handler.OptionsControlHandler;
 import org.exbin.framework.gui.utils.panel.CloseControlPanel;
 import org.exbin.framework.gui.utils.panel.OptionsControlPanel;
 import org.exbin.framework.preferences.PreferencesWrapper;
-import org.openide.awt.UndoRedo;
-import org.openide.loaders.DataObject;
 import org.openide.util.Exceptions;
 import org.openide.util.NbPreferences;
 
 /**
  * Binary editor component panel.
  *
- * @version 0.2.2 2020/01/05
+ * @version 0.2.2 2020/01/07
  * @author ExBin Project (http://exbin.org)
  */
 public class BinEdComponentPanel extends javax.swing.JPanel {
@@ -106,8 +109,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
     private final BinaryEditorPreferences preferences;
     private static SegmentsRepository segmentsRepository = null;
     private final ExtCodeArea codeArea;
-    private final UndoRedo.Manager undoRedo;
-    private final BinaryUndoSwingHandler undoHandler;
+    private BinaryUndoSwingHandler undoHandler;
     private final ExtendedCodeAreaLayoutProfile defaultLayoutProfile;
     private final ExtendedCodeAreaThemeProfile defaultThemeProfile;
     private final CodeAreaColorsProfile defaultColorProfile;
@@ -119,19 +121,17 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
     private CharsetChangeListener charsetChangeListener = null;
     private ModifiedStateListener modifiedChangeListener = null;
     private GoToPositionAction goToRowAction;
-    private AbstractAction showHeaderAction;
-    private AbstractAction showRowNumbersAction;
+    private final AbstractAction showHeaderAction;
+    private final AbstractAction showRowNumbersAction;
+    private final SearchAction searchAction;
     private EncodingsHandler encodingsHandler;
     private ValuesPanel valuesPanel = null;
     private JScrollPane valuesPanelScrollPane = null;
     private boolean valuesPanelVisible = false;
-    private final SearchAction searchAction;
 
     private FileHandlingMode fileHandlingMode = DEFAULT_FILE_HANDLING_MODE;
     private final Font defaultFont;
-    protected String displayName;
     private long documentOriginalSize;
-    private DataObject dataObject;
 
     public BinEdComponentPanel() {
         initComponents();
@@ -169,13 +169,8 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
             }
         });
 
-        undoRedo = new UndoRedo.Manager();
-        undoHandler = new BinaryUndoSwingHandler(codeArea, undoRedo);
-
         getSegmentsRepository();
         setNewData();
-        CodeAreaOperationCommandHandler commandHandler = new CodeAreaOperationCommandHandler(codeArea, undoHandler);
-        codeArea.setCommandHandler(commandHandler);
         registerBinaryStatus(statusPanel);
 
         initialLoadFromPreferences();
@@ -219,21 +214,6 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
                 }
                 JPopupMenu popupMenu = createContextMenu(clickedX, clickedY);
                 popupMenu.show(invoker, x, y);
-            }
-        });
-
-        undoHandler.addUndoUpdateListener(new BinaryDataUndoUpdateListener() {
-            @Override
-            public void undoCommandPositionChanged() {
-                codeArea.repaint();
-                updateCurrentDocumentSize();
-                notifyModified();
-            }
-
-            @Override
-            public void undoCommandAdded(final BinaryDataCommand command) {
-                updateCurrentDocumentSize();
-                notifyModified();
             }
         });
 
@@ -321,21 +301,21 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
 
     private void switchFileHandlingMode(FileHandlingMode newHandlingMode) {
         if (newHandlingMode != fileHandlingMode) {
-            // Switch memory mode
-            if (dataObject != null) {
-                // If document is connected to file, attempt to release first if modified and then simply reload
-                if (isModified()) {
-                    if (releaseFile()) {
-                        fileHandlingMode = newHandlingMode;
-                        openDataObject(dataObject);
-                        codeArea.clearSelection();
-                        codeArea.setCaretPosition(0);
-                    }
-                } else {
-                    fileHandlingMode = newHandlingMode;
-                    openDataObject(dataObject);
-                }
-            } else {
+//            // Switch memory mode
+//            if (dataObject != null) {
+//                // If document is connected to file, attempt to release first if modified and then simply reload
+//                if (isModified()) {
+//                    if (releaseFile()) {
+//                        fileHandlingMode = newHandlingMode;
+//                        openDataObject(dataObject);
+//                        codeArea.clearSelection();
+//                        codeArea.setCaretPosition(0);
+//                    }
+//                } else {
+//                    fileHandlingMode = newHandlingMode;
+//                    openDataObject(dataObject);
+//                }
+//            } else {
                 // If document unsaved in memory, switch data in code area
                 if (codeArea.getContentData() instanceof DeltaDocument) {
                     BinaryData oldData = codeArea.getContentData();
@@ -354,8 +334,8 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
                 codeArea.notifyDataChanged();
                 updateCurrentMemoryMode();
                 fileHandlingMode = newHandlingMode;
-            }
-            fileHandlingMode = newHandlingMode;
+//            }
+//            fileHandlingMode = newHandlingMode;
         }
     }
 
@@ -399,8 +379,9 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
 //
 //        return true;
 //    }
+
     public boolean isModified() {
-        return undoHandler.getCommandPosition() != undoHandler.getSyncPoint();
+        return undoHandler != null && undoHandler.getCommandPosition() != undoHandler.getSyncPoint();
     }
 
     private void setNewData() {
@@ -417,11 +398,6 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
      * @return true if successful
      */
     private boolean releaseFile() {
-
-        if (dataObject == null) {
-            return true;
-        }
-
         while (isModified()) {
             Object[] options = {
                 "Save",
@@ -442,7 +418,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
             }
 
             try {
-                saveDataObject(dataObject);
+                saveDocument();
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
@@ -451,13 +427,39 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         return true;
     }
 
-    public void openDataObject(DataObject dataObject) {
-        this.dataObject = dataObject;
-        displayName = dataObject.getPrimaryFile().getNameExt();
+    public void openDocument(File file, boolean editable) throws IOException {
+        BinaryData oldData = codeArea.getContentData();
+
+        if (fileHandlingMode == FileHandlingMode.DELTA) {
+            FileDataSource fileSource = segmentsRepository.openFileSource(file, editable ? FileDataSource.EditationMode.READ_WRITE : FileDataSource.EditationMode.READ_ONLY);
+            DeltaDocument document = segmentsRepository.createDocument(fileSource);
+            codeArea.setContentData(document);
+            oldData.dispose();
+        } else {
+            try (FileInputStream fileStream = new FileInputStream(file)) {
+                BinaryData data = codeArea.getContentData();
+                if (!(data instanceof PagedData)) {
+                    data = new PagedData();
+                    oldData.dispose();
+                }
+                ((EditableBinaryData) data).loadFromStream(fileStream);
+                codeArea.setContentData(data);
+            }
+        }
+    }
+
+    public void openDocument(InputStream stream) throws IOException {
+        ((EditableBinaryData) codeArea.getContentData()).loadFromStream(stream);
+
+//        displayName = dataObject.getPrimaryFile().getNameExt();
 //        setHtmlDisplayName(displayName);
 //        setIcon(editorIcon);
 //        node.openFile(dataObject);
 //        savable.setDataObject(dataObject);
+        postOpen();
+    }
+
+    private void postOpen() {
         documentOriginalSize = codeArea.getDataSize();
         updateCurrentDocumentSize();
         updateCurrentMemoryMode();
@@ -469,17 +471,32 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
 //        codeArea.setCharset(charset);
     }
 
-    public void saveDataObject(DataObject dataObject) throws IOException {
-//        node.saveFile(dataObject);
+    public void saveDocument() throws IOException {
+        BinaryData data = codeArea.getContentData();
+        if (data instanceof DeltaDocument) {
+            try {
+                segmentsRepository.saveDocument((DeltaDocument) data);
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        } else {
+
+        }
+
+        postSave();
+    }
+
+    public void saveDocument(OutputStream stream) throws IOException {
+        codeArea.getContentData().saveToStream(stream);
+        postSave();
+    }
+
+    private void postSave() {
         undoHandler.setSyncPoint();
-//        setModified(false);
+        notifyModified();
         documentOriginalSize = codeArea.getDataSize();
         updateCurrentDocumentSize();
         updateCurrentMemoryMode();
-    }
-
-    public UndoRedo getUndoRedo() {
-        return undoRedo;
     }
 
     public void updateCurrentDocumentSize() {
@@ -854,7 +871,10 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
 
         EditorOptions editorOptions = applyOptions.getEditorOptions();
         switchShowValuesPanel(editorOptions.isShowValuesPanel());
-        ((CodeAreaOperationCommandHandler) codeArea.getCommandHandler()).setEnterKeyHandlingMode(editorOptions.getEnterKeyHandlingMode());
+        if (codeArea.getCommandHandler() instanceof CodeAreaOperationCommandHandler) {
+            ((CodeAreaOperationCommandHandler) codeArea.getCommandHandler()).setEnterKeyHandlingMode(editorOptions.getEnterKeyHandlingMode());
+        }
+
         switchFileHandlingMode(editorOptions.getFileHandlingMode());
 
         StatusOptions statusOptions = applyOptions.getStatusOptions();
@@ -970,6 +990,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
     public void setUndoHandler(BinaryUndoSwingHandler undoHandler) {
         CodeAreaOperationCommandHandler commandHandler = new CodeAreaOperationCommandHandler(codeArea, undoHandler);
         codeArea.setCommandHandler(commandHandler);
+        // TODO set ENTER KEY mode in apply options
 
         undoHandler.addUndoUpdateListener(new BinaryDataUndoUpdateListener() {
             @Override
