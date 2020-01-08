@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -99,7 +100,7 @@ import org.openide.util.NbPreferences;
 /**
  * Binary editor component panel.
  *
- * @version 0.2.2 2020/01/07
+ * @version 0.2.2 2020/01/08
  * @author ExBin Project (http://exbin.org)
  */
 public class BinEdComponentPanel extends javax.swing.JPanel {
@@ -114,13 +115,13 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
     private final ExtendedCodeAreaThemeProfile defaultThemeProfile;
     private final CodeAreaColorsProfile defaultColorProfile;
 
-    private BinEdToolbarPanel toolbarPanel;
-    private BinaryStatusPanel statusPanel;
+    private final BinEdToolbarPanel toolbarPanel;
+    private final BinaryStatusPanel statusPanel;
     private BinaryStatusApi binaryStatus;
     private TextEncodingStatusApi encodingStatus;
     private CharsetChangeListener charsetChangeListener = null;
     private ModifiedStateListener modifiedChangeListener = null;
-    private GoToPositionAction goToRowAction;
+    private final GoToPositionAction goToRowAction;
     private final AbstractAction showHeaderAction;
     private final AbstractAction showRowNumbersAction;
     private final SearchAction searchAction;
@@ -146,9 +147,40 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         defaultLayoutProfile = codeArea.getLayoutProfile();
         defaultThemeProfile = codeArea.getThemeProfile();
         defaultColorProfile = codeArea.getColorsProfile();
-
         toolbarPanel = new BinEdToolbarPanel(preferences, codeArea);
         statusPanel = new BinaryStatusPanel();
+
+        goToRowAction = new GoToPositionAction(codeArea);
+        showHeaderAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ExtendedCodeAreaLayoutProfile layoutProfile = codeArea.getLayoutProfile();
+                if (layoutProfile == null) {
+                    throw new IllegalStateException();
+                }
+                boolean showHeader = layoutProfile.isShowHeader();
+                layoutProfile.setShowHeader(!showHeader);
+                codeArea.setLayoutProfile(layoutProfile);
+            }
+        };
+        showRowNumbersAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ExtendedCodeAreaLayoutProfile layoutProfile = codeArea.getLayoutProfile();
+                if (layoutProfile == null) {
+                    throw new IllegalStateException();
+                }
+                boolean showRowPosition = layoutProfile.isShowRowPosition();
+                layoutProfile.setShowRowPosition(!showRowPosition);
+                codeArea.setLayoutProfile(layoutProfile);
+            }
+        };
+        searchAction = new SearchAction(codeArea, codeAreaPanel);
+
+        init();
+    }
+
+    private void init() {
         this.add(toolbarPanel, BorderLayout.NORTH);
         registerEncodingStatus(statusPanel);
         encodingsHandler = new EncodingsHandler();
@@ -175,33 +207,8 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
 
         initialLoadFromPreferences();
 
-        this.add(codeArea, BorderLayout.CENTER);
         this.add(statusPanel, BorderLayout.SOUTH);
-        goToRowAction = new GoToPositionAction(codeArea);
-        showHeaderAction = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ExtendedCodeAreaLayoutProfile layoutProfile = codeArea.getLayoutProfile();
-                if (layoutProfile == null) {
-                    throw new IllegalStateException();
-                }
-                boolean showHeader = layoutProfile.isShowHeader();
-                layoutProfile.setShowHeader(!showHeader);
-                codeArea.setLayoutProfile(layoutProfile);
-            }
-        };
-        showRowNumbersAction = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ExtendedCodeAreaLayoutProfile layoutProfile = codeArea.getLayoutProfile();
-                if (layoutProfile == null) {
-                    throw new IllegalStateException();
-                }
-                boolean showRowPosition = layoutProfile.isShowRowPosition();
-                layoutProfile.setShowRowPosition(!showRowPosition);
-                codeArea.setLayoutProfile(layoutProfile);
-            }
-        };
+        codeAreaPanel.add(codeArea, BorderLayout.CENTER);
 
         codeArea.setComponentPopupMenu(new JPopupMenu() {
             @Override
@@ -217,7 +224,6 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
             }
         });
 
-        searchAction = new SearchAction(codeArea, this);
         codeArea.addDataChangedListener(() -> {
             searchAction.codeAreaDataChanged();
             updateCurrentDocumentSize();
@@ -263,7 +269,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
 
             @Override
             public void changeCursorPosition() {
-                goToRowAction.actionPerformed(new ActionEvent(this, 0, ""));
+                goToRowAction.actionPerformed(new ActionEvent(BinEdComponentPanel.this, 0, ""));
             }
 
             @Override
@@ -316,24 +322,28 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
 //                    openDataObject(dataObject);
 //                }
 //            } else {
-                // If document unsaved in memory, switch data in code area
-                if (codeArea.getContentData() instanceof DeltaDocument) {
-                    BinaryData oldData = codeArea.getContentData();
-                    PagedData data = new PagedData();
-                    data.insert(0, codeArea.getContentData());
-                    codeArea.setContentData(data);
-                    oldData.dispose();
-                } else {
-                    BinaryData oldData = codeArea.getContentData();
-                    DeltaDocument document = segmentsRepository.createDocument();
-                    document.insert(0, oldData);
-                    codeArea.setContentData(document);
+            // If document unsaved in memory, switch data in code area
+            if (codeArea.getContentData() instanceof DeltaDocument) {
+                BinaryData oldData = codeArea.getContentData();
+                PagedData data = new PagedData();
+                data.insert(0, codeArea.getContentData());
+                codeArea.setContentData(data);
+                if (oldData != null) {
                     oldData.dispose();
                 }
-                undoHandler.clear();
-                codeArea.notifyDataChanged();
-                updateCurrentMemoryMode();
-                fileHandlingMode = newHandlingMode;
+            } else {
+                BinaryData oldData = codeArea.getContentData();
+                DeltaDocument document = segmentsRepository.createDocument();
+                document.insert(0, oldData);
+                codeArea.setContentData(document);
+                if (oldData != null) {
+                    oldData.dispose();
+                }
+            }
+            undoHandler.clear();
+            codeArea.notifyDataChanged();
+            updateCurrentMemoryMode();
+            fileHandlingMode = newHandlingMode;
 //            }
 //            fileHandlingMode = newHandlingMode;
         }
@@ -354,31 +364,6 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
     public void setModifiedChangeListener(ModifiedStateListener modifiedChangeListener) {
         this.modifiedChangeListener = modifiedChangeListener;
     }
-
-//    public boolean canClose() {
-//        if (!modified) {
-//            return true;
-//        }
-//
-//        final Component parent = WindowManager.getDefault().getMainWindow();
-//        final Object[] options = new Object[]{"Save", "Discard", "Cancel"};
-//        final String message = "File " + displayName + " is modified. Save?";
-//        final int choice = JOptionPane.showOptionDialog(parent, message, "Question", JOptionPane.YES_NO_CANCEL_OPTION,
-//                JOptionPane.QUESTION_MESSAGE, null, options, JOptionPane.YES_OPTION);
-//        if (choice == JOptionPane.CANCEL_OPTION) {
-//            return false;
-//        }
-//
-//        if (choice == JOptionPane.YES_OPTION) {
-//            try {
-//                savable.handleSave();
-//            } catch (IOException ex) {
-//                Exceptions.printStackTrace(ex);
-//            }
-//        }
-//
-//        return true;
-//    }
 
     public boolean isModified() {
         return undoHandler != null && undoHandler.getCommandPosition() != undoHandler.getSyncPoint();
@@ -434,13 +419,17 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
             FileDataSource fileSource = segmentsRepository.openFileSource(file, editable ? FileDataSource.EditationMode.READ_WRITE : FileDataSource.EditationMode.READ_ONLY);
             DeltaDocument document = segmentsRepository.createDocument(fileSource);
             codeArea.setContentData(document);
-            oldData.dispose();
+            if (oldData != null) {
+                oldData.dispose();
+            }
         } else {
             try (FileInputStream fileStream = new FileInputStream(file)) {
                 BinaryData data = codeArea.getContentData();
                 if (!(data instanceof PagedData)) {
                     data = new PagedData();
-                    oldData.dispose();
+                    if (oldData != null) {
+                        oldData.dispose();
+                    }
                 }
                 ((EditableBinaryData) data).loadFromStream(fileStream);
                 codeArea.setContentData(data);
@@ -448,14 +437,11 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         }
     }
 
-    public void openDocument(InputStream stream) throws IOException {
-        ((EditableBinaryData) codeArea.getContentData()).loadFromStream(stream);
-
-//        displayName = dataObject.getPrimaryFile().getNameExt();
-//        setHtmlDisplayName(displayName);
-//        setIcon(editorIcon);
-//        node.openFile(dataObject);
-//        savable.setDataObject(dataObject);
+    public void openDocument(InputStream stream, boolean editable) throws IOException {
+        setNewData();
+        EditableBinaryData data = Objects.requireNonNull((EditableBinaryData) codeArea.getContentData());
+        data.loadFromStream(stream);
+        codeArea.setEditationMode(editable ? EditationMode.EXPANDING : EditationMode.READ_ONLY);
         postOpen();
     }
 
@@ -464,6 +450,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         updateCurrentDocumentSize();
         updateCurrentMemoryMode();
 
+        // Autodetect encoding using IDE mechanism
 //        final Charset charset = Charset.forName(FileEncodingQuery.getEncoding(dataObject.getPrimaryFile()).name());
 //        if (charsetChangeListener != null) {
 //            charsetChangeListener.charsetChanged();
@@ -487,7 +474,11 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
     }
 
     public void saveDocument(OutputStream stream) throws IOException {
-        codeArea.getContentData().saveToStream(stream);
+        BinaryData contentData = codeArea.getContentData();
+        if (contentData != null) {
+            contentData.saveToStream(stream);
+        }
+
         postSave();
     }
 
@@ -541,7 +532,12 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        codeAreaPanel = new javax.swing.JPanel();
+
         setLayout(new java.awt.BorderLayout());
+
+        codeAreaPanel.setLayout(new java.awt.BorderLayout());
+        add(codeAreaPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     /**
@@ -555,6 +551,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel codeAreaPanel;
     // End of variables declaration//GEN-END:variables
     public void closeData() {
         BinaryData data = codeArea.getContentData();

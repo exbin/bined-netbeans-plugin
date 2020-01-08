@@ -31,7 +31,7 @@ import org.openide.awt.UndoRedo;
 import org.openide.util.Exceptions;
 
 /**
- * Undo handler for binary editor using Swing undo.
+ * Undo handler for binary editor using AWT undo.
  *
  * @version 0.2.0 2018/09/10
  * @author ExBin Project (http://exbin.org)

@@ -23,6 +23,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
@@ -208,7 +209,7 @@ public final class SearchAction implements ActionListener {
         CharsetEncoder encoder = charset.newEncoder();
         int maxBytesPerChar = (int) encoder.maxBytesPerChar();
         byte[] charData = new byte[maxBytesPerChar];
-        long dataSize = data.getDataSize();
+        long dataSize = codeArea.getDataSize();
         while (position <= dataSize - findText.length()) {
             int matchCharLength = 0;
             int matchLength = 0;
@@ -262,7 +263,7 @@ public final class SearchAction implements ActionListener {
         painter.setMatches(foundMatches);
         if (foundMatches.size() > 0) {
             painter.setCurrentMatchIndex(0);
-            ExtendedHighlightCodeAreaPainter.SearchMatch firstMatch = painter.getCurrentMatch();
+            ExtendedHighlightCodeAreaPainter.SearchMatch firstMatch = Objects.requireNonNull(painter.getCurrentMatch());
             codeArea.revealPosition(new DefaultCodeAreaCaretPosition(firstMatch.getPosition(), 0, codeArea.getActiveSection()));
         }
         binarySearchPanel.setStatus(foundMatches.size(), 0);
@@ -287,8 +288,8 @@ public final class SearchAction implements ActionListener {
             position = 0;
         }
 
-        BinaryData searchData = condition.getBinaryData();
-        BinaryData data = codeArea.getContentData();
+        BinaryData searchData = Objects.requireNonNull(condition.getBinaryData());
+        BinaryData data = Objects.requireNonNull(codeArea.getContentData());
 
         List<ExtendedHighlightCodeAreaPainter.SearchMatch> foundMatches = new ArrayList<>();
 
@@ -319,7 +320,7 @@ public final class SearchAction implements ActionListener {
         painter.setMatches(foundMatches);
         if (foundMatches.size() > 0) {
             painter.setCurrentMatchIndex(0);
-            ExtendedHighlightCodeAreaPainter.SearchMatch firstMatch = painter.getCurrentMatch();
+            ExtendedHighlightCodeAreaPainter.SearchMatch firstMatch = Objects.requireNonNull(painter.getCurrentMatch());
             codeArea.revealPosition(new DefaultCodeAreaCaretPosition(firstMatch.getPosition(), 0, codeArea.getActiveSection()));
         }
         binarySearchPanel.setStatus(foundMatches.size(), 0);

@@ -22,7 +22,7 @@ package org.exbin.bined.netbeans;
  * @author ExBin Project (http://exbin.org)
  */
 public final class BinEdNetBeansPlugin {
-    
+
     private BinEdNetBeansPlugin() {
     }
 }

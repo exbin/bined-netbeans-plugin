@@ -208,8 +208,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             try {
                 stream = dataObject.getPrimaryFile().getInputStream();
                 if (stream != null) {
-                    componentPanel.openDocument(stream);
-                    codeArea.setEditationMode(editable ? EditationMode.EXPANDING : EditationMode.READ_ONLY);
+                    componentPanel.openDocument(stream, editable);
                 }
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
