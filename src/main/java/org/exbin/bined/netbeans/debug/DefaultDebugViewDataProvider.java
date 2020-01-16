@@ -15,32 +15,36 @@
  */
 package org.exbin.bined.netbeans.debug;
 
-import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import org.netbeans.spi.viewmodel.UnknownTypeException;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
+import org.exbin.auxiliary.paged_data.BinaryData;
 
 /**
- * Debug view action.
+ * Data source for debugging.
  *
- * @version 0.2.1 2019/09/01
+ * @version 0.2.0 2020/01/16
  * @author ExBin Project (http://exbin.org)
  */
-public final class VariablesActionProvider implements org.netbeans.spi.viewmodel.NodeActionsProvider {
+@ParametersAreNonnullByDefault
+public class DefaultDebugViewDataProvider implements DebugViewDataProvider {
 
+    private final String name;
+    private final BinaryData data;
+
+    public DefaultDebugViewDataProvider(String name, BinaryData data) {
+        this.name = name;
+        this.data = data;
+    }
+
+    @Nonnull
     @Override
-    public void performDefaultAction(Object node) throws UnknownTypeException {
+    public String getName() {
+        return name;
     }
 
     @Override
-    public Action[] getActions(Object node) throws UnknownTypeException {
-        return new Action[]{
-            new AbstractAction("Test") {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    System.out.println("Test");
-                }
-            }
-        };
+    @Nonnull
+    public BinaryData getData() {
+        return data;
     }
 }

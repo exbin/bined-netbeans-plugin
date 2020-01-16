@@ -30,7 +30,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * @version 0.2.1 2019/09/02
  */
 @ParametersAreNonnullByDefault
-public class DebugViewDataSource implements BinaryData {
+public class DebugViewData implements BinaryData {
 
     public static final int PAGE_SIZE = 2048;
 
@@ -39,7 +39,7 @@ public class DebugViewDataSource implements BinaryData {
     private final CachePage[] pages = new CachePage[2];
     private int nextPage = 0;
 
-    public DebugViewDataSource(PageProvider pageProvider) {
+    public DebugViewData(PageProvider pageProvider) {
         this.pageProvider = pageProvider;
         pages[0] = new CachePage();
         pages[1] = new CachePage();

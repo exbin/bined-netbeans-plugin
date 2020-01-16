@@ -15,7 +15,7 @@
  */
 package org.exbin.bined.netbeans.debug.array;
 
-import org.exbin.bined.netbeans.debug.DebugViewDataSource;
+import org.exbin.bined.netbeans.debug.DebugViewData;
 import org.netbeans.api.debugger.jpda.Field;
 import org.netbeans.api.debugger.jpda.ObjectVariable;
 
@@ -25,7 +25,7 @@ import org.netbeans.api.debugger.jpda.ObjectVariable;
  * @author ExBin Project (http://exbin.org)
  * @version 0.2.1 2019/09/03
  */
-public class IntegerArrayPageProvider implements DebugViewDataSource.PageProvider {
+public class IntegerArrayPageProvider implements DebugViewData.PageProvider {
 
     private final ObjectVariable arrayRef;
 
@@ -35,7 +35,7 @@ public class IntegerArrayPageProvider implements DebugViewDataSource.PageProvide
 
     @Override
     public byte[] getPage(long pageIndex) {
-        int pageSize = DebugViewDataSource.PAGE_SIZE / 4;
+        int pageSize = DebugViewData.PAGE_SIZE / 4;
         int startPos = (int) (pageIndex * pageSize);
         int length = pageSize;
         if (arrayRef.getFieldsCount() - startPos < pageSize) {

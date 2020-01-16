@@ -1,6 +1,7 @@
 0.2.2
 - Switched to Gradle building
 - Action to show debug variables as binary data in ToolTip view
+- Support for multiple decoders in debugging view
 
 0.2.1 (2019-09-04)
 - Action to show debug variables as binary data

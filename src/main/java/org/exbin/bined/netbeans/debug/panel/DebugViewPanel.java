@@ -16,17 +16,23 @@
 package org.exbin.bined.netbeans.debug.panel;
 
 import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.List;
 import org.exbin.bined.EditationMode;
 import org.exbin.auxiliary.paged_data.BinaryData;
+import org.exbin.bined.netbeans.debug.DebugViewDataProvider;
 import org.exbin.bined.netbeans.panel.BinEdComponentPanel;
 
 /**
  * Panel to show debug view.
  *
- * @version 0.2.2 2020/01/08
+ * @version 0.2.2 2020/01/15
  * @author ExBin Project (http://exbin.org)
  */
 public class DebugViewPanel extends javax.swing.JPanel {
+
+    private final List<DebugViewDataProvider> providers = new ArrayList<>();
+    private int selectedProvider = 0;
 
     private final BinEdComponentPanel componentPanel;
 
@@ -52,16 +58,39 @@ public class DebugViewPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        methodComboBox = new javax.swing.JComboBox<>();
+        providerComboBox = new javax.swing.JComboBox<>();
 
         setLayout(new java.awt.BorderLayout());
-        add(methodComboBox, java.awt.BorderLayout.PAGE_START);
+
+        providerComboBox.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                providerComboBoxItemStateChanged(evt);
+            }
+        });
+        add(providerComboBox, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void providerComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_providerComboBoxItemStateChanged
+        int selectedIndex = providerComboBox.getSelectedIndex();
+        if (selectedProvider != selectedIndex) {
+            selectedProvider = selectedIndex;
+            setData(providers.get(selectedProvider).getData());
+        }
+    }//GEN-LAST:event_providerComboBoxItemStateChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> methodComboBox;
+    private javax.swing.JComboBox<String> providerComboBox;
     // End of variables declaration//GEN-END:variables
+
+    public void addProvider(DebugViewDataProvider provider) {
+        if (providers.isEmpty()) {
+            setData(provider.getData());
+        }
+
+        providers.add(provider);
+        providerComboBox.addItem(provider.getName());
+    }
 
     public void setData(BinaryData data) {
         componentPanel.getCodeArea().setContentData(data);

@@ -24,7 +24,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import javax.annotation.Nullable;
 import javax.swing.JPanel;
-import org.exbin.bined.netbeans.debug.DebugViewDataSource;
+import org.exbin.bined.netbeans.debug.DebugViewData;
 import org.exbin.bined.netbeans.debug.array.BooleanArrayPageProvider;
 import org.exbin.bined.netbeans.debug.array.ByteArrayPageProvider;
 import org.exbin.bined.netbeans.debug.array.CharArrayPageProvider;
@@ -39,6 +39,8 @@ import org.exbin.framework.gui.utils.WindowUtils;
 import org.exbin.framework.gui.utils.panel.CloseControlPanel;
 import org.exbin.auxiliary.paged_data.BinaryData;
 import org.exbin.auxiliary.paged_data.ByteArrayData;
+import org.exbin.bined.netbeans.debug.DebugViewDataProvider;
+import org.exbin.bined.netbeans.debug.DefaultDebugViewDataProvider;
 import org.netbeans.api.debugger.jpda.ClassVariable;
 import org.netbeans.api.debugger.jpda.Field;
 import org.netbeans.api.debugger.jpda.JPDAArrayType;
@@ -115,7 +117,6 @@ public final class BinaryDebugAction implements ActionListener {
         WindowUtils.DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, parent, "View as Binary", Dialog.ModalityType.APPLICATION_MODAL);
 
         BinaryData data;
-        boolean fallback = true;
         if (variableObject instanceof ObjectVariable) {
             JPDAClassType classType = ((ObjectVariable) variableObject).getClassType();
             ClassVariable classObject = classType == null ? null : classType.classObject();
@@ -124,14 +125,12 @@ public final class BinaryDebugAction implements ActionListener {
             if (classObject instanceof JPDAArrayType) {
                 data = processArrayValue((ObjectVariable) variableObject, (JPDAArrayType) classObject);
                 if (data != null) {
-                    fallback = false;
-                    debugViewPanel.setData(data);
+                    debugViewPanel.addProvider(new DefaultDebugViewDataProvider("binary sequence from array", data));
                 }
             } else if (classObject != null && classObject.getReflectedType() instanceof JPDAArrayType) {
                 data = processArrayValue((ObjectVariable) variableObject, (JPDAArrayType) classObject.getReflectedType());
                 if (data != null) {
-                    fallback = false;
-                    debugViewPanel.setData(data);
+                    debugViewPanel.addProvider(new DefaultDebugViewDataProvider("native binary sequence from array", data));
                 }
             } else if (classType instanceof JPDAArrayType) {
 // TODO support for java.lang.*[] wrappers for native types
@@ -157,19 +156,30 @@ public final class BinaryDebugAction implements ActionListener {
             }
         }
 
-        if (fallback && variableObject instanceof Variable) {
+        if (variableObject instanceof Variable) {
             String variableValue = ((Variable) variableObject).getValue();
             String variableType = ((Variable) variableObject).getType();
             data = processSimpleValue(variableType, variableValue);
-            if (data == null) {
-                String value = ((Variable) variableObject).getValue();
-                if (value != null) {
-                    data = new ByteArrayData(value.getBytes(Charset.defaultCharset()));
-                } else {
-                    data = new ByteArrayData();
-                }
+            if (data != null) {
+                debugViewPanel.addProvider(new DefaultDebugViewDataProvider("binary value", data));
             }
-            debugViewPanel.setData(data);
+
+            final String value = ((Variable) variableObject).getValue();
+            debugViewPanel.addProvider(new DebugViewDataProvider() {
+                @Override
+                public String getName() {
+                    return "toString()";
+                }
+
+                @Override
+                public BinaryData getData() {
+                    if (value != null) {
+                        return new ByteArrayData(value.getBytes(Charset.defaultCharset()));
+                    } else {
+                        return new ByteArrayData();
+                    }
+                }
+            });
         }
 
         controlPanel.setHandler(() -> {
@@ -257,31 +267,31 @@ public final class BinaryDebugAction implements ActionListener {
         String type = arrayType.getComponentTypeName();
         switch (type) {
             case "boolean": {
-                return new DebugViewDataSource(new BooleanArrayPageProvider(variableObject));
+                return new DebugViewData(new BooleanArrayPageProvider(variableObject));
             }
 //            case "java.lang.Byte": {
 //                loadChildValues(variableObject);
 //            }
             case "byte": {
-                return new DebugViewDataSource(new ByteArrayPageProvider(variableObject));
+                return new DebugViewData(new ByteArrayPageProvider(variableObject));
             }
             case "short": {
-                return new DebugViewDataSource(new ShortArrayPageProvider(variableObject));
+                return new DebugViewData(new ShortArrayPageProvider(variableObject));
             }
             case "int": {
-                return new DebugViewDataSource(new IntegerArrayPageProvider(variableObject));
+                return new DebugViewData(new IntegerArrayPageProvider(variableObject));
             }
             case "long": {
-                return new DebugViewDataSource(new LongArrayPageProvider(variableObject));
+                return new DebugViewData(new LongArrayPageProvider(variableObject));
             }
             case "float": {
-                return new DebugViewDataSource(new FloatArrayPageProvider(variableObject));
+                return new DebugViewData(new FloatArrayPageProvider(variableObject));
             }
             case "double": {
-                return new DebugViewDataSource(new DoubleArrayPageProvider(variableObject));
+                return new DebugViewData(new DoubleArrayPageProvider(variableObject));
             }
             case "char": {
-                return new DebugViewDataSource(new CharArrayPageProvider(variableObject));
+                return new DebugViewData(new CharArrayPageProvider(variableObject));
             }
         }
 
