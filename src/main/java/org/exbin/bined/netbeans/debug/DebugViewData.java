@@ -21,6 +21,7 @@ import org.exbin.auxiliary.paged_data.ByteArrayEditableData;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
@@ -84,11 +85,13 @@ public class DebugViewData implements BinaryData {
         return page.data[pageOffset];
     }
 
+    @Nonnull
     @Override
     public BinaryData copy() {
         return copy(0, getDataSize());
     }
 
+    @Nonnull
     @Override
     public BinaryData copy(long startFrom, long length) {
         ByteArrayEditableData result = new ByteArrayEditableData();

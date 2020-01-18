@@ -60,11 +60,11 @@ import org.exbin.bined.capability.CharsetCapable;
 import org.exbin.bined.extended.layout.ExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.highlight.swing.extended.ExtendedHighlightNonAsciiCodeAreaPainter;
 import org.exbin.bined.netbeans.BinEdApplyOptions;
-import org.exbin.bined.netbeans.BinaryUndoSwingHandler;
 import org.exbin.bined.netbeans.GoToPositionAction;
 import org.exbin.bined.netbeans.SearchAction;
 import org.exbin.bined.operation.BinaryDataCommand;
 import org.exbin.bined.operation.swing.CodeAreaOperationCommandHandler;
+import org.exbin.bined.operation.undo.BinaryDataUndoHandler;
 import org.exbin.bined.operation.undo.BinaryDataUndoUpdateListener;
 import org.exbin.bined.swing.basic.color.CodeAreaColorsProfile;
 import org.exbin.bined.swing.capability.FontCapable;
@@ -110,7 +110,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
     private final BinaryEditorPreferences preferences;
     private static SegmentsRepository segmentsRepository = null;
     private final ExtCodeArea codeArea;
-    private BinaryUndoSwingHandler undoHandler;
+    private BinaryDataUndoHandler undoHandler;
     private final ExtendedCodeAreaLayoutProfile defaultLayoutProfile;
     private final ExtendedCodeAreaThemeProfile defaultThemeProfile;
     private final CodeAreaColorsProfile defaultColorProfile;
@@ -382,7 +382,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
      *
      * @return true if successful
      */
-    private boolean releaseFile() {
+    public boolean releaseFile() {
         while (isModified()) {
             Object[] options = {
                 "Save",
@@ -854,7 +854,9 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         EditorOptions editorOptions = applyOptions.getEditorOptions();
         editorOptions.setShowValuesPanel(valuesPanelVisible);
         editorOptions.setFileHandlingMode(fileHandlingMode);
-        editorOptions.setEnterKeyHandlingMode(((CodeAreaOperationCommandHandler) codeArea.getCommandHandler()).getEnterKeyHandlingMode());
+        if (codeArea.getCommandHandler() instanceof CodeAreaOperationCommandHandler) {
+            editorOptions.setEnterKeyHandlingMode(((CodeAreaOperationCommandHandler) codeArea.getCommandHandler()).getEnterKeyHandlingMode());
+        }
 
         // TODO applyOptions.getStatusOptions().loadFromPreferences(preferences.getStatusPreferences());
     }
@@ -936,41 +938,49 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
 
     private void initialLoadFromPreferences() {
         applyOptions(new BinEdApplyOptions() {
+            @Nonnull
             @Override
             public CodeAreaOptions getCodeAreaOptions() {
                 return preferences.getCodeAreaPreferences();
             }
 
+            @Nonnull
             @Override
             public TextEncodingOptions getEncodingOptions() {
                 return preferences.getEncodingPreferences();
             }
 
+            @Nonnull
             @Override
             public TextFontOptions getFontOptions() {
                 return preferences.getFontPreferences();
             }
 
+            @Nonnull
             @Override
             public EditorOptions getEditorOptions() {
                 return preferences.getEditorPreferences();
             }
 
+            @Nonnull
             @Override
             public StatusOptions getStatusOptions() {
                 return preferences.getStatusPreferences();
             }
 
+            @Nonnull
             @Override
             public CodeAreaLayoutOptions getLayoutOptions() {
                 return preferences.getLayoutPreferences();
             }
 
+            @Nonnull
             @Override
             public CodeAreaColorOptions getColorOptions() {
                 return preferences.getColorPreferences();
             }
 
+            @Nonnull
             @Override
             public CodeAreaThemeOptions getThemeOptions() {
                 return preferences.getThemePreferences();
@@ -984,7 +994,8 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         fileHandlingMode = preferences.getEditorPreferences().getFileHandlingMode();
     }
 
-    public void setUndoHandler(BinaryUndoSwingHandler undoHandler) {
+    public void setUndoHandler(BinaryDataUndoHandler undoHandler) {
+        this.undoHandler = undoHandler;
         CodeAreaOperationCommandHandler commandHandler = new CodeAreaOperationCommandHandler(codeArea, undoHandler);
         codeArea.setCommandHandler(commandHandler);
         // TODO set ENTER KEY mode in apply options
@@ -998,7 +1009,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
             }
 
             @Override
-            public void undoCommandAdded(final BinaryDataCommand command) {
+            public void undoCommandAdded(@Nonnull final BinaryDataCommand command) {
                 updateCurrentDocumentSize();
                 notifyModified();
             }
