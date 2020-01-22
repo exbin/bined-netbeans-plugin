@@ -20,6 +20,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import org.exbin.bined.CodeType;
@@ -41,6 +43,8 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
 
     private final BinaryEditorPreferences preferences;
     private final ExtCodeArea codeArea;
+    private final AbstractAction optionsAction;
+
     private final AbstractAction cycleCodeTypesAction;
     private final JRadioButtonMenuItem binaryCodeTypeAction;
     private final JRadioButtonMenuItem octalCodeTypeAction;
@@ -50,9 +54,10 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     private DropDownButton codeTypeDropDown;
 
 //    private JSplitButton codeTypeButton;
-    public BinEdToolbarPanel(BinaryEditorPreferences preferences, ExtCodeArea codeArea) {
+    public BinEdToolbarPanel(BinaryEditorPreferences preferences, ExtCodeArea codeArea, AbstractAction optionsAction) {
         this.preferences = preferences;
         this.codeArea = codeArea;
+        this.optionsAction = optionsAction;
 
         codeTypeButtonGroup = new ButtonGroup();
         binaryCodeTypeAction = new JRadioButtonMenuItem(new AbstractAction("Binary") {
@@ -120,6 +125,14 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
 //            }
 //        });
 //        controlToolBar.add(codeTypeButton);
+
+        controlToolBar.addSeparator();
+        JButton optionsButton = new JButton();
+        optionsButton.setToolTipText("Options");
+        optionsButton.setAction(optionsAction);
+        optionsButton.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/options/resources/icons/Preferences16.gif")));
+        controlToolBar.add(optionsButton);
+
     }
 
     private void updateCycleButtonName() {

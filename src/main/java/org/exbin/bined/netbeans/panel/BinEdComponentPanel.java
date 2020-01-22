@@ -147,7 +147,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         defaultLayoutProfile = codeArea.getLayoutProfile();
         defaultThemeProfile = codeArea.getThemeProfile();
         defaultColorProfile = codeArea.getColorsProfile();
-        toolbarPanel = new BinEdToolbarPanel(preferences, codeArea);
+        toolbarPanel = new BinEdToolbarPanel(preferences, codeArea, createOptionsAction());
         statusPanel = new BinaryStatusPanel();
 
         goToRowAction = new GoToPositionAction(codeArea);
@@ -340,7 +340,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
                     oldData.dispose();
                 }
             }
-            undoHandler.clear();
+            // TODO undoHandler.clear();
             codeArea.notifyDataChanged();
             updateCurrentMemoryMode();
             fileHandlingMode = newHandlingMode;
@@ -711,47 +711,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
 
         final JMenuItem optionsMenuItem = new JMenuItem("Options...");
         optionsMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/options/resources/icons/Preferences16.gif")));
-        optionsMenuItem.addActionListener((ActionEvent e) -> {
-            final BinEdOptionsPanelBorder optionsPanelWrapper = new BinEdOptionsPanelBorder();
-            BinEdOptionsPanel optionsPanel = optionsPanelWrapper.getOptionsPanel();
-            optionsPanel.setPreferences(preferences);
-            optionsPanel.setTextFontService(new TextFontService() {
-                @Override
-                public Font getCurrentFont() {
-                    return codeArea.getCodeFont();
-                }
-
-                @Override
-                public Font getDefaultFont() {
-                    return defaultFont;
-                }
-
-                @Override
-                public void setCurrentFont(Font font) {
-                    codeArea.setCodeFont(font);
-                }
-            });
-            optionsPanel.loadFromPreferences();
-            updateApplyOptions(optionsPanel);
-            OptionsControlPanel optionsControlPanel = new OptionsControlPanel();
-            JPanel dialogPanel = WindowUtils.createDialogPanel(optionsPanelWrapper, optionsControlPanel);
-            WindowUtils.DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, (Component) e.getSource(), "Options", Dialog.ModalityType.APPLICATION_MODAL);
-            optionsControlPanel.setHandler((OptionsControlHandler.ControlActionType actionType) -> {
-                if (actionType != OptionsControlHandler.ControlActionType.CANCEL) {
-                    optionsPanel.applyToOptions();
-                    if (actionType == OptionsControlHandler.ControlActionType.SAVE) {
-                        optionsPanel.saveToPreferences();
-                    }
-                    applyOptions(optionsPanel);
-                    codeArea.repaint();
-                }
-
-                dialog.close();
-            });
-            dialog.getWindow().setSize(650, 460);
-            dialog.showCentered((Component) e.getSource());
-            dialog.dispose();
-        });
+        optionsMenuItem.addActionListener(createOptionsAction());
         result.add(optionsMenuItem);
 
         switch (positionZone) {
@@ -780,6 +740,53 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         }
 
         return result;
+    }
+
+    private AbstractAction createOptionsAction() {
+        return new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final BinEdOptionsPanelBorder optionsPanelWrapper = new BinEdOptionsPanelBorder();
+                BinEdOptionsPanel optionsPanel = optionsPanelWrapper.getOptionsPanel();
+                optionsPanel.setPreferences(preferences);
+                optionsPanel.setTextFontService(new TextFontService() {
+                    @Override
+                    public Font getCurrentFont() {
+                        return codeArea.getCodeFont();
+                    }
+
+                    @Override
+                    public Font getDefaultFont() {
+                        return defaultFont;
+                    }
+
+                    @Override
+                    public void setCurrentFont(Font font) {
+                        codeArea.setCodeFont(font);
+                    }
+                });
+                optionsPanel.loadFromPreferences();
+                updateApplyOptions(optionsPanel);
+                OptionsControlPanel optionsControlPanel = new OptionsControlPanel();
+                JPanel dialogPanel = WindowUtils.createDialogPanel(optionsPanelWrapper, optionsControlPanel);
+                WindowUtils.DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, (Component) e.getSource(), "Options", Dialog.ModalityType.APPLICATION_MODAL);
+                optionsControlPanel.setHandler((OptionsControlHandler.ControlActionType actionType) -> {
+                    if (actionType != OptionsControlHandler.ControlActionType.CANCEL) {
+                        optionsPanel.applyToOptions();
+                        if (actionType == OptionsControlHandler.ControlActionType.SAVE) {
+                            optionsPanel.saveToPreferences();
+                        }
+                        applyOptions(optionsPanel);
+                        codeArea.repaint();
+                    }
+
+                    dialog.close();
+                });
+                dialog.getWindow().setSize(650, 460);
+                dialog.showCentered((Component) e.getSource());
+                dialog.dispose();
+            }
+        };
     }
 
     @Nonnull
