@@ -21,12 +21,14 @@ import java.util.List;
 import org.exbin.bined.EditationMode;
 import org.exbin.auxiliary.paged_data.BinaryData;
 import org.exbin.bined.netbeans.debug.DebugViewDataProvider;
+import org.exbin.bined.netbeans.panel.BinEdComponentFileApi;
 import org.exbin.bined.netbeans.panel.BinEdComponentPanel;
+import org.exbin.framework.bined.FileHandlingMode;
 
 /**
  * Panel to show debug view.
  *
- * @version 0.2.2 2020/01/15
+ * @version 0.2.2 2020/01/26
  * @author ExBin Project (http://exbin.org)
  */
 public class DebugViewPanel extends javax.swing.JPanel {
@@ -45,6 +47,24 @@ public class DebugViewPanel extends javax.swing.JPanel {
 
     private void init() {
         componentPanel.getCodeArea().setEditationMode(EditationMode.READ_ONLY);
+        componentPanel.setFileApi(new BinEdComponentFileApi() {
+            @Override
+            public boolean isSaveSupported() {
+                return false;
+            }
+
+            @Override
+            public void saveDocument() {
+            }
+
+            @Override
+            public void switchFileHandlingMode(FileHandlingMode newHandlingMode) {
+            }
+
+            @Override
+            public void closeData() {
+            }
+        });
 
         this.add(componentPanel, BorderLayout.CENTER);
     }
@@ -78,7 +98,6 @@ public class DebugViewPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_providerComboBoxItemStateChanged
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> providerComboBox;
     // End of variables declaration//GEN-END:variables
@@ -93,6 +112,6 @@ public class DebugViewPanel extends javax.swing.JPanel {
     }
 
     public void setData(BinaryData data) {
-        componentPanel.getCodeArea().setContentData(data);
+        componentPanel.setContentData(data);
     }
 }

@@ -18,18 +18,13 @@ package org.exbin.bined.netbeans.panel;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -45,12 +40,6 @@ import javax.swing.JSeparator;
 import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import org.exbin.auxiliary.paged_data.BinaryData;
-import org.exbin.auxiliary.paged_data.ByteArrayData;
-import org.exbin.auxiliary.paged_data.EditableBinaryData;
-import org.exbin.auxiliary.paged_data.PagedData;
-import org.exbin.auxiliary.paged_data.delta.DeltaDocument;
-import org.exbin.auxiliary.paged_data.delta.FileDataSource;
-import org.exbin.auxiliary.paged_data.delta.SegmentsRepository;
 import org.exbin.bined.BasicCodeAreaZone;
 import org.exbin.bined.CodeAreaCaretPosition;
 import org.exbin.bined.EditationMode;
@@ -94,21 +83,20 @@ import org.exbin.framework.gui.utils.handler.OptionsControlHandler;
 import org.exbin.framework.gui.utils.panel.CloseControlPanel;
 import org.exbin.framework.gui.utils.panel.OptionsControlPanel;
 import org.exbin.framework.preferences.PreferencesWrapper;
-import org.openide.util.Exceptions;
 import org.openide.util.NbPreferences;
 
 /**
  * Binary editor component panel.
  *
- * @version 0.2.2 2020/01/08
+ * @version 0.2.2 2020/01/26
  * @author ExBin Project (http://exbin.org)
  */
 public class BinEdComponentPanel extends javax.swing.JPanel {
 
     private static final FileHandlingMode DEFAULT_FILE_HANDLING_MODE = FileHandlingMode.DELTA;
 
+    private BinEdComponentFileApi fileApi = null;
     private final BinaryEditorPreferences preferences;
-    private static SegmentsRepository segmentsRepository = null;
     private final ExtCodeArea codeArea;
     private BinaryDataUndoHandler undoHandler;
     private final ExtendedCodeAreaLayoutProfile defaultLayoutProfile;
@@ -201,8 +189,6 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
             }
         });
 
-        getSegmentsRepository();
-        setNewData();
         registerBinaryStatus(statusPanel);
 
         initialLoadFromPreferences();
@@ -257,6 +243,9 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         codeArea.addCaretMovedListener((CodeAreaCaretPosition caretPosition) -> {
             binaryStatus.setCursorPosition(caretPosition);
         });
+        codeArea.addSelectionChangedListener(selectionRange -> {
+            binaryStatus.setSelectionRange(selectionRange);
+        });
 
         codeArea.addEditationModeChangedListener(binaryStatus::setEditationMode);
         binaryStatus.setEditationMode(codeArea.getEditationMode(), codeArea.getActiveOperation());
@@ -290,11 +279,19 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
             public void changeMemoryMode(BinaryStatusApi.MemoryMode memoryMode) {
                 FileHandlingMode newHandlingMode = memoryMode == BinaryStatusApi.MemoryMode.DELTA_MODE ? FileHandlingMode.DELTA : FileHandlingMode.MEMORY;
                 if (newHandlingMode != fileHandlingMode) {
-                    switchFileHandlingMode(newHandlingMode);
+                    fileApi.switchFileHandlingMode(newHandlingMode);
                     preferences.getEditorPreferences().setFileHandlingMode(newHandlingMode);
                 }
             }
         });
+    }
+
+    public BinEdComponentFileApi getFileApi() {
+        return fileApi;
+    }
+
+    public void setFileApi(BinEdComponentFileApi fileApi) {
+        this.fileApi = fileApi;
     }
 
     private void switchShowValuesPanel(boolean showValuesPanel) {
@@ -302,50 +299,6 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
             showValuesPanel();
         } else {
             hideValuesPanel();
-        }
-    }
-
-    private void switchFileHandlingMode(FileHandlingMode newHandlingMode) {
-        if (newHandlingMode != fileHandlingMode) {
-//            // Switch memory mode
-//            if (dataObject != null) {
-//                // If document is connected to file, attempt to release first if modified and then simply reload
-//                if (isModified()) {
-//                    if (releaseFile()) {
-//                        fileHandlingMode = newHandlingMode;
-//                        openDataObject(dataObject);
-//                        codeArea.clearSelection();
-//                        codeArea.setCaretPosition(0);
-//                    }
-//                } else {
-//                    fileHandlingMode = newHandlingMode;
-//                    openDataObject(dataObject);
-//                }
-//            } else {
-            // If document unsaved in memory, switch data in code area
-            if (codeArea.getContentData() instanceof DeltaDocument) {
-                BinaryData oldData = codeArea.getContentData();
-                PagedData data = new PagedData();
-                data.insert(0, codeArea.getContentData());
-                codeArea.setContentData(data);
-                if (oldData != null) {
-                    oldData.dispose();
-                }
-            } else {
-                BinaryData oldData = codeArea.getContentData();
-                DeltaDocument document = segmentsRepository.createDocument();
-                document.insert(0, oldData);
-                codeArea.setContentData(document);
-                if (oldData != null) {
-                    oldData.dispose();
-                }
-            }
-            // TODO undoHandler.clear();
-            codeArea.notifyDataChanged();
-            updateCurrentMemoryMode();
-            fileHandlingMode = newHandlingMode;
-//            }
-//            fileHandlingMode = newHandlingMode;
         }
     }
 
@@ -369,20 +322,15 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         return undoHandler != null && undoHandler.getCommandPosition() != undoHandler.getSyncPoint();
     }
 
-    private void setNewData() {
-        if (fileHandlingMode == FileHandlingMode.DELTA) {
-            codeArea.setContentData(segmentsRepository.createDocument());
-        } else {
-            codeArea.setContentData(new PagedData());
-        }
-    }
-
     /**
      * Attempts to release current file and warn if document was modified.
      *
      * @return true if successful
      */
     public boolean releaseFile() {
+        if (fileApi == null)
+            return true;
+
         while (isModified()) {
             Object[] options = {
                 "Save",
@@ -402,50 +350,15 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
                 return false;
             }
 
-            try {
-                saveDocument();
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
+            saveDocument();
         }
 
         return true;
     }
 
-    public void openDocument(File file, boolean editable) throws IOException {
-        BinaryData oldData = codeArea.getContentData();
+    public void setContentData(BinaryData data) {
+        codeArea.setContentData(data);
 
-        if (fileHandlingMode == FileHandlingMode.DELTA) {
-            FileDataSource fileSource = segmentsRepository.openFileSource(file, editable ? FileDataSource.EditationMode.READ_WRITE : FileDataSource.EditationMode.READ_ONLY);
-            DeltaDocument document = segmentsRepository.createDocument(fileSource);
-            codeArea.setContentData(document);
-            if (oldData != null) {
-                oldData.dispose();
-            }
-        } else {
-            try (FileInputStream fileStream = new FileInputStream(file)) {
-                BinaryData data = codeArea.getContentData();
-                if (!(data instanceof PagedData)) {
-                    data = new PagedData();
-                    if (oldData != null) {
-                        oldData.dispose();
-                    }
-                }
-                ((EditableBinaryData) data).loadFromStream(fileStream);
-                codeArea.setContentData(data);
-            }
-        }
-    }
-
-    public void openDocument(InputStream stream, boolean editable) throws IOException {
-        setNewData();
-        EditableBinaryData data = Objects.requireNonNull((EditableBinaryData) codeArea.getContentData());
-        data.loadFromStream(stream);
-        codeArea.setEditationMode(editable ? EditationMode.EXPANDING : EditationMode.READ_ONLY);
-        postOpen();
-    }
-
-    private void postOpen() {
         documentOriginalSize = codeArea.getDataSize();
         updateCurrentDocumentSize();
         updateCurrentMemoryMode();
@@ -458,31 +371,9 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
 //        codeArea.setCharset(charset);
     }
 
-    public void saveDocument() throws IOException {
-        BinaryData data = codeArea.getContentData();
-        if (data instanceof DeltaDocument) {
-            try {
-                segmentsRepository.saveDocument((DeltaDocument) data);
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        } else {
+    private void saveDocument() {
+        fileApi.saveDocument();
 
-        }
-
-        postSave();
-    }
-
-    public void saveDocument(OutputStream stream) throws IOException {
-        BinaryData contentData = codeArea.getContentData();
-        if (contentData != null) {
-            contentData.saveToStream(stream);
-        }
-
-        postSave();
-    }
-
-    private void postSave() {
         undoHandler.setSyncPoint();
         notifyModified();
         documentOriginalSize = codeArea.getDataSize();
@@ -502,13 +393,14 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
 
     public void setFileHandlingMode(FileHandlingMode fileHandlingMode) {
         this.fileHandlingMode = fileHandlingMode;
+        updateCurrentMemoryMode();
     }
 
     private void updateCurrentMemoryMode() {
         BinaryStatusApi.MemoryMode memoryMode = BinaryStatusApi.MemoryMode.RAM_MEMORY;
         if (codeArea.getEditationMode() == EditationMode.READ_ONLY) {
             memoryMode = BinaryStatusApi.MemoryMode.READ_ONLY;
-        } else if (codeArea.getContentData() instanceof DeltaDocument) {
+        } else if (fileHandlingMode == FileHandlingMode.DELTA) {
             memoryMode = BinaryStatusApi.MemoryMode.DELTA_MODE;
         }
 
@@ -553,28 +445,6 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel codeAreaPanel;
     // End of variables declaration//GEN-END:variables
-    public void closeData() {
-        BinaryData data = codeArea.getContentData();
-        codeArea.setContentData(new ByteArrayData());
-        if (data instanceof DeltaDocument) {
-            FileDataSource fileSource = ((DeltaDocument) data).getFileSource();
-            data.dispose();
-            segmentsRepository.detachFileSource(fileSource);
-            segmentsRepository.closeFileSource(fileSource);
-        } else {
-            if (data != null) {
-                data.dispose();
-            }
-        }
-    }
-
-    public static synchronized SegmentsRepository getSegmentsRepository() {
-        if (segmentsRepository == null) {
-            segmentsRepository = new SegmentsRepository();
-        }
-
-        return segmentsRepository;
-    }
 
     @Nonnull
     private JPopupMenu createContextMenu(int x, int y) {
@@ -742,11 +612,13 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         return result;
     }
 
+    @Nonnull
     private AbstractAction createOptionsAction() {
         return new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 final BinEdOptionsPanelBorder optionsPanelWrapper = new BinEdOptionsPanelBorder();
+                optionsPanelWrapper.setPreferredSize(new Dimension(700, 460));
                 BinEdOptionsPanel optionsPanel = optionsPanelWrapper.getOptionsPanel();
                 optionsPanel.setPreferences(preferences);
                 optionsPanel.setTextFontService(new TextFontService() {
@@ -777,12 +649,12 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
                             optionsPanel.saveToPreferences();
                         }
                         applyOptions(optionsPanel);
+                        fileApi.switchFileHandlingMode(optionsPanel.getEditorOptions().getFileHandlingMode());
                         codeArea.repaint();
                     }
 
                     dialog.close();
                 });
-                dialog.getWindow().setSize(650, 460);
                 dialog.showCentered((Component) e.getSource());
                 dialog.dispose();
             }
@@ -880,8 +752,6 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         if (codeArea.getCommandHandler() instanceof CodeAreaOperationCommandHandler) {
             ((CodeAreaOperationCommandHandler) codeArea.getCommandHandler()).setEnterKeyHandlingMode(editorOptions.getEnterKeyHandlingMode());
         }
-
-        switchFileHandlingMode(editorOptions.getFileHandlingMode());
 
         StatusOptions statusOptions = applyOptions.getStatusOptions();
         statusPanel.setStatusOptions(statusOptions);
@@ -999,12 +869,20 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         toolbarPanel.loadFromPreferences();
 
         fileHandlingMode = preferences.getEditorPreferences().getFileHandlingMode();
+        updateCurrentMemoryMode();
+    }
+
+    public BinaryDataUndoHandler getUndoHandler() {
+        return undoHandler;
     }
 
     public void setUndoHandler(BinaryDataUndoHandler undoHandler) {
         this.undoHandler = undoHandler;
         CodeAreaOperationCommandHandler commandHandler = new CodeAreaOperationCommandHandler(codeArea, undoHandler);
         codeArea.setCommandHandler(commandHandler);
+        if (valuesPanel != null) {
+            valuesPanel.setCodeArea(codeArea, undoHandler);
+        }
         // TODO set ENTER KEY mode in apply options
 
         undoHandler.addUndoUpdateListener(new BinaryDataUndoUpdateListener() {
@@ -1023,13 +901,13 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         });
     }
 
-    public static interface CharsetChangeListener {
+    public interface CharsetChangeListener {
 
-        public void charsetChanged();
+        void charsetChanged();
     }
 
-    public static interface ModifiedStateListener {
+    public interface ModifiedStateListener {
 
-        public void modifiedChanged();
+        void modifiedChanged();
     }
 }

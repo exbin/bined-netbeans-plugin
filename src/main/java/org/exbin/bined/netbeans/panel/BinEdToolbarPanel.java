@@ -64,7 +64,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 codeArea.setCodeType(CodeType.BINARY);
-                updateCycleButtonName();
+                updateCycleButtonState();
             }
         });
         codeTypeButtonGroup.add(binaryCodeTypeAction);
@@ -72,7 +72,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 codeArea.setCodeType(CodeType.OCTAL);
-                updateCycleButtonName();
+                updateCycleButtonState();
             }
         });
         codeTypeButtonGroup.add(octalCodeTypeAction);
@@ -80,7 +80,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 codeArea.setCodeType(CodeType.DECIMAL);
-                updateCycleButtonName();
+                updateCycleButtonState();
             }
         });
         codeTypeButtonGroup.add(decimalCodeTypeAction);
@@ -88,7 +88,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 codeArea.setCodeType(CodeType.HEXADECIMAL);
-                updateCycleButtonName();
+                updateCycleButtonState();
             }
         });
         codeTypeButtonGroup.add(hexadecimalCodeTypeAction);
@@ -99,7 +99,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
                 CodeType[] values = CodeType.values();
                 CodeType next = codeTypePos + 1 >= values.length ? values[0] : values[codeTypePos + 1];
                 codeArea.setCodeType(next);
-                updateCycleButtonName();
+                updateCycleButtonState();
             }
         };
 
@@ -115,7 +115,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         cycleCodeTypesPopupMenu.add(decimalCodeTypeAction);
         cycleCodeTypesPopupMenu.add(hexadecimalCodeTypeAction);
         codeTypeDropDown = new DropDownButton(cycleCodeTypesAction, cycleCodeTypesPopupMenu);
-        updateCycleButtonName();
+        updateCycleButtonState();
         controlToolBar.add(codeTypeDropDown);
 //        codeTypeButton = new JSplitButton("HEX");
 //        codeTypeButton.addActionListener(new ActionListener() {
@@ -135,7 +135,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
 
     }
 
-    private void updateCycleButtonName() {
+    private void updateCycleButtonState() {
         CodeType codeType = codeArea.getCodeType();
         codeTypeDropDown.setActionText(codeType.name().substring(0, 3));
         switch (codeType) {
@@ -167,16 +167,20 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     }
 
     public void applyFromCodeArea() {
-        updateCycleButtonName();
-        showUnprintablesToggleButton.setSelected(codeArea.isShowUnprintables());
+        updateCycleButtonState();
+        updateUnprintables();
     }
 
     public void loadFromPreferences() {
         codeArea.setCodeType(preferences.getCodeAreaPreferences().getCodeType());
-        updateCycleButtonName();
-        showUnprintablesToggleButton.setSelected(preferences.getCodeAreaPreferences().isShowUnprintables());
+        updateCycleButtonState();
+        updateUnprintables();
     }
 
+    public void updateUnprintables() {
+        showUnprintablesToggleButton.setSelected(codeArea.isShowUnprintables());
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 

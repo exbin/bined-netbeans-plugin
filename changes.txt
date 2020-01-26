@@ -1,7 +1,9 @@
 0.2.2
+- Minor GUI improvements
 - Switched to Gradle building
 - Action to show debug variables as binary data in ToolTip view
 - Support for multiple decoders in debugging view
+- Display the number of bytes selected
 
 0.2.1 (2019-09-04)
 - Action to show debug variables as binary data

@@ -20,26 +20,24 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import org.exbin.bined.swing.extended.ExtCodeArea;
+import org.exbin.bined.netbeans.panel.BinEdComponentFileApi;
 import org.netbeans.spi.actions.AbstractSavable;
 import org.openide.loaders.DataObject;
 
 /**
  * Saving capability for binary editor.
  *
- * @version 0.2.0 2018/09/10
+ * @version 0.2.2 2020/01/26
  * @author ExBin Project (http://exbin.org)
  */
 @ParametersAreNonnullByDefault
 class Savable extends AbstractSavable {
 
     private DataObject dataObject;
-    private final BinaryEditorTopComponent component;
-    private final ExtCodeArea codeArea;
+    private final BinEdComponentFileApi fileApi;
 
-    public Savable(BinaryEditorTopComponent component, ExtCodeArea codeArea) {
-        this.component = component;
-        this.codeArea = codeArea;
+    public Savable(BinEdComponentFileApi fileApi) {
+        this.fileApi = fileApi;
     }
 
     public void activate() {
@@ -72,7 +70,7 @@ class Savable extends AbstractSavable {
             return false;
         }
         final Savable other = (Savable) obj;
-        return Objects.equals(this.component, other.component);
+        return Objects.equals(this.fileApi, other.fileApi);
     }
 
     @Override
@@ -82,10 +80,6 @@ class Savable extends AbstractSavable {
 
     @Override
     protected void handleSave() throws IOException {
-        if (dataObject == null) {
-            return;
-        }
-
-        component.saveDataObject(dataObject);
+        fileApi.saveDocument();
     }
 }

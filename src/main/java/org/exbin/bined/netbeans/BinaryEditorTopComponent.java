@@ -18,25 +18,13 @@ package org.exbin.bined.netbeans;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URI;
-import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
-import org.exbin.auxiliary.paged_data.BinaryData;
-import org.exbin.auxiliary.paged_data.delta.DeltaDocument;
-import org.exbin.bined.EditationMode;
-import org.exbin.bined.swing.extended.ExtCodeArea;
-import org.exbin.bined.netbeans.panel.BinEdComponentPanel;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
@@ -46,7 +34,6 @@ import org.openide.loaders.DataObject;
 import org.openide.nodes.Node;
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
-import org.openide.util.Utilities;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.windows.TopComponent;
@@ -55,7 +42,7 @@ import org.openide.windows.WindowManager;
 /**
  * Binary editor top component.
  *
- * @version 0.2.2 2020/01/07
+ * @version 0.2.2 2020/01/26
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.bined//BinaryEditor//EN", autostore = false)
@@ -68,72 +55,53 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     private static final String BINARY_EDITOR_TOP_COMPONENT_STRING = "CTL_BinaryEditorTopComponent";
     private static final String BINARY_EDITOR_TOP_COMPONENT_HINT_STRING = "HINT_BinaryEditorTopComponent";
 
-    public static final String ACTION_CLIPBOARD_CUT = "cut-to-clipboard";
-    public static final String ACTION_CLIPBOARD_COPY = "copy-to-clipboard";
-    public static final String ACTION_CLIPBOARD_PASTE = "paste-from-clipboard";
     private final Image editorIcon = new ImageIcon(getClass().getResource("/org/exbin/bined/netbeans/resources/icons/icon.png")).getImage();
 
-    private final BinEdComponentPanel componentPanel;
+    private final BinEdFile editorFile;
 
     private final BinaryEditorNode node;
 
-    private final UndoRedo.Manager undoRedo;
     private final Savable savable;
-    private final InstanceContent content = new InstanceContent();
-
     private boolean opened = false;
     protected String displayName;
-    private DataObject dataObject;
 
     public BinaryEditorTopComponent() {
         initComponents();
-
-        componentPanel = new BinEdComponentPanel();
-        ExtCodeArea codeArea = componentPanel.getCodeArea();
-        undoRedo = new UndoRedo.Manager();
-        BinaryUndoSwingHandler undoHandler = new BinaryUndoSwingHandler(codeArea, undoRedo);
-
-        componentPanel.setUndoHandler(undoHandler);
-        add(componentPanel, BorderLayout.CENTER);
-
+        
         node = new BinaryEditorNode(this);
-        content.add(node);
-        savable = new Savable(this, codeArea);
+        editorFile = new BinEdFile();
+        savable = new Savable(editorFile);
+
+        add(editorFile.getPanel(), BorderLayout.CENTER);
+
+        editorFile.getContent().add(node);
 
         setActivatedNodes(new Node[]{node});
 
         setName(NbBundle.getMessage(BinaryEditorTopComponent.class, BINARY_EDITOR_TOP_COMPONENT_STRING));
         setToolTipText(NbBundle.getMessage(BinaryEditorTopComponent.class, BINARY_EDITOR_TOP_COMPONENT_HINT_STRING));
 
-        componentPanel.setModifiedChangeListener(() -> {
+        editorFile.setModifiedChangeListener(() -> {
             updateModified();
         });
 
-        getActionMap().put(ACTION_CLIPBOARD_COPY, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                codeArea.copy();
-            }
-        });
-        getActionMap().put(ACTION_CLIPBOARD_CUT, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                codeArea.cut();
-            }
-        });
-        getActionMap().put(ACTION_CLIPBOARD_PASTE, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                codeArea.paste();
-            }
-        });
-
+        InstanceContent content = editorFile.getContent();
         associateLookup(new AbstractLookup(content));
+    }
+    
+    public void openDataObject(DataObject dataObject) {
+        displayName = dataObject.getPrimaryFile().getNameExt();
+        setHtmlDisplayName(displayName);
+        setIcon(editorIcon);
+
+        editorFile.openFile(dataObject);
+        savable.setDataObject(dataObject);
+        opened = true;
     }
 
     @Override
     public boolean canClose() {
-        if (!componentPanel.isModified()) {
+        if (!editorFile.isModified()) {
             return true;
         }
 
@@ -147,18 +115,15 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         }
 
         if (choice == JOptionPane.YES_OPTION) {
-            try {
-                savable.handleSave();
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
+            editorFile.saveDocument();
         }
 
         return true;
     }
 
     private void updateModified() {
-        boolean modified = componentPanel.isModified();
+        InstanceContent content = editorFile.getContent();
+        boolean modified = editorFile.isModified();
         final String htmlDisplayName;
         if (modified && opened) {
             savable.activate();
@@ -183,92 +148,9 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         }
     }
 
-    public void openDataObject(DataObject dataObject) {
-        this.dataObject = dataObject;
-        displayName = dataObject.getPrimaryFile().getNameExt();
-        setHtmlDisplayName(displayName);
-        setIcon(editorIcon);
-        openFile(dataObject);
-        savable.setDataObject(dataObject);
-        opened = true;
-
-//        final Charset charset = Charset.forName(FileEncodingQuery.getEncoding(dataObject.getPrimaryFile()).name());
-//        if (charsetChangeListener != null) {
-//            charsetChangeListener.charsetChanged();
-//        }
-//        codeArea.setCharset(charset);
-    }
-
-    private void openFile(DataObject dataObject) {
-        ExtCodeArea codeArea = componentPanel.getCodeArea();
-        boolean editable = dataObject.getPrimaryFile().canWrite();
-        URI fileUri = dataObject.getPrimaryFile().toURI();
-        if (fileUri == null) {
-            InputStream stream = null;
-            try {
-                stream = dataObject.getPrimaryFile().getInputStream();
-                if (stream != null) {
-                    componentPanel.openDocument(stream, editable);
-                }
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            } finally {
-                if (stream != null) {
-                    try {
-                        stream.close();
-                    } catch (IOException ex) {
-                        Exceptions.printStackTrace(ex);
-                    }
-                }
-            }
-        } else {
-            try {
-                codeArea.setEditationMode(editable ? EditationMode.EXPANDING : EditationMode.READ_ONLY);
-                File file = Utilities.toFile(fileUri);
-                componentPanel.openDocument(file, editable);
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        }
-    }
-
-    public void saveDataObject(DataObject dataObject) throws IOException {
-        saveFile(dataObject);
-        updateModified();
-    }
-
-    public void saveFile(DataObject dataObject) {
-        ExtCodeArea codeArea = componentPanel.getCodeArea();
-        BinaryData data = codeArea.getContentData();
-        if (data instanceof DeltaDocument) {
-            try {
-                componentPanel.saveDocument();
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        } else {
-            OutputStream stream;
-            try {
-                stream = dataObject.getPrimaryFile().getOutputStream();
-                try {
-                    componentPanel.saveDocument(stream);
-                    stream.flush();
-                } catch (IOException ex) {
-                    Exceptions.printStackTrace(ex);
-                } finally {
-                    if (stream != null) {
-                        stream.close();
-                    }
-                }
-            } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-        }
-    }
-
-    @Override
+        @Override
     public UndoRedo getUndoRedo() {
-        return undoRedo;
+        return editorFile.getUndoRedo();
     }
 
     /**
@@ -287,7 +169,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     @Override
     public void componentOpened() {
         super.componentOpened();
-        componentPanel.getCodeArea().requestFocus();
+        editorFile.requestFocus();
     }
 
     @Override
@@ -295,12 +177,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         if (savable != null) {
             savable.deactivate();
         }
-        closeData();
+        editorFile.closeData();
         super.componentClosed();
-    }
-
-    private void closeData() {
-        componentPanel.closeData();
     }
 
     public void writeProperties(java.util.Properties p) {
@@ -309,10 +187,6 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
     public void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
-    }
-
-    public ExtCodeArea getCodeArea() {
-        return componentPanel.getCodeArea();
     }
 
     @Override
