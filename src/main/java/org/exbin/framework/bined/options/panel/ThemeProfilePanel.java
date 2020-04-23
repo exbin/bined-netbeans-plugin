@@ -34,6 +34,7 @@ import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
 import org.exbin.auxiliary.paged_data.ByteArrayEditableData;
+import org.exbin.bined.RowWrappingMode;
 
 /**
  * Theme profile panel.
@@ -73,7 +74,7 @@ public class ThemeProfilePanel extends javax.swing.JPanel {
             Logger.getLogger(ThemeProfilePanel.class.getName()).log(Level.SEVERE, null, ex);
         }
         codeArea.setContentData(exampleData);
-        ((RowWrappingCapable) codeArea).setRowWrapping(RowWrappingCapable.RowWrappingMode.WRAPPING);
+        ((RowWrappingCapable) codeArea).setRowWrapping(RowWrappingMode.WRAPPING);
         codeArea.setEnabled(false);
         codeArea.setSelection(new SelectionRange(200, 300));
     }

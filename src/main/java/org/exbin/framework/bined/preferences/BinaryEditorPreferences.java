@@ -21,8 +21,8 @@ import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import org.exbin.bined.CodeAreaViewMode;
-import org.exbin.bined.capability.RowWrappingCapable;
+import org.exbin.bined.RowWrappingMode;
+import org.exbin.bined.basic.CodeAreaViewMode;
 import org.exbin.bined.swing.extended.layout.DefaultExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.swing.extended.layout.ExtendedCodeAreaDecorations;
 import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
@@ -139,7 +139,7 @@ public class BinaryEditorPreferences {
     private void importLegacyPreferences() {
         LegacyPreferences legacyPreferences = new LegacyPreferences(preferences);
         codeAreaPreferences.setCodeType(legacyPreferences.getCodeType());
-        codeAreaPreferences.setRowWrappingMode(legacyPreferences.isLineWrapping() ? RowWrappingCapable.RowWrappingMode.WRAPPING : RowWrappingCapable.RowWrappingMode.NO_WRAPPING);
+        codeAreaPreferences.setRowWrappingMode(legacyPreferences.isLineWrapping() ? RowWrappingMode.WRAPPING : RowWrappingMode.NO_WRAPPING);
         codeAreaPreferences.setShowUnprintables(legacyPreferences.isShowNonprintables());
         codeAreaPreferences.setCodeCharactersCase(legacyPreferences.getCodeCharactersCase());
         codeAreaPreferences.setPositionCodeType(legacyPreferences.getPositionCodeType());

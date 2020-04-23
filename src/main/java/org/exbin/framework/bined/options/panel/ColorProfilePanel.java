@@ -36,6 +36,7 @@ import org.exbin.bined.swing.extended.color.ExtendedCodeAreaColorProfile;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
 import org.exbin.auxiliary.paged_data.ByteArrayEditableData;
+import org.exbin.bined.RowWrappingMode;
 
 /**
  * Color profile panel.
@@ -90,7 +91,7 @@ public class ColorProfilePanel extends javax.swing.JPanel {
             Logger.getLogger(ColorProfilePanel.class.getName()).log(Level.SEVERE, null, ex);
         }
         codeArea.setContentData(exampleData);
-        ((RowWrappingCapable) codeArea).setRowWrapping(RowWrappingCapable.RowWrappingMode.WRAPPING);
+        ((RowWrappingCapable) codeArea).setRowWrapping(RowWrappingMode.WRAPPING);
         codeArea.setEnabled(false);
         codeArea.setShowUnprintables(true);
         codeArea.setSelection(new SelectionRange(200, 300));
