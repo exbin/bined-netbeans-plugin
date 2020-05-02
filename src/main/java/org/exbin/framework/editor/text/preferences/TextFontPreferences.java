@@ -81,22 +81,22 @@ public class TextFontPreferences implements TextFontOptions {
         if (fontSize.isPresent()) {
             attribs.put(TextAttribute.SIZE, Integer.valueOf(fontSize.get()).floatValue());
         }
-        if (Boolean.valueOf(preferences.get(PREFERENCES_TEXT_FONT_UNDERLINE, null))) {
+        if (preferences.getBoolean(PREFERENCES_TEXT_FONT_UNDERLINE, false)) {
             attribs.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_LOW_ONE_PIXEL);
         }
-        if (Boolean.valueOf(preferences.get(PREFERENCES_TEXT_FONT_STRIKETHROUGH, null))) {
+        if (preferences.getBoolean(PREFERENCES_TEXT_FONT_STRIKETHROUGH, false)) {
             attribs.put(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
         }
-        if (Boolean.valueOf(preferences.get(PREFERENCES_TEXT_FONT_STRONG, null))) {
+        if (preferences.getBoolean(PREFERENCES_TEXT_FONT_STRONG, false)) {
             attribs.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
         }
-        if (Boolean.valueOf(preferences.get(PREFERENCES_TEXT_FONT_ITALIC, null))) {
+        if (preferences.getBoolean(PREFERENCES_TEXT_FONT_ITALIC, false)) {
             attribs.put(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
         }
-        if (Boolean.valueOf(preferences.get(PREFERENCES_TEXT_FONT_SUBSCRIPT, null))) {
+        if (preferences.getBoolean(PREFERENCES_TEXT_FONT_SUBSCRIPT, false)) {
             attribs.put(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB);
         }
-        if (Boolean.valueOf(preferences.get(PREFERENCES_TEXT_FONT_SUPERSCRIPT, null))) {
+        if (preferences.getBoolean(PREFERENCES_TEXT_FONT_SUPERSCRIPT, false)) {
             attribs.put(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUPER);
         }
         return attribs;
@@ -132,11 +132,11 @@ public class TextFontPreferences implements TextFontOptions {
         } else {
             preferences.remove(PREFERENCES_TEXT_FONT_SIZE);
         }
-        preferences.put(PREFERENCES_TEXT_FONT_UNDERLINE, Boolean.toString(TextAttribute.UNDERLINE_LOW_ONE_PIXEL.equals(attribs.get(TextAttribute.UNDERLINE))));
-        preferences.put(PREFERENCES_TEXT_FONT_STRIKETHROUGH, Boolean.toString(TextAttribute.STRIKETHROUGH_ON.equals(attribs.get(TextAttribute.STRIKETHROUGH))));
-        preferences.put(PREFERENCES_TEXT_FONT_STRONG, Boolean.toString(TextAttribute.WEIGHT_BOLD.equals(attribs.get(TextAttribute.WEIGHT))));
-        preferences.put(PREFERENCES_TEXT_FONT_ITALIC, Boolean.toString(TextAttribute.POSTURE_OBLIQUE.equals(attribs.get(TextAttribute.POSTURE))));
-        preferences.put(PREFERENCES_TEXT_FONT_SUBSCRIPT, Boolean.toString(TextAttribute.SUPERSCRIPT_SUB.equals(attribs.get(TextAttribute.SUPERSCRIPT))));
-        preferences.put(PREFERENCES_TEXT_FONT_SUPERSCRIPT, Boolean.toString(TextAttribute.SUPERSCRIPT_SUPER.equals(attribs.get(TextAttribute.SUPERSCRIPT))));
+        preferences.putBoolean(PREFERENCES_TEXT_FONT_UNDERLINE, TextAttribute.UNDERLINE_LOW_ONE_PIXEL.equals(attribs.get(TextAttribute.UNDERLINE)));
+        preferences.putBoolean(PREFERENCES_TEXT_FONT_STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON.equals(attribs.get(TextAttribute.STRIKETHROUGH)));
+        preferences.putBoolean(PREFERENCES_TEXT_FONT_STRONG, TextAttribute.WEIGHT_BOLD.equals(attribs.get(TextAttribute.WEIGHT)));
+        preferences.putBoolean(PREFERENCES_TEXT_FONT_ITALIC, TextAttribute.POSTURE_OBLIQUE.equals(attribs.get(TextAttribute.POSTURE)));
+        preferences.putBoolean(PREFERENCES_TEXT_FONT_SUBSCRIPT, TextAttribute.SUPERSCRIPT_SUB.equals(attribs.get(TextAttribute.SUPERSCRIPT)));
+        preferences.putBoolean(PREFERENCES_TEXT_FONT_SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUPER.equals(attribs.get(TextAttribute.SUPERSCRIPT)));
     }
 }
