@@ -55,7 +55,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.JTextComponent;
 import org.exbin.framework.gui.utils.handler.OkCancelService;
-import org.exbin.framework.gui.utils.panel.WindowHeaderPanel;
+import org.exbin.framework.gui.utils.gui.WindowHeaderPanel;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 

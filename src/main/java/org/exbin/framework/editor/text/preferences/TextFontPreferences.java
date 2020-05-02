@@ -19,6 +19,7 @@ import java.awt.Font;
 import java.awt.font.TextAttribute;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.framework.api.Preferences;
@@ -71,15 +72,14 @@ public class TextFontPreferences implements TextFontOptions {
     @Nonnull
     @Override
     public Map<TextAttribute, Object> getFontAttributes() {
-        String value;
         Map<TextAttribute, Object> attribs = new HashMap<>();
-        value = preferences.get(PREFERENCES_TEXT_FONT_FAMILY);
-        if (value != null) {
-            attribs.put(TextAttribute.FAMILY, value);
+        Optional<String> fontFamily = preferences.get(PREFERENCES_TEXT_FONT_FAMILY);
+        if (fontFamily.isPresent()) {
+            attribs.put(TextAttribute.FAMILY, fontFamily.get());
         }
-        value = preferences.get(PREFERENCES_TEXT_FONT_SIZE);
-        if (value != null) {
-            attribs.put(TextAttribute.SIZE, Integer.valueOf(value).floatValue());
+        Optional<String> fontSize = preferences.get(PREFERENCES_TEXT_FONT_SIZE);
+        if (fontSize.isPresent()) {
+            attribs.put(TextAttribute.SIZE, Integer.valueOf(fontSize.get()).floatValue());
         }
         if (Boolean.valueOf(preferences.get(PREFERENCES_TEXT_FONT_UNDERLINE, null))) {
             attribs.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_LOW_ONE_PIXEL);

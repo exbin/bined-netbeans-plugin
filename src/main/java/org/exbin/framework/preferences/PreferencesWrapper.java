@@ -15,6 +15,7 @@
  */
 package org.exbin.framework.preferences;
 
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.exbin.framework.api.Preferences;
@@ -43,10 +44,10 @@ public class PreferencesWrapper implements Preferences {
         return preferences.get(key, null) != null;
     }
 
-    @Nullable
+    @Nonnull
     @Override
-    public String get(String key) {
-        return preferences.get(key, null);
+    public Optional<String> get(String key) {
+        return Optional.ofNullable(preferences.get(key, null));
     }
 
     @Nonnull
@@ -153,6 +154,7 @@ public class PreferencesWrapper implements Preferences {
         }
     }
 
+    @Nonnull
     public java.util.prefs.Preferences getInnerPreferences() {
         return preferences;
     }

@@ -17,7 +17,7 @@ package org.exbin.bined.netbeans.debug.array;
 
 import java.math.BigInteger;
 import org.exbin.bined.netbeans.debug.DebugViewData;
-import org.exbin.framework.bined.panel.ValuesPanel;
+import org.exbin.framework.bined.gui.ValuesPanel;
 import org.netbeans.api.debugger.jpda.Field;
 import org.netbeans.api.debugger.jpda.ObjectVariable;
 

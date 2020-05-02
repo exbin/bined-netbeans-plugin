@@ -187,7 +187,7 @@ public class BinaryEditorPreferences {
     }
 
     private void convertPreferences_0_2_0() {
-        String codeType = preferences.get(CodeAreaPreferences.PREFERENCES_VIEW_MODE);
+        String codeType = preferences.get(CodeAreaPreferences.PREFERENCES_VIEW_MODE, "DUAL");
         if ("HEXADECIMAL".equals(codeType)) {
             codeAreaPreferences.setViewMode(CodeAreaViewMode.CODE_MATRIX);
         } else if ("PREVIEW".equals(codeType)) {

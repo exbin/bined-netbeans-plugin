@@ -29,12 +29,13 @@ Compiling
 
 Java Development Kit (JDK) version 8 or later is required to build this project.
 
-Gradle 4.x is needed to build this project.  
+Currently Gradle version 4.x is needed to build this project.
+
+Use:  
+gradle wrapper --gradle-version 4.10  
+./gradlew build nbm  
 
 License
 -------
 
-Dual licensed as:
-
-- Apache License, Version 2.0 - see LICENSE-2.0.txt (primary)
-- Common Development and Distribution License, Version 1.0 - see cddl-1.0.txt
+Apache License, Version 2.0 - see LICENSE-2.0.txt
