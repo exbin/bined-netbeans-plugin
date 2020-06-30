@@ -20,6 +20,7 @@ import java.awt.Component;
 import java.awt.Image;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
@@ -50,6 +51,7 @@ import org.openide.windows.WindowManager;
         persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @TopComponent.OpenActionRegistration(displayName = "#CTL_BinaryEditorAction", preferredID = "BinaryEditorTopComponent")
+@ParametersAreNonnullByDefault
 public final class BinaryEditorTopComponent extends TopComponent implements MultiViewElement, Serializable, UndoRedo.Provider {
 
     private static final String BINARY_EDITOR_TOP_COMPONENT_STRING = "CTL_BinaryEditorTopComponent";
@@ -67,7 +69,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
     public BinaryEditorTopComponent() {
         initComponents();
-        
+
         node = new BinaryEditorNode(this);
         editorFile = new BinEdFile();
         savable = new Savable(editorFile);
@@ -88,7 +90,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         InstanceContent content = editorFile.getContent();
         associateLookup(new AbstractLookup(content));
     }
-    
+
     public void openDataObject(DataObject dataObject) {
         displayName = dataObject.getPrimaryFile().getNameExt();
         setHtmlDisplayName(displayName);
@@ -148,7 +150,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         }
     }
 
-        @Override
+    @Override
     public UndoRedo getUndoRedo() {
         return editorFile.getUndoRedo();
     }

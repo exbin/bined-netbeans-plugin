@@ -16,6 +16,7 @@
 package org.exbin.bined.netbeans.debug;
 
 import java.awt.event.ActionEvent;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import org.netbeans.spi.viewmodel.UnknownTypeException;
@@ -26,6 +27,7 @@ import org.netbeans.spi.viewmodel.UnknownTypeException;
  * @version 0.2.1 2019/09/01
  * @author ExBin Project (http://exbin.org)
  */
+@ParametersAreNonnullByDefault
 public final class VariablesActionProvider implements org.netbeans.spi.viewmodel.NodeActionsProvider {
 
     @Override

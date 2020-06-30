@@ -33,10 +33,10 @@ import org.openide.windows.WindowManager;
  * @version 0.2.0 2018/12/22
  * @author ExBin Project (http://exbin.org)
  */
-@ParametersAreNonnullByDefault
 @ActionID(category = "File", id = "org.exbin.bined.OpenAsBinaryAction")
 @ActionRegistration(displayName = "#CTL_OpenAsBinaryAction")
 @NbBundle.Messages("CTL_OpenAsBinaryAction=Open as Binary")
+@ParametersAreNonnullByDefault
 public final class OpenAsBinaryAction implements ActionListener {
 
     public OpenAsBinaryAction() {

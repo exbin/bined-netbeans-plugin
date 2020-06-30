@@ -16,6 +16,7 @@
 package org.exbin.bined.netbeans.debug.array;
 
 import java.math.BigInteger;
+import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.netbeans.debug.DebugViewData;
 import org.exbin.framework.bined.gui.ValuesPanel;
 import org.netbeans.api.debugger.jpda.Field;
@@ -27,6 +28,7 @@ import org.netbeans.api.debugger.jpda.ObjectVariable;
  * @author ExBin Project (http://exbin.org)
  * @version 0.2.1 2019/09/04
  */
+@ParametersAreNonnullByDefault
 public class LongArrayPageProvider implements DebugViewData.PageProvider {
 
     private final ObjectVariable arrayRef;

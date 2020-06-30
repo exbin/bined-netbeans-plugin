@@ -171,7 +171,7 @@ public final class SearchAction implements ActionListener {
             binarySearchPanel.requestSearchFocus();
         }
     }
-    
+
     public void switchReplaceMode(BinarySearchPanel.SearchOperation searchOperation) {
         binarySearchPanel.switchReplaceMode(searchOperation);
     }

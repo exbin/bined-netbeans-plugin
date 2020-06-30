@@ -306,7 +306,6 @@ public class BinEdFile implements BinEdComponentFileApi {
     }
 
     private void setNewData() {
-        ExtCodeArea codeArea = componentPanel.getCodeArea();
         FileHandlingMode fileHandlingMode = componentPanel.getFileHandlingMode();
         if (fileHandlingMode == FileHandlingMode.DELTA) {
             componentPanel.setContentData(segmentsRepository.createDocument());

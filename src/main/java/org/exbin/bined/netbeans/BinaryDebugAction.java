@@ -23,6 +23,7 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JPanel;
 import org.exbin.bined.netbeans.debug.DebugViewData;
 import org.exbin.bined.netbeans.debug.array.BooleanArrayPageProvider;
@@ -69,6 +70,7 @@ import org.openide.windows.WindowManager;
         displayName = "#CTL_BinaryDebugAction"
 )
 //@Messages("CTL_BinaryDebugAction=Show as Binary")
+@ParametersAreNonnullByDefault
 public final class BinaryDebugAction implements ActionListener {
 
     public static final String SHOW_WATCHES = "show_watches"; // NOI18N

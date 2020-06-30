@@ -18,6 +18,7 @@ package org.exbin.bined.netbeans.debug.gui;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.EditationMode;
 import org.exbin.auxiliary.paged_data.BinaryData;
 import org.exbin.bined.netbeans.debug.DebugViewDataProvider;
@@ -31,6 +32,7 @@ import org.exbin.framework.bined.FileHandlingMode;
  * @version 0.2.2 2020/01/26
  * @author ExBin Project (http://exbin.org)
  */
+@ParametersAreNonnullByDefault
 public class DebugViewPanel extends javax.swing.JPanel {
 
     private final List<DebugViewDataProvider> providers = new ArrayList<>();

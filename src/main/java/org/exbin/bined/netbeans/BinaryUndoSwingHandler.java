@@ -17,6 +17,7 @@ package org.exbin.bined.netbeans;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.undo.CannotRedoException;
@@ -133,16 +134,19 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoHandler {
                 return true;
             }
 
+            @Nonnull
             @Override
             public String getPresentationName() {
                 return command.getCaption();
             }
 
+            @Nonnull
             @Override
             public String getUndoPresentationName() {
                 return "";
             }
 
+            @Nonnull
             @Override
             public String getRedoPresentationName() {
                 return "";
