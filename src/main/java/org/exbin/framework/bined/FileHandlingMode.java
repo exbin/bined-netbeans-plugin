@@ -29,5 +29,9 @@ public enum FileHandlingMode {
     /**
      * File is handled using delta changes.
      */
-    DELTA;
+    DELTA,
+    /**
+     * NetBeans native file wrapper.
+     */
+    NATIVE;
 }

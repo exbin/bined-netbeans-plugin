@@ -137,7 +137,7 @@ public class LegacyPreferences {
         }
         value = preferences.get(TextFontPreferences.PREFERENCES_TEXT_FONT_SIZE).orElse(null);
         if (value != null) {
-            attribs.put(TextAttribute.SIZE, new Integer(value).floatValue());
+            attribs.put(TextAttribute.SIZE, Integer.valueOf(value).floatValue());
         }
         if (preferences.getBoolean(TextFontPreferences.PREFERENCES_TEXT_FONT_UNDERLINE, false)) {
             attribs.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_LOW_ONE_PIXEL);
