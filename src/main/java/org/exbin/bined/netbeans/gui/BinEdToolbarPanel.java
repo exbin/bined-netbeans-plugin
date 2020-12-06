@@ -27,7 +27,7 @@ import javax.swing.JRadioButtonMenuItem;
 import org.exbin.bined.CodeType;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
-import org.exbin.framework.gui.menu.component.DropDownButton;
+import org.exbin.framework.gui.action.gui.DropDownButton;
 import org.exbin.framework.gui.utils.LanguageUtils;
 
 /**
@@ -128,8 +128,8 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
 
         controlToolBar.addSeparator();
         JButton optionsButton = new JButton();
-        optionsButton.setToolTipText("Options");
         optionsButton.setAction(optionsAction);
+        optionsButton.setToolTipText("Options");
         optionsButton.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/options/resources/icons/Preferences16.gif")));
         controlToolBar.add(optionsButton);
 
