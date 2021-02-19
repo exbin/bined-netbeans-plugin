@@ -471,7 +471,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
             }
             default: {
                 final JMenuItem cutMenuItem = new JMenuItem("Cut");
-                cutMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/menu/resources/icons/tango-icon-theme/16x16/actions/edit-cut.png")));
+                cutMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/action/resources/icons/tango-icon-theme/16x16/actions/edit-cut.png")));
                 cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionUtils.getMetaMask()));
                 cutMenuItem.setEnabled(codeArea.hasSelection() && codeArea.isEditable());
                 cutMenuItem.addActionListener((ActionEvent e) -> {
@@ -481,7 +481,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
                 menu.add(cutMenuItem);
 
                 final JMenuItem copyMenuItem = new JMenuItem("Copy");
-                copyMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/menu/resources/icons/tango-icon-theme/16x16/actions/edit-copy.png")));
+                copyMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/action/resources/icons/tango-icon-theme/16x16/actions/edit-copy.png")));
                 copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionUtils.getMetaMask()));
                 copyMenuItem.setEnabled(codeArea.hasSelection());
                 copyMenuItem.addActionListener((ActionEvent e) -> {
@@ -499,7 +499,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
                 menu.add(copyAsCodeMenuItem);
 
                 final JMenuItem pasteMenuItem = new JMenuItem("Paste");
-                pasteMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/menu/resources/icons/tango-icon-theme/16x16/actions/edit-paste.png")));
+                pasteMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/action/resources/icons/tango-icon-theme/16x16/actions/edit-paste.png")));
                 pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionUtils.getMetaMask()));
                 pasteMenuItem.setEnabled(codeArea.canPaste() && codeArea.isEditable());
                 pasteMenuItem.addActionListener((ActionEvent e) -> {
@@ -521,7 +521,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
                 menu.add(pasteFromCodeMenuItem);
 
                 final JMenuItem deleteMenuItem = new JMenuItem("Delete");
-                deleteMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/menu/resources/icons/tango-icon-theme/16x16/actions/edit-delete.png")));
+                deleteMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/action/resources/icons/tango-icon-theme/16x16/actions/edit-delete.png")));
                 deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
                 deleteMenuItem.setEnabled(codeArea.hasSelection() && codeArea.isEditable());
                 deleteMenuItem.addActionListener((ActionEvent e) -> {
@@ -532,7 +532,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
                 menu.addSeparator();
 
                 final JMenuItem selectAllMenuItem = new JMenuItem("Select All");
-                selectAllMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/menu/resources/icons/tango-icon-theme/16x16/actions/edit-select-all.png")));
+                selectAllMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/action/resources/icons/tango-icon-theme/16x16/actions/edit-select-all.png")));
                 selectAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionUtils.getMetaMask()));
                 selectAllMenuItem.addActionListener((ActionEvent e) -> {
                     codeArea.selectAll();
