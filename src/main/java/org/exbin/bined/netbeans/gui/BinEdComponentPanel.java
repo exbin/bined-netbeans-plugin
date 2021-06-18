@@ -452,7 +452,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
 
     @Nonnull
     private void createContextMenu(final JPopupMenu menu, int x, int y) {
-        BasicCodeAreaZone positionZone = codeArea.getPositionZone(x, y);
+        BasicCodeAreaZone positionZone = codeArea.getPainter().getPositionZone(x, y);
 
         switch (positionZone) {
             case TOP_LEFT_CORNER:
