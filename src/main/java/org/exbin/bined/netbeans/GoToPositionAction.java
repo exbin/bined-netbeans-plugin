@@ -19,10 +19,10 @@ import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Objects;
 import java.util.ResourceBundle;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JPanel;
+import org.exbin.bined.CodeAreaUtils;
 import org.exbin.bined.basic.PositionScrollVisibility;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.gui.GoToBinaryPanel;
@@ -45,7 +45,7 @@ public class GoToPositionAction implements ActionListener {
     private final ExtCodeArea codeArea;
 
     public GoToPositionAction(ExtCodeArea codeArea) {
-        this.codeArea = Objects.requireNonNull(codeArea);
+        this.codeArea = CodeAreaUtils.requireNonNull(codeArea);
     }
 
     @Override

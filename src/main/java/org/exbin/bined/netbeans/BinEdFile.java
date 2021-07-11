@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.util.Objects;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -34,6 +33,7 @@ import org.exbin.auxiliary.paged_data.PagedData;
 import org.exbin.auxiliary.paged_data.delta.DeltaDocument;
 import org.exbin.auxiliary.paged_data.delta.FileDataSource;
 import org.exbin.auxiliary.paged_data.delta.SegmentsRepository;
+import org.exbin.bined.CodeAreaUtils;
 import org.exbin.bined.EditationMode;
 import org.exbin.bined.netbeans.gui.BinEdComponentFileApi;
 import org.exbin.bined.netbeans.gui.BinEdComponentPanel;
@@ -191,7 +191,7 @@ public class BinEdFile implements BinEdComponentFileApi {
     public void openDocument(InputStream stream, boolean editable) throws IOException {
         ExtCodeArea codeArea = componentPanel.getCodeArea();
         setNewData();
-        EditableBinaryData data = Objects.requireNonNull((EditableBinaryData) codeArea.getContentData());
+        EditableBinaryData data = CodeAreaUtils.requireNonNull((EditableBinaryData) codeArea.getContentData());
         data.loadFromStream(stream);
         codeArea.setEditationMode(editable ? EditationMode.EXPANDING : EditationMode.READ_ONLY);
         componentPanel.setContentData(data);
