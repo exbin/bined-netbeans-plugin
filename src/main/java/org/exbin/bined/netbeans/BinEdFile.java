@@ -34,7 +34,7 @@ import org.exbin.auxiliary.paged_data.delta.DeltaDocument;
 import org.exbin.auxiliary.paged_data.delta.FileDataSource;
 import org.exbin.auxiliary.paged_data.delta.SegmentsRepository;
 import org.exbin.bined.CodeAreaUtils;
-import org.exbin.bined.EditationMode;
+import org.exbin.bined.EditMode;
 import org.exbin.bined.netbeans.gui.BinEdComponentFileApi;
 import org.exbin.bined.netbeans.gui.BinEdComponentPanel;
 import org.exbin.bined.swing.extended.ExtCodeArea;
@@ -151,7 +151,7 @@ public class BinEdFile implements BinEdComponentFileApi {
             }
         } else {
             try {
-                codeArea.setEditationMode(editable ? EditationMode.EXPANDING : EditationMode.READ_ONLY);
+                codeArea.setEditMode(editable ? EditMode.EXPANDING : EditMode.READ_ONLY);
                 File file = Utilities.toFile(fileUri);
                 openDocument(file, editable);
             } catch (IOException ex) {
@@ -166,7 +166,7 @@ public class BinEdFile implements BinEdComponentFileApi {
 
         BinaryData oldData = codeArea.getContentData();
         if (fileHandlingMode == FileHandlingMode.DELTA) {
-            FileDataSource fileSource = segmentsRepository.openFileSource(file, editable ? FileDataSource.EditationMode.READ_WRITE : FileDataSource.EditationMode.READ_ONLY);
+            FileDataSource fileSource = segmentsRepository.openFileSource(file, editable ? FileDataSource.EditMode.READ_WRITE : FileDataSource.EditMode.READ_ONLY);
             DeltaDocument document = segmentsRepository.createDocument(fileSource);
             componentPanel.setContentData(document);
             if (oldData != null) {
@@ -185,7 +185,7 @@ public class BinEdFile implements BinEdComponentFileApi {
                 componentPanel.setContentData(data);
             }
         }
-        codeArea.setEditationMode(editable ? EditationMode.EXPANDING : EditationMode.READ_ONLY);
+        codeArea.setEditMode(editable ? EditMode.EXPANDING : EditMode.READ_ONLY);
     }
 
     public void openDocument(InputStream stream, boolean editable) throws IOException {
@@ -193,7 +193,7 @@ public class BinEdFile implements BinEdComponentFileApi {
         setNewData();
         EditableBinaryData data = CodeAreaUtils.requireNonNull((EditableBinaryData) codeArea.getContentData());
         data.loadFromStream(stream);
-        codeArea.setEditationMode(editable ? EditationMode.EXPANDING : EditationMode.READ_ONLY);
+        codeArea.setEditMode(editable ? EditMode.EXPANDING : EditMode.READ_ONLY);
         componentPanel.setContentData(data);
     }
 

@@ -51,6 +51,7 @@ import org.exbin.framework.gui.utils.gui.DefaultControlPanel;
 import org.exbin.auxiliary.paged_data.BinaryData;
 import org.exbin.auxiliary.paged_data.ByteArrayEditableData;
 import org.exbin.auxiliary.paged_data.EditableBinaryData;
+import org.exbin.bined.CodeAreaUtils;
 import org.exbin.bined.RowWrappingMode;
 
 /**
@@ -880,7 +881,7 @@ public class BinarySearchPanel extends javax.swing.JPanel {
                     break;
                 }
                 default:
-                    throw new IllegalStateException("Illegal search type " + searchParameters.getSearchDirection().name());
+                    throw CodeAreaUtils.getInvalidTypeException(searchParameters.getSearchDirection());
             }
         }
         searchParameters.setStartPosition(startPosition);

@@ -31,7 +31,6 @@ import javax.swing.SwingUtilities;
 import org.exbin.bined.CaretMovedListener;
 import org.exbin.bined.CodeAreaCaretPosition;
 import org.exbin.bined.DataChangedListener;
-import org.exbin.bined.capability.EditationModeCapable;
 import org.exbin.bined.operation.BinaryDataCommand;
 import org.exbin.bined.operation.BinaryDataOperationException;
 import org.exbin.bined.operation.swing.command.BinaryCompoundCommand;
@@ -45,6 +44,7 @@ import org.exbin.framework.gui.utils.WindowUtils;
 import org.exbin.auxiliary.paged_data.BinaryData;
 import org.exbin.auxiliary.paged_data.ByteArrayEditableData;
 import org.exbin.auxiliary.paged_data.EditableBinaryData;
+import org.exbin.bined.capability.EditModeCapable;
 
 /**
  * Values side panel.
@@ -743,7 +743,7 @@ public class ValuesPanel extends javax.swing.JPanel {
 
     public void enableUpdate() {
         dataChangedListener = () -> {
-            updateEditationMode();
+            updateEditMode();
             updateValues();
         };
         codeArea.addDataChangedListener(dataChangedListener);
@@ -765,7 +765,7 @@ public class ValuesPanel extends javax.swing.JPanel {
         if (undoHandler != null) {
             undoHandler.addUndoUpdateListener(undoUpdateListener);
         }
-        updateEditationMode();
+        updateEditMode();
         updateValues();
     }
 
@@ -777,7 +777,7 @@ public class ValuesPanel extends javax.swing.JPanel {
         }
     }
 
-    public void updateEditationMode() {
+    public void updateEditMode() {
         boolean editable = isEditable();
         binaryCheckBox0.setEnabled(editable);
         binaryCheckBox1.setEnabled(editable);
@@ -857,7 +857,7 @@ public class ValuesPanel extends javax.swing.JPanel {
     }
 
     private boolean isEditable() {
-        return ((EditationModeCapable) codeArea).isEditable();
+        return ((EditModeCapable) codeArea).isEditable();
     }
 
     private ByteOrder getByteOrder() {

@@ -18,6 +18,7 @@ package org.exbin.framework.bined.gui;
 import java.util.ResourceBundle;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import org.exbin.bined.CodeAreaUtils;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.WindowUtils;
 
@@ -210,7 +211,7 @@ public class GoToBinaryPanel extends javax.swing.JPanel {
                 absolutePosition = cursorPosition + position;
                 break;
             default:
-                throw new IllegalStateException("Unexpected go to mode " + goToMode.name());
+                throw CodeAreaUtils.getInvalidTypeException(goToMode);
         }
 
         if (absolutePosition < 0) {
@@ -238,7 +239,7 @@ public class GoToBinaryPanel extends javax.swing.JPanel {
                 setPositionValue(absolutePosition - cursorPosition);
                 break;
             default:
-                throw new IllegalStateException("Unexpected go to mode " + goToMode.name());
+                throw CodeAreaUtils.getInvalidTypeException(goToMode);
         }
         updateTargetPosition();
     }
@@ -298,7 +299,7 @@ public class GoToBinaryPanel extends javax.swing.JPanel {
                 break;
             }
             default:
-                throw new IllegalStateException("Unexpected go to mode " + goToMode.name());
+                throw CodeAreaUtils.getInvalidTypeException(goToMode);
         }
         setTargetPosition(absolutePosition);
     }

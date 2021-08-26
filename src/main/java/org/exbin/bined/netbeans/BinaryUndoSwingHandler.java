@@ -304,6 +304,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoHandler {
     }
 
     private void undoUpdated() {
+        codeArea.notifyDataChanged();
         listeners.forEach((listener) -> listener.undoCommandPositionChanged());
     }
 

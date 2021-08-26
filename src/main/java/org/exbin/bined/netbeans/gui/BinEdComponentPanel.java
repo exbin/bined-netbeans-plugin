@@ -41,8 +41,8 @@ import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import org.exbin.auxiliary.paged_data.BinaryData;
 import org.exbin.bined.CodeAreaCaretPosition;
-import org.exbin.bined.EditationMode;
-import org.exbin.bined.EditationOperation;
+import org.exbin.bined.EditMode;
+import org.exbin.bined.EditOperation;
 import org.exbin.bined.PositionCodeType;
 import org.exbin.bined.basic.BasicCodeAreaZone;
 import org.exbin.bined.capability.CharsetCapable;
@@ -245,17 +245,17 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         codeArea.addCaretMovedListener((CodeAreaCaretPosition caretPosition) -> {
             binaryStatus.setCursorPosition(caretPosition);
         });
-        codeArea.addSelectionChangedListener(selectionRange -> {
-            binaryStatus.setSelectionRange(selectionRange);
+        codeArea.addSelectionChangedListener(() -> {
+            binaryStatus.setSelectionRange(codeArea.getSelection());
         });
 
-        codeArea.addEditationModeChangedListener(binaryStatus::setEditationMode);
-        binaryStatus.setEditationMode(codeArea.getEditationMode(), codeArea.getActiveOperation());
+        codeArea.addEditModeChangedListener(binaryStatus::setEditMode);
+        binaryStatus.setEditMode(codeArea.getEditMode(), codeArea.getActiveOperation());
 
         binaryStatus.setControlHandler(new BinaryStatusApi.StatusControlHandler() {
             @Override
-            public void changeEditationOperation(EditationOperation editationOperation) {
-                codeArea.setEditationOperation(editationOperation);
+            public void changeEditOperation(EditOperation editOperation) {
+                codeArea.setEditOperation(editOperation);
             }
 
             @Override
@@ -400,7 +400,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
 
     private void updateCurrentMemoryMode() {
         BinaryStatusApi.MemoryMode memoryMode = BinaryStatusApi.MemoryMode.RAM_MEMORY;
-        if (codeArea.getEditationMode() == EditationMode.READ_ONLY) {
+        if (codeArea.getEditMode() == EditMode.READ_ONLY) {
             memoryMode = BinaryStatusApi.MemoryMode.READ_ONLY;
         } else if (fileHandlingMode == FileHandlingMode.DELTA) {
             memoryMode = BinaryStatusApi.MemoryMode.DELTA_MODE;

@@ -17,6 +17,7 @@ package org.exbin.framework.gui.utils.gui;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import org.exbin.bined.CodeAreaUtils;
 import org.exbin.framework.gui.utils.LanguageUtils;
 import org.exbin.framework.gui.utils.OkCancelListener;
 import org.exbin.framework.gui.utils.WindowUtils;
@@ -150,7 +151,7 @@ public class DefaultControlPanel extends javax.swing.JPanel implements DefaultCo
                     break;
                 }
                 default:
-                    throw new IllegalStateException("Illegal action type " + actionType.name());
+                    throw CodeAreaUtils.getInvalidTypeException(actionType);
             }
         };
     }

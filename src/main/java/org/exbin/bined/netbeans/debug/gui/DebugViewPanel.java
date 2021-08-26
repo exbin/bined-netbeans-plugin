@@ -19,7 +19,7 @@ import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.ParametersAreNonnullByDefault;
-import org.exbin.bined.EditationMode;
+import org.exbin.bined.EditMode;
 import org.exbin.auxiliary.paged_data.BinaryData;
 import org.exbin.bined.netbeans.debug.DebugViewDataProvider;
 import org.exbin.bined.netbeans.gui.BinEdComponentFileApi;
@@ -48,7 +48,7 @@ public class DebugViewPanel extends javax.swing.JPanel {
     }
 
     private void init() {
-        componentPanel.getCodeArea().setEditationMode(EditationMode.READ_ONLY);
+        componentPanel.getCodeArea().setEditMode(EditMode.READ_ONLY);
         componentPanel.setFileApi(new BinEdComponentFileApi() {
             @Override
             public boolean isSaveSupported() {
