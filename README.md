@@ -33,7 +33,7 @@ For project compiling Gradle build system is used: https://gradle.org
 
 You can either download and install gradle or use gradlew or gradlew.bat scripts to download separate copy of gradle to perform the project build.
 
-Build commands: "gradle build" and "gradle nbm"
+Build command: "gradle build nbm"
 
 License
 -------
