@@ -9,7 +9,6 @@ import java.util.zip.ZipFile
 
 buildscript {
     repositories {
-        jcenter()
         flatDir {
             dirs "lib"
         }
@@ -57,7 +56,6 @@ repositories {
     mavenCentral()
     maven { url 'https://netbeans.apidesign.org/maven2' }
     maven { url 'https://repo.gradle.org/gradle/libs-releases-local' }
-    jcenter()
     flatDir {
         dirs "lib"
     }
@@ -198,7 +196,7 @@ nbm {
     specificationVersion = ext.nbmVersion
     implementationVersion = ext.nbmVersion
     if (VersionNumber.parse(gradle.gradleVersion) >= VersionNumber.parse('5.0')) {
-        usePack200 = "true"
+        // usePack200 = false
     }
     //    moduleInstall = 'org.netbeans.gradle.project.NbGradleModuleInstall'
     localizingBundle = 'org/exbin/bined/netbeans/Bundle.properties'
