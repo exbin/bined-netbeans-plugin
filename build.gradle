@@ -23,7 +23,7 @@ buildscript {
     }
 }
 
-['java', 'distribution', 'maven-publish', 'signing', 'cz.kubacki.nbm'].each {
+['java', 'maven-publish', 'maven', 'signing', 'cz.kubacki.nbm'].each {
     apply plugin: it
 }
 
@@ -31,7 +31,7 @@ ext.scriptFile = { String fileName ->
     return new File(new File(rootDir, 'gradle'), fileName)
 }
 
-version = '0.2.2-SNAPSHOT'
+version = '0.2.2'
 group = 'org.exbin.bined.netbeans'
 
 sourceCompatibility = '1.8'
@@ -40,7 +40,8 @@ targetCompatibility = sourceCompatibility
 ext {
     //    netbeansVersion = 'dev-SNAPSHOT'
     netbeansVersion = 'RELEASE111'
-    binedVersion = '0.2.0-SNAPSHOT'
+    binedVersion = '0.2.0'
+    pagedDataVersion = '0.2.0'
     repositoryName = "bined-netbeans-plugin"
     nbmVersion = version.endsWith('-SNAPSHOT') ? version.substring(0, version.length() - 9) : version
     homePageUrl = 'https://bined.exbin.org/netbeans-plugin'
@@ -53,6 +54,7 @@ ext {
 //packer.properties()["pack.effort"] = "9"
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven { url 'https://netbeans.apidesign.org/maven2' }
     maven { url 'https://repo.gradle.org/gradle/libs-releases-local' }
@@ -144,11 +146,11 @@ task javadocJar (type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
-//def tryGetProperty = { String name, String defaultValue ->
-//    return org.netbeans.gradle.build.PropertyUtils.getStringProperty(project, name, defaultValue)
-//}
-//
-//
+def tryGetProperty = { String name, String defaultValue ->
+    return defaultValue
+    //org.netbeans.gradle.build.PropertyUtils.getStringProperty(project, name, defaultValue)
+}
+
 jar.manifest {
     attributes(['OpenIDE-Module-Layer': 'org/exbin/bined/netbeans/layer.xml'])
 }
@@ -201,11 +203,11 @@ nbm {
     //    moduleInstall = 'org.netbeans.gradle.project.NbGradleModuleInstall'
     localizingBundle = 'org/exbin/bined/netbeans/Bundle.properties'
 
-    //    keyStore {
-    //        keyStoreFile = tryGetProperty('nbGradlePluginKeyStore', null)
-    //        username = tryGetProperty('nbGradlePluginKeyStoreUser', 'hajdam')
-    //        password = tryGetProperty('nbGradlePluginKeyStorePass', '')
-    //    }
+     keyStore {
+         keyStoreFile = project.file('private/keystore') //tryGetProperty('nbGradlePluginKeyStore', 'keystore')
+         username = tryGetProperty('nbGradlePluginKeyStoreUser', 'bined')
+         password = tryGetProperty('nbGradlePluginKeyStorePass', '')
+	 }
 }
 
 def netbeansModule = { String groupName, String moduleName ->
@@ -221,7 +223,13 @@ def netbeansApi = { String moduleName ->
 }
 
 def binedLibrary = { String libName ->
-    return ":${libName}-${binedVersion}"
+//    return ":${libName}-${binedVersion}"
+    return "org.exbin.bined:${libName}:${binedVersion}"
+}
+
+def pagedDataLibrary = { String libName ->
+//    return ":${libName}-${pagedDataVersion}"
+    return "org.exbin.auxiliary:${libName}:${pagedDataVersion}"
 }
 
 dependencies {
@@ -260,8 +268,8 @@ dependencies {
     implementation binedLibrary("bined-operation-swing")
     implementation binedLibrary("bined-swing")
     implementation binedLibrary("bined-swing-extended")
-    implementation ':paged_data-0.2.0-SNAPSHOT'
-    implementation ':paged_data-delta-0.2.0-SNAPSHOT'
+    implementation pagedDataLibrary('paged_data')
+    implementation pagedDataLibrary('paged_data-delta')
 
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
@@ -281,7 +289,7 @@ task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from 
     from sourceSets.main.allSource
 }
 
-// uploadArchives.dependsOn tasks.nbm
+uploadArchives.dependsOn tasks.nbm
 publish.dependsOn tasks.nbm
 artifacts {
     archives jar
@@ -322,19 +330,16 @@ publishing {
             artifact (javadocJar) {
                 classifier 'javadoc'
             }
-            //            artifact (nbmFile) {
-            //                classifier 'nbm'
-            //                extension = 'nbm'
-            //            }
-            artifact (tasks.nbm.outputFile) {
+            artifact (nbmFile) {
+                classifier 'nbm'
                 extension = 'nbm'
             }
 
-            pom.packaging 'nbm'
             pom.withXml {
                 asNode().children().last() + {
                     resolveStrategy = Closure.DELEGATE_FIRST
                     name deployName
+                    pom.packaging 'nbm'
                     description deployDescription
                     url deployUrl
                     scm {
@@ -371,25 +376,41 @@ publishing {
 }
 
 if (gradle.startParameter.taskNames.contains("uploadArchives") && !version.endsWith('-SNAPSHOT')) {
+
+    configurations {
+        releaseArtifacts {}
+    }
+    
     artifacts {
         archives javadocJar, sourcesJar
+
         archives (tasks.nbm.outputFile) {
             name = "${project.name}-${project.version}"
             extension = 'nbm'
             type = 'nbm'
         }
+
+        releaseArtifacts jar
+        releaseArtifacts (tasks.nbm.outputFile) {
+            name = "${project.name}-${project.version}"
+            extension = 'nbm'
+            type = 'nbm'
+        }
+        releaseArtifacts javadocJar
+        releaseArtifacts sourcesJar
     }
 
     signing {
-        sign configurations.archives
+        sign tasks.nbm.outputFile
+        sign configurations.releaseArtifacts
     }
 
     uploadArchives {
         repositories {
             mavenDeployer {
-//                beforeDeployment {
-//                    MavenDeployment deployment -> signing.signPom(deployment)
-//                }
+                beforeDeployment {
+                    MavenDeployment deployment -> signing.signPom(deployment)
+                }
 
                 repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
                     authentication(userName: ossrhUsername, password: ossrhPassword)
@@ -399,9 +420,9 @@ if (gradle.startParameter.taskNames.contains("uploadArchives") && !version.endsW
                     authentication(userName: ossrhUsername, password: ossrhPassword)
                 }
 
-                pom.packaging 'nbm'
                 pom.project {
                     name deployName
+                    packaging 'nbm'
                     description deployDescription
                     url deployUrl
 

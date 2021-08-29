@@ -6,3 +6,4 @@ target/
 testuserdir/
 *~
 /nbproject/private/
+/private/

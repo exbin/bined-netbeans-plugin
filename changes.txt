@@ -1,4 +1,4 @@
-0.2.2
+0.2.2 (2021-08-29)
 - Minor GUI improvements
 - Switched to Gradle building
 - Action to show debug variables as binary data in ToolTip view
