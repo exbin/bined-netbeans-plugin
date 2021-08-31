@@ -23,7 +23,7 @@ buildscript {
     }
 }
 
-['java', 'maven-publish', 'maven', 'signing', 'cz.kubacki.nbm'].each {
+['java', 'maven-publish', 'signing', 'cz.kubacki.nbm'].each {
     apply plugin: it
 }
 
@@ -31,7 +31,7 @@ ext.scriptFile = { String fileName ->
     return new File(new File(rootDir, 'gradle'), fileName)
 }
 
-version = '0.2.2'
+version = '0.2.3-SNAPSHOT'
 group = 'org.exbin.bined.netbeans'
 
 sourceCompatibility = '1.8'
