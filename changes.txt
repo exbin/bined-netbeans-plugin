@@ -1,4 +1,5 @@
 0.2.3
+- Relaxed dependecies - plugin should work for VisualVM
 
 0.2.2 (2021-08-29)
 - Minor GUI improvements

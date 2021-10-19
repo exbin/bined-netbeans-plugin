@@ -5,7 +5,7 @@ Hexadecimal viewer/editor plugin module for NetBeans platform.
 
 Homepage: https://bined.exbin.org/netbeans-plugin  
 
-Published as: http://plugins.netbeans.org/plugin/67898/  
+Published as: https://plugins.netbeans.apache.org/catalogue/?id=59  
 
 Screenshot
 ----------

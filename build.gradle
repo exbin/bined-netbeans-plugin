@@ -23,7 +23,7 @@ buildscript {
     }
 }
 
-['java', 'maven-publish', 'signing', 'cz.kubacki.nbm'].each {
+['java', 'maven-publish', 'signing', 'cz.kubacki.nbm'].each {  
     apply plugin: it
 }
 
@@ -39,7 +39,7 @@ targetCompatibility = sourceCompatibility
 
 ext {
     //    netbeansVersion = 'dev-SNAPSHOT'
-    netbeansVersion = 'RELEASE111'
+    netbeansVersion = 'RELEASE90'
     binedVersion = '0.2.0'
     pagedDataVersion = '0.2.0'
     repositoryName = "bined-netbeans-plugin"
@@ -203,11 +203,11 @@ nbm {
     //    moduleInstall = 'org.netbeans.gradle.project.NbGradleModuleInstall'
     localizingBundle = 'org/exbin/bined/netbeans/Bundle.properties'
 
-     keyStore {
-         keyStoreFile = project.file('private/keystore') //tryGetProperty('nbGradlePluginKeyStore', 'keystore')
-         username = tryGetProperty('nbGradlePluginKeyStoreUser', 'bined')
-         password = tryGetProperty('nbGradlePluginKeyStorePass', '')
-	 }
+//    keyStore {
+//         keyStoreFile = project.file('private/keystore') //tryGetProperty('nbGradlePluginKeyStore', 'keystore')
+//         username = tryGetProperty('nbGradlePluginKeyStoreUser', 'bined')
+//         password = tryGetProperty('nbGradlePluginKeyStorePass', '')
+//    }
 }
 
 def netbeansModule = { String groupName, String moduleName ->
@@ -239,16 +239,18 @@ dependencies {
         netbeans "org.netbeans.api:org-netbeans-api-annotations-common:$netbeansVersion"
     }
 
+    compileOnly netbeansApi('org-netbeans-api-debugger')
+    compileOnly netbeansApi('org-netbeans-api-debugger-jpda')
+    compileOnly netbeansApi('org-netbeans-spi-debugger-ui')
+    compileOnly netbeansApi('org-netbeans-spi-debugger-jpda-ui')
+    compileOnly netbeansApi('org-netbeans-spi-viewmodel')
+    compileOnly netbeansModule('org.netbeans.modules', 'org-netbeans-modules-projectapi-nb')
+
     providedCompile netbeansApi('org-netbeans-api-annotations-common')
-    providedCompile netbeansApi('org-netbeans-api-debugger')
-    providedCompile netbeansApi('org-netbeans-api-debugger-jpda')
     providedCompile netbeansApi('org-netbeans-core-multiview')
     providedCompile netbeansApi('org-netbeans-modules-options-api')
     providedCompile netbeansApi('org-netbeans-modules-queries')
     providedCompile netbeansApi('org-netbeans-modules-settings')
-    providedCompile netbeansApi('org-netbeans-spi-debugger-ui')
-    providedCompile netbeansApi('org-netbeans-spi-debugger-jpda-ui')
-    providedCompile netbeansApi('org-netbeans-spi-viewmodel')
     providedCompile netbeansApi('org-openide-actions')
     providedCompile netbeansApi('org-openide-awt')
     providedCompile netbeansApi('org-openide-dialogs')
@@ -274,7 +276,6 @@ dependencies {
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
     testImplementation 'junit:junit:4.12'
-    providedRuntime netbeansModule('org.netbeans.modules', 'org-netbeans-modules-projectapi-nb')
 
     if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
         // Workaround for @javax.annotation.Generated
@@ -289,7 +290,7 @@ task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from 
     from sourceSets.main.allSource
 }
 
-uploadArchives.dependsOn tasks.nbm
+//uploadArchives.dependsOn tasks.nbm
 publish.dependsOn tasks.nbm
 artifacts {
     archives jar
@@ -408,9 +409,9 @@ if (gradle.startParameter.taskNames.contains("uploadArchives") && !version.endsW
     uploadArchives {
         repositories {
             mavenDeployer {
-                beforeDeployment {
-                    MavenDeployment deployment -> signing.signPom(deployment)
-                }
+//                beforeDeployment {
+//                    MavenDeployment deployment -> signing.signPom(deployment)
+//                }
 
                 repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
                     authentication(userName: ossrhUsername, password: ossrhPassword)

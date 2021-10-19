@@ -267,7 +267,7 @@ public final class SearchAction implements ActionListener {
             ExtendedHighlightCodeAreaPainter.SearchMatch firstMatch = Objects.requireNonNull(painter.getCurrentMatch());
             codeArea.revealPosition(new DefaultCodeAreaCaretPosition(firstMatch.getPosition(), 0, codeArea.getActiveSection()));
         }
-        binarySearchPanel.setStatus(foundMatches.size(), 0);
+        binarySearchPanel.setStatus(foundMatches.size(), foundMatches.isEmpty() ? -1 : 0);
         codeArea.repaint();
     }
 
@@ -324,7 +324,7 @@ public final class SearchAction implements ActionListener {
             ExtendedHighlightCodeAreaPainter.SearchMatch firstMatch = Objects.requireNonNull(painter.getCurrentMatch());
             codeArea.revealPosition(new DefaultCodeAreaCaretPosition(firstMatch.getPosition(), 0, codeArea.getActiveSection()));
         }
-        binarySearchPanel.setStatus(foundMatches.size(), 0);
+        binarySearchPanel.setStatus(foundMatches.size(), foundMatches.isEmpty() ? -1 : 0);
         codeArea.repaint();
     }
 
