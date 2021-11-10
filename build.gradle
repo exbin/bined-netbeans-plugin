@@ -40,8 +40,8 @@ targetCompatibility = sourceCompatibility
 ext {
     //    netbeansVersion = 'dev-SNAPSHOT'
     netbeansVersion = 'RELEASE90'
-    binedVersion = '0.2.0'
-    pagedDataVersion = '0.2.0'
+    binedVersion = '0.2.1-SNAPSHOT'
+    pagedDataVersion = '0.2.1-SNAPSHOT'
     repositoryName = "bined-netbeans-plugin"
     nbmVersion = version.endsWith('-SNAPSHOT') ? version.substring(0, version.length() - 9) : version
     homePageUrl = 'https://bined.exbin.org/netbeans-plugin'
@@ -223,13 +223,13 @@ def netbeansApi = { String moduleName ->
 }
 
 def binedLibrary = { String libName ->
-//    return ":${libName}-${binedVersion}"
-    return "org.exbin.bined:${libName}:${binedVersion}"
+    return ":${libName}-${binedVersion}"
+//    return "org.exbin.bined:${libName}:${binedVersion}"
 }
 
 def pagedDataLibrary = { String libName ->
-//    return ":${libName}-${pagedDataVersion}"
-    return "org.exbin.auxiliary:${libName}:${pagedDataVersion}"
+    return ":${libName}-${pagedDataVersion}"
+//    return "org.exbin.auxiliary:${libName}:${pagedDataVersion}"
 }
 
 dependencies {

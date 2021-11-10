@@ -1,4 +1,7 @@
 0.2.3
+- Added templates for profiles
+- Added insert data dialog
+- Added files compare dialog
 - Relaxed dependecies - plugin should work for VisualVM
 
 0.2.2 (2021-08-29)

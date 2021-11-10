@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.bined.netbeans;
+package org.exbin.bined.netbeans.action;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -24,6 +24,7 @@ import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
@@ -334,6 +335,7 @@ public final class SearchAction implements ActionListener {
         }
     }
 
+    @Nonnull
     private JPopupMenu createCodeAreaPopupMenu(final ExtCodeArea codeArea, String menuPostfix) {
         JPopupMenu popupMenu = new JPopupMenu();
 

@@ -26,6 +26,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.nio.charset.Charset;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
@@ -49,8 +50,10 @@ import org.exbin.bined.capability.CharsetCapable;
 import org.exbin.bined.extended.layout.ExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.highlight.swing.extended.ExtendedHighlightNonAsciiCodeAreaPainter;
 import org.exbin.bined.netbeans.BinEdApplyOptions;
-import org.exbin.bined.netbeans.GoToPositionAction;
-import org.exbin.bined.netbeans.SearchAction;
+import org.exbin.bined.netbeans.action.CompareFilesAction;
+import org.exbin.bined.netbeans.action.GoToPositionAction;
+import org.exbin.bined.netbeans.action.InsertDataAction;
+import org.exbin.bined.netbeans.action.SearchAction;
 import org.exbin.bined.operation.BinaryDataCommand;
 import org.exbin.bined.operation.swing.CodeAreaOperationCommandHandler;
 import org.exbin.bined.operation.undo.BinaryDataUndoHandler;
@@ -110,6 +113,8 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
     private CharsetChangeListener charsetChangeListener = null;
     private ModifiedStateListener modifiedChangeListener = null;
     private final GoToPositionAction goToRowAction;
+    private final InsertDataAction insertDataAction;
+    private final CompareFilesAction compareFilesAction;
     private final AbstractAction showHeaderAction;
     private final AbstractAction showRowNumbersAction;
     private final SearchAction searchAction;
@@ -139,6 +144,8 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         statusPanel = new BinaryStatusPanel();
 
         goToRowAction = new GoToPositionAction(codeArea);
+        insertDataAction = new InsertDataAction(codeArea);
+        compareFilesAction = new CompareFilesAction(codeArea);
         showHeaderAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -358,21 +365,6 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         return true;
     }
 
-    public void setContentData(BinaryData data) {
-        codeArea.setContentData(data);
-
-        documentOriginalSize = codeArea.getDataSize();
-        updateCurrentDocumentSize();
-        updateCurrentMemoryMode();
-
-        // Autodetect encoding using IDE mechanism
-//        final Charset charset = Charset.forName(FileEncodingQuery.getEncoding(dataObject.getPrimaryFile()).name());
-//        if (charsetChangeListener != null) {
-//            charsetChangeListener.charsetChanged();
-//        }
-//        codeArea.setCharset(charset);
-    }
-
     private void saveDocument() {
         fileApi.saveDocument();
 
@@ -541,6 +533,9 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
                 menu.add(selectAllMenuItem);
                 menu.addSeparator();
 
+                JMenuItem insertDataMenuItem = createInsertDataMenuItem();
+                menu.add(insertDataMenuItem);
+
                 JMenuItem goToMenuItem = createGoToMenuItem();
                 menu.add(goToMenuItem);
 
@@ -580,6 +575,9 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
                 menu.add(showMenu);
             }
         }
+
+        JMenuItem compareFilesMenuItem = createCompareFilesMenuItem();
+        menu.add(compareFilesMenuItem);
 
         final JMenuItem optionsMenuItem = new JMenuItem("Options...");
         optionsMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/options/resources/icons/Preferences16.gif")));
@@ -667,6 +665,21 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         goToMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ActionUtils.getMetaMask()));
         goToMenuItem.addActionListener(goToRowAction);
         return goToMenuItem;
+    }
+
+    @Nonnull
+    private JMenuItem createInsertDataMenuItem() {
+        final JMenuItem insertDataMenuItem = new JMenuItem("Insert Data...");
+        insertDataMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionUtils.getMetaMask()));
+        insertDataMenuItem.addActionListener(insertDataAction);
+        return insertDataMenuItem;
+    }
+
+    @Nonnull
+    private JMenuItem createCompareFilesMenuItem() {
+        final JMenuItem compareFilesMenuItem = new JMenuItem("Compare Files...");
+        compareFilesMenuItem.addActionListener(compareFilesAction);
+        return compareFilesMenuItem;
     }
 
     @Nonnull
@@ -880,6 +893,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         this.undoHandler = undoHandler;
         CodeAreaOperationCommandHandler commandHandler = new CodeAreaOperationCommandHandler(codeArea, undoHandler);
         codeArea.setCommandHandler(commandHandler);
+        insertDataAction.setUndoHandler(undoHandler);
         if (valuesPanel != null) {
             valuesPanel.setCodeArea(codeArea, undoHandler);
         }
@@ -899,6 +913,26 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
                 notifyModified();
             }
         });
+    }
+
+    @Nullable
+    public BinaryData getContentData() {
+        return codeArea.getContentData();
+    }
+
+    public void setContentData(BinaryData data) {
+        codeArea.setContentData(data);
+
+        documentOriginalSize = codeArea.getDataSize();
+        updateCurrentDocumentSize();
+        updateCurrentMemoryMode();
+
+        // Autodetect encoding using IDE mechanism
+//        final Charset charset = Charset.forName(FileEncodingQuery.getEncoding(dataObject.getPrimaryFile()).name());
+//        if (charsetChangeListener != null) {
+//            charsetChangeListener.charsetChanged();
+//        }
+//        codeArea.setCharset(charset);
     }
 
     public interface CharsetChangeListener {

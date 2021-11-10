@@ -40,7 +40,7 @@ public class GoToBinaryPanel extends javax.swing.JPanel {
     public GoToBinaryPanel() {
         initComponents();
 
-        baseSwitchableSpinnerPanel.setMinimum(0l);
+        baseSwitchableSpinnerPanel.setMinimum(0L);
         baseSwitchableSpinnerPanel.addChangeListener((javax.swing.event.ChangeEvent evt) -> {
             updateTargetPosition();
         });
@@ -277,22 +277,16 @@ public class GoToBinaryPanel extends javax.swing.JPanel {
         long absolutePosition = getTargetPosition();
         this.goToMode = goToMode;
         switch (goToMode) {
-            case FROM_START: {
-                setPositionValue(0l);
-                baseSwitchableSpinnerPanel.setMinimum(0l);
-                baseSwitchableSpinnerPanel.setMaximum(maxPosition);
-                baseSwitchableSpinnerPanel.revalidateSpinner();
-                break;
-            }
+            case FROM_START:
             case FROM_END: {
-                setPositionValue(0l);
-                baseSwitchableSpinnerPanel.setMinimum(0l);
+                setPositionValue(0L);
+                baseSwitchableSpinnerPanel.setMinimum(0L);
                 baseSwitchableSpinnerPanel.setMaximum(maxPosition);
                 baseSwitchableSpinnerPanel.revalidateSpinner();
                 break;
             }
             case FROM_CURSOR: {
-                setPositionValue(0l);
+                setPositionValue(0L);
                 baseSwitchableSpinnerPanel.setMinimum(-cursorPosition);
                 baseSwitchableSpinnerPanel.setMaximum(maxPosition - cursorPosition);
                 baseSwitchableSpinnerPanel.revalidateSpinner();
@@ -305,14 +299,12 @@ public class GoToBinaryPanel extends javax.swing.JPanel {
     }
 
     private long getPositionValue() {
-        return (Long) baseSwitchableSpinnerPanel.getValue();
+        return baseSwitchableSpinnerPanel.getValue();
     }
 
     private void setPositionValue(long value) {
         baseSwitchableSpinnerPanel.setValue(value);
         updateTargetPosition();
-//        positionSpinner.setValue(value);
-//        positionSpinner.firePropertyChange(SPINNER_PROPERTY, value, value);
     }
 
     /**
