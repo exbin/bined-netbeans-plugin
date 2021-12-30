@@ -26,4 +26,19 @@
             </folder>
         </folder>
     </folder>
+    <folder name="Templates">
+        <folder name="Other">
+            <attr name="displayName" bundlevalue="org.exbin.bined.netbeans.Bundle#CTL_Templates/Other"/>
+            <attr name="position" intvalue="2100"/>
+            <file name="binaryFile.bin" url="nbresloc:/org/exbin/bined/netbeans/BinEdTemplate.bin">
+                <attr name="displayName" bundlevalue="org.exbin.bined.netbeans.Bundle#CTL_Templates/Other/binaryFile"/>
+                <attr name="instantiatingWizardURL" urlvalue="nbresloc:/org/exbin/bined/netbeans/BinEdTemplate.html"/>
+                <attr name="position" intvalue="5000"/>
+                <attr name="template" boolvalue="true"/>
+                <attr name="SystemFileSystem.icon" urlvalue="org/exbin/bined/netbeans/resources/icons/icon.png"/>
+                <attr name="templateCategory" stringvalue="simple-files"/>
+                <attr name="requireProject" boolvalue="false"/>
+            </file>
+        </folder>
+    </folder>
 </filesystem>

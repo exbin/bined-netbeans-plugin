@@ -33,7 +33,7 @@ import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
 import org.exbin.framework.gui.utils.gui.DefaultControlPanel;
 
 /**
- * Go to handler.
+ * Go to position action.
  *
  * @version 0.2.1 2019/07/21
  * @author ExBin Project (http://exbin.org)
