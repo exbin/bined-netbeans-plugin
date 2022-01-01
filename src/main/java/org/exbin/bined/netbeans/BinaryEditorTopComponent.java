@@ -17,11 +17,9 @@ package org.exbin.bined.netbeans;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Image;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import javax.annotation.ParametersAreNonnullByDefault;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
@@ -47,7 +45,7 @@ import org.openide.windows.WindowManager;
  * @author ExBin Project (http://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.bined//BinaryEditor//EN", autostore = false)
-@TopComponent.Description(preferredID = "BinaryEditorTopComponent",
+@TopComponent.Description(preferredID = "BinaryEditorTopComponent", iconBase = "org/exbin/bined/netbeans/resources/icons/icon.png",
         persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @TopComponent.OpenActionRegistration(displayName = "#CTL_BinaryEditorAction", preferredID = "BinaryEditorTopComponent")
@@ -56,8 +54,6 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
     private static final String BINARY_EDITOR_TOP_COMPONENT_STRING = "CTL_BinaryEditorTopComponent";
     private static final String BINARY_EDITOR_TOP_COMPONENT_HINT_STRING = "HINT_BinaryEditorTopComponent";
-
-    private final Image editorIcon = new ImageIcon(getClass().getResource("/org/exbin/bined/netbeans/resources/icons/icon.png")).getImage();
 
     private final BinEdFile editorFile;
 
@@ -94,7 +90,6 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     public void openDataObject(DataObject dataObject) {
         displayName = dataObject.getPrimaryFile().getNameExt();
         setHtmlDisplayName(displayName);
-        setIcon(editorIcon);
 
         editorFile.openFile(dataObject);
         savable.setDataObject(dataObject);

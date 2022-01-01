@@ -283,6 +283,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoHandler {
         this.syncPointPosition = commandPosition;
     }
 
+    @Nonnull
     @Override
     public List<BinaryDataCommand> getCommandList() {
         throw new UnsupportedOperationException("Not supported yet.");

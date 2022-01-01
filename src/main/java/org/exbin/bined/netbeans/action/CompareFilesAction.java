@@ -49,7 +49,6 @@ import org.exbin.framework.gui.utils.gui.CloseControlPanel;
 @ParametersAreNonnullByDefault
 public class CompareFilesAction extends AbstractAction {
 
-
     private final ExtCodeArea codeArea;
 
     public CompareFilesAction(ExtCodeArea codeArea) {
