@@ -15,12 +15,12 @@
  */
 package org.exbin.bined.netbeans.debug.array;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.netbeans.debug.DebugViewData;
 
 import org.netbeans.api.debugger.jpda.Field;
 import org.netbeans.api.debugger.jpda.ObjectVariable;
-// import org.netbeans.modules.debugger.jpda.models.FieldVariable;
 
 /**
  * Byte array data source for debugger view.
@@ -37,6 +37,7 @@ public class ByteArrayPageProvider implements DebugViewData.PageProvider {
         this.arrayRef = arrayRef;
     }
 
+    @Nonnull
     @Override
     public byte[] getPage(long pageIndex) {
         int startPos = (int) (pageIndex * DebugViewData.PAGE_SIZE);

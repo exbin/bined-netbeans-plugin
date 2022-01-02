@@ -16,6 +16,7 @@
 package org.exbin.bined.netbeans.debug.array;
 
 import java.math.BigInteger;
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.netbeans.debug.DebugViewData;
 import org.exbin.framework.bined.gui.ValuesPanel;
@@ -37,6 +38,7 @@ public class LongArrayPageProvider implements DebugViewData.PageProvider {
         this.arrayRef = arrayRef;
     }
 
+    @Nonnull
     @Override
     public byte[] getPage(long pageIndex) {
         int pageSize = DebugViewData.PAGE_SIZE / 8;

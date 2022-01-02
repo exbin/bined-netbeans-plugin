@@ -16,6 +16,7 @@
 package org.exbin.bined.netbeans.debug;
 
 import java.awt.event.ActionEvent;
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -34,6 +35,7 @@ public final class VariablesActionProvider implements org.netbeans.spi.viewmodel
     public void performDefaultAction(Object node) throws UnknownTypeException {
     }
 
+    @Nonnull
     @Override
     public Action[] getActions(Object node) throws UnknownTypeException {
         return new Action[]{

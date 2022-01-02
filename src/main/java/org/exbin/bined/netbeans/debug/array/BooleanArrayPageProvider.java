@@ -15,6 +15,7 @@
  */
 package org.exbin.bined.netbeans.debug.array;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.netbeans.debug.DebugViewData;
 
@@ -36,6 +37,7 @@ public class BooleanArrayPageProvider implements DebugViewData.PageProvider {
         this.arrayRef = arrayRef;
     }
 
+    @Nonnull
     @Override
     public byte[] getPage(long pageIndex) {
         int startPos = (int) (pageIndex * DebugViewData.PAGE_SIZE * 8);

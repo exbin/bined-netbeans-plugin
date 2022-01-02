@@ -15,6 +15,7 @@
  */
 package org.exbin.bined.netbeans.debug.array;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.netbeans.debug.DebugViewData;
 import org.netbeans.api.debugger.jpda.Field;
@@ -36,6 +37,7 @@ public class CharArrayPageProvider implements DebugViewData.PageProvider {
         this.arrayRef = arrayRef;
     }
 
+    @Nonnull
     @Override
     public byte[] getPage(long pageIndex) {
         int pageSize = DebugViewData.PAGE_SIZE / 2;
