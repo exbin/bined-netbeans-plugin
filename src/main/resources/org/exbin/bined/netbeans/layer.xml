@@ -21,7 +21,7 @@
                 <file name="org-exbin-bined-netbeans-debug-BinaryDebugButton.instance">
                     <attr name="serviceClass" stringvalue="java.awt.Component"/>
                     <attr name="instanceOf" stringvalue="java.awt.Component"/>
-                    <attr intvalue="300" name="position"/>
+                    <attr intvalue="460" name="position"/>
                 </file>
             </folder>
         </folder>

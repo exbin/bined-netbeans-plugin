@@ -3,6 +3,7 @@
 - Added insert data dialog
 - Added files compare dialog
 - Relaxed dependecies - plugin should work for VisualVM
+- Added link to online help/manual
 
 0.2.2 (2021-08-29)
 - Minor GUI improvements

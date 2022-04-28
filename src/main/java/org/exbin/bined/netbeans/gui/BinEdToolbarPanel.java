@@ -44,6 +44,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     private final BinaryEditorPreferences preferences;
     private final ExtCodeArea codeArea;
     private final AbstractAction optionsAction;
+    private final AbstractAction onlineHelpAction;
 
     private final AbstractAction cycleCodeTypesAction;
     private final JRadioButtonMenuItem binaryCodeTypeAction;
@@ -58,6 +59,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         this.preferences = preferences;
         this.codeArea = codeArea;
         this.optionsAction = optionsAction;
+        this.onlineHelpAction = onlineHelpAction;
 
         codeTypeButtonGroup = new ButtonGroup();
         binaryCodeTypeAction = new JRadioButtonMenuItem(new AbstractAction("Binary") {
@@ -133,6 +135,11 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         optionsButton.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/options/resources/icons/Preferences16.gif")));
         controlToolBar.add(optionsButton);
 
+        JButton onlineHelpButton = new JButton();
+        onlineHelpButton.setAction(onlineHelpAction);
+        onlineHelpButton.setToolTipText("Online Help");
+        onlineHelpButton.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/bined/resources/icons/open_icon_library/icons/png/16x16/actions/help.png")));
+        controlToolBar.add(onlineHelpButton);
     }
 
     private void updateCycleButtonState() {

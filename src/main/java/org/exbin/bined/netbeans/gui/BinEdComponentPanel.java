@@ -82,6 +82,7 @@ import org.exbin.framework.editor.text.options.TextFontOptions;
 import org.exbin.framework.editor.text.service.TextFontService;
 import org.exbin.framework.gui.about.gui.AboutPanel;
 import org.exbin.framework.gui.utils.ActionUtils;
+import org.exbin.framework.gui.utils.BareBonesBrowserLaunch;
 import org.exbin.framework.gui.utils.WindowUtils;
 import org.exbin.framework.gui.utils.handler.OptionsControlHandler;
 import org.exbin.framework.gui.utils.gui.CloseControlPanel;
@@ -99,6 +100,7 @@ import org.openide.util.NbPreferences;
 public class BinEdComponentPanel extends javax.swing.JPanel {
 
     private static final FileHandlingMode DEFAULT_FILE_HANDLING_MODE = FileHandlingMode.DELTA;
+    private static final String ONLINE_HELP_URL = "https://bined.exbin.org/netbeans-plugin/?manual";
 
     private BinEdComponentFileApi fileApi = null;
     private final BinaryEditorPreferences preferences;
@@ -142,7 +144,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         defaultLayoutProfile = codeArea.getLayoutProfile();
         defaultThemeProfile = codeArea.getThemeProfile();
         defaultColorProfile = codeArea.getColorsProfile();
-        toolbarPanel = new BinEdToolbarPanel(preferences, codeArea, createOptionsAction());
+        toolbarPanel = new BinEdToolbarPanel(preferences, codeArea, createOptionsAction(), createOnlineHelpAction());
         statusPanel = new BinaryStatusPanel();
 
         goToRowAction = new GoToPositionAction(codeArea);
@@ -594,6 +596,12 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
             }
             default: {
                 menu.addSeparator();
+
+                final JMenuItem onlineHelpMenuItem = new JMenuItem("Online Help...");
+                onlineHelpMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/bined/resources/icons/open_icon_library/icons/png/16x16/actions/help.png")));
+                onlineHelpMenuItem.addActionListener(createOnlineHelpAction());
+                menu.add(onlineHelpMenuItem);
+
                 final JMenuItem aboutMenuItem = new JMenuItem("About...");
                 aboutMenuItem.addActionListener((ActionEvent e) -> {
                     AboutPanel aboutPanel = new AboutPanel();
@@ -657,6 +665,16 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
                 });
                 dialog.showCentered((Component) e.getSource());
                 dialog.dispose();
+            }
+        };
+    }
+
+    @Nonnull
+    private AbstractAction createOnlineHelpAction() {
+        return new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                BareBonesBrowserLaunch.openURL(ONLINE_HELP_URL);
             }
         };
     }
