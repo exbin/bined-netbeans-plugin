@@ -15,9 +15,9 @@ buildscript {
     }
     dependencies {
     	if (VersionNumber.parse(gradle.gradleVersion) >= VersionNumber.parse('5.0')) {
-    		classpath "cz.kubacki.gradle.plugins:gradle-nbm-plugin:1.18.1-dev.0.uncommitted+7341f79"
+            classpath "cz.kubacki.gradle.plugins:gradle-nbm-plugin:1.18.0-dev.39.uncommitted+develop.f9fd71d"
     	} else {
-    		classpath "cz.kubacki.gradle.plugins:gradle-nbm-plugin:1.17.1-dev.6.uncommitted+3041178"
+            classpath "cz.kubacki.gradle.plugins:gradle-nbm-plugin:1.17.1-dev.6.uncommitted+3041178"
     	}
         gradleApi()
     }
@@ -45,7 +45,7 @@ ext {
     repositoryName = "bined-netbeans-plugin"
     nbmVersion = version.endsWith('-SNAPSHOT') ? version.substring(0, version.length() - 9) : version
     homePageUrl = 'https://bined.exbin.org/netbeans-plugin'
-    deployUrl = homePageUrl
+    deployUrl = 'https://bined.exbin.org/netbeans-plugin'
     deployName = 'BinEd NetBeans Plugin'
     deployDescription = 'Binary/Hexadecimal editor plugin for NetBeans platform'
 }
@@ -157,7 +157,7 @@ jar.manifest {
 
 task nbmFile (type: Jar, dependsOn: tasks.nbm) {
     classifier = 'nbm'
-    from tasks.nbm.outputFile
+//    from tasks.nbm.outputFile
 }
 
 def packGZ(File jarToPack) {
@@ -193,10 +193,10 @@ task nbmPack (type: Jar, dependsOn: jar) {
 nbm {
     moduleAuthor = 'ExBin Project'
     licenseFile = 'LICENSE.txt'
-    homePage = ext.homePageUrl
+    homePage = project.ext.homePageUrl
     moduleName = group
-    specificationVersion = ext.nbmVersion
-    implementationVersion = ext.nbmVersion
+    specificationVersion = project.ext.nbmVersion
+    implementationVersion = project.ext.nbmVersion
     if (VersionNumber.parse(gradle.gradleVersion) >= VersionNumber.parse('5.0')) {
         // usePack200 = false
     }
@@ -233,12 +233,6 @@ def pagedDataLibrary = { String libName ->
 }
 
 dependencies {
-    if (VersionNumber.parse(gradle.gradleVersion) >= VersionNumber.parse('5.0')) {
-        netbeans "org.netbeans.api:org-openide-awt:$netbeansVersion"
-        netbeans "org.netbeans.api:org-openide-util:$netbeansVersion"
-        netbeans "org.netbeans.api:org-netbeans-api-annotations-common:$netbeansVersion"
-    }
-
     compileOnly netbeansApi('org-netbeans-api-debugger')
     compileOnly netbeansApi('org-netbeans-api-debugger-jpda')
     compileOnly netbeansApi('org-netbeans-spi-debugger-ui')
@@ -296,11 +290,6 @@ artifacts {
     archives jar
     archives sourcesJar
     tests testJar
-    archives (tasks.nbm.outputFile) {
-        name = "${project.name}-${project.version}"
-        extension = 'nbm'
-        type = 'nbm'
-    }
 }
 
 task netBeansRun(type: Exec) {

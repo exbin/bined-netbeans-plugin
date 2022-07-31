@@ -31,8 +31,8 @@ import org.exbin.bined.EditOperation;
 import org.exbin.bined.PositionCodeType;
 import org.exbin.bined.SelectionRange;
 import org.exbin.framework.editor.text.TextEncodingStatusApi;
-import org.exbin.framework.gui.utils.LanguageUtils;
-import org.exbin.framework.gui.utils.WindowUtils;
+import org.exbin.framework.utils.LanguageUtils;
+import org.exbin.framework.utils.WindowUtils;
 import org.exbin.framework.bined.BinaryStatusApi;
 import org.exbin.framework.bined.options.StatusOptions;
 import org.exbin.framework.bined.options.impl.StatusOptionsImpl;
@@ -61,7 +61,7 @@ public class BinaryStatusPanel extends javax.swing.JPanel implements BinaryStatu
     private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(BinaryStatusPanel.class);
 
     private StatusPreferences statusParameters;
-    private StatusControlHandler statusControlHandler;
+    private Controller controller;
 
     private StatusCursorPositionFormat cursorPositionFormat = new StatusCursorPositionFormat();
     private StatusDocumentSizeFormat documentSizeFormat = new StatusDocumentSizeFormat();
@@ -421,23 +421,23 @@ public class BinaryStatusPanel extends javax.swing.JPanel implements BinaryStatu
     }// </editor-fold>//GEN-END:initComponents
 
     private void editModeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editModeLabelMouseClicked
-        if (statusControlHandler != null && evt.getButton() == MouseEvent.BUTTON1) {
+        if (controller != null && evt.getButton() == MouseEvent.BUTTON1) {
             if (editOperation == EditOperation.INSERT) {
-                statusControlHandler.changeEditOperation(EditOperation.OVERWRITE);
+                controller.changeEditOperation(EditOperation.OVERWRITE);
             } else if (editOperation == EditOperation.OVERWRITE) {
-                statusControlHandler.changeEditOperation(EditOperation.INSERT);
+                controller.changeEditOperation(EditOperation.INSERT);
             }
         }
     }//GEN-LAST:event_editModeLabelMouseClicked
 
     private void cursorPositionLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cursorPositionLabelMouseClicked
         if (evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() > 1) {
-            statusControlHandler.changeCursorPosition();
+            controller.changeCursorPosition();
         }
     }//GEN-LAST:event_cursorPositionLabelMouseClicked
 
     private void positionGoToMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_positionGoToMenuItemActionPerformed
-        statusControlHandler.changeCursorPosition();
+        controller.changeCursorPosition();
     }//GEN-LAST:event_positionGoToMenuItemActionPerformed
 
     private void positionCopyMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_positionCopyMenuItemActionPerformed
@@ -460,7 +460,7 @@ public class BinaryStatusPanel extends javax.swing.JPanel implements BinaryStatu
 
     private void encodingLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_encodingLabelMouseClicked
         if (evt.getButton() == MouseEvent.BUTTON1) {
-            statusControlHandler.cycleEncodings();
+            controller.cycleEncodings();
         } else {
             handleEncodingPopup(evt);
         }
@@ -475,11 +475,11 @@ public class BinaryStatusPanel extends javax.swing.JPanel implements BinaryStatu
     }//GEN-LAST:event_encodingLabelMouseReleased
 
     private void deltaMemoryModeRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deltaMemoryModeRadioButtonMenuItemActionPerformed
-        statusControlHandler.changeMemoryMode(MemoryMode.DELTA_MODE);
+        controller.changeMemoryMode(MemoryMode.DELTA_MODE);
     }//GEN-LAST:event_deltaMemoryModeRadioButtonMenuItemActionPerformed
 
     private void ramMemoryModeRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ramMemoryModeRadioButtonMenuItemActionPerformed
-        statusControlHandler.changeMemoryMode(MemoryMode.RAM_MEMORY);
+        controller.changeMemoryMode(MemoryMode.RAM_MEMORY);
     }//GEN-LAST:event_ramMemoryModeRadioButtonMenuItemActionPerformed
 
     private void cursorPositionShowOffsetCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cursorPositionShowOffsetCheckBoxMenuItemActionPerformed
@@ -533,7 +533,7 @@ public class BinaryStatusPanel extends javax.swing.JPanel implements BinaryStatu
 
     private void handleEncodingPopup(java.awt.event.MouseEvent evt) {
         if (evt.isPopupTrigger()) {
-            statusControlHandler.encodingsPopupEncodingsMenu(evt);
+            controller.encodingsPopupEncodingsMenu(evt);
         }
     }
 
@@ -645,9 +645,8 @@ public class BinaryStatusPanel extends javax.swing.JPanel implements BinaryStatu
         }
     }
 
-    @Override
-    public void setControlHandler(StatusControlHandler statusControlHandler) {
-        this.statusControlHandler = statusControlHandler;
+    public void setController(Controller controller) {
+        this.controller = controller;
     }
 
     @Override
@@ -807,5 +806,40 @@ public class BinaryStatusPanel extends javax.swing.JPanel implements BinaryStatu
             builder.insert(0, "-");
         }
         return builder.toString();
+    }
+
+    @ParametersAreNonnullByDefault
+    public static interface Controller {
+
+        /**
+         * Requests change of edit operation from given operation.
+         *
+         * @param operation edit operation
+         */
+        void changeEditOperation(EditOperation operation);
+
+        /**
+         * Requests change of cursor position using go-to dialog.
+         */
+        void changeCursorPosition();
+
+        /**
+         * Switches to next encoding in defined list.
+         */
+        void cycleEncodings();
+
+        /**
+         * Handles encodings popup menu.
+         *
+         * @param mouseEvent mouse event
+         */
+        void encodingsPopupEncodingsMenu(MouseEvent mouseEvent);
+
+        /**
+         * Requests change of memory mode.
+         *
+         * @param memoryMode memory mode
+         */
+        void changeMemoryMode(MemoryMode memoryMode);
     }
 }

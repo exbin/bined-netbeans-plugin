@@ -27,8 +27,8 @@ import javax.swing.JRadioButtonMenuItem;
 import org.exbin.bined.CodeType;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
-import org.exbin.framework.gui.action.gui.DropDownButton;
-import org.exbin.framework.gui.utils.LanguageUtils;
+import org.exbin.framework.action.gui.DropDownButton;
+import org.exbin.framework.utils.LanguageUtils;
 
 /**
  * Binary editor toolbar panel.
@@ -54,8 +54,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     private final ButtonGroup codeTypeButtonGroup;
     private DropDownButton codeTypeDropDown;
 
-//    private JSplitButton codeTypeButton;
-    public BinEdToolbarPanel(BinaryEditorPreferences preferences, ExtCodeArea codeArea, AbstractAction optionsAction) {
+    public BinEdToolbarPanel(BinaryEditorPreferences preferences, ExtCodeArea codeArea, AbstractAction optionsAction, AbstractAction onlineHelpAction) {
         this.preferences = preferences;
         this.codeArea = codeArea;
         this.optionsAction = optionsAction;
@@ -132,7 +131,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         JButton optionsButton = new JButton();
         optionsButton.setAction(optionsAction);
         optionsButton.setToolTipText("Options");
-        optionsButton.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/gui/options/resources/icons/Preferences16.gif")));
+        optionsButton.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/options/gui/resources/icons/Preferences16.gif")));
         controlToolBar.add(optionsButton);
 
         JButton onlineHelpButton = new JButton();

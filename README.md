@@ -35,6 +35,8 @@ You can either download and install gradle or use gradlew or gradlew.bat scripts
 
 Build command: "gradle build nbm"
 
+Current deployment version is built with Java 8 and Gradle 4.6. 
+
 License
 -------
 

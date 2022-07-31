@@ -38,11 +38,11 @@ import org.exbin.framework.bined.gui.BinaryMultilinePanel;
 import org.exbin.framework.bined.gui.InsertDataPanel;
 import org.exbin.framework.bined.operation.InsertDataOperation;
 import org.exbin.framework.bined.operation.ReplaceDataOperation;
-import org.exbin.framework.gui.utils.WindowUtils;
-import org.exbin.framework.gui.utils.WindowUtils.DialogWrapper;
-import org.exbin.framework.gui.utils.handler.DefaultControlHandler;
-import org.exbin.framework.gui.utils.handler.DefaultControlHandler.ControlActionType;
-import org.exbin.framework.gui.utils.gui.DefaultControlPanel;
+import org.exbin.framework.utils.WindowUtils;
+import org.exbin.framework.utils.WindowUtils.DialogWrapper;
+import org.exbin.framework.utils.handler.DefaultControlHandler;
+import org.exbin.framework.utils.handler.DefaultControlHandler.ControlActionType;
+import org.exbin.framework.utils.gui.DefaultControlPanel;
 
 /**
  * Insert data action.
@@ -76,7 +76,7 @@ public class InsertDataAction extends AbstractAction {
         DefaultControlPanel controlPanel = new DefaultControlPanel(insertDataPanel.getResourceBundle());
         JPanel dialogPanel = WindowUtils.createDialogPanel(insertDataPanel, controlPanel);
         final DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, (Component) event.getSource(), "", Dialog.ModalityType.APPLICATION_MODAL);
-        insertDataPanel.setControl(() -> {
+        insertDataPanel.setController(() -> {
             final BinaryMultilinePanel multilinePanel = new BinaryMultilinePanel();
             SearchCondition searchCondition = new SearchCondition();
             EditableBinaryData conditionData = new ByteArrayEditableData();
