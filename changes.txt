@@ -1,9 +1,11 @@
-0.2.3
+0.2.4
+
+0.2.3 (2022-08-13)
 - Added templates for profiles
 - Added insert data dialog
 - Added files compare dialog
 - Added edit selection action
-- Relaxed dependecies - e.g. plugin should work in VisualVM
+- Relaxed dependencies - e.g. plugin should work in VisualVM
 - Added link to online help/manual
 
 0.2.2 (2021-08-29)
