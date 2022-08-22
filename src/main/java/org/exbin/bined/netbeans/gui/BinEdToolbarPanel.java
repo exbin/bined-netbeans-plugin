@@ -118,14 +118,6 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         codeTypeDropDown = new DropDownButton(cycleCodeTypesAction, cycleCodeTypesPopupMenu);
         updateCycleButtonState();
         controlToolBar.add(codeTypeDropDown);
-//        codeTypeButton = new JSplitButton("HEX");
-//        codeTypeButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                throw new UnsupportedOperationException("Not supported yet.");
-//            }
-//        });
-//        controlToolBar.add(codeTypeButton);
 
         controlToolBar.addSeparator();
         JButton optionsButton = new JButton();
