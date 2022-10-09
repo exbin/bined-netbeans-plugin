@@ -96,7 +96,7 @@ public class DebugViewPanel extends javax.swing.JPanel {
         int selectedIndex = providerComboBox.getSelectedIndex();
         if (selectedProvider != selectedIndex) {
             selectedProvider = selectedIndex;
-            setData(providers.get(selectedProvider).getData());
+            setContentData(providers.get(selectedProvider).getData());
         }
     }//GEN-LAST:event_providerComboBoxItemStateChanged
 
@@ -106,14 +106,14 @@ public class DebugViewPanel extends javax.swing.JPanel {
 
     public void addProvider(DebugViewDataProvider provider) {
         if (providers.isEmpty()) {
-            setData(provider.getData());
+            setContentData(provider.getData());
         }
 
         providers.add(provider);
         providerComboBox.addItem(provider.getName());
     }
 
-    public void setData(BinaryData data) {
+    public void setContentData(BinaryData data) {
         componentPanel.setContentData(data);
     }
 }

@@ -43,7 +43,9 @@ import org.exbin.framework.bined.SearchParameters;
 import org.exbin.framework.utils.ActionUtils;
 import org.exbin.auxiliary.paged_data.BinaryData;
 import org.exbin.auxiliary.paged_data.EditableBinaryData;
+import org.exbin.bined.CharsetStreamTranslator;
 import org.exbin.bined.CodeAreaUtils;
+import org.exbin.bined.swing.CodeAreaSwingUtils;
 
 /**
  * Search action.
@@ -208,8 +210,13 @@ public final class SearchAction implements ActionListener {
         List<ExtendedHighlightCodeAreaPainter.SearchMatch> foundMatches = new ArrayList<>();
 
         Charset charset = codeArea.getCharset();
-        CharsetEncoder encoder = charset.newEncoder();
-        int maxBytesPerChar = (int) encoder.maxBytesPerChar();
+        int maxBytesPerChar;
+        try {
+            CharsetEncoder encoder = charset.newEncoder();
+            maxBytesPerChar = (int) encoder.maxBytesPerChar();
+        } catch (UnsupportedOperationException ex) {
+            maxBytesPerChar = CharsetStreamTranslator.DEFAULT_MAX_BYTES_PER_CHAR;
+        }
         byte[] charData = new byte[maxBytesPerChar];
         long dataSize = codeArea.getDataSize();
         while (position <= dataSize - findText.length()) {
