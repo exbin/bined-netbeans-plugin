@@ -35,6 +35,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.auxiliary.paged_data.BinaryData;
+import org.exbin.auxiliary.paged_data.ByteArrayData;
 import org.exbin.auxiliary.paged_data.PagedData;
 import org.exbin.framework.bined.gui.CompareFilesPanel;
 import org.exbin.framework.utils.WindowUtils;
@@ -82,7 +83,7 @@ public class CompareFilesAction extends AbstractAction {
                     return null;
                 }
 
-                try (FileInputStream stream = new FileInputStream(result[0])) {
+                try ( FileInputStream stream = new FileInputStream(result[0])) {
                     PagedData pagedData = new PagedData();
                     pagedData.loadFromStream(stream);
                     return new CompareFilesPanel.FileRecord(result[0].getAbsolutePath(), pagedData);
@@ -95,7 +96,8 @@ public class CompareFilesAction extends AbstractAction {
             @Nonnull
             @Override
             public BinaryData getFileData(int index) {
-                return codeArea.getContentData();
+                BinaryData contentData = codeArea.getContentData();
+                return contentData != null ? contentData : new ByteArrayData();
             }
         });
         compareFilesPanel.setAvailableFiles(availableFiles);

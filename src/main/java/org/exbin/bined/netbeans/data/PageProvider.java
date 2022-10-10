@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
  * @version 0.2.6 2022/05/16
  */
 public interface PageProvider {
+
     @Nonnull
     byte[] getPage(long pageIndex);
 

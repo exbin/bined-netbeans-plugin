@@ -22,6 +22,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -106,18 +109,22 @@ public class BinEdFile implements BinEdComponentFileApi {
         return componentPanel.releaseFile();
     }
 
+    @Nonnull
     public JPanel getPanel() {
         return componentPanel;
     }
-    
+
+    @Nonnull
     public InstanceContent getContent() {
         return content;
     }
 
+    @Nonnull
     public UndoRedo.Manager getUndoRedo() {
         return undoRedo;
     }
 
+    @Nonnull
     public static synchronized SegmentsRepository getSegmentsRepository() {
         if (segmentsRepository == null) {
             segmentsRepository = new SegmentsRepository();
@@ -139,13 +146,13 @@ public class BinEdFile implements BinEdComponentFileApi {
                     openDocument(stream, editable);
                 }
             } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
+                Logger.getLogger(BinEdFile.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
                 if (stream != null) {
                     try {
                         stream.close();
                     } catch (IOException ex) {
-                        Exceptions.printStackTrace(ex);
+                        Logger.getLogger(BinEdFile.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
@@ -155,7 +162,7 @@ public class BinEdFile implements BinEdComponentFileApi {
                 File file = Utilities.toFile(fileUri);
                 openDocument(file, editable);
             } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
+                Logger.getLogger(BinEdFile.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -173,7 +180,7 @@ public class BinEdFile implements BinEdComponentFileApi {
                 oldData.dispose();
             }
         } else {
-            try (FileInputStream fileStream = new FileInputStream(file)) {
+            try ( FileInputStream fileStream = new FileInputStream(file)) {
                 BinaryData data = codeArea.getContentData();
                 if (!(data instanceof PagedData)) {
                     data = new PagedData();
@@ -204,7 +211,7 @@ public class BinEdFile implements BinEdComponentFileApi {
             try {
                 segmentsRepository.saveDocument((DeltaDocument) data);
             } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
+                Logger.getLogger(BinEdFile.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
             OutputStream stream;
@@ -217,14 +224,14 @@ public class BinEdFile implements BinEdComponentFileApi {
                     }
                     stream.flush();
                 } catch (IOException ex) {
-                    Exceptions.printStackTrace(ex);
+                    Logger.getLogger(BinEdFile.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
                     if (stream != null) {
                         stream.close();
                     }
                 }
             } catch (IOException ex) {
-                Exceptions.printStackTrace(ex);
+                Logger.getLogger(BinEdFile.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
@@ -251,7 +258,7 @@ public class BinEdFile implements BinEdComponentFileApi {
         if (dataObject == null) {
             return;
         }
-        
+
         saveFile();
     }
 
@@ -293,7 +300,7 @@ public class BinEdFile implements BinEdComponentFileApi {
                     }
                     componentPanel.setContentData(document);
                 }
-                
+
                 componentPanel.getUndoHandler().clear();
                 componentPanel.setFileHandlingMode(newHandlingMode);
             }

@@ -96,7 +96,7 @@ public interface BinaryStatusApi {
         }
 
         @Nullable
-        public static MemoryMode findByPreferencesValue(String matchValue) {
+        public static MemoryMode findByPreferencesValue(@Nonnull String matchValue) {
             for (MemoryMode value : values()) {
                 if (value.getPreferencesValue().equals(matchValue)) {
                     return value;

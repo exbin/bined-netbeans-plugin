@@ -187,6 +187,7 @@ public class DebugViewData implements BinaryData {
         throw new UnsupportedOperationException("Save to stream is not supported");
     }
 
+    @Nonnull
     @Override
     public InputStream getDataInputStream() {
         throw new UnsupportedOperationException("Data input stream is not supported");

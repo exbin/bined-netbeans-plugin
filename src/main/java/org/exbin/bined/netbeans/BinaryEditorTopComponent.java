@@ -19,6 +19,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
@@ -31,7 +33,6 @@ import org.netbeans.core.spi.multiview.MultiViewElementCallback;
 import org.openide.awt.UndoRedo;
 import org.openide.loaders.DataObject;
 import org.openide.nodes.Node;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
@@ -140,7 +141,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                     setHtmlDisplayName(htmlDisplayName);
                 });
             } catch (InterruptedException | InvocationTargetException ex) {
-                Exceptions.printStackTrace(ex);
+                Logger.getLogger(BinaryEditorTopComponent.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

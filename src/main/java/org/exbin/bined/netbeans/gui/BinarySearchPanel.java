@@ -765,7 +765,7 @@ public class BinarySearchPanel extends javax.swing.JPanel {
         switch (searchCondition.getSearchMode()) {
             case TEXT: {
                 String searchText = searchCondition.getSearchText();
-                if (searchText == null || searchText.isEmpty()) {
+                if (searchText.isEmpty()) {
                     condition.setSearchText(searchText);
                     performFind();
                     return;

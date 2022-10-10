@@ -347,14 +347,15 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
      * @return true if successful
      */
     public boolean releaseFile() {
-        if (fileApi == null)
+        if (fileApi == null) {
             return true;
+        }
 
         while (isModified() && fileApi.isSaveSupported()) {
             Object[] options = {
-                    "Save",
-                    "Discard",
-                    "Cancel"
+                "Save",
+                "Discard",
+                "Cancel"
             };
             int result = JOptionPane.showOptionDialog(this,
                     "Document was modified! Do you wish to save it?",
@@ -378,7 +379,9 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
     private void saveDocument() {
         fileApi.saveDocument();
 
-        undoHandler.setSyncPoint();
+        if (undoHandler != null) {
+            undoHandler.setSyncPoint();
+        }
         notifyModified();
         documentOriginalSize = codeArea.getDataSize();
         updateCurrentDocumentSize();
@@ -419,7 +422,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         if (modifiedChangeListener != null) {
             modifiedChangeListener.modifiedChanged();
         }
-        
+
 //        toolbarPanel.updateModified(isModified());
     }
 
@@ -925,6 +928,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         updateCurrentMemoryMode();
     }
 
+    @Nullable
     public BinaryDataUndoHandler getUndoHandler() {
         return undoHandler;
     }

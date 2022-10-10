@@ -1,4 +1,7 @@
 0.2.4
+- Added API: view binary data
+- Fixed optional dependency on debug (issue #15)
+- Fixed context menu "open as binary" registration (issue #15)
 
 0.2.3 (2022-08-13)
 - Added templates for profiles

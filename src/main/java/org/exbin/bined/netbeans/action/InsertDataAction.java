@@ -55,7 +55,6 @@ public class InsertDataAction extends AbstractAction {
 
     private final ExtCodeArea codeArea;
     private BinaryDataUndoHandler undoHandler;
-    private JComponent component;
 
     public InsertDataAction(ExtCodeArea codeArea) {
         this.codeArea = codeArea;
@@ -63,10 +62,6 @@ public class InsertDataAction extends AbstractAction {
 
     public void setUndoHandler(BinaryDataUndoHandler undoHandler) {
         this.undoHandler = undoHandler;
-    }
-    
-    public void setComponent(JComponent component) {
-        this.component = component;
     }
 
     @Override

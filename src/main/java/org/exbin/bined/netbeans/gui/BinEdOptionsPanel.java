@@ -757,6 +757,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
         ColorProfilesPanel.ColorProfile profile;
     }
 
+    @ParametersAreNonnullByDefault
     private static class CategoryItem {
 
         String categoryName;

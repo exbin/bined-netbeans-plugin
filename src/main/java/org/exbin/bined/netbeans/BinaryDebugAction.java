@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JPanel;
@@ -325,6 +326,7 @@ public final class BinaryDebugAction implements ActionListener {
         openComponent(viewName, false).requestVisible();
     }
 
+    @Nonnull
     static TopComponent openComponent(String viewName, boolean activate) {
         TopComponent view = WindowManager.getDefault().findTopComponent(viewName);
         if (view == null) {

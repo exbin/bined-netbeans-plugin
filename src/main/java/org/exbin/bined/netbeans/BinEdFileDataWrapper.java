@@ -18,6 +18,8 @@ package org.exbin.bined.netbeans;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.auxiliary.paged_data.BinaryData;
@@ -435,8 +437,8 @@ public class BinEdFileDataWrapper implements EditableBinaryData {
         if (cacheInputStream != null) {
             try {
                 cacheInputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ex) {
+                Logger.getLogger(BinEdFileDataWrapper.class.getName()).log(Level.SEVERE, null, ex);
             }
             cacheInputStream = null;
         }

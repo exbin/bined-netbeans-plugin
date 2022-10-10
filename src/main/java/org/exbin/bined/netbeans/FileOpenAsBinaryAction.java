@@ -17,6 +17,8 @@ package org.exbin.bined.netbeans;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JFileChooser;
 import org.openide.awt.ActionID;
@@ -26,7 +28,6 @@ import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectNotFoundException;
-import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.openide.windows.Mode;
 import org.openide.windows.WindowManager;
@@ -70,7 +71,7 @@ public final class FileOpenAsBinaryAction implements ActionListener {
                 editorComponent.open();
                 editorComponent.requestActive();
             } catch (DataObjectNotFoundException ex) {
-                Exceptions.printStackTrace(ex);
+                Logger.getLogger(FileOpenAsBinaryAction.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

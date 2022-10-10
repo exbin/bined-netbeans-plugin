@@ -17,6 +17,8 @@ package org.exbin.bined.netbeans;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.event.UndoableEditEvent;
@@ -29,7 +31,6 @@ import org.exbin.bined.operation.undo.BinaryDataUndoHandler;
 import org.exbin.bined.operation.undo.BinaryDataUndoUpdateListener;
 import org.exbin.bined.swing.CodeAreaCore;
 import org.openide.awt.UndoRedo;
-import org.openide.util.Exceptions;
 
 /**
  * Undo handler for binary editor using AWT undo.
@@ -89,7 +90,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoHandler {
                 try {
                     command.undo();
                 } catch (BinaryDataOperationException ex) {
-                    Exceptions.printStackTrace(ex);
+                    Logger.getLogger(BinaryUndoSwingHandler.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 undoUpdated();
             }
@@ -105,7 +106,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoHandler {
                 try {
                     command.redo();
                 } catch (BinaryDataOperationException ex) {
-                    Exceptions.printStackTrace(ex);
+                    Logger.getLogger(BinaryUndoSwingHandler.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 undoUpdated();
             }

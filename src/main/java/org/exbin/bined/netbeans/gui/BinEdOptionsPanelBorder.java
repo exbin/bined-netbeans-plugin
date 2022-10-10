@@ -15,6 +15,7 @@
  */
 package org.exbin.bined.netbeans.gui;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
@@ -52,6 +53,7 @@ public class BinEdOptionsPanelBorder extends javax.swing.JPanel {
     private org.exbin.bined.netbeans.gui.BinEdOptionsPanel optionsPanel;
     // End of variables declaration//GEN-END:variables
 
+    @Nonnull
     public BinEdOptionsPanel getOptionsPanel() {
         return optionsPanel;
     }

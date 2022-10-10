@@ -45,7 +45,6 @@ import org.exbin.auxiliary.paged_data.BinaryData;
 import org.exbin.auxiliary.paged_data.EditableBinaryData;
 import org.exbin.bined.CharsetStreamTranslator;
 import org.exbin.bined.CodeAreaUtils;
-import org.exbin.bined.swing.CodeAreaSwingUtils;
 
 /**
  * Search action.
