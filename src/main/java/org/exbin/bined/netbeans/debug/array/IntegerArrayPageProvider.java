@@ -17,6 +17,7 @@ package org.exbin.bined.netbeans.debug.array;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import org.exbin.bined.netbeans.data.PageProvider;
 import org.exbin.bined.netbeans.debug.DebugViewData;
 import org.netbeans.api.debugger.jpda.Field;
 import org.netbeans.api.debugger.jpda.ObjectVariable;
@@ -28,7 +29,7 @@ import org.netbeans.api.debugger.jpda.ObjectVariable;
  * @version 0.2.1 2019/09/03
  */
 @ParametersAreNonnullByDefault
-public class IntegerArrayPageProvider implements DebugViewData.PageProvider {
+public class IntegerArrayPageProvider implements PageProvider {
 
     private final ObjectVariable arrayRef;
 
@@ -49,7 +50,7 @@ public class IntegerArrayPageProvider implements DebugViewData.PageProvider {
         byte[] result = new byte[length * 4];
         for (int i = 0; i < values.length; i++) {
             Field rawValue = values[i];
-            int value = Integer.valueOf(rawValue.getValue());
+            int value = Integer.parseInt(rawValue.getValue());
 
             result[i * 4] = (byte) (value >> 24);
             result[i * 4 + 1] = (byte) ((value >> 16) & 0xff);

@@ -18,6 +18,7 @@ package org.exbin.bined.netbeans.debug.array;
 import java.nio.ByteBuffer;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import org.exbin.bined.netbeans.data.PageProvider;
 import org.exbin.bined.netbeans.debug.DebugViewData;
 import org.netbeans.api.debugger.jpda.Field;
 import org.netbeans.api.debugger.jpda.ObjectVariable;
@@ -30,7 +31,7 @@ import org.netbeans.api.debugger.jpda.ObjectVariable;
  * @version 0.2.1 2019/09/04
  */
 @ParametersAreNonnullByDefault
-public class FloatArrayPageProvider implements DebugViewData.PageProvider {
+public class FloatArrayPageProvider implements PageProvider {
 
     private final byte[] valuesCache = new byte[4];
     private final ByteBuffer byteBuffer = ByteBuffer.wrap(valuesCache);
@@ -54,7 +55,7 @@ public class FloatArrayPageProvider implements DebugViewData.PageProvider {
         byte[] result = new byte[length * 4];
         for (int i = 0; i < values.length; i++) {
             Field rawValue = values[i];
-            float value = Float.valueOf(rawValue.getValue());
+            float value = Float.parseFloat(rawValue.getValue());
 
             byteBuffer.rewind();
             byteBuffer.putFloat(value);

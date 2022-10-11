@@ -42,7 +42,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <nb.release.version>RELEASE82</nb.release.version>
-        <keystore>${project.build.outputDirectory}/private/keystore</keystore>
+        <keystore>${pom.basedir}/private/keystore</keystore>
         <exbin.bined.version>0.2.1-SNAPSHOT</exbin.bined.version>
         <exbin.pageddata.version>0.2.1-SNAPSHOT</exbin.pageddata.version>
     </properties>
@@ -520,7 +520,7 @@
                             <keystore>${keystore}</keystore>
                             <storepass>${project.artifactId}</storepass>
                             <keypass>${project.artifactId}</keypass>
-                            <alias>${project.artifactId}</alias>
+                            <alias>deltahex</alias>
                             <dname>CN=Miroslav Hajda, OU=ExBin Project, O=ExBin Project, L=Zdechov, ST=Czech Republic, C=cz</dname>
                             <sigalg>SHA1withDSA</sigalg>
                             <ext />

@@ -17,6 +17,7 @@ package org.exbin.bined.netbeans.debug.array;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import org.exbin.bined.netbeans.data.PageProvider;
 import org.exbin.bined.netbeans.debug.DebugViewData;
 
 import org.netbeans.api.debugger.jpda.Field;
@@ -29,7 +30,7 @@ import org.netbeans.api.debugger.jpda.ObjectVariable;
  * @version 0.2.2 2020/01/18
  */
 @ParametersAreNonnullByDefault
-public class BooleanArrayPageProvider implements DebugViewData.PageProvider {
+public class BooleanArrayPageProvider implements PageProvider {
 
     private final ObjectVariable arrayRef;
 
@@ -52,7 +53,7 @@ public class BooleanArrayPageProvider implements DebugViewData.PageProvider {
         int bytePos = 0;
         for (int i = 0; i < values.length; i++) {
             Field rawValue = values[i];
-            boolean value = Boolean.valueOf(rawValue.getValue());
+            boolean value = Boolean.parseBoolean(rawValue.getValue());
 //            if (rawValue instanceof ObjectVariable) {
 //                rawValue = ((ObjectVariable) rawValue).getFields(0, 0)[0];
 //            }

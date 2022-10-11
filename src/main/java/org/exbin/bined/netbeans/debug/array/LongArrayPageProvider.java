@@ -18,6 +18,7 @@ package org.exbin.bined.netbeans.debug.array;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import org.exbin.bined.netbeans.data.PageProvider;
 import org.exbin.bined.netbeans.debug.DebugViewData;
 import org.exbin.framework.bined.gui.ValuesPanel;
 import org.netbeans.api.debugger.jpda.Field;
@@ -30,7 +31,7 @@ import org.netbeans.api.debugger.jpda.ObjectVariable;
  * @version 0.2.1 2019/09/04
  */
 @ParametersAreNonnullByDefault
-public class LongArrayPageProvider implements DebugViewData.PageProvider {
+public class LongArrayPageProvider implements PageProvider {
 
     private final ObjectVariable arrayRef;
 
@@ -51,7 +52,7 @@ public class LongArrayPageProvider implements DebugViewData.PageProvider {
         byte[] result = new byte[length * 8];
         for (int i = 0; i < values.length; i++) {
             Field rawValue = values[i];
-            long value = Long.valueOf(rawValue.getValue());
+            long value = Long.parseLong(rawValue.getValue());
 
             BigInteger bigInteger = BigInteger.valueOf(value);
             for (int bit = 0; bit < 7; bit++) {

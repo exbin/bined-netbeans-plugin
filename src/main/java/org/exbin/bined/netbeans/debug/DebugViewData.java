@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import org.exbin.bined.netbeans.data.PageProvider;
 
 /**
  * Debugger value dual page data source.
@@ -196,13 +197,6 @@ public class DebugViewData implements BinaryData {
     @Override
     public void dispose() {
 
-    }
-
-    public interface PageProvider {
-
-        byte[] getPage(long pageIndex);
-
-        long getDocumentSize();
     }
 
     private class CachePage {

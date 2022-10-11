@@ -17,6 +17,7 @@ package org.exbin.bined.netbeans.debug.array;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import org.exbin.bined.netbeans.data.PageProvider;
 import org.exbin.bined.netbeans.debug.DebugViewData;
 import org.netbeans.api.debugger.jpda.Field;
 import org.netbeans.api.debugger.jpda.ObjectVariable;
@@ -28,7 +29,7 @@ import org.netbeans.api.debugger.jpda.ObjectVariable;
  * @version 0.2.1 2019/09/04
  */
 @ParametersAreNonnullByDefault
-public class ShortArrayPageProvider implements DebugViewData.PageProvider {
+public class ShortArrayPageProvider implements PageProvider {
 
     private final ObjectVariable arrayRef;
 
@@ -49,7 +50,7 @@ public class ShortArrayPageProvider implements DebugViewData.PageProvider {
         byte[] result = new byte[length * 2];
         for (int i = 0; i < values.length; i++) {
             Field rawValue = values[i];
-            short value = Short.valueOf(rawValue.getValue());
+            short value = Short.parseShort(rawValue.getValue());
             result[i * 2] = (byte) (value >> 8);
             result[i * 2 + 1] = (byte) (value & 0xff);
         }

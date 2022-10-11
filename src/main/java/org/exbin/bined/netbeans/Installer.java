@@ -32,6 +32,7 @@ import org.openide.windows.WindowManager;
 @ParametersAreNonnullByDefault
 public class Installer extends ModuleInstall {
 
+    private static final String OPEN_AS_BINARY_ACTION_INSTANCE = "Actions/File/org-exbin-bined-OpenAsBinaryAction.instance";
     private static final String OPEN_AS_BINARY_ACTION_STRING = "org-exbin-bined-OpenAsBinaryAction.shadow";
     private static final String OPENIDE_OPEN_ACTION_STRING = "org-openide-actions-OpenAction.shadow";
     private static final String OPEN_ACTION_STRING = "OpenAction.shadow";
@@ -40,11 +41,10 @@ public class Installer extends ModuleInstall {
     private static final String ORIGINAL_FILE_ATTRIBUTE = "originalFile";
     private static final String ACTIONS_FOLDER = "Actions";
     private static final String LOADERS_FOLDER = "Loaders";
+    private static final String DYNAMIC_FILETYPE_PREFIX = "-nb";
 
     @Override
     public void restored() {
-        // Drop legacy action registration
-//        WindowManager.getDefault().invokeWhenUIReady(new ActionLegacyUninstaller());
         WindowManager.getDefault().invokeWhenUIReady(new ActionInstaller());
     }
 
@@ -87,6 +87,36 @@ public class Installer extends ModuleInstall {
         protected void handleFileType(FileObject fileType) {
             if (fileType.isFolder()) {
                 try {
+                    String fileTypeName = fileType.getName();
+                    // It seems that NetBeans registers types with -nb postfix for dynamically loaded plugins
+                    if (fileTypeName.endsWith(DYNAMIC_FILETYPE_PREFIX)) {
+                        // Drop legacy action registration
+                        FileObject fileTypeFolder = fileType.getParent().getFileObject(fileTypeName);
+                        if (fileTypeFolder != null) {
+                            final FileObject actionsFolder = fileTypeFolder.getFileObject(ACTIONS_FOLDER);
+                            if (actionsFolder != null) {
+                                final FileObject openAsBinaryAction = actionsFolder.getFileObject(OPEN_AS_BINARY_ACTION_STRING);
+                                if (openAsBinaryAction != null) {
+                                    openAsBinaryAction.delete();
+                                    actionsFolder.refresh();
+                                }
+                                boolean hasAttributes = actionsFolder.getAttributes().hasMoreElements();
+                                boolean hasChildren = actionsFolder.getChildren().length > 0;
+                                if (!hasAttributes && !hasChildren) {
+                                    actionsFolder.delete();
+                                }
+                            }
+
+                            boolean hasAttributes = fileTypeFolder.getAttributes().hasMoreElements();
+                            boolean hasChildren = fileTypeFolder.getChildren().length > 0;
+                            if (!hasAttributes && !hasChildren) {
+                                fileTypeFolder.delete();
+                            }
+                        }
+
+                        fileType = FileUtil.createFolder(fileType.getParent(), fileTypeName.substring(0, fileTypeName.length() - 3));
+                    }
+
                     FileObject actionsFolder = fileType.getFileObject(ACTIONS_FOLDER);
                     if (actionsFolder == null) {
                         actionsFolder = FileUtil.createFolder(fileType, ACTIONS_FOLDER);
@@ -131,7 +161,7 @@ public class Installer extends ModuleInstall {
                     final FileObject openAsBinaryAction = actionsFolder.getFileObject(OPEN_AS_BINARY_ACTION_STRING);
                     if (openAsBinaryAction == null) {
                         final FileObject action = actionsFolder.createData(OPEN_AS_BINARY_ACTION_STRING);
-                        action.setAttribute(ORIGINAL_FILE_ATTRIBUTE, "Actions/File/org-exbin-bined-OpenAsBinaryAction.instance");
+                        action.setAttribute(ORIGINAL_FILE_ATTRIBUTE, OPEN_AS_BINARY_ACTION_INSTANCE);
                         action.setAttribute(POSITION_ATTRIBUTE, actionPosition);
                     } else {
                         openAsBinaryAction.setAttribute(POSITION_ATTRIBUTE, actionPosition);
@@ -153,41 +183,36 @@ public class Installer extends ModuleInstall {
         protected void handleFileType(FileObject fileType) {
             if (fileType.isFolder()) {
                 try {
-                    final FileObject actionsFolder = FileUtil.createFolder(fileType, ACTIONS_FOLDER);
-                    final FileObject openAsBinaryAction = actionsFolder.getFileObject(OPEN_AS_BINARY_ACTION_STRING);
-                    if (openAsBinaryAction != null) {
-                        openAsBinaryAction.delete();
+                    String fileTypeName = fileType.getName();
+                    if (fileTypeName.endsWith(DYNAMIC_FILETYPE_PREFIX)) {
+                        fileTypeName = fileTypeName.substring(0, fileTypeName.length() - 3);
                     }
-                } catch (IOException ex) {
-                    Logger.getLogger(ActionUninstaller.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-    }
 
-    /**
-     * Drops all legacy references to the 'Open As Binary' action.
-     */
-    @ParametersAreNonnullByDefault
-    private static final class ActionLegacyUninstaller extends FileTypeHandler {
+                    FileObject fileTypeFolder = fileType.getParent().getFileObject(fileTypeName);
+                    if (fileTypeFolder != null) {
+                        final FileObject actionsFolder = fileTypeFolder.getFileObject(ACTIONS_FOLDER);
+                        if (actionsFolder != null) {
+                            final FileObject openAsBinaryAction = actionsFolder.getFileObject(OPEN_AS_BINARY_ACTION_STRING);
+                            if (openAsBinaryAction != null) {
+                                openAsBinaryAction.delete();
+                                actionsFolder.refresh();
 
-        @Override
-        protected void handleFileType(FileObject fileType) {
-            if (fileType.isFolder()) {
-                try {
-                    final FileObject actionsFolder = FileUtil.createFolder(fileType, ACTIONS_FOLDER);
-                    final FileObject openAsBinaryAction = actionsFolder.getFileObject(OPEN_AS_BINARY_ACTION_STRING);
-                    if (openAsBinaryAction != null) {
-                        openAsBinaryAction.delete();
-                        actionsFolder.refresh();
-                        boolean hasAttributes = actionsFolder.getAttributes().hasMoreElements();
-                        boolean hasChildren = actionsFolder.getChildren().length > 0;
-                        if (!hasAttributes && !hasChildren) {
-                            actionsFolder.delete();
+                                boolean hasAttributes = actionsFolder.getAttributes().hasMoreElements();
+                                boolean hasChildren = actionsFolder.getChildren().length > 0;
+                                if (!hasAttributes && !hasChildren) {
+                                    actionsFolder.delete();
+                                }
+
+                                hasAttributes = fileTypeFolder.getAttributes().hasMoreElements();
+                                hasChildren = fileTypeFolder.getChildren().length > 0;
+                                if (!hasAttributes && !hasChildren) {
+                                    fileTypeFolder.delete();
+                                }
+                            }
                         }
                     }
                 } catch (IOException ex) {
-                    Logger.getLogger(ActionLegacyUninstaller.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ActionUninstaller.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }

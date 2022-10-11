@@ -155,7 +155,7 @@ public final class BinaryDebugAction implements ActionListener {
 //                        fallback = false;
 //                        debugViewPanel.setData(data);
 //                    }
-//                }
+//                }  
             }
         }
 
@@ -196,20 +196,20 @@ public final class BinaryDebugAction implements ActionListener {
         switch (variableType) {
             case "byte": {
                 byte[] byteArray = new byte[1];
-                byte value = Byte.valueOf(variableValue);
+                byte value = Byte.parseByte(variableValue);
                 byteArray[0] = value;
                 return new ByteArrayData(byteArray);
             }
             case "short": {
                 byte[] byteArray = new byte[2];
-                short value = Short.valueOf(variableValue);
+                short value = Short.parseShort(variableValue);
                 byteArray[0] = (byte) (value >> 8);
                 byteArray[1] = (byte) (value & 0xff);
                 return new ByteArrayData(byteArray);
             }
             case "int": {
                 byte[] byteArray = new byte[4];
-                int value = Integer.valueOf(variableValue);
+                int value = Integer.parseInt(variableValue);
                 byteArray[0] = (byte) (value >> 24);
                 byteArray[1] = (byte) ((value >> 16) & 0xff);
                 byteArray[2] = (byte) ((value >> 8) & 0xff);
@@ -218,7 +218,7 @@ public final class BinaryDebugAction implements ActionListener {
             }
             case "long": {
                 byte[] byteArray = new byte[8];
-                long value = Long.valueOf(variableValue);
+                long value = Long.parseLong(variableValue);
                 BigInteger bigInteger = BigInteger.valueOf(value);
                 for (int bit = 0; bit < 7; bit++) {
                     BigInteger nextByte = bigInteger.and(ValuesPanel.BIG_INTEGER_BYTE_MASK);
@@ -229,7 +229,7 @@ public final class BinaryDebugAction implements ActionListener {
             }
             case "float": {
                 byte[] byteArray = new byte[4];
-                float value = Float.valueOf(variableValue);
+                float value = Float.parseFloat(variableValue);
                 byteBuffer.rewind();
                 byteBuffer.putFloat(value);
                 System.arraycopy(valuesCache, 0, byteArray, 0, 4);
@@ -237,7 +237,7 @@ public final class BinaryDebugAction implements ActionListener {
             }
             case "double": {
                 byte[] byteArray = new byte[8];
-                double value = Double.valueOf(variableValue);
+                double value = Double.parseDouble(variableValue);
                 byteBuffer.rewind();
                 byteBuffer.putDouble(value);
                 System.arraycopy(valuesCache, 0, byteArray, 0, 8);
