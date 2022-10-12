@@ -1,6 +1,6 @@
-0.2.4
+0.2.4 (2022-10-12)
 - Added API: view binary data
-- Fixed optional dependency on debug (issue #15)
+- Fixed invalid dependency on debugging module (issue #15)
 - Fixed context menu "open as binary" registration (issue #15)
 
 0.2.3 (2022-08-13)
