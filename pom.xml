@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.exbin.bined.netbeans</groupId>
     <artifactId>bined-netbeans-plugin</artifactId>
-    <version>0.2.4</version>
+    <version>0.2.5-SNAPSHOT</version>
     <packaging>nbm</packaging>
 
     <name>BinEd NetBeans Plugin</name>
