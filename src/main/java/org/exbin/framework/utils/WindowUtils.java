@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -63,8 +63,7 @@ import org.openide.DialogDisplayer;
 /**
  * Utility static methods usable for windows and dialogs.
  *
- * @version 0.2.1 2019/07/14
- * @author ExBin Project (http://exbin.org)
+ * @author ExBin Project (https://exbin.org)
  */
 @ParametersAreNonnullByDefault
 public class WindowUtils {
@@ -421,7 +420,7 @@ public class WindowUtils {
             if (window instanceof Frame) {
                 ((Frame) window).setExtendedState(Frame.MAXIMIZED_BOTH);
             } else {
-                // TODO if (window instanceof JDialog) 
+                // TODO if (window instanceof JDialog)
             }
         } else {
             window.setBounds((int) absoluteX, (int) absoluteY, (int) widthX, (int) widthY);
@@ -460,7 +459,7 @@ public class WindowUtils {
             super(new BorderLayout());
             this.okCancelService = okCancelService;
         }
-        
+
         @Nullable
         @Override
         public JButton getDefaultButton() {
