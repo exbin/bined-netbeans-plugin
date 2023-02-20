@@ -20,7 +20,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JButton;
 import org.exbin.framework.utils.LanguageUtils;
 import org.exbin.framework.utils.OkCancelListener;
-import org.exbin.framework.utils.WindowUtils;
+import org.exbin.framework.utils.UiUtils;
 import org.exbin.framework.utils.handler.CloseControlHandler;
 
 /**
@@ -108,7 +108,7 @@ public class CloseControlPanel extends javax.swing.JPanel implements CloseContro
 
     @Override
     public void performCloseClick() {
-        WindowUtils.doButtonClick(closeButton);
+        UiUtils.doButtonClick(closeButton);
     }
 
     @Nonnull

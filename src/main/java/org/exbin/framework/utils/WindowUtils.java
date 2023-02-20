@@ -16,7 +16,6 @@
 package org.exbin.framework.utils;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;
@@ -45,14 +44,12 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.JTextComponent;
 import org.exbin.framework.utils.handler.OkCancelService;
@@ -71,7 +68,6 @@ public class WindowUtils {
     public static final String ESC_CANCEL_KEY = "esc-cancel";
     public static final String ENTER_OK_KEY = "enter-ok";
 
-    private static final int BUTTON_CLICK_TIME = 150;
     private static LookAndFeel lookAndFeel = null;
 
     private WindowUtils() {
@@ -95,7 +91,7 @@ public class WindowUtils {
         if (window instanceof WindowHeaderPanel.WindowHeaderDecorationProvider) {
             ((WindowHeaderPanel.WindowHeaderDecorationProvider) window).setHeaderDecoration(headerPanel);
         } else {
-            Frame frame = getFrame(window);
+            Frame frame = UiUtils.getFrame(window);
             if (frame instanceof WindowHeaderPanel.WindowHeaderDecorationProvider) {
                 ((WindowHeaderPanel.WindowHeaderDecorationProvider) frame).setHeaderDecoration(headerPanel);
             }
@@ -194,7 +190,8 @@ public class WindowUtils {
         JDialog dialog = new JDialog();
         Dimension size = component.getPreferredSize();
         dialog.add(component);
-        dialog.setSize(size.width + 8, size.height + 24);
+        dialog.getContentPane().setPreferredSize(new Dimension(size.width, size.height));
+        dialog.pack();
         if (component instanceof OkCancelService) {
             assignGlobalKeyListener(dialog, ((OkCancelService) component).getOkCancelListener());
         }
@@ -214,16 +211,6 @@ public class WindowUtils {
         WindowUtils.lookAndFeel = lookAndFeel;
     }
 
-    public static boolean isDarkUI() {
-        Color backgroundColor = UIManager.getColor("TextArea.background");
-        if (backgroundColor == null) {
-            return false;
-        }
-
-        int medium = (backgroundColor.getRed() + backgroundColor.getBlue() + backgroundColor.getGreen()) / 3;
-        return medium < 96;
-    }
-
     public static void closeWindow(Window window) {
         window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
     }
@@ -234,24 +221,6 @@ public class WindowUtils {
         dialog.setSize(640, 480);
         dialog.setLocationByPlatform(true);
         return dialog;
-    }
-
-    /**
-     * Finds frame component for given component.
-     *
-     * @param component instantiated component
-     * @return frame instance if found
-     */
-    @Nullable
-    public static Frame getFrame(Component component) {
-        Window parentComponent = SwingUtilities.getWindowAncestor(component);
-        while (!(parentComponent == null || parentComponent instanceof Frame)) {
-            parentComponent = SwingUtilities.getWindowAncestor(parentComponent);
-        }
-        if (parentComponent == null) {
-            parentComponent = JOptionPane.getRootFrame();
-        }
-        return (Frame) parentComponent;
     }
 
     @Nullable
@@ -280,12 +249,12 @@ public class WindowUtils {
         assignGlobalKeyListener(component, new OkCancelListener() {
             @Override
             public void okEvent() {
-                doButtonClick(okButton);
+                UiUtils.doButtonClick(okButton);
             }
 
             @Override
             public void cancelEvent() {
-                doButtonClick(cancelButton);
+                UiUtils.doButtonClick(cancelButton);
             }
         });
     }
@@ -348,15 +317,6 @@ public class WindowUtils {
                 }
             }
         });
-    }
-
-    /**
-     * Performs visually visible click on the button component.
-     *
-     * @param button button component
-     */
-    public static void doButtonClick(JButton button) {
-        button.doClick(BUTTON_CLICK_TIME);
     }
 
     @Nonnull

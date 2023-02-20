@@ -33,6 +33,7 @@ import javax.swing.table.DefaultTableModel;
 import org.exbin.framework.utils.BareBonesBrowserLaunch;
 import org.exbin.framework.utils.LanguageUtils;
 import org.exbin.framework.utils.WindowUtils;
+import org.exbin.framework.utils.UiUtils;
 
 /**
  * About application panel.
@@ -52,7 +53,7 @@ public class AboutPanel extends javax.swing.JPanel implements HyperlinkListener 
     }
 
     private void init() {
-        darkMode = WindowUtils.isDarkUI();
+        darkMode = UiUtils.isDarkUI();
         if (darkMode) {
             aboutHeaderPanel.setBackground(Color.BLACK);
             appTitleLabel.setForeground(Color.WHITE);

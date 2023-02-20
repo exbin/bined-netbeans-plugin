@@ -20,7 +20,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JButton;
 import org.exbin.framework.utils.LanguageUtils;
 import org.exbin.framework.utils.OkCancelListener;
-import org.exbin.framework.utils.WindowUtils;
+import org.exbin.framework.utils.UiUtils;
 import org.exbin.framework.utils.handler.OptionsControlHandler;
 
 /**
@@ -147,15 +147,15 @@ public class OptionsControlPanel extends javax.swing.JPanel implements OptionsCo
     public void performClick(OptionsControlHandler.ControlActionType actionType) {
         switch (actionType) {
             case SAVE: {
-                WindowUtils.doButtonClick(saveButton);
+                UiUtils.doButtonClick(saveButton);
                 break;
             }
             case APPLY_ONCE: {
-                WindowUtils.doButtonClick(applyOnceButton);
+                UiUtils.doButtonClick(applyOnceButton);
                 break;
             }
             case CANCEL: {
-                WindowUtils.doButtonClick(cancelButton);
+                UiUtils.doButtonClick(cancelButton);
                 break;
             }
             default:

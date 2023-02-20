@@ -24,6 +24,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.plaf.ComponentUI;
 import org.exbin.bined.CodeType;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
@@ -176,6 +177,12 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
 
     public void updateUnprintables() {
         showUnprintablesToggleButton.setSelected(codeArea.isShowUnprintables());
+    }
+
+    @Override
+    public void updateUI() {
+        super.updateUI();
+        codeTypeDropDown.updateUI();
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

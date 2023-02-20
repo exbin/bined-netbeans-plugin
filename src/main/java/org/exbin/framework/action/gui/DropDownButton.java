@@ -92,6 +92,17 @@ public class DropDownButton extends JButton {
         });
     }
 
+    @Override
+    public void updateUI() {
+        super.updateUI();
+        if (buttonPanel != null) {
+            buttonPanel.updateUI();
+        }
+        if (popupMenu != null) {
+            popupMenu.updateUI();
+        }
+    }
+    
     protected void setRolloverBorder() {
         JButton menuButton = buttonPanel.getMenuButton();
         menuButton.setBorderPainted(true);
