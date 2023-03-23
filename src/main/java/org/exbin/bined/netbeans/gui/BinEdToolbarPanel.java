@@ -181,7 +181,9 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     @Override
     public void updateUI() {
         super.updateUI();
-        codeTypeDropDown.updateUI();
+        if (codeTypeDropDown != null) {
+            codeTypeDropDown.updateUI();
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
