@@ -17,7 +17,7 @@ package org.exbin.bined.netbeans.debug.array;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import org.exbin.bined.netbeans.data.PageProvider;
+import org.exbin.framework.bined.objectdata.PageProvider;
 import org.exbin.bined.netbeans.debug.DebugViewData;
 
 import org.netbeans.api.debugger.jpda.Field;

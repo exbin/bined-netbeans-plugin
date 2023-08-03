@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import org.exbin.bined.netbeans.data.PageProvider;
+import org.exbin.framework.bined.objectdata.PageProvider;
 
 /**
  * Debugger value dual page data source.

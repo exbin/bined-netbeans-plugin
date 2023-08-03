@@ -21,7 +21,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JComponent;
 import org.exbin.auxiliary.paged_data.BinaryData;
-import org.exbin.bined.netbeans.data.ObjectValueConvertor;
+import org.exbin.framework.bined.objectdata.ObjectValueConvertor;
 import org.exbin.bined.netbeans.api.BinaryViewHandler;
 import org.exbin.bined.netbeans.debug.gui.DebugViewPanel;
 import org.exbin.framework.utils.WindowUtils.DialogWrapper;

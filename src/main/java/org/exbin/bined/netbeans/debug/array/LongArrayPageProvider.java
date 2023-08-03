@@ -18,9 +18,9 @@ package org.exbin.bined.netbeans.debug.array;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import org.exbin.bined.netbeans.data.PageProvider;
+import org.exbin.framework.bined.objectdata.PageProvider;
 import org.exbin.bined.netbeans.debug.DebugViewData;
-import org.exbin.framework.bined.gui.ValuesPanel;
+import org.exbin.framework.bined.inspector.gui.BasicValuesPanel;
 import org.netbeans.api.debugger.jpda.Field;
 import org.netbeans.api.debugger.jpda.ObjectVariable;
 
@@ -55,7 +55,7 @@ public class LongArrayPageProvider implements PageProvider {
 
             BigInteger bigInteger = BigInteger.valueOf(value);
             for (int bit = 0; bit < 7; bit++) {
-                BigInteger nextByte = bigInteger.and(ValuesPanel.BIG_INTEGER_BYTE_MASK);
+                BigInteger nextByte = bigInteger.and(BasicValuesPanel.BIG_INTEGER_BYTE_MASK);
                 result[i * 8 + 7 - bit] = nextByte.byteValue();
                 bigInteger = bigInteger.shiftRight(8);
             }

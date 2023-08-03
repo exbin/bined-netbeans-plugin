@@ -36,7 +36,7 @@ import org.exbin.bined.netbeans.debug.array.IntegerArrayPageProvider;
 import org.exbin.bined.netbeans.debug.array.LongArrayPageProvider;
 import org.exbin.bined.netbeans.debug.array.ShortArrayPageProvider;
 import org.exbin.bined.netbeans.debug.gui.DebugViewPanel;
-import org.exbin.framework.bined.gui.ValuesPanel;
+import org.exbin.framework.bined.inspector.gui.BasicValuesPanel;
 import org.exbin.framework.utils.WindowUtils;
 import org.exbin.framework.utils.gui.CloseControlPanel;
 import org.exbin.auxiliary.paged_data.BinaryData;
@@ -220,7 +220,7 @@ public final class BinaryDebugAction implements ActionListener {
                 long value = Long.parseLong(variableValue);
                 BigInteger bigInteger = BigInteger.valueOf(value);
                 for (int bit = 0; bit < 7; bit++) {
-                    BigInteger nextByte = bigInteger.and(ValuesPanel.BIG_INTEGER_BYTE_MASK);
+                    BigInteger nextByte = bigInteger.and(BasicValuesPanel.BIG_INTEGER_BYTE_MASK);
                     byteArray[7 - bit] = nextByte.byteValue();
                     bigInteger = bigInteger.shiftRight(8);
                 }

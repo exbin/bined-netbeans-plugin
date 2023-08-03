@@ -17,6 +17,7 @@ package org.exbin.bined.netbeans;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import org.exbin.framework.bined.inspector.options.DataInspectorOptions;
 import org.exbin.framework.bined.options.CodeAreaColorOptions;
 import org.exbin.framework.bined.options.CodeAreaLayoutOptions;
 import org.exbin.framework.bined.options.CodeAreaOptions;
@@ -48,6 +49,9 @@ public interface BinEdApplyOptions {
 
     @Nonnull
     StatusOptions getStatusOptions();
+
+    @Nonnull
+    DataInspectorOptions getDataInspectorOptions();
 
     @Nonnull
     CodeAreaLayoutOptions getLayoutOptions();

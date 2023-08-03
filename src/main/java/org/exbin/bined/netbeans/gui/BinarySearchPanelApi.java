@@ -16,8 +16,8 @@
 package org.exbin.bined.netbeans.gui;
 
 import javax.annotation.ParametersAreNonnullByDefault;
-import org.exbin.framework.bined.ReplaceParameters;
-import org.exbin.framework.bined.SearchParameters;
+import org.exbin.framework.bined.search.ReplaceParameters;
+import org.exbin.framework.bined.search.SearchParameters;
 
 /**
  * Binary search panel interface.

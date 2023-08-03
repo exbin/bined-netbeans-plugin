@@ -66,6 +66,7 @@ import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
 import org.exbin.framework.bined.BinaryStatusApi;
 import org.exbin.framework.bined.FileHandlingMode;
+import org.exbin.framework.bined.inspector.options.DataInspectorOptions;
 import org.exbin.framework.bined.options.CodeAreaColorOptions;
 import org.exbin.framework.bined.options.CodeAreaLayoutOptions;
 import org.exbin.framework.bined.options.CodeAreaOptions;
@@ -74,7 +75,7 @@ import org.exbin.framework.bined.options.EditorOptions;
 import org.exbin.framework.bined.options.StatusOptions;
 import org.exbin.framework.bined.options.impl.CodeAreaOptionsImpl;
 import org.exbin.framework.bined.gui.BinaryStatusPanel;
-import org.exbin.framework.bined.gui.ValuesPanel;
+import org.exbin.framework.bined.inspector.gui.BasicValuesPanel;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
 import org.exbin.framework.editor.text.EncodingsHandler;
 import org.exbin.framework.editor.text.TextEncodingStatusApi;
@@ -126,9 +127,9 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
     private final AbstractAction showRowNumbersAction;
     private final SearchAction searchAction;
     private EncodingsHandler encodingsHandler;
-    private ValuesPanel valuesPanel = null;
+    private BasicValuesPanel valuesPanel = null;
     private JScrollPane valuesPanelScrollPane = null;
-    private boolean valuesPanelVisible = false;
+    private boolean parsingPanelVisible = false;
 
     private FileHandlingMode fileHandlingMode = DEFAULT_FILE_HANDLING_MODE;
     private final Font defaultFont;
@@ -267,7 +268,7 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         codeArea.addEditModeChangedListener(binaryStatus::setEditMode);
         binaryStatus.setEditMode(codeArea.getEditMode(), codeArea.getActiveOperation());
 
-        ((BinaryStatusPanel) binaryStatus).setController(new BinaryStatusPanel.Controller() {
+        ((BinaryStatusPanel) binaryStatus).setStatusControlHandler(new BinaryStatusPanel.StatusControlHandler() {
             @Override
             public void changeEditOperation(EditOperation editOperation) {
                 codeArea.setEditOperation(editOperation);
@@ -312,8 +313,8 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         this.fileApi = fileApi;
     }
 
-    private void switchShowValuesPanel(boolean showValuesPanel) {
-        if (showValuesPanel) {
+    private void switchShowParsingPanel(boolean showParsingPanel) {
+        if (showParsingPanel) {
             showValuesPanel();
         } else {
             hideValuesPanel();
@@ -784,8 +785,9 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         CodeAreaOptionsImpl.applyFromCodeArea(applyOptions.getCodeAreaOptions(), codeArea);
         applyOptions.getEncodingOptions().setSelectedEncoding(((CharsetCapable) codeArea).getCharset().name());
 
+        DataInspectorOptions dataInspectorOptions = applyOptions.getDataInspectorOptions();
+        dataInspectorOptions.setShowParsingPanel(parsingPanelVisible);
         EditorOptions editorOptions = applyOptions.getEditorOptions();
-        editorOptions.setShowValuesPanel(valuesPanelVisible);
         editorOptions.setFileHandlingMode(fileHandlingMode);
         if (codeArea.getCommandHandler() instanceof CodeAreaOperationCommandHandler) {
             editorOptions.setEnterKeyHandlingMode(((CodeAreaOperationCommandHandler) codeArea.getCommandHandler()).getEnterKeyHandlingMode());
@@ -801,8 +803,9 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
         encodingsHandler.setEncodings(applyOptions.getEncodingOptions().getEncodings());
         ((FontCapable) codeArea).setCodeFont(applyOptions.getFontOptions().isUseDefaultFont() ? defaultFont : applyOptions.getFontOptions().getFont(defaultFont));
 
+        DataInspectorOptions dataInspectorOptions = applyOptions.getDataInspectorOptions();
+        switchShowParsingPanel(dataInspectorOptions.isShowParsingPanel());
         EditorOptions editorOptions = applyOptions.getEditorOptions();
-        switchShowValuesPanel(editorOptions.isShowValuesPanel());
         if (codeArea.getCommandHandler() instanceof CodeAreaOperationCommandHandler) {
             ((CodeAreaOperationCommandHandler) codeArea.getCommandHandler()).setEnterKeyHandlingMode(editorOptions.getEnterKeyHandlingMode());
         }
@@ -837,10 +840,10 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
     }
 
     public void showValuesPanel() {
-        if (!valuesPanelVisible) {
-            valuesPanelVisible = true;
+        if (!parsingPanelVisible) {
+            parsingPanelVisible = true;
             if (valuesPanel == null) {
-                valuesPanel = new ValuesPanel();
+                valuesPanel = new BasicValuesPanel();
                 valuesPanel.setCodeArea(codeArea, undoHandler);
                 valuesPanelScrollPane = new JScrollPane(valuesPanel);
                 valuesPanelScrollPane.setBorder(null);
@@ -854,8 +857,8 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
     }
 
     public void hideValuesPanel() {
-        if (valuesPanelVisible) {
-            valuesPanelVisible = false;
+        if (parsingPanelVisible) {
+            parsingPanelVisible = false;
             valuesPanel.disableUpdate();
             this.remove(valuesPanelScrollPane);
             this.revalidate();
@@ -898,6 +901,12 @@ public class BinEdComponentPanel extends javax.swing.JPanel {
             @Override
             public StatusOptions getStatusOptions() {
                 return preferences.getStatusPreferences();
+            }
+
+            @Nonnull
+            @Override
+            public DataInspectorOptions getDataInspectorOptions() {
+                return preferences.getDataInspectorPreferences();
             }
 
             @Nonnull
