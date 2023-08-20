@@ -15,7 +15,7 @@
  */
 package org.exbin.bined.netbeans.gui;
 
-import org.exbin.bined.netbeans.BinEdApplyOptions;
+import org.exbin.bined.netbeans.main.BinEdApplyOptions;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Font;

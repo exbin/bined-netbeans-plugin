@@ -26,6 +26,8 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
+import org.exbin.bined.netbeans.main.BinEdFileHandler;
+import org.exbin.bined.netbeans.main.BinEdManager;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
@@ -55,7 +57,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     private static final String BINARY_EDITOR_TOP_COMPONENT_STRING = "CTL_BinaryEditorTopComponent";
     private static final String BINARY_EDITOR_TOP_COMPONENT_HINT_STRING = "HINT_BinaryEditorTopComponent";
 
-    private final BinEdFile editorFile;
+    private final BinEdFileHandler editorFile;
 
     private final BinaryEditorNode node;
 
@@ -67,10 +69,12 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         initComponents();
 
         node = new BinaryEditorNode(this);
-        editorFile = new BinEdFile();
+        editorFile = new BinEdFileHandler();
+        BinEdManager binEdManager = BinEdManager.getInstance();
+        binEdManager.getFileManager().initFileHandler(editorFile);
         savable = new Savable(editorFile);
 
-        add(editorFile.getPanel(), BorderLayout.CENTER);
+        add(editorFile.getComponent(), BorderLayout.CENTER);
 
         editorFile.getContent().add(node);
 

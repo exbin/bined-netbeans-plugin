@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.bined.netbeans.gui;
+package org.exbin.bined.netbeans.search.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -348,7 +348,6 @@ public class BinarySearchPanel extends javax.swing.JPanel {
         findLabel.setName("findLabel"); // NOI18N
 
         findTypeToolBar.setBorder(null);
-        findTypeToolBar.setFloatable(false);
         findTypeToolBar.setRollover(true);
         findTypeToolBar.setFocusable(false);
         findTypeToolBar.setName("findTypeToolBar"); // NOI18N
@@ -372,7 +371,6 @@ public class BinarySearchPanel extends javax.swing.JPanel {
         findComboBox.setName("findComboBox"); // NOI18N
 
         findToolBar.setBorder(null);
-        findToolBar.setFloatable(false);
         findToolBar.setRollover(true);
         findToolBar.setFocusable(false);
         findToolBar.setName("findToolBar"); // NOI18N
@@ -450,7 +448,6 @@ public class BinarySearchPanel extends javax.swing.JPanel {
         infoLabel.setName("infoLabel"); // NOI18N
 
         closeToolBar.setBorder(null);
-        closeToolBar.setFloatable(false);
         closeToolBar.setRollover(true);
         closeToolBar.setName("closeToolBar"); // NOI18N
 
@@ -505,7 +502,6 @@ public class BinarySearchPanel extends javax.swing.JPanel {
         replaceLabel.setName("replaceLabel"); // NOI18N
 
         replaceTypeToolBar.setBorder(null);
-        replaceTypeToolBar.setFloatable(false);
         replaceTypeToolBar.setRollover(true);
         replaceTypeToolBar.setFocusable(false);
         replaceTypeToolBar.setName("replaceTypeToolBar"); // NOI18N
@@ -532,7 +528,6 @@ public class BinarySearchPanel extends javax.swing.JPanel {
         replaceComboBox.setName("replaceComboBox"); // NOI18N
 
         replaceToolBar.setBorder(null);
-        replaceToolBar.setFloatable(false);
         replaceToolBar.setRollover(true);
         replaceToolBar.setFocusable(false);
         replaceToolBar.setName("replaceToolBar"); // NOI18N

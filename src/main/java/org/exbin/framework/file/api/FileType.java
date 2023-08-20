@@ -13,27 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.bined.netbeans.gui;
+package org.exbin.framework.file.api;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-import org.exbin.framework.bined.search.ReplaceParameters;
-import org.exbin.framework.bined.search.SearchParameters;
+import javax.annotation.Nonnull;
 
 /**
- * Binary search panel interface.
+ * Interface for file types.
  *
  * @author ExBin Project (https://exbin.org)
  */
-@ParametersAreNonnullByDefault
-public interface BinarySearchPanelApi {
+public interface FileType {
 
-    void performFind(SearchParameters dialogSearchParameters);
-
-    void setMatchPosition(int matchPosition);
-
-    void updatePosition();
-
-    void performReplace(SearchParameters searchParameters, ReplaceParameters replaceParameters);
-
-    void clearMatches();
+    /**
+     * Returns file type Id - should be in following format
+     * &lt;ModuleName&gt;.&lt;FileTypeName&gt;.
+     *
+     * @return file type ID
+     */
+    @Nonnull
+    String getFileTypeId();
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.bined.netbeans.action;
+package org.exbin.bined.netbeans.search.action;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -33,8 +33,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import org.exbin.bined.DefaultCodeAreaCaretPosition;
 import org.exbin.bined.highlight.swing.extended.ExtendedHighlightCodeAreaPainter;
-import org.exbin.bined.netbeans.gui.BinarySearchPanel;
-import org.exbin.bined.netbeans.gui.BinarySearchPanelApi;
+import org.exbin.bined.netbeans.search.gui.BinarySearchPanel;
+import org.exbin.bined.netbeans.search.gui.BinarySearchPanelApi;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.handler.CodeAreaPopupMenuHandler;
 import org.exbin.framework.bined.search.ReplaceParameters;
@@ -168,7 +168,7 @@ public final class SearchAction implements ActionListener {
         if (!findTextPanelVisible) {
             codeAreaPanel.add(binarySearchPanel, BorderLayout.SOUTH);
             codeAreaPanel.revalidate();
-//            revalidate();
+            codeAreaPanel.repaint();
             findTextPanelVisible = true;
             binarySearchPanel.requestSearchFocus();
         }
@@ -184,7 +184,7 @@ public final class SearchAction implements ActionListener {
             binarySearchPanel.clearSearch();
             codeAreaPanel.remove(binarySearchPanel);
             codeAreaPanel.revalidate();
-//            revalidate();
+            codeAreaPanel.repaint();
             findTextPanelVisible = false;
         }
     }
@@ -352,7 +352,7 @@ public final class SearchAction implements ActionListener {
 
             @Override
             public boolean isEnabled() {
-                return codeArea.hasSelection();
+                return codeArea.isEditable() && codeArea.hasSelection();
             }
         });
         cutMenuItem.setText("Cut");
@@ -380,7 +380,7 @@ public final class SearchAction implements ActionListener {
 
             @Override
             public boolean isEnabled() {
-                return codeArea.canPaste();
+                return codeArea.isEditable() && codeArea.canPaste();
             }
         });
         pasteMenuItem.setText("Paste");
@@ -394,7 +394,7 @@ public final class SearchAction implements ActionListener {
 
             @Override
             public boolean isEnabled() {
-                return codeArea.hasSelection();
+                return codeArea.isEditable() && codeArea.hasSelection();
             }
         });
         deleteMenuItem.setText("Delete");

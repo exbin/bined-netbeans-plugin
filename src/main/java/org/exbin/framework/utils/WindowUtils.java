@@ -43,7 +43,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JTextArea;
@@ -203,6 +202,7 @@ public class WindowUtils {
         invokeWindow(dialog);
     }
 
+    @Nullable
     public static LookAndFeel getLookAndFeel() {
         return lookAndFeel;
     }
@@ -349,7 +349,7 @@ public class WindowUtils {
         position.setRelativeY(window.getY() - screenY);
         position.setWidth(window.getWidth());
         position.setHeight(window.getHeight());
-        position.setMaximized(window instanceof Frame ? (((Frame) window).getExtendedState() & JFrame.MAXIMIZED_BOTH) > 0 : false);
+        position.setMaximized(window instanceof Frame ? (((Frame) window).getExtendedState() & Frame.MAXIMIZED_BOTH) > 0 : false);
         return position;
     }
 

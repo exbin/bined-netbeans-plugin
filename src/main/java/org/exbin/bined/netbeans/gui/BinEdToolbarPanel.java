@@ -16,15 +16,18 @@
 package org.exbin.bined.netbeans.gui;
 
 import java.awt.event.ActionEvent;
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import org.exbin.bined.CodeType;
+import org.exbin.bined.netbeans.main.BinEdManager;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
 import org.exbin.framework.action.gui.DropDownButton;
@@ -40,10 +43,9 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
 
     private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(BinEdToolbarPanel.class);
 
-    private final BinaryEditorPreferences preferences;
-    private final ExtCodeArea codeArea;
-    private final AbstractAction optionsAction;
-    private final AbstractAction onlineHelpAction;
+    private final Control codeAreaControl;
+    private AbstractAction optionsAction;
+    private AbstractAction onlineHelpAction;
 
     private final AbstractAction cycleCodeTypesAction;
     private final JRadioButtonMenuItem binaryCodeTypeAction;
@@ -53,17 +55,15 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     private final ButtonGroup codeTypeButtonGroup;
     private DropDownButton codeTypeDropDown;
 
-    public BinEdToolbarPanel(BinaryEditorPreferences preferences, ExtCodeArea codeArea, AbstractAction optionsAction, AbstractAction onlineHelpAction) {
-        this.preferences = preferences;
-        this.codeArea = codeArea;
-        this.optionsAction = optionsAction;
-        this.onlineHelpAction = onlineHelpAction;
+    public BinEdToolbarPanel(JComponent targetComponent, Control codeAreaControl) {
+        // BinaryEditorPreferences preferences, ExtCodeArea codeArea, AbstractAction optionsAction, AbstractAction onlineHelpAction
+        this.codeAreaControl = codeAreaControl;
 
         codeTypeButtonGroup = new ButtonGroup();
         binaryCodeTypeAction = new JRadioButtonMenuItem(new AbstractAction("Binary") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                codeArea.setCodeType(CodeType.BINARY);
+                codeAreaControl.setCodeType(CodeType.BINARY);
                 updateCycleButtonState();
             }
         });
@@ -71,7 +71,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         octalCodeTypeAction = new JRadioButtonMenuItem(new AbstractAction("Octal") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                codeArea.setCodeType(CodeType.OCTAL);
+                codeAreaControl.setCodeType(CodeType.OCTAL);
                 updateCycleButtonState();
             }
         });
@@ -79,7 +79,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         decimalCodeTypeAction = new JRadioButtonMenuItem(new AbstractAction("Decimal") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                codeArea.setCodeType(CodeType.DECIMAL);
+                codeAreaControl.setCodeType(CodeType.DECIMAL);
                 updateCycleButtonState();
             }
         });
@@ -87,7 +87,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         hexadecimalCodeTypeAction = new JRadioButtonMenuItem(new AbstractAction("Hexadecimal") {
             @Override
             public void actionPerformed(ActionEvent e) {
-                codeArea.setCodeType(CodeType.HEXADECIMAL);
+                codeAreaControl.setCodeType(CodeType.HEXADECIMAL);
                 updateCycleButtonState();
             }
         });
@@ -95,10 +95,10 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         cycleCodeTypesAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int codeTypePos = codeArea.getCodeType().ordinal();
+                int codeTypePos = codeAreaControl.getCodeType().ordinal();
                 CodeType[] values = CodeType.values();
                 CodeType next = codeTypePos + 1 >= values.length ? values[0] : values[codeTypePos + 1];
-                codeArea.setCodeType(next);
+                codeAreaControl.setCodeType(next);
                 updateCycleButtonState();
             }
         };
@@ -120,20 +120,40 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
 
         controlToolBar.addSeparator();
         JButton optionsButton = new JButton();
-        optionsButton.setAction(optionsAction);
+        optionsButton.setAction(new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                if (optionsAction != null) {
+                    optionsAction.actionPerformed(e);
+                }
+            }
+        });
         optionsButton.setToolTipText("Options");
         optionsButton.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/options/gui/resources/icons/Preferences16.gif")));
         controlToolBar.add(optionsButton);
 
         JButton onlineHelpButton = new JButton();
-        onlineHelpButton.setAction(onlineHelpAction);
+        onlineHelpButton.setAction(new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                if (onlineHelpAction != null) {
+                    onlineHelpAction.actionPerformed(e);
+                }
+            }
+        });
         onlineHelpButton.setToolTipText("Online Help");
         onlineHelpButton.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/bined/resources/icons/open_icon_library/icons/png/16x16/actions/help.png")));
         controlToolBar.add(onlineHelpButton);
     }
 
+    public void setOptionsAction(AbstractAction optionsAction) {
+        this.optionsAction = optionsAction;
+    }
+
+    public void setOnlineHelpAction(AbstractAction onlineHelpAction) {
+        this.onlineHelpAction = onlineHelpAction;
+    }
+
     private void updateCycleButtonState() {
-        CodeType codeType = codeArea.getCodeType();
+        CodeType codeType = codeAreaControl.getCodeType();
         codeTypeDropDown.setActionText(codeType.name().substring(0, 3));
         switch (codeType) {
             case BINARY: {
@@ -168,14 +188,14 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         updateUnprintables();
     }
 
-    public void loadFromPreferences() {
-        codeArea.setCodeType(preferences.getCodeAreaPreferences().getCodeType());
+    public void loadFromPreferences(BinaryEditorPreferences preferences) {
+        codeAreaControl.setCodeType(preferences.getCodeAreaPreferences().getCodeType());
         updateCycleButtonState();
         updateUnprintables();
     }
 
     public void updateUnprintables() {
-        showUnprintablesToggleButton.setSelected(codeArea.isShowUnprintables());
+        showUnprintablesToggleButton.setSelected(codeAreaControl.isShowUnprintables());
     }
 
     @Override
@@ -224,7 +244,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void showUnprintablesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showUnprintablesToggleButtonActionPerformed
-        codeArea.setShowUnprintables(showUnprintablesToggleButton.isSelected());
+        codeAreaControl.setShowUnprintables(showUnprintablesToggleButton.isSelected());
     }//GEN-LAST:event_showUnprintablesToggleButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -233,4 +253,18 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     private javax.swing.JToggleButton showUnprintablesToggleButton;
     // End of variables declaration//GEN-END:variables
 
+    @ParametersAreNonnullByDefault
+    public interface Control {
+
+        @Nonnull
+        CodeType getCodeType();
+
+        void setCodeType(CodeType codeType);
+
+        boolean isShowUnprintables();
+
+        void setShowUnprintables(boolean showUnprintables);
+
+        void repaint();
+    }
 }

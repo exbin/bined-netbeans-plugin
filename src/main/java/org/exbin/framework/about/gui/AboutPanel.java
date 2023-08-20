@@ -17,6 +17,7 @@ package org.exbin.framework.about.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.io.IOException;
 import java.util.HashMap;
@@ -25,12 +26,14 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.table.DefaultTableModel;
-import org.exbin.framework.utils.BareBonesBrowserLaunch;
+import org.exbin.framework.utils.DesktopUtils;
 import org.exbin.framework.utils.LanguageUtils;
 import org.exbin.framework.utils.WindowUtils;
 import org.exbin.framework.utils.UiUtils;
@@ -40,6 +43,7 @@ import org.exbin.framework.utils.UiUtils;
  *
  * @author ExBin Project (https://exbin.org)
  */
+@ParametersAreNonnullByDefault
 public class AboutPanel extends javax.swing.JPanel implements HyperlinkListener {
 
     private ResourceBundle appBundle;
@@ -95,7 +99,7 @@ public class AboutPanel extends javax.swing.JPanel implements HyperlinkListener 
     @Override
     public void hyperlinkUpdate(HyperlinkEvent event) {
         if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            BareBonesBrowserLaunch.openURL(event.getURL().toExternalForm());
+            DesktopUtils.openDesktopURL(event.getURL().toExternalForm());
         }
     }
 
@@ -342,9 +346,9 @@ public class AboutPanel extends javax.swing.JPanel implements HyperlinkListener 
     }// </editor-fold>//GEN-END:initComponents
 
     private void appHomepageLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_appHomepageLabelMouseClicked
-        if (!evt.isPopupTrigger()) {
+        if (evt.getButton() == MouseEvent.BUTTON1 && !evt.isPopupTrigger()) {
             String targetURL = ((JLabel) evt.getSource()).getText();
-            BareBonesBrowserLaunch.openDesktopURL(targetURL);
+            DesktopUtils.openDesktopURL(targetURL);
         }
     }//GEN-LAST:event_appHomepageLabelMouseClicked
 
@@ -382,7 +386,7 @@ public class AboutPanel extends javax.swing.JPanel implements HyperlinkListener 
     private javax.swing.JTextField versionTextField;
     // End of variables declaration//GEN-END:variables
 
-    public void setSideComponent(JComponent sideComponent) {
+    public void setSideComponent(@Nullable JComponent sideComponent) {
         if (this.sideComponent != null) {
             remove(this.sideComponent);
         }
@@ -394,7 +398,7 @@ public class AboutPanel extends javax.swing.JPanel implements HyperlinkListener 
     }
 
     public void setupFields() {
-        appBundle = ResourceBundle.getBundle("org.exbin.bined.netbeans.Bundle");
+        appBundle = ResourceBundle.getBundle("org.exbin.bined.netbeans.resources.Bundle");
 
         // Load license
         try {

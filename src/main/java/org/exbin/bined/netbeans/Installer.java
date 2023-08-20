@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.ParametersAreNonnullByDefault;
+import org.exbin.bined.netbeans.bookmarks.BookmarksManager;
+import org.exbin.bined.netbeans.inspector.BinEdInspectorManager;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.modules.ModuleInstall;
@@ -42,10 +44,19 @@ public class Installer extends ModuleInstall {
     private static final String ACTIONS_FOLDER = "Actions";
     private static final String LOADERS_FOLDER = "Loaders";
     private static final String DYNAMIC_FILETYPE_PREFIX = "-nb";
+    
+    private volatile boolean installed = false;
 
     @Override
     public void restored() {
         WindowManager.getDefault().invokeWhenUIReady(new ActionInstaller());
+        
+        if (!installed) {
+            installed = true;
+            
+            new BookmarksManager().init();
+            new BinEdInspectorManager().init();
+        }
     }
 
     @Override

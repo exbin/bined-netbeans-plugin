@@ -16,7 +16,6 @@
 package org.exbin.framework.editor.text.options.gui;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import javax.annotation.Nonnull;
@@ -385,10 +384,10 @@ public class TextEncodingPanel extends javax.swing.JPanel implements OptionsCapa
             if (indices.length == 0) {
                 return;
             }
-            Arrays.sort(indices);
+
             for (int i = indices.length - 1; i >= 0; i--) {
                 charsets.remove(indices[i]);
-                fireContentsChanged(this, indices[i], indices[i]);
+                fireIntervalRemoved(this, indices[i], indices[i]);
             }
         }
 

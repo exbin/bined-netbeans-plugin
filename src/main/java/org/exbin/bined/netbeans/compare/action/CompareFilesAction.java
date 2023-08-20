@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.bined.netbeans.action;
+package org.exbin.bined.netbeans.compare.action;
 
 import java.awt.Component;
 import java.awt.Dialog;

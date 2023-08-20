@@ -1,4 +1,6 @@
 0.2.5
+- Added support for bookmarks
+- Added clipboard content dialog
 
 0.2.4 (2022-10-12)
 - Added API: view binary data

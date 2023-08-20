@@ -22,9 +22,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.EditMode;
 import org.exbin.auxiliary.paged_data.BinaryData;
 import org.exbin.bined.netbeans.debug.DebugViewDataProvider;
-import org.exbin.bined.netbeans.gui.BinEdComponentFileApi;
 import org.exbin.bined.netbeans.gui.BinEdComponentPanel;
-import org.exbin.framework.bined.FileHandlingMode;
+import org.exbin.bined.netbeans.main.BinEdEditorComponent;
+import org.exbin.bined.netbeans.main.BinEdManager;
 
 /**
  * Panel to show debug view.
@@ -37,35 +37,19 @@ public class DebugViewPanel extends javax.swing.JPanel {
     private final List<DebugViewDataProvider> providers = new ArrayList<>();
     private int selectedProvider = 0;
 
-    private final BinEdComponentPanel componentPanel;
+    private final BinEdEditorComponent binEdEditorComponent;
 
     public DebugViewPanel() {
-        componentPanel = new BinEdComponentPanel();
+        BinEdManager binEdManager = BinEdManager.getInstance();
+        binEdEditorComponent = binEdManager.createBinEdEditor();
 
         initComponents();
         init();
     }
 
     private void init() {
+        BinEdComponentPanel componentPanel = binEdEditorComponent.getComponentPanel();
         componentPanel.getCodeArea().setEditMode(EditMode.READ_ONLY);
-        componentPanel.setFileApi(new BinEdComponentFileApi() {
-            @Override
-            public boolean isSaveSupported() {
-                return false;
-            }
-
-            @Override
-            public void saveDocument() {
-            }
-
-            @Override
-            public void switchFileHandlingMode(FileHandlingMode newHandlingMode) {
-            }
-
-            @Override
-            public void closeData() {
-            }
-        });
 
         this.add(componentPanel, BorderLayout.CENTER);
     }
@@ -113,6 +97,6 @@ public class DebugViewPanel extends javax.swing.JPanel {
     }
 
     public void setContentData(BinaryData data) {
-        componentPanel.setContentData(data);
+        binEdEditorComponent.setContentData(data);
     }
 }

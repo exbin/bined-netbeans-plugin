@@ -20,7 +20,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import org.exbin.bined.netbeans.gui.BinEdComponentFileApi;
+import org.exbin.framework.bined.gui.BinEdComponentFileApi;
 import org.netbeans.spi.actions.AbstractSavable;
 import org.openide.loaders.DataObject;
 
