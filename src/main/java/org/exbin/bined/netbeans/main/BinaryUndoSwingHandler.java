@@ -262,6 +262,11 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoHandler {
     public void setUndoMaximumSize(long maxSize) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    
+    @Nonnull
+    public UndoRedo.Manager getUndoManager() {
+        return undoManager;
+    }
 
     @Override
     public long getUsedSize() {

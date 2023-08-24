@@ -1,4 +1,5 @@
 0.2.5
+- Partial mitigation to file locking issue
 - Added support for bookmarks
 - Added clipboard content dialog
 

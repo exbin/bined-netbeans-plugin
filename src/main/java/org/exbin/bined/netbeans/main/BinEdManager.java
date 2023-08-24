@@ -34,7 +34,6 @@ import org.exbin.framework.about.gui.AboutPanel;
 import org.exbin.framework.bined.FileHandlingMode;
 import org.exbin.framework.bined.gui.BinEdComponentFileApi;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
-import org.exbin.framework.editor.text.EncodingsHandler;
 import org.exbin.framework.utils.ActionUtils;
 import org.exbin.framework.utils.DesktopUtils;
 import org.exbin.framework.utils.WindowUtils;
@@ -86,8 +85,6 @@ public class BinEdManager {
     private BinEdFileManager fileManager = new BinEdFileManager();
     private BookmarksSupport bookmarksSupport;
     private InspectorSupport inspectorSupport;
-
-    private EncodingsHandler encodingsHandler;
 
     private BinEdManager() {
         preferences = new BinaryEditorPreferences(new PreferencesWrapper(NbPreferences.forModule(BinaryEditorPreferences.class)));

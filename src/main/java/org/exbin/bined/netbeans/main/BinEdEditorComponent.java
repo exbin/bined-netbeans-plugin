@@ -60,7 +60,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -82,6 +84,7 @@ public class BinEdEditorComponent {
     public static final String ACTION_CLIPBOARD_PASTE = "paste-from-clipboard";
 
     private BinEdComponentPanel componentPanel = new BinEdComponentPanel();
+    private JPanel wrapperPanel = new JPanel(new BorderLayout());
     private final BinEdToolbarPanel toolbarPanel;
     private final BinaryStatusPanel statusPanel;
 
@@ -105,6 +108,7 @@ public class BinEdEditorComponent {
     private FileHandlingMode fileHandlingMode = FileHandlingMode.DELTA;
 
     public BinEdEditorComponent() {
+        wrapperPanel.add(componentPanel, BorderLayout.CENTER);
         ExtCodeArea codeArea = componentPanel.getCodeArea();
         toolbarPanel = new BinEdToolbarPanel(codeArea,
                 new BinEdToolbarPanel.Control() {
@@ -144,7 +148,7 @@ public class BinEdEditorComponent {
         defaultFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
         codeArea.setCodeFont(defaultFont);
 
-        componentPanel.add(toolbarPanel, BorderLayout.NORTH);
+        wrapperPanel.add(toolbarPanel, BorderLayout.NORTH);
         registerEncodingStatus(statusPanel);
         encodingsHandler = new EncodingsHandler();
         encodingsHandler.setParentComponent(componentPanel);
@@ -167,7 +171,7 @@ public class BinEdEditorComponent {
 
         registerBinaryStatus(statusPanel);
 
-        componentPanel.add(statusPanel, BorderLayout.SOUTH);
+        wrapperPanel.add(statusPanel, BorderLayout.SOUTH);
 
         codeArea.addDataChangedListener(() -> {
             // TODO searchAction.codeAreaDataChanged();
@@ -254,6 +258,11 @@ public class BinEdEditorComponent {
                 }
             }
         });
+    }
+
+    @Nonnull
+    public JComponent getComponent() {
+        return wrapperPanel;
     }
 
     @Nonnull

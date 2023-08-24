@@ -15,7 +15,6 @@
  */
 package org.exbin.bined.netbeans.main;
 
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -28,9 +27,7 @@ import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 import org.exbin.auxiliary.paged_data.BinaryData;
 import org.exbin.auxiliary.paged_data.ByteArrayData;
 import org.exbin.auxiliary.paged_data.EditableBinaryData;
@@ -41,6 +38,7 @@ import org.exbin.auxiliary.paged_data.delta.SegmentsRepository;
 import org.exbin.bined.CodeAreaUtils;
 import org.exbin.bined.EditMode;
 import org.exbin.bined.netbeans.gui.BinEdComponentPanel;
+import org.exbin.bined.operation.undo.BinaryDataUndoHandler;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.gui.BinEdComponentFileApi;
 import org.exbin.framework.bined.FileHandlingMode;
@@ -66,15 +64,13 @@ public class BinEdFileHandler implements FileHandler, BinEdComponentFileApi {
 
     private DataObject dataObject;
 
-    private final UndoRedo.Manager undoRedo;
     private final InstanceContent content = new InstanceContent();
 
     public BinEdFileHandler() {
         BinEdManager binEdManager = BinEdManager.getInstance();
         editorComponent = binEdManager.createBinEdEditor();
         ExtCodeArea codeArea = editorComponent.getCodeArea();
-        undoRedo = new UndoRedo.Manager();
-        BinaryUndoSwingHandler undoHandler = new BinaryUndoSwingHandler(codeArea, undoRedo);
+        BinaryUndoSwingHandler undoHandler = new BinaryUndoSwingHandler(codeArea, new UndoRedo.Manager());
         editorComponent.setFileApi(this);
         editorComponent.setUndoHandler(undoHandler);
     }
@@ -88,7 +84,12 @@ public class BinEdFileHandler implements FileHandler, BinEdComponentFileApi {
     }
 
     @Nonnull
-    public BinEdComponentPanel getComponent() {
+    public JComponent getComponent() {
+        return editorComponent.getComponent();
+    }
+
+    @Nonnull
+    public BinEdComponentPanel getComponentPanel() {
         return editorComponent.getComponentPanel();
     }
 
@@ -99,7 +100,8 @@ public class BinEdFileHandler implements FileHandler, BinEdComponentFileApi {
 
     @Nonnull
     public UndoRedo.Manager getUndoRedo() {
-        return undoRedo;
+        BinaryUndoSwingHandler undoHandler = (BinaryUndoSwingHandler) editorComponent.getUndoHandler();
+        return undoHandler.getUndoManager();
     }
     
     @Nonnull
@@ -121,7 +123,7 @@ public class BinEdFileHandler implements FileHandler, BinEdComponentFileApi {
     @Nonnull
     @Override
     public String getFileName() {
-        return null;
+        return dataObject.getPrimaryFile().getName();
     }
 
     @Nonnull
@@ -254,6 +256,14 @@ public class BinEdFileHandler implements FileHandler, BinEdComponentFileApi {
                 Logger.getLogger(BinEdFileHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        fileSync();
+    }
+
+    private void fileSync() {
+        BinaryDataUndoHandler undoHandler = editorComponent.getUndoHandler();
+        if (undoHandler != null) {
+            undoHandler.setSyncPoint();
+        }
     }
 
     @Override
@@ -321,7 +331,10 @@ public class BinEdFileHandler implements FileHandler, BinEdComponentFileApi {
                     editorComponent.setContentData(document);
                 }
 
-                editorComponent.getUndoHandler().clear();
+                BinaryDataUndoHandler undoHandler = editorComponent.getUndoHandler();
+                if (undoHandler != null) {
+                    undoHandler.clear();
+                }
                 editorComponent.setFileHandlingMode(newHandlingMode);
             }
         }

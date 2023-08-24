@@ -30,7 +30,7 @@ public interface FileSaving {
     /**
      * Save document back to source file.
      */
-    void saveDocument();
+    void saveFile();
 
     /**
      * Saves file to given filename.
