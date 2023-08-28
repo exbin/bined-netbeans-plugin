@@ -166,6 +166,8 @@ public class BinEdManager {
             }
         });
 
+        binEdEditorComponent.setGoToPositionAction(new GoToPositionAction(codeArea));
+
         return binEdEditorComponent;
     }
 
