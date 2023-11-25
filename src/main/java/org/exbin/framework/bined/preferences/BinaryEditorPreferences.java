@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.RowWrappingMode;
 import org.exbin.bined.basic.CodeAreaViewMode;
+import org.exbin.bined.netbeans.preferences.IntegrationPreferences;
 import org.exbin.bined.swing.extended.layout.DefaultExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.swing.extended.layout.ExtendedCodeAreaDecorations;
 import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
@@ -45,6 +46,7 @@ public class BinaryEditorPreferences {
 
     private final Preferences preferences;
 
+    private final IntegrationPreferences integrationPreferences;
     private final EditorPreferences editorPreferences;
     private final StatusPreferences statusPreferences;
     private final CodeAreaPreferences codeAreaPreferences;
@@ -58,6 +60,7 @@ public class BinaryEditorPreferences {
     public BinaryEditorPreferences(Preferences preferences) {
         this.preferences = preferences;
 
+        integrationPreferences = new IntegrationPreferences(preferences);
         editorPreferences = new EditorPreferences(preferences);
         statusPreferences = new StatusPreferences(preferences);
         codeAreaPreferences = new CodeAreaPreferences(preferences);
@@ -97,6 +100,11 @@ public class BinaryEditorPreferences {
     @Nonnull
     public Preferences getPreferences() {
         return preferences;
+    }
+
+    @Nonnull
+    public IntegrationPreferences getIntegrationPreferences() {
+        return integrationPreferences;
     }
 
     @Nonnull

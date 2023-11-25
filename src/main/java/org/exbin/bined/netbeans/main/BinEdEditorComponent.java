@@ -71,6 +71,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.nio.charset.Charset;
 import javax.swing.JScrollPane;
+import org.exbin.bined.netbeans.options.IntegrationOptions;
 
 /**
  * Component for BinEd editor instances.
@@ -565,6 +566,12 @@ public class BinEdEditorComponent {
             @Override
             public TextFontOptions getFontOptions() {
                 return preferences.getFontPreferences();
+            }
+
+            @Nonnull
+            @Override
+            public IntegrationOptions getIntegrationOptions() {
+                return preferences.getIntegrationPreferences();
             }
 
             @Nonnull

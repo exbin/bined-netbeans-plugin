@@ -29,7 +29,6 @@ import java.util.logging.Logger;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.table.DefaultTableModel;
@@ -50,6 +49,7 @@ public class AboutPanel extends javax.swing.JPanel implements HyperlinkListener 
     private final ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(AboutPanel.class);
     private JComponent sideComponent = null;
     private boolean darkMode = false;
+    private String appHomepageLink;
 
     public AboutPanel() {
         initComponents();
@@ -347,8 +347,7 @@ public class AboutPanel extends javax.swing.JPanel implements HyperlinkListener 
 
     private void appHomepageLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_appHomepageLabelMouseClicked
         if (evt.getButton() == MouseEvent.BUTTON1 && !evt.isPopupTrigger()) {
-            String targetURL = ((JLabel) evt.getSource()).getText();
-            DesktopUtils.openDesktopURL(targetURL);
+            DesktopUtils.openDesktopURL(appHomepageLink);
         }
     }//GEN-LAST:event_appHomepageLabelMouseClicked
 
@@ -415,7 +414,8 @@ public class AboutPanel extends javax.swing.JPanel implements HyperlinkListener 
         versionTextField.setText(appBundle.getString("Application.version"));
         vendorTextField.setText(appBundle.getString("Application.vendor"));
         licenseTextField.setText(appBundle.getString("Application.license"));
-        appHomepageLabel.setText(appBundle.getString("Application.homepage"));
+        appHomepageLink = appBundle.getString("Application.homepage");
+        appHomepageLabel.setText("<html><a href=\"\">" + appHomepageLink + "</a></html>");
         authorsTextArea.setText(appBundle.getString("Application.authors"));
         String aboutImagePath = appBundle.getString("Application.aboutImage");
         if (aboutImagePath != null) {

@@ -63,14 +63,20 @@ public class BinEdInspectorManager {
                 binEdComponentInspector.setBasicValuesColorModifier(basicValuesColorModifier);
                 return Optional.of(binEdComponentInspector);
             }
-
-            @Override
-            public void onPopupMenuCreation(JPopupMenu popupMenu,
-                    ExtCodeArea codeArea, String menuPostfix, int x, int y) {
-            }
         });
 
         binEdManager.setInspectorSupport(new BinEdManager.InspectorSupport() {
+            @Override
+            public boolean isShowParsingPanel(BinEdComponentPanel binEdComponentPanel) {
+                try {
+                    BinEdComponentInspector componentExtension
+                            = binEdComponentPanel.getComponentExtension(BinEdComponentInspector.class);
+                    return componentExtension.isShowParsingPanel();
+                } catch (IllegalStateException ex) {
+                    return false;
+                }
+            }
+
             @Nonnull
             public ShowParsingPanelAction showParsingPanelAction(BinEdComponentPanel binEdComponentPanel) {
                 return new ShowParsingPanelAction(binEdComponentPanel);

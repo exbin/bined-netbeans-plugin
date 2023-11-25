@@ -21,8 +21,10 @@ import org.exbin.bined.extended.layout.ExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.netbeans.action.EditSelectionAction;
 import org.exbin.bined.netbeans.action.GoToPositionAction;
 import org.exbin.bined.netbeans.action.OptionsAction;
-import org.exbin.bined.netbeans.blockedit.action.InsertDataAction;
-import org.exbin.bined.netbeans.clipboard.action.ClipboardContentAction;
+import org.exbin.bined.netbeans.operation.action.ConvertDataAction;
+import org.exbin.bined.netbeans.operation.action.InsertDataAction;
+import org.exbin.bined.netbeans.tool.content.action.ClipboardContentAction;
+import org.exbin.bined.netbeans.tool.content.action.DragDropContentAction;
 import org.exbin.bined.netbeans.compare.action.CompareFilesAction;
 import org.exbin.bined.netbeans.gui.BinEdComponentPanel;
 import org.exbin.bined.netbeans.gui.BinEdToolbarPanel;
@@ -63,6 +65,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import org.exbin.bined.netbeans.bookmarks.BookmarksManager;
+import org.exbin.bined.netbeans.inspector.BinEdInspectorManager;
 import org.exbin.framework.preferences.PreferencesWrapper;
 import org.openide.util.NbPreferences;
 
@@ -83,6 +87,7 @@ public class BinEdManager {
 
     private final BinaryEditorPreferences preferences;
     private BinEdFileManager fileManager = new BinEdFileManager();
+    private volatile boolean initialized;
     private BookmarksSupport bookmarksSupport;
     private InspectorSupport inspectorSupport;
 
@@ -101,6 +106,12 @@ public class BinEdManager {
 
     @Nonnull
     public BinEdEditorComponent createBinEdEditor() {
+        if (!initialized) {
+            initialized = true;
+            new BookmarksManager().init();
+            new BinEdInspectorManager().init();
+        }
+
         BinEdEditorComponent binEdEditorComponent = new BinEdEditorComponent();
         binEdEditorComponent.initialLoadFromPreferences(preferences);
         BinEdComponentPanel componentPanel = binEdEditorComponent.getComponentPanel();
@@ -127,17 +138,37 @@ public class BinEdManager {
                 if (keyEvent.getModifiersEx() == ActionUtils.getMetaMask()) {
                     int keyCode = keyEvent.getKeyCode();
                     switch (keyCode) {
-                    case KeyEvent.VK_F: {
-                        SearchAction searchAction = new SearchAction(codeArea, binEdEditorComponent.getComponentPanel());
-                        searchAction.actionPerformed(new ActionEvent(keyEvent.getSource(), keyEvent.getID(), ""));
-                        searchAction.switchReplaceMode(BinarySearchPanel.SearchOperation.FIND);
-                        break;
-                    }
-                    case KeyEvent.VK_G: {
-                        GoToPositionAction goToPositionAction = new GoToPositionAction(codeArea);
-                        goToPositionAction.actionPerformed(new ActionEvent(keyEvent.getSource(), keyEvent.getID(), ""));
-                        break;
-                    }
+                        case KeyEvent.VK_F: {
+                            SearchAction searchAction = new SearchAction(codeArea, binEdEditorComponent.getComponentPanel());
+                            searchAction.actionPerformed(new ActionEvent(keyEvent.getSource(), keyEvent.getID(), ""));
+                            searchAction.switchReplaceMode(BinarySearchPanel.SearchOperation.FIND);
+                            break;
+                        }
+                        case KeyEvent.VK_G: {
+                            if (codeArea.isEditable()) {
+                                GoToPositionAction goToPositionAction = new GoToPositionAction(codeArea);
+                                goToPositionAction.actionPerformed(new ActionEvent(keyEvent.getSource(), keyEvent.getID(), ""));
+                            }
+                            break;
+                        }
+                        case KeyEvent.VK_I: {
+                            if (codeArea.isEditable()) {
+                                InsertDataAction insertDataAction = new InsertDataAction(codeArea);
+                                insertDataAction.actionPerformed(new ActionEvent(keyEvent.getSource(),
+                                        keyEvent.getID(),
+                                        ""));
+                            }
+                            break;
+                        }
+                        case KeyEvent.VK_M: {
+                            if (codeArea.isEditable()) {
+                                ConvertDataAction convertDataAction = new ConvertDataAction(codeArea);
+                                convertDataAction.actionPerformed(new ActionEvent(keyEvent.getSource(),
+                                        keyEvent.getID(),
+                                        ""));
+                            }
+                            break;
+                        }
                     }
                 }
             }
@@ -147,25 +178,14 @@ public class BinEdManager {
         toolbarPanel.setOptionsAction(createOptionsAction(binEdEditorComponent));
         toolbarPanel.setOnlineHelpAction(
                 new AbstractAction() {
-                    @Override
-                    public void actionPerformed(@Nonnull ActionEvent event) {
-                        createOnlineHelpAction().actionPerformed(new ActionEvent(BinEdManager.this, 0, "COMMAND", 0));
-                    }
-                }
+            @Override
+            public void actionPerformed(@Nonnull ActionEvent event) {
+                createOnlineHelpAction().actionPerformed(new ActionEvent(BinEdManager.this, 0, "COMMAND", 0));
+            }
+        }
         );
 
         bookmarksSupport.registerBookmarksComponentActions(codeArea);
-        binEdEditorComponent.getComponentPanel().addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                // TODO bookmarksSupport.setActiveFile(binEdEditorComponent.getFileApi());
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-            }
-        });
-
         binEdEditorComponent.setGoToPositionAction(new GoToPositionAction(codeArea));
 
         return binEdEditorComponent;
@@ -183,161 +203,171 @@ public class BinEdManager {
     public void createContextMenu(ExtCodeArea codeArea, @Nullable BinEdComponentFileApi fileApi, @Nullable BinEdEditorComponent editorComponent, final JPopupMenu menu, PopupMenuVariant variant, int x, int y) {
         BasicCodeAreaZone positionZone = codeArea.getPainter().getPositionZone(x, y);
 
-        switch (positionZone) {
-        case TOP_LEFT_CORNER:
-        case HEADER: {
-            if (variant != PopupMenuVariant.BASIC) {
-                menu.add(createShowHeaderMenuItem(codeArea));
-                menu.add(createPositionCodeTypeMenuItem(codeArea));
-            }
-            break;
-        }
-        case ROW_POSITIONS: {
-            if (variant != PopupMenuVariant.BASIC) {
-                menu.add(createShowRowPositionMenuItem(codeArea));
-                menu.add(createPositionCodeTypeMenuItem(codeArea));
-                menu.add(new JSeparator());
-                menu.add(createGoToMenuItem(codeArea));
-            }
-
-            break;
-        }
-        default: {
-            final JMenuItem cutMenuItem = new JMenuItem("Cut");
-            ImageIcon cutMenuItemIcon = new ImageIcon(getClass().getResource(FRAMEWORK_TANGO_ICON_THEME_PREFIX + "edit-cut.png"));
-            cutMenuItem.setIcon(cutMenuItemIcon);
-            cutMenuItem.setDisabledIcon(new ImageIcon(GrayFilter.createDisabledImage(cutMenuItemIcon.getImage())));
-            cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionUtils.getMetaMask()));
-            cutMenuItem.setEnabled(codeArea.hasSelection() && codeArea.isEditable());
-            cutMenuItem.addActionListener((ActionEvent e) -> {
-                codeArea.cut();
-                menu.setVisible(false);
-            });
-            menu.add(cutMenuItem);
-
-            final JMenuItem copyMenuItem = new JMenuItem("Copy");
-            ImageIcon copyMenuItemIcon = new ImageIcon(getClass().getResource(FRAMEWORK_TANGO_ICON_THEME_PREFIX + "edit-copy.png"));
-            copyMenuItem.setIcon(copyMenuItemIcon);
-            copyMenuItem.setDisabledIcon(new ImageIcon(GrayFilter.createDisabledImage(copyMenuItemIcon.getImage())));
-            copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionUtils.getMetaMask()));
-            copyMenuItem.setEnabled(codeArea.hasSelection());
-            copyMenuItem.addActionListener((ActionEvent e) -> {
-                codeArea.copy();
-                menu.setVisible(false);
-            });
-            menu.add(copyMenuItem);
-
-            final JMenuItem copyAsCodeMenuItem = new JMenuItem("Copy as Code");
-            copyAsCodeMenuItem.setEnabled(codeArea.hasSelection());
-            copyAsCodeMenuItem.addActionListener((ActionEvent e) -> {
-                codeArea.copyAsCode();
-                menu.setVisible(false);
-            });
-            menu.add(copyAsCodeMenuItem);
-
-            final JMenuItem pasteMenuItem = new JMenuItem("Paste");
-            ImageIcon pasteMenuItemIcon = new ImageIcon(getClass().getResource(FRAMEWORK_TANGO_ICON_THEME_PREFIX + "edit-paste.png"));
-            pasteMenuItem.setIcon(pasteMenuItemIcon);
-            pasteMenuItem.setDisabledIcon(new ImageIcon(GrayFilter.createDisabledImage(pasteMenuItemIcon.getImage())));
-            pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionUtils.getMetaMask()));
-            pasteMenuItem.setEnabled(codeArea.canPaste() && codeArea.isEditable());
-            pasteMenuItem.addActionListener((ActionEvent e) -> {
-                codeArea.paste();
-                menu.setVisible(false);
-            });
-            menu.add(pasteMenuItem);
-
-            final JMenuItem pasteFromCodeMenuItem = new JMenuItem("Paste from Code");
-            pasteFromCodeMenuItem.setEnabled(codeArea.canPaste() && codeArea.isEditable());
-            pasteFromCodeMenuItem.addActionListener((ActionEvent e) -> {
-                try {
-                    codeArea.pasteFromCode();
-                } catch (IllegalArgumentException ex) {
-                    JOptionPane.showMessageDialog(codeArea, ex.getMessage(), "Unable to Paste Code", JOptionPane.ERROR_MESSAGE);
+        if (variant == PopupMenuVariant.EDITOR) {
+            switch (positionZone) {
+                case TOP_LEFT_CORNER:
+                case HEADER:
+                case ROW_POSITIONS: {
+                    break;
                 }
-                menu.setVisible(false);
-            });
-            menu.add(pasteFromCodeMenuItem);
-
-            final JMenuItem deleteMenuItem = new JMenuItem("Delete");
-            ImageIcon deleteMenuItemIcon = new ImageIcon(getClass().getResource(FRAMEWORK_TANGO_ICON_THEME_PREFIX + "edit-delete.png"));
-            deleteMenuItem.setIcon(deleteMenuItemIcon);
-            deleteMenuItem.setDisabledIcon(new ImageIcon(GrayFilter.createDisabledImage(deleteMenuItemIcon.getImage())));
-            deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
-            deleteMenuItem.setEnabled(codeArea.hasSelection() && codeArea.isEditable());
-            deleteMenuItem.addActionListener((ActionEvent e) -> {
-                codeArea.delete();
-                menu.setVisible(false);
-            });
-            menu.add(deleteMenuItem);
-
-            final JMenuItem selectAllMenuItem = new JMenuItem("Select All");
-            selectAllMenuItem.setIcon(new ImageIcon(getClass().getResource(FRAMEWORK_TANGO_ICON_THEME_PREFIX + "edit-select-all.png")));
-            selectAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionUtils.getMetaMask()));
-            selectAllMenuItem.addActionListener((ActionEvent e) -> {
-                codeArea.selectAll();
-                menu.setVisible(false);
-            });
-            menu.add(selectAllMenuItem);
-
-            menu.add(createEditSelectionMenuItem(codeArea));
-            menu.add(createClipboardContentMenuItem());
-
-            menu.addSeparator();
-
-            final JMenuItem findMenuItem = new JMenuItem("Find...");
-            findMenuItem.setIcon(new ImageIcon(getClass().getResource(BINED_TANGO_ICON_THEME_PREFIX + "edit-find.png")));
-            findMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionUtils.getMetaMask()));
-            findMenuItem.addActionListener((ActionEvent e) -> {
-                SearchAction searchAction = new SearchAction(codeArea, editorComponent.getComponentPanel());
-                searchAction.actionPerformed(e);
-                searchAction.switchReplaceMode(BinarySearchPanel.SearchOperation.FIND);
-            });
-            menu.add(findMenuItem);
-
-            final JMenuItem replaceMenuItem = new JMenuItem("Replace...");
-            replaceMenuItem.setIcon(new ImageIcon(getClass().getResource(BINED_TANGO_ICON_THEME_PREFIX + "edit-find-replace.png")));
-            replaceMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionUtils.getMetaMask()));
-            replaceMenuItem.setEnabled(codeArea.isEditable());
-            replaceMenuItem.addActionListener((ActionEvent e) -> {
-                SearchAction searchAction = new SearchAction(codeArea, editorComponent.getComponentPanel());
-                searchAction.actionPerformed(e);
-                searchAction.switchReplaceMode(BinarySearchPanel.SearchOperation.REPLACE);
-            });
-            menu.add(replaceMenuItem);
-
-            JMenuItem goToMenuItem = createGoToMenuItem(codeArea);
-            menu.add(goToMenuItem);
-
-            menu.add(bookmarksSupport.createBookmarksPopupMenu());
+                default: {
+                    JMenu showMenu = new JMenu("Show");
+                    showMenu.add(createShowHeaderMenuItem(codeArea));
+                    showMenu.add(createShowRowPositionMenuItem(codeArea));
+                    showMenu.add(createShowInspectorPanel(editorComponent.getComponentPanel()));
+                    menu.add(showMenu);
+                    menu.addSeparator();
+                }
+            }
         }
+
+        switch (positionZone) {
+            case TOP_LEFT_CORNER:
+            case HEADER: {
+                if (variant != PopupMenuVariant.BASIC) {
+                    menu.add(createShowHeaderMenuItem(codeArea));
+                    menu.add(createPositionCodeTypeMenuItem(codeArea));
+                }
+                break;
+            }
+            case ROW_POSITIONS: {
+                if (variant != PopupMenuVariant.BASIC) {
+                    menu.add(createShowRowPositionMenuItem(codeArea));
+                    menu.add(createPositionCodeTypeMenuItem(codeArea));
+                    menu.add(new JSeparator());
+                    menu.add(createGoToMenuItem(codeArea));
+                }
+
+                break;
+            }
+            default: {
+                final JMenuItem cutMenuItem = new JMenuItem("Cut");
+                ImageIcon cutMenuItemIcon = new ImageIcon(getClass().getResource(FRAMEWORK_TANGO_ICON_THEME_PREFIX + "edit-cut.png"));
+                cutMenuItem.setIcon(cutMenuItemIcon);
+                cutMenuItem.setDisabledIcon(new ImageIcon(GrayFilter.createDisabledImage(cutMenuItemIcon.getImage())));
+                cutMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ActionUtils.getMetaMask()));
+                cutMenuItem.setEnabled(codeArea.hasSelection() && codeArea.isEditable());
+                cutMenuItem.addActionListener((ActionEvent e) -> {
+                    codeArea.cut();
+                    menu.setVisible(false);
+                });
+                menu.add(cutMenuItem);
+
+                final JMenuItem copyMenuItem = new JMenuItem("Copy");
+                ImageIcon copyMenuItemIcon = new ImageIcon(getClass().getResource(FRAMEWORK_TANGO_ICON_THEME_PREFIX + "edit-copy.png"));
+                copyMenuItem.setIcon(copyMenuItemIcon);
+                copyMenuItem.setDisabledIcon(new ImageIcon(GrayFilter.createDisabledImage(copyMenuItemIcon.getImage())));
+                copyMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionUtils.getMetaMask()));
+                copyMenuItem.setEnabled(codeArea.hasSelection());
+                copyMenuItem.addActionListener((ActionEvent e) -> {
+                    codeArea.copy();
+                    menu.setVisible(false);
+                });
+                menu.add(copyMenuItem);
+
+                final JMenuItem copyAsCodeMenuItem = new JMenuItem("Copy as Code");
+                copyAsCodeMenuItem.setEnabled(codeArea.hasSelection());
+                copyAsCodeMenuItem.addActionListener((ActionEvent e) -> {
+                    codeArea.copyAsCode();
+                    menu.setVisible(false);
+                });
+                menu.add(copyAsCodeMenuItem);
+
+                final JMenuItem pasteMenuItem = new JMenuItem("Paste");
+                ImageIcon pasteMenuItemIcon = new ImageIcon(getClass().getResource(FRAMEWORK_TANGO_ICON_THEME_PREFIX + "edit-paste.png"));
+                pasteMenuItem.setIcon(pasteMenuItemIcon);
+                pasteMenuItem.setDisabledIcon(new ImageIcon(GrayFilter.createDisabledImage(pasteMenuItemIcon.getImage())));
+                pasteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionUtils.getMetaMask()));
+                pasteMenuItem.setEnabled(codeArea.canPaste() && codeArea.isEditable());
+                pasteMenuItem.addActionListener((ActionEvent e) -> {
+                    codeArea.paste();
+                    menu.setVisible(false);
+                });
+                menu.add(pasteMenuItem);
+
+                final JMenuItem pasteFromCodeMenuItem = new JMenuItem("Paste from Code");
+                pasteFromCodeMenuItem.setEnabled(codeArea.canPaste() && codeArea.isEditable());
+                pasteFromCodeMenuItem.addActionListener((ActionEvent e) -> {
+                    try {
+                        codeArea.pasteFromCode();
+                    } catch (IllegalArgumentException ex) {
+                        JOptionPane.showMessageDialog(codeArea, ex.getMessage(), "Unable to Paste Code", JOptionPane.ERROR_MESSAGE);
+                    }
+                    menu.setVisible(false);
+                });
+                menu.add(pasteFromCodeMenuItem);
+
+                final JMenuItem deleteMenuItem = new JMenuItem("Delete");
+                ImageIcon deleteMenuItemIcon = new ImageIcon(getClass().getResource(FRAMEWORK_TANGO_ICON_THEME_PREFIX + "edit-delete.png"));
+                deleteMenuItem.setIcon(deleteMenuItemIcon);
+                deleteMenuItem.setDisabledIcon(new ImageIcon(GrayFilter.createDisabledImage(deleteMenuItemIcon.getImage())));
+                deleteMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
+                deleteMenuItem.setEnabled(codeArea.hasSelection() && codeArea.isEditable());
+                deleteMenuItem.addActionListener((ActionEvent e) -> {
+                    codeArea.delete();
+                    menu.setVisible(false);
+                });
+                menu.add(deleteMenuItem);
+
+                final JMenuItem selectAllMenuItem = new JMenuItem("Select All");
+                selectAllMenuItem.setIcon(new ImageIcon(getClass().getResource(FRAMEWORK_TANGO_ICON_THEME_PREFIX + "edit-select-all.png")));
+                selectAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionUtils.getMetaMask()));
+                selectAllMenuItem.addActionListener((ActionEvent e) -> {
+                    codeArea.selectAll();
+                    menu.setVisible(false);
+                });
+                menu.add(selectAllMenuItem);
+
+                menu.add(createEditSelectionMenuItem(codeArea));
+
+                menu.addSeparator();
+
+                final JMenuItem findMenuItem = new JMenuItem("Find...");
+                findMenuItem.setIcon(new ImageIcon(getClass().getResource(BINED_TANGO_ICON_THEME_PREFIX + "edit-find.png")));
+                findMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, ActionUtils.getMetaMask()));
+                findMenuItem.addActionListener((ActionEvent e) -> {
+                    SearchAction searchAction = new SearchAction(codeArea, editorComponent.getComponentPanel());
+                    searchAction.actionPerformed(e);
+                    searchAction.switchReplaceMode(BinarySearchPanel.SearchOperation.FIND);
+                });
+                menu.add(findMenuItem);
+
+                final JMenuItem replaceMenuItem = new JMenuItem("Replace...");
+                replaceMenuItem.setIcon(new ImageIcon(getClass().getResource(BINED_TANGO_ICON_THEME_PREFIX + "edit-find-replace.png")));
+                replaceMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ActionUtils.getMetaMask()));
+                replaceMenuItem.setEnabled(codeArea.isEditable());
+                replaceMenuItem.addActionListener((ActionEvent e) -> {
+                    SearchAction searchAction = new SearchAction(codeArea, editorComponent.getComponentPanel());
+                    searchAction.actionPerformed(e);
+                    searchAction.switchReplaceMode(BinarySearchPanel.SearchOperation.REPLACE);
+                });
+                menu.add(replaceMenuItem);
+
+                JMenuItem goToMenuItem = createGoToMenuItem(codeArea);
+                menu.add(goToMenuItem);
+
+                menu.add(bookmarksSupport.createBookmarksPopupMenu());
+            }
         }
 
         menu.addSeparator();
 
-        if (variant == PopupMenuVariant.EDITOR) {
-            switch (positionZone) {
-            case TOP_LEFT_CORNER:
-            case HEADER:
-            case ROW_POSITIONS: {
-                break;
-            }
-            default: {
-                JMenu showMenu = new JMenu("Show");
-                showMenu.add(createShowHeaderMenuItem(codeArea));
-                showMenu.add(createShowRowPositionMenuItem(codeArea));
-                menu.add(showMenu);
-            }
-            }
-        }
-
         if (editorComponent != null) {
             JMenuItem insertDataMenuItem = createInsertDataMenuItem(editorComponent);
+            insertDataMenuItem.setEnabled(codeArea.isEditable());
             menu.add(insertDataMenuItem);
+            JMenuItem convertDataMenuItem = createConvertDataMenuItem(editorComponent);
+            convertDataMenuItem.setEnabled(codeArea.isEditable());
+            menu.add(convertDataMenuItem);
+            menu.addSeparator();
         }
 
-        JMenuItem compareFilesMenuItem = createCompareFilesMenuItem(codeArea);
-        menu.add(compareFilesMenuItem);
+        JMenu toolsMenu = new JMenu("Tools");
+        toolsMenu.add(createCompareFilesMenuItem(codeArea));
+        toolsMenu.add(createClipboardContentMenuItem());
+        toolsMenu.add(createDragDropContentMenuItem());
+        menu.add(toolsMenu);
+
         if (editorComponent != null) {
             if (fileApi instanceof BinEdFileHandler || codeArea.getContentData() instanceof BinEdFileDataWrapper) {
                 JMenuItem reloadFileMenuItem = createReloadFileMenuItem(editorComponent);
@@ -354,34 +384,34 @@ public class BinEdManager {
         }
 
         switch (positionZone) {
-        case TOP_LEFT_CORNER:
-        case HEADER:
-        case ROW_POSITIONS: {
-            break;
-        }
-        default: {
-            menu.addSeparator();
+            case TOP_LEFT_CORNER:
+            case HEADER:
+            case ROW_POSITIONS: {
+                break;
+            }
+            default: {
+                menu.addSeparator();
 
-            final JMenuItem onlineHelpMenuItem = new JMenuItem("Online Help...");
-            onlineHelpMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/bined/resources/icons/open_icon_library/icons/png/16x16/actions/help.png")));
-            onlineHelpMenuItem.addActionListener(createOnlineHelpAction());
-            menu.add(onlineHelpMenuItem);
+                final JMenuItem onlineHelpMenuItem = new JMenuItem("Online Help...");
+                onlineHelpMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/bined/resources/icons/open_icon_library/icons/png/16x16/actions/help.png")));
+                onlineHelpMenuItem.addActionListener(createOnlineHelpAction());
+                menu.add(onlineHelpMenuItem);
 
-            final JMenuItem aboutMenuItem = new JMenuItem("About...");
-            aboutMenuItem.addActionListener((ActionEvent e) -> {
-                AboutPanel aboutPanel = new AboutPanel();
-                aboutPanel.setupFields();
-                CloseControlPanel closeControlPanel = new CloseControlPanel();
-                JPanel dialogPanel = WindowUtils.createDialogPanel(aboutPanel, closeControlPanel);
-                WindowUtils.DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, (Component) e.getSource(), "About Plugin", Dialog.ModalityType.APPLICATION_MODAL);
-                closeControlPanel.setHandler(() -> {
-                    dialog.close();
+                final JMenuItem aboutMenuItem = new JMenuItem("About...");
+                aboutMenuItem.addActionListener((ActionEvent e) -> {
+                    AboutPanel aboutPanel = new AboutPanel();
+                    aboutPanel.setupFields();
+                    CloseControlPanel closeControlPanel = new CloseControlPanel();
+                    JPanel dialogPanel = WindowUtils.createDialogPanel(aboutPanel, closeControlPanel);
+                    WindowUtils.DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, (Component) e.getSource(), "About Plugin", Dialog.ModalityType.APPLICATION_MODAL);
+                    closeControlPanel.setHandler(() -> {
+                        dialog.close();
+                    });
+                    //            dialog.setSize(650, 460);
+                    dialog.showCentered((Component) e.getSource());
                 });
-                //            dialog.setSize(650, 460);
-                dialog.showCentered((Component) e.getSource());
-            });
-            menu.add(aboutMenuItem);
-        }
+                menu.add(aboutMenuItem);
+            }
         }
     }
 
@@ -420,9 +450,17 @@ public class BinEdManager {
         final JMenuItem insertDataMenuItem = new JMenuItem("Insert Data...");
         insertDataMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, ActionUtils.getMetaMask()));
         InsertDataAction insertDataAction = new InsertDataAction(editorComponent.getCodeArea());
-        insertDataAction.setUndoHandler(editorComponent.getUndoHandler());
         insertDataMenuItem.addActionListener(insertDataAction);
         return insertDataMenuItem;
+    }
+
+    @Nonnull
+    private JMenuItem createConvertDataMenuItem(BinEdEditorComponent editorComponent) {
+        final JMenuItem convertDataMenuItem = new JMenuItem("Convert Data...");
+        convertDataMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ActionUtils.getMetaMask()));
+        ConvertDataAction convertDataAction = new ConvertDataAction(editorComponent.getCodeArea());
+        convertDataMenuItem.addActionListener(convertDataAction);
+        return convertDataMenuItem;
     }
 
     @Nonnull
@@ -532,9 +570,27 @@ public class BinEdManager {
         return menu;
     }
 
+    @Nonnull
     public JMenuItem createClipboardContentMenuItem() {
         JMenuItem clipboardContentMenuItem = new JMenuItem("Clipboard Content...");
         clipboardContentMenuItem.addActionListener(new ClipboardContentAction());
+        return clipboardContentMenuItem;
+    }
+
+    @Nonnull
+    public JMenuItem createDragDropContentMenuItem() {
+        JMenuItem dragDropContentMenuItem = new JMenuItem("Drag&Drop Content...");
+        dragDropContentMenuItem.addActionListener(new DragDropContentAction());
+        return dragDropContentMenuItem;
+    }
+
+    @Nonnull
+    public JMenuItem createShowInspectorPanel(BinEdComponentPanel binEdComponentPanel) {
+        JCheckBoxMenuItem clipboardContentMenuItem = new JCheckBoxMenuItem("Inspector Panel");
+        clipboardContentMenuItem.setSelected(inspectorSupport.isShowParsingPanel(binEdComponentPanel));
+        clipboardContentMenuItem.addActionListener(event -> {
+            inspectorSupport.showParsingPanelAction(binEdComponentPanel).actionPerformed(event);
+        });
         return clipboardContentMenuItem;
     }
 
@@ -557,6 +613,7 @@ public class BinEdManager {
 
     @ParametersAreNonnullByDefault
     public interface BookmarksSupport {
+
         @Nonnull
         JMenu createBookmarksPopupMenu();
 
@@ -567,6 +624,9 @@ public class BinEdManager {
 
     @ParametersAreNonnullByDefault
     public interface InspectorSupport {
+
+        boolean isShowParsingPanel(BinEdComponentPanel binEdComponentPanel);
+
         @Nonnull
         ShowParsingPanelAction showParsingPanelAction(BinEdComponentPanel binEdComponentPanel);
     }

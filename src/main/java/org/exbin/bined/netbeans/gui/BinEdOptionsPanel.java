@@ -31,6 +31,9 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
+import org.exbin.bined.netbeans.options.IntegrationOptions;
+import org.exbin.bined.netbeans.options.gui.IntegrationOptionsPanel;
+import org.exbin.bined.netbeans.options.impl.IntegrationOptionsImpl;
 import org.exbin.bined.swing.extended.color.ExtendedCodeAreaColorProfile;
 import org.exbin.bined.swing.extended.layout.DefaultExtendedCodeAreaLayoutProfile;
 import org.exbin.bined.swing.extended.theme.ExtendedCodeAreaThemeProfile;
@@ -93,6 +96,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
     private DefaultListModel<CategoryItem> categoryModel = new DefaultListModel<>();
     private JPanel currentCategoryPanel = null;
 
+    private final IntegrationOptionsImpl integrationOptions = new IntegrationOptionsImpl();
     private final EditorOptionsImpl editorOptions = new EditorOptionsImpl();
     private final StatusOptionsImpl statusOptions = new StatusOptionsImpl();
     private final TextEncodingOptionsImpl encodingOptions = new TextEncodingOptionsImpl();
@@ -103,6 +107,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
     private final CodeAreaColorOptionsImpl colorOptions = new CodeAreaColorOptionsImpl();
     private final CodeAreaThemeOptionsImpl themeOptions = new CodeAreaThemeOptionsImpl();
 
+    private final IntegrationOptionsPanel integrationOptionsPanel = new IntegrationOptionsPanel();
     private final EditorOptionsPanel editorOptionsPanel = new EditorOptionsPanel();
     private final StatusOptionsPanel statusOptionsPanel = new StatusOptionsPanel();
     private final CodeAreaOptionsPanel codeAreaOptionsPanel = new CodeAreaOptionsPanel();
@@ -124,6 +129,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
 //        this.controller = controller;
         initComponents();
 
+        categoryModel.addElement(new CategoryItem("Integration", integrationOptionsPanel));
         categoryModel.addElement(new CategoryItem("Editor", editorOptionsPanel));
         categoryModel.addElement(new CategoryItem("Status Panel", statusOptionsPanel));
         categoryModel.addElement(new CategoryItem("Code Area", codeAreaOptionsPanel));
@@ -180,7 +186,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
                 fontPanel.setStoredFont(currentFont);
                 DefaultControlPanel controlPanel = new DefaultControlPanel();
                 JPanel dialogPanel = WindowUtils.createDialogPanel(fontPanel, controlPanel);
-                final DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, BinEdOptionsPanel.this, "Set font", java.awt.Dialog.ModalityType.APPLICATION_MODAL);
+                final DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, BinEdOptionsPanel.this, "Select Font", java.awt.Dialog.ModalityType.APPLICATION_MODAL);
                 controlPanel.setHandler((DefaultControlHandler.ControlActionType actionType) -> {
                     if (actionType != DefaultControlHandler.ControlActionType.CANCEL) {
                         result.font = fontPanel.getStoredFont();
@@ -626,6 +632,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
     }// </editor-fold>//GEN-END:initComponents
 
     public void loadFromPreferences() {
+        integrationOptions.loadFromPreferences(preferences.getIntegrationPreferences());
         editorOptions.loadFromPreferences(preferences.getEditorPreferences());
         statusOptions.loadFromPreferences(preferences.getStatusPreferences());
         codeAreaOptions.loadFromPreferences(preferences.getCodeAreaPreferences());
@@ -635,6 +642,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
         colorOptions.loadFromPreferences(preferences.getColorPreferences());
         themeOptions.loadFromPreferences(preferences.getThemePreferences());
 
+        integrationOptionsPanel.loadFromOptions(integrationOptions);
         editorOptionsPanel.loadFromOptions(editorOptions);
         statusOptionsPanel.loadFromOptions(statusOptions);
         codeAreaOptionsPanel.loadFromOptions(codeAreaOptions);
@@ -652,6 +660,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
     public void saveToPreferences() {
         applyToOptions();
 
+        integrationOptions.saveToPreferences(preferences.getIntegrationPreferences());
         editorOptions.saveToPreferences(preferences.getEditorPreferences());
         statusOptions.saveToPreferences(preferences.getStatusPreferences());
         codeAreaOptions.saveToPreferences(preferences.getCodeAreaPreferences());
@@ -664,6 +673,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
     }
 
     public void applyToOptions() {
+        integrationOptionsPanel.saveToOptions(integrationOptions);
         editorOptionsPanel.saveToOptions(editorOptions);
         statusOptionsPanel.saveToOptions(statusOptions);
         codeAreaOptionsPanel.saveToOptions(codeAreaOptions);
@@ -697,6 +707,12 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
     @Override
     public TextEncodingOptionsImpl getEncodingOptions() {
         return encodingOptions;
+    }
+
+    @Nonnull
+    @Override
+    public IntegrationOptions getIntegrationOptions() {
+        return integrationOptions;
     }
 
     @Nonnull

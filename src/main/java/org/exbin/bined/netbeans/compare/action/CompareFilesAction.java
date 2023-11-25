@@ -82,7 +82,7 @@ public class CompareFilesAction extends AbstractAction {
                     return null;
                 }
 
-                try ( FileInputStream stream = new FileInputStream(result[0])) {
+                try (FileInputStream stream = new FileInputStream(result[0])) {
                     PagedData pagedData = new PagedData();
                     pagedData.loadFromStream(stream);
                     return new CompareFilesPanel.FileRecord(result[0].getAbsolutePath(), pagedData);

@@ -18,7 +18,6 @@ package org.exbin.bined.netbeans.action;
 import org.exbin.bined.SelectionRange;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.gui.EditSelectionPanel;
-import org.exbin.framework.bined.gui.GoToBinaryPanel;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JPanel;
@@ -43,7 +42,7 @@ import org.exbin.framework.utils.handler.DefaultControlHandler;
 @ParametersAreNonnullByDefault
 public class EditSelectionAction implements ActionListener {
 
-    private final ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(GoToBinaryPanel.class);
+    private final ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(EditSelectionPanel.class);
     private final ExtCodeArea codeArea;
 
     public EditSelectionAction(ExtCodeArea codeArea) {

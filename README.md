@@ -1,7 +1,7 @@
-BinEd - Binary/Hexadecimal Editor - NetBeans Plugin
-===================================================
+BinEd - Binary/Hex Editor - NetBeans Plugin
+===========================================
 
-Hexadecimal viewer/editor plugin module for NetBeans platform.
+Hex viewer/editor plugin module for NetBeans platform.
 
 Homepage: https://bined.exbin.org/netbeans-plugin  
 

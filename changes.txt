@@ -1,7 +1,9 @@
 0.2.5
-- Partial mitigation to file locking issue
+- Added convert data action
 - Added support for bookmarks
-- Added clipboard content dialog
+- Added clipboard content tool
+- Added drag&drop content tool
+- Partial mitigation to file locking issue
 
 0.2.4 (2022-10-12)
 - Added API: view binary data

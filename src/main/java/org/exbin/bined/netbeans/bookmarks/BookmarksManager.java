@@ -96,20 +96,6 @@ public class BookmarksManager {
             public Optional<BinEdComponentPanel.BinEdComponentExtension> createComponentExtension(BinEdComponentPanel component) {
                 return Optional.empty();
             }
-
-            @Override
-            public void onPopupMenuCreation(final JPopupMenu popupMenu,
-                    final ExtCodeArea codeArea, String menuPostfix, int x, int y) {
-                BasicCodeAreaZone positionZone = codeArea.getPainter().getPositionZone(x, y);
-
-                if (positionZone == BasicCodeAreaZone.TOP_LEFT_CORNER || positionZone == BasicCodeAreaZone.HEADER
-                        || positionZone == BasicCodeAreaZone.ROW_POSITIONS) {
-                    return;
-                }
-
-                // TODO: Change position
-                popupMenu.add(createBookmarksPopupMenu());
-            }
         });
         binEdManager.setBookmarksSupport(new BinEdManager.BookmarksSupport() {
 

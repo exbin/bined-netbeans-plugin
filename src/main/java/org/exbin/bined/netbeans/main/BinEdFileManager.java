@@ -28,7 +28,6 @@ import org.exbin.framework.editor.text.preferences.TextFontPreferences;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import javax.swing.JPopupMenu;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +61,7 @@ public class BinEdFileManager {
 
         for (BinEdFileExtension fileExtension : binEdComponentExtensions) {
             Optional<BinEdComponentPanel.BinEdComponentExtension> componentExtension = fileExtension.createComponentExtension(componentPanel);
-            componentExtension.ifPresent((extension) -> {
+            componentExtension.ifPresent(extension -> {
                 extension.onCreate(componentPanel);
                 componentPanel.addComponentExtension(extension);
             });
@@ -126,8 +125,6 @@ public class BinEdFileManager {
 
         @Nonnull
         Optional<BinEdComponentPanel.BinEdComponentExtension> createComponentExtension(BinEdComponentPanel component);
-
-        void onPopupMenuCreation(final JPopupMenu popupMenu, final ExtCodeArea codeArea, String menuPostfix, int x, int y);
     }
 
     @ParametersAreNonnullByDefault

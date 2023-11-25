@@ -37,7 +37,7 @@ import org.openide.util.NbPreferences;
         keywords = "#AdvancedOption_Keywords_BinEd",
         keywordsCategory = "Advanced/BinEd"
 )
-@org.openide.util.NbBundle.Messages({"AdvancedOption_DisplayName_BinEd=BinEd", "AdvancedOption_Keywords_BinEd=BinEd hexadecimal editor"})
+@org.openide.util.NbBundle.Messages({"AdvancedOption_DisplayName_BinEd=BinEd", "AdvancedOption_Keywords_BinEd=BinEd binary/hex editor"})
 public final class BinEdOptionsPanelController extends OptionsPanelController {
 
     private BinEdOptionsPanel panel;
