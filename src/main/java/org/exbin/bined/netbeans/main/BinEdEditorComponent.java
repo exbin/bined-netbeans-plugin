@@ -360,6 +360,12 @@ public class BinEdEditorComponent {
         return statusPanel;
     }
 
+    public void detachToolbar() {
+        wrapperPanel.remove(toolbarPanel);
+        wrapperPanel.invalidate();
+        wrapperPanel.repaint();
+    }
+
     @Nonnull
     public BinEdToolbarPanel getToolbarPanel() {
         return toolbarPanel;
@@ -627,7 +633,7 @@ public class BinEdEditorComponent {
         encodingsHandler.setEncodings(applyOptions.getEncodingOptions().getEncodings());
         ((FontCapable) codeArea).setCodeFont(applyOptions.getFontOptions().isUseDefaultFont() ? defaultFont : applyOptions.getFontOptions().getFont(defaultFont));
 
-        DataInspectorOptions dataInspectorOptions = applyOptions.getDataInspectorOptions();
+//        DataInspectorOptions dataInspectorOptions = applyOptions.getDataInspectorOptions();
 //        switchShowParsingPanel(dataInspectorOptions.isShowParsingPanel());
         EditorOptions editorOptions = applyOptions.getEditorOptions();
         if (codeArea.getCommandHandler() instanceof CodeAreaOperationCommandHandler) {

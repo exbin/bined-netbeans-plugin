@@ -61,7 +61,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
     private final BinaryEditorNode node;
 
-    private final Savable savable;
+    private final BinaryEditorTopComponentSavable savable;
     private boolean opened = false;
     protected String displayName;
 
@@ -72,7 +72,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         editorFile = new BinEdFileHandler();
         BinEdManager binEdManager = BinEdManager.getInstance();
         binEdManager.getFileManager().initFileHandler(editorFile);
-        savable = new Savable(editorFile);
+        savable = new BinaryEditorTopComponentSavable(editorFile);
 
         add(editorFile.getComponent(), BorderLayout.CENTER);
 

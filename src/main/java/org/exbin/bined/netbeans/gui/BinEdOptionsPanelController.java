@@ -19,6 +19,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
+import org.exbin.bined.netbeans.Installer;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
 import org.exbin.framework.preferences.PreferencesWrapper;
 import org.netbeans.spi.options.OptionsPanelController;
@@ -54,6 +55,7 @@ public final class BinEdOptionsPanelController extends OptionsPanelController {
     public void applyChanges() {
         SwingUtilities.invokeLater(() -> {
             getPanel().saveToPreferences();
+            Installer.applyIntegrationOptions(getPanel().getIntegrationOptions());
             changed = false;
         });
     }

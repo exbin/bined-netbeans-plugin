@@ -19,7 +19,6 @@ import org.exbin.bined.netbeans.gui.BinEdComponentPanel;
 import org.exbin.bined.netbeans.inspector.action.ShowParsingPanelAction;
 import org.exbin.bined.netbeans.main.BinEdFileManager;
 import org.exbin.bined.netbeans.main.BinEdManager;
-import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.api.Preferences;
 import org.exbin.framework.bined.inspector.BasicValuesPositionColorModifier;
 import org.exbin.framework.bined.inspector.options.impl.DataInspectorOptionsImpl;
@@ -28,7 +27,6 @@ import org.exbin.framework.utils.LanguageUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import javax.swing.JPopupMenu;
 import java.util.Optional;
 import java.util.ResourceBundle;
 

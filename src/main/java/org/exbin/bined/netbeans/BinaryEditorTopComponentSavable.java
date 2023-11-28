@@ -30,12 +30,12 @@ import org.openide.loaders.DataObject;
  * @author ExBin Project (https://exbin.org)
  */
 @ParametersAreNonnullByDefault
-class Savable extends AbstractSavable {
+class BinaryEditorTopComponentSavable extends AbstractSavable {
 
     private DataObject dataObject;
     private final BinEdComponentFileApi fileApi;
 
-    public Savable(BinEdComponentFileApi fileApi) {
+    public BinaryEditorTopComponentSavable(BinEdComponentFileApi fileApi) {
         this.fileApi = fileApi;
     }
 
@@ -68,7 +68,7 @@ class Savable extends AbstractSavable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Savable other = (Savable) obj;
+        final BinaryEditorTopComponentSavable other = (BinaryEditorTopComponentSavable) obj;
         return Objects.equals(this.fileApi, other.fileApi);
     }
 

@@ -74,7 +74,7 @@
         <Component class="javax.swing.JLabel" name="findLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/bined/netbeans/gui/resources/BinarySearchPanel.properties" key="findLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/bined/netbeans/search/gui/resources/BinarySearchPanel.properties" key="findLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
             <Property name="name" type="java.lang.String" value="findLabel" noResource="true"/>
           </Properties>
@@ -95,7 +95,7 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="T"/>
                 <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/bined/netbeans/gui/resources/BinarySearchPanel.properties" key="findTypeButton.toolTipText" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/bined/netbeans/search/gui/resources/BinarySearchPanel.properties" key="findTypeButton.toolTipText" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -176,7 +176,7 @@
                 </Property>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/bined/netbeans/gui/resources/BinarySearchPanel.properties" key="matchCaseToggleButton.toolTipText" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/bined/netbeans/search/gui/resources/BinarySearchPanel.properties" key="matchCaseToggleButton.toolTipText" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -194,7 +194,7 @@
                 </Property>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/bined/netbeans/gui/resources/BinarySearchPanel.properties" key="multipleMatchesToggleButton.toolTipText" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/bined/netbeans/search/gui/resources/BinarySearchPanel.properties" key="multipleMatchesToggleButton.toolTipText" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -213,7 +213,7 @@
             <Component class="javax.swing.JButton" name="optionsButton">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/bined/netbeans/gui/resources/BinarySearchPanel.properties" key="optionsButton.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/bined/netbeans/search/gui/resources/BinarySearchPanel.properties" key="optionsButton.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -249,7 +249,7 @@
                   <Image iconType="3" name="/org/exbin/framework/bined/resources/icons/open_icon_library/icons/png/16x16/actions/dialog-cancel-3.png"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/bined/netbeans/gui/resources/BinarySearchPanel.properties" key="closeButton.toolTipText" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/bined/netbeans/search/gui/resources/BinarySearchPanel.properties" key="closeButton.toolTipText" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -311,7 +311,7 @@
         <Component class="javax.swing.JLabel" name="replaceLabel">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-              <ResourceString bundle="org/exbin/bined/netbeans/gui/resources/BinarySearchPanel.properties" key="replaceLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+              <ResourceString bundle="org/exbin/bined/netbeans/search/gui/resources/BinarySearchPanel.properties" key="replaceLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
             </Property>
             <Property name="name" type="java.lang.String" value="replaceLabel" noResource="true"/>
           </Properties>
@@ -331,10 +331,10 @@
             <Component class="javax.swing.JButton" name="replaceTypeButton">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/bined/netbeans/gui/resources/BinarySearchPanel.properties" key="replaceTypeButton.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/bined/netbeans/search/gui/resources/BinarySearchPanel.properties" key="replaceTypeButton.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/bined/netbeans/gui/resources/BinarySearchPanel.properties" key="replaceTypeButton.toolTipText" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/bined/netbeans/search/gui/resources/BinarySearchPanel.properties" key="replaceTypeButton.toolTipText" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
                 <Property name="defaultCapable" type="boolean" value="false"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -384,7 +384,7 @@
             <Component class="javax.swing.JButton" name="replaceButton">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/bined/netbeans/gui/resources/BinarySearchPanel.properties" key="replaceButton.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/bined/netbeans/search/gui/resources/BinarySearchPanel.properties" key="replaceButton.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
                 <Property name="enabled" type="boolean" value="false"/>
                 <Property name="focusable" type="boolean" value="false"/>
@@ -399,7 +399,7 @@
             <Component class="javax.swing.JButton" name="replaceAllButton">
               <Properties>
                 <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-                  <ResourceString bundle="org/exbin/bined/netbeans/gui/resources/BinarySearchPanel.properties" key="replaceAllButton.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+                  <ResourceString bundle="org/exbin/bined/netbeans/search/gui/resources/BinarySearchPanel.properties" key="replaceAllButton.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
                 </Property>
                 <Property name="enabled" type="boolean" value="false"/>
                 <Property name="focusable" type="boolean" value="false"/>

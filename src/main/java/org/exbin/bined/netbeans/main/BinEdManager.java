@@ -61,8 +61,6 @@ import javax.swing.KeyStroke;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import org.exbin.bined.netbeans.bookmarks.BookmarksManager;

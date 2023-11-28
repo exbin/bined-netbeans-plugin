@@ -30,7 +30,8 @@ public class IntegrationPreferences implements IntegrationOptions {
     public static final String PREFERENCES_REGISTER_FILE_MENU_OPEN_AS_BINARY = "registerFileMenuOpenAsBinary";
     public static final String PREFERENCES_REGISTER_OPEN_FILE_AS_BINARY_VIA_TOOLBAR = "registerOpenFileAsBinaryViaToolbar";
     public static final String PREFERENCES_REGISTER_CONTEXT_OPEN_AS_BINARY = "registerContextOpenAsBinary";
-    public static final String PREFERENCES_REGISTER_CONTEXT_OPEN_IN_BINARY_EDITOR = "registerContextOpenInBinaryEditor";
+    public static final String PREFERENCES_REGISTER_CONTEXT_TOOLS_OPEN_AS_BINARY = "registerContextToolsBinaryEditor";
+    public static final String PREFERENCES_REGISTER_BINARY_MULTIVIEW = "registerBinaryMultiview";
     public static final String PREFERENCES_REGISTER_DEBUG_VIEW_AS_BINARY = "registerDebugVariablesAsBinary";
     public static final String PREFERENCES_REGISTER_BYTE_TO_BYTE_DIFF_TOOL = "registerByteToByteDiffTool";
 
@@ -44,7 +45,7 @@ public class IntegrationPreferences implements IntegrationOptions {
 
     @Override
     public boolean isRegisterFileMenuOpenAsBinary() {
-        return preferences.getBoolean(PREFERENCES_REGISTER_FILE_MENU_OPEN_AS_BINARY, false);
+        return preferences.getBoolean(PREFERENCES_REGISTER_FILE_MENU_OPEN_AS_BINARY, true);
     }
 
     public void setRegisterFileMenuOpenAsBinary(boolean registerFileMenuOpenAsBinary) {
@@ -53,7 +54,7 @@ public class IntegrationPreferences implements IntegrationOptions {
 
     @Override
     public boolean isRegisterOpenFileAsBinaryViaToolbar() {
-        return preferences.getBoolean(PREFERENCES_REGISTER_OPEN_FILE_AS_BINARY_VIA_TOOLBAR, true);
+        return preferences.getBoolean(PREFERENCES_REGISTER_OPEN_FILE_AS_BINARY_VIA_TOOLBAR, false);
     }
 
     public void setRegisterOpenFileAsBinaryViaToolbar(boolean registerOpenFileAsBinaryViaToolbar) {
@@ -70,12 +71,21 @@ public class IntegrationPreferences implements IntegrationOptions {
     }
 
     @Override
-    public boolean isRegisterContextOpenInBinaryEditor() {
-        return preferences.getBoolean(PREFERENCES_REGISTER_CONTEXT_OPEN_IN_BINARY_EDITOR, true);
+    public boolean isRegisterContextToolsOpenAsBinary() {
+        return preferences.getBoolean(PREFERENCES_REGISTER_CONTEXT_TOOLS_OPEN_AS_BINARY, true);
     }
 
-    public void setRegisterContextOpenInBinaryEditor(boolean registerContextOpenInBinaryEditor) {
-        preferences.putBoolean(PREFERENCES_REGISTER_CONTEXT_OPEN_IN_BINARY_EDITOR, registerContextOpenInBinaryEditor);
+    public void setRegisterContextToolsOpenAsBinary(boolean registerContextToolsOpenAsBinary) {
+        preferences.putBoolean(PREFERENCES_REGISTER_CONTEXT_TOOLS_OPEN_AS_BINARY, registerContextToolsOpenAsBinary);
+    }
+
+    @Override
+    public boolean isRegisterBinaryMultiview() {
+        return preferences.getBoolean(PREFERENCES_REGISTER_BINARY_MULTIVIEW, true);
+    }
+
+    public void setRegisterBinaryMultiview(boolean registerBinaryMultiview) {
+        preferences.putBoolean(PREFERENCES_REGISTER_BINARY_MULTIVIEW, registerBinaryMultiview);
     }
 
     @Override

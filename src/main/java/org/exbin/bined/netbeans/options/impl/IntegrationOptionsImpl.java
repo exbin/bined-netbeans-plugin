@@ -28,10 +28,11 @@ import org.exbin.framework.options.api.OptionsData;
 @ParametersAreNonnullByDefault
 public class IntegrationOptionsImpl implements OptionsData, IntegrationOptions {
 
-    private boolean registerFileMenuOpenAsBinary = false;
+    private boolean registerFileMenuOpenAsBinary = true;
     private boolean registerOpenFileAsBinaryViaToolbar = true;
     private boolean registerContextOpenAsBinary = false;
-    private boolean registerContextOpenInBinaryEditor = true;
+    private boolean registerContextToolsOpenAsBinary = true;
+    private boolean registerBinaryMultiview = false;
     private boolean registerDebugViewAsBinary = true;
     private boolean registerByteToByteDiffTool = true;
 
@@ -65,12 +66,21 @@ public class IntegrationOptionsImpl implements OptionsData, IntegrationOptions {
     }
 
     @Override
-    public boolean isRegisterContextOpenInBinaryEditor() {
-        return registerContextOpenInBinaryEditor;
+    public boolean isRegisterContextToolsOpenAsBinary() {
+        return registerContextToolsOpenAsBinary;
     }
 
-    public void setRegisterContextOpenInBinaryEditor(boolean registerContextOpenInBinaryEditor) {
-        this.registerContextOpenInBinaryEditor = registerContextOpenInBinaryEditor;
+    public void setRegisterContextToolsOpenAsBinary(boolean registerContextToolsOpenAsBinary) {
+        this.registerContextToolsOpenAsBinary = registerContextToolsOpenAsBinary;
+    }
+
+    @Override
+    public boolean isRegisterBinaryMultiview() {
+        return registerBinaryMultiview;
+    }
+
+    public void setRegisterBinaryMultiview(boolean registerBinaryMultiview) {
+        this.registerBinaryMultiview = registerBinaryMultiview;
     }
 
     @Override
@@ -103,7 +113,8 @@ public class IntegrationOptionsImpl implements OptionsData, IntegrationOptions {
         registerFileMenuOpenAsBinary = preferences.isRegisterFileMenuOpenAsBinary();
         registerOpenFileAsBinaryViaToolbar = preferences.isRegisterOpenFileAsBinaryViaToolbar();
         registerContextOpenAsBinary = preferences.isRegisterContextOpenAsBinary();
-        registerContextOpenInBinaryEditor = preferences.isRegisterContextOpenInBinaryEditor();
+        registerContextToolsOpenAsBinary = preferences.isRegisterContextToolsOpenAsBinary();
+        registerBinaryMultiview = preferences.isRegisterBinaryMultiview();
         registerDebugViewAsBinary = preferences.isRegisterDebugViewAsBinary();
         registerByteToByteDiffTool = preferences.isRegisterByteToByteDiffTool();
         registerEditAsBinaryForDbColumn = preferences.isRegisterEditAsBinaryForDbColumn();
@@ -113,7 +124,8 @@ public class IntegrationOptionsImpl implements OptionsData, IntegrationOptions {
         preferences.setRegisterFileMenuOpenAsBinary(registerFileMenuOpenAsBinary);
         preferences.setRegisterOpenFileAsBinaryViaToolbar(registerOpenFileAsBinaryViaToolbar);
         preferences.setRegisterContextOpenAsBinary(registerContextOpenAsBinary);
-        preferences.setRegisterContextOpenInBinaryEditor(registerContextOpenInBinaryEditor);
+        preferences.setRegisterContextToolsOpenAsBinary(registerContextToolsOpenAsBinary);
+        preferences.setRegisterBinaryMultiview(registerBinaryMultiview);
         preferences.setRegisterDebugViewAsBinary(registerDebugViewAsBinary);
         preferences.setRegisterByteToByteDiffTool(registerByteToByteDiffTool);
         preferences.setRegisterEditAsBinaryForDbColumn(registerEditAsBinaryForDbColumn);
@@ -123,7 +135,8 @@ public class IntegrationOptionsImpl implements OptionsData, IntegrationOptions {
         registerFileMenuOpenAsBinary = options.isRegisterFileMenuOpenAsBinary();
         registerOpenFileAsBinaryViaToolbar = options.isRegisterOpenFileAsBinaryViaToolbar();
         registerContextOpenAsBinary = options.isRegisterContextOpenAsBinary();
-        registerContextOpenInBinaryEditor = options.isRegisterContextOpenInBinaryEditor();
+        registerContextToolsOpenAsBinary = options.isRegisterContextToolsOpenAsBinary();
+        registerBinaryMultiview = options.isRegisterBinaryMultiview();
         registerDebugViewAsBinary = options.isRegisterDebugViewAsBinary();
         registerByteToByteDiffTool = options.isRegisterByteToByteDiffTool();
         registerEditAsBinaryForDbColumn = options.isRegisterEditAsBinaryForDbColumn();

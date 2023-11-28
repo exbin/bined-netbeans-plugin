@@ -28,6 +28,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JComponent;
+import javax.swing.JToolBar;
 import org.exbin.auxiliary.paged_data.BinaryData;
 import org.exbin.auxiliary.paged_data.ByteArrayData;
 import org.exbin.auxiliary.paged_data.EditableBinaryData;
@@ -46,7 +47,6 @@ import org.exbin.framework.file.api.FileHandler;
 import org.exbin.framework.file.api.FileType;
 import org.openide.awt.UndoRedo;
 import org.openide.loaders.DataObject;
-import org.openide.util.Exceptions;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.InstanceContent;
 
@@ -107,6 +107,15 @@ public class BinEdFileHandler implements FileHandler, BinEdComponentFileApi {
     @Nonnull
     public ExtCodeArea getCodeArea() {
         return editorComponent.getCodeArea();
+    }
+    
+    public void detachToolbar() {
+        editorComponent.detachToolbar();
+    }
+    
+    @Nonnull
+    public JToolBar getToolBar() {
+        return editorComponent.getToolbarPanel().getToolBar();
     }
 
     @Override

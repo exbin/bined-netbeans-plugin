@@ -23,10 +23,11 @@
                   <Component id="openFileAsBinaryCheckBox" max="32767" attributes="0"/>
                   <Component id="openFileToolbarBinaryCheckBox" alignment="0" max="32767" attributes="0"/>
                   <Component id="contextOpenAsBinaryCheckBox" alignment="0" max="32767" attributes="0"/>
-                  <Component id="binaryEditorInContextOpenInCheckBox" alignment="0" max="32767" attributes="0"/>
+                  <Component id="contextToolsOpenAsBinaryCheckBox" alignment="0" max="32767" attributes="0"/>
                   <Component id="openAsBinaryInDebugViewCheckBox" alignment="0" max="32767" attributes="0"/>
                   <Component id="byteToByteDiffToolCheckBox" alignment="0" max="32767" attributes="0"/>
                   <Component id="editAsBinaryForDbColumnCheckBox" alignment="1" max="32767" attributes="0"/>
+                  <Component id="binaryMultiviewCheckBox" alignment="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -42,7 +43,9 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="contextOpenAsBinaryCheckBox" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="binaryEditorInContextOpenInCheckBox" min="-2" max="-2" attributes="0"/>
+              <Component id="contextToolsOpenAsBinaryCheckBox" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="binaryMultiviewCheckBox" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="openAsBinaryInDebugViewCheckBox" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -57,6 +60,7 @@
   <SubComponents>
     <Component class="javax.swing.JCheckBox" name="openFileAsBinaryCheckBox">
       <Properties>
+        <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="openFileAsBinaryCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
         </Property>
@@ -67,10 +71,10 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="openFileToolbarBinaryCheckBox">
       <Properties>
-        <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="openFileToolbarBinaryCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
         </Property>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="openFileToolbarBinaryCheckBoxStateChanged"/>
@@ -86,15 +90,26 @@
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="contextOpenAsBinaryCheckBoxStateChanged"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JCheckBox" name="binaryEditorInContextOpenInCheckBox">
+    <Component class="javax.swing.JCheckBox" name="contextToolsOpenAsBinaryCheckBox">
       <Properties>
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="binaryEditorInContextOpenInCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="contextToolsOpenAsBinaryCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="binaryEditorInContextOpenInCheckBoxStateChanged"/>
+        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="contextToolsOpenAsBinaryCheckBoxStateChanged"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="binaryMultiviewCheckBox">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="binaryMultiviewCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+        </Property>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <Events>
+        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="binaryMultiviewCheckBoxStateChanged"/>
       </Events>
     </Component>
     <Component class="javax.swing.JCheckBox" name="openAsBinaryInDebugViewCheckBox">
@@ -103,6 +118,7 @@
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="openAsBinaryInDebugViewCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
         </Property>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="openAsBinaryInDebugViewCheckBoxStateChanged"/>
@@ -110,10 +126,10 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="byteToByteDiffToolCheckBox">
       <Properties>
-        <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="byteToByteDiffToolCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
         </Property>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="byteToByteDiffToolCheckBoxStateChanged"/>
@@ -121,10 +137,10 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="editAsBinaryForDbColumnCheckBox">
       <Properties>
-        <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
           <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="editAsBinaryForDbColumnCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
         </Property>
+        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="editAsBinaryForDbColumnCheckBoxStateChanged"/>

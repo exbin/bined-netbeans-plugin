@@ -31,7 +31,9 @@ public interface IntegrationOptions {
 
     boolean isRegisterContextOpenAsBinary();
 
-    boolean isRegisterContextOpenInBinaryEditor();
+    boolean isRegisterContextToolsOpenAsBinary();
+    
+    boolean isRegisterBinaryMultiview();
 
     boolean isRegisterDebugViewAsBinary();
 

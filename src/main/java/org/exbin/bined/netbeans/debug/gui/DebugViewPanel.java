@@ -24,6 +24,7 @@ import org.exbin.auxiliary.paged_data.BinaryData;
 import org.exbin.bined.netbeans.debug.DebugViewDataProvider;
 import org.exbin.bined.netbeans.gui.BinEdComponentPanel;
 import org.exbin.bined.netbeans.main.BinEdEditorComponent;
+import org.exbin.bined.netbeans.main.BinEdFileManager;
 import org.exbin.bined.netbeans.main.BinEdManager;
 
 /**
@@ -48,7 +49,11 @@ public class DebugViewPanel extends javax.swing.JPanel {
     }
 
     private void init() {
+        BinEdManager binEdManager = BinEdManager.getInstance();
+        BinEdFileManager fileManager = binEdManager.getFileManager();
         BinEdComponentPanel componentPanel = binEdEditorComponent.getComponentPanel();
+        fileManager.initComponentPanel(componentPanel);
+
         componentPanel.getCodeArea().setEditMode(EditMode.READ_ONLY);
 
         this.add(componentPanel, BorderLayout.CENTER);

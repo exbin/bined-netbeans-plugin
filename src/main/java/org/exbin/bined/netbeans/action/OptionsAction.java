@@ -34,9 +34,10 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import org.exbin.bined.netbeans.Installer;
 
 /**
- * Go to position action.
+ * Options action.
  *
  * @author ExBin Project (https://exbin.org)
  */
@@ -89,6 +90,7 @@ public class OptionsAction extends AbstractAction {
                     optionsPanel.saveToPreferences();
                 }
                 editorComponent.applyOptions(optionsPanel);
+                Installer.applyIntegrationOptions(optionsPanel.getIntegrationOptions());
                 fileApi.switchFileHandlingMode(optionsPanel.getEditorOptions().getFileHandlingMode());
                 codeArea.repaint();
             }

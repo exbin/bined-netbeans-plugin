@@ -15,7 +15,9 @@
  */
 package org.exbin.bined.netbeans;
 
+import java.io.IOException;
 import javax.annotation.ParametersAreNonnullByDefault;
+import org.netbeans.api.actions.Savable;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
@@ -31,12 +33,26 @@ import org.openide.loaders.MultiFileLoader;
 @ParametersAreNonnullByDefault
 @MIMEResolver.ExtensionRegistration(displayName = "#BinEdDataObject.extensionDisplayName", mimeType = BinEdDataObject.MIME, extension = {BinEdDataObject.MMD_EXT})
 @DataObject.Registration(displayName = "#BinEdDataObject.displayName", mimeType = BinEdDataObject.MIME, iconBase = "org/exbin/bined/netbeans/resources/icons/icon.png")
-public class BinEdDataObject extends MultiDataObject {
+public class BinEdDataObject extends MultiDataObject implements Savable {
 
-  public static final String MIME = "application/octet-stream"; //NOI18N
-  public static final String MMD_EXT = "bin"; //NOI18N
+    public static final String MIME = "application/octet-stream"; //NOI18N
+    public static final String MMD_EXT = "bin"; //NOI18N
+    
+    private BinEdEditor visualEditor;
 
-  public BinEdDataObject(FileObject fo, MultiFileLoader loader) throws DataObjectExistsException {
+    public BinEdDataObject(FileObject fo, MultiFileLoader loader) throws DataObjectExistsException {
         super(fo, loader);
+        registerEditor(MIME, true);
+    }
+
+    public void setVisualEditor(BinEdEditor visualEditor) {
+        this.visualEditor = visualEditor;
+    }
+
+    @Override
+    public void save() throws IOException {
+        if (visualEditor != null) {
+            visualEditor.save();
+        }
     }
 }

@@ -17,6 +17,7 @@ package org.exbin.bined.netbeans;
 
 import java.awt.Component;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigInteger;
@@ -114,6 +115,7 @@ public final class BinaryDebugAction implements ActionListener {
 
     public static void actionPerformed(Component parent, Object variableObject) {
         DebugViewPanel debugViewPanel = new DebugViewPanel();
+        debugViewPanel.setPreferredSize(new Dimension(800, 500));
         CloseControlPanel controlPanel = new CloseControlPanel();
         JPanel dialogPanel = WindowUtils.createDialogPanel(debugViewPanel, controlPanel);
         WindowUtils.DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, parent, "View as Binary", Dialog.ModalityType.APPLICATION_MODAL);

@@ -26,9 +26,8 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JToolBar;
 import org.exbin.bined.CodeType;
-import org.exbin.bined.netbeans.main.BinEdManager;
-import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
 import org.exbin.framework.action.gui.DropDownButton;
 import org.exbin.framework.utils.LanguageUtils;
@@ -121,6 +120,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         controlToolBar.addSeparator();
         JButton optionsButton = new JButton();
         optionsButton.setAction(new AbstractAction() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (optionsAction != null) {
                     optionsAction.actionPerformed(e);
@@ -133,6 +133,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
 
         JButton onlineHelpButton = new JButton();
         onlineHelpButton.setAction(new AbstractAction() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 if (onlineHelpAction != null) {
                     onlineHelpAction.actionPerformed(e);
@@ -204,6 +205,11 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         if (codeTypeDropDown != null) {
             codeTypeDropDown.updateUI();
         }
+    }
+
+    @Nonnull
+    public JToolBar getToolBar() {
+        return controlToolBar;
     }
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

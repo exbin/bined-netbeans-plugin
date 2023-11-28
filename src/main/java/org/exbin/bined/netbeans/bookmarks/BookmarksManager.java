@@ -15,7 +15,6 @@
  */
 package org.exbin.bined.netbeans.bookmarks;
 
-import org.exbin.bined.basic.BasicCodeAreaZone;
 import org.exbin.bined.netbeans.bookmarks.action.AddBookmarkAction;
 import org.exbin.bined.netbeans.bookmarks.action.EditBookmarkAction;
 import org.exbin.bined.netbeans.bookmarks.action.ManageBookmarksAction;
@@ -42,7 +41,6 @@ import javax.swing.Icon;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
-import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import java.awt.Color;

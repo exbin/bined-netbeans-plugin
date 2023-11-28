@@ -1,8 +1,10 @@
-0.2.5
+0.2.5 (2023-11-28)
 - Added convert data action
 - Added support for bookmarks
 - Added clipboard content tool
 - Added drag&drop content tool
+- Added integration options page
+- Added native file mode
 - Partial mitigation to file locking issue
 
 0.2.4 (2022-10-12)

@@ -9,6 +9,9 @@ import java.util.zip.ZipFile
 
 buildscript {
     repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
         flatDir {
             dirs "lib"
         }
@@ -23,15 +26,21 @@ buildscript {
     }
 }
 
-['java', 'maven-publish', 'signing', 'cz.kubacki.nbm'].each {  
-    apply plugin: it
+plugins {
+	id 'java'
+	id 'maven-publish'
+    id 'signing'
+// Old publishing
+//	id 'maven'
 }
+
+apply plugin: 'cz.kubacki.nbm'
 
 ext.scriptFile = { String fileName ->
     return new File(new File(rootDir, 'gradle'), fileName)
 }
 
-version = '0.2.5-SNAPSHOT'
+version = '0.2.5'
 group = 'org.exbin.bined.netbeans'
 
 sourceCompatibility = '1.8'
@@ -39,7 +48,7 @@ targetCompatibility = sourceCompatibility
 
 ext {
     //    netbeansVersion = 'dev-SNAPSHOT'
-    netbeansVersion = 'RELEASE90'
+    netbeansVersion = 'RELEASE82'
     binedVersion = '0.2.1-SNAPSHOT'
     pagedDataVersion = '0.2.1-SNAPSHOT'
     repositoryName = "bined-netbeans-plugin"
@@ -47,7 +56,7 @@ ext {
     homePageUrl = 'https://bined.exbin.org/netbeans-plugin'
     deployUrl = 'https://bined.exbin.org/netbeans-plugin'
     deployName = 'BinEd NetBeans Plugin'
-    deployDescription = 'Binary/Hexadecimal editor plugin for NetBeans platform'
+    deployDescription = 'Binary/Hex editor plugin for NetBeans platform'
 }
 
 //ext.packer = Pack200.newPacker()
@@ -56,6 +65,12 @@ ext {
 repositories {
     mavenLocal()
     mavenCentral()
+/*
+    String nbRepo = netbeansVersion.endsWith('-SNAPSHOT')
+    ? 'https://bits.netbeans.org/netbeans/trunk/new-maven-snapshot'
+: 'https://bits.netbeans.org/nexus/content/groups/netbeans'
+    maven { url nbRepo }
+*/
     maven { url 'https://netbeans.apidesign.org/maven2' }
     maven { url 'https://repo.gradle.org/gradle/libs-releases-local' }
     flatDir {
@@ -203,6 +218,7 @@ nbm {
     //    moduleInstall = 'org.netbeans.gradle.project.NbGradleModuleInstall'
     localizingBundle = 'org/exbin/bined/netbeans/Bundle.properties'
 
+// Uncomment for releases for self-signing nbm
 //    keyStore {
 //         keyStoreFile = project.file('private/keystore') //tryGetProperty('nbGradlePluginKeyStore', 'keystore')
 //         username = tryGetProperty('nbGradlePluginKeyStoreUser', 'bined')
@@ -233,13 +249,6 @@ def pagedDataLibrary = { String libName ->
 }
 
 dependencies {
-    compileOnly netbeansApi('org-netbeans-api-debugger')
-    compileOnly netbeansApi('org-netbeans-api-debugger-jpda')
-    compileOnly netbeansApi('org-netbeans-spi-debugger-ui')
-    compileOnly netbeansApi('org-netbeans-spi-debugger-jpda-ui')
-    compileOnly netbeansApi('org-netbeans-spi-viewmodel')
-    compileOnly netbeansModule('org.netbeans.modules', 'org-netbeans-modules-projectapi-nb')
-
     providedCompile netbeansApi('org-netbeans-api-annotations-common')
     providedCompile netbeansApi('org-netbeans-core-multiview')
     providedCompile netbeansApi('org-netbeans-modules-options-api')
@@ -256,6 +265,15 @@ dependencies {
     providedCompile netbeansApi('org-openide-util-lookup')
     providedCompile netbeansApi('org-openide-util-ui')
     providedCompile netbeansApi('org-openide-windows')
+
+    // Ideally we would like debugger group to be optional so that plugin could work for other netbeans platform apps
+    // compileOnly doesn't work as optional dependency
+    providedCompile netbeansApi('org-netbeans-api-debugger')
+    providedCompile netbeansApi('org-netbeans-api-debugger-jpda')
+    providedCompile netbeansApi('org-netbeans-spi-debugger-ui')
+    providedCompile netbeansApi('org-netbeans-spi-debugger-jpda-ui')
+    providedCompile netbeansApi('org-netbeans-spi-viewmodel')
+    providedCompile netbeansModule('org.netbeans.modules', 'org-netbeans-modules-projectapi-nb')
 
     implementation binedLibrary("bined-core")
     implementation binedLibrary("bined-extended")
@@ -285,7 +303,8 @@ task sourcesJar(type: Jar, dependsOn: classes, description: 'Creates a jar from 
     from sourceSets.main.allSource
 }
 
-//uploadArchives.dependsOn tasks.nbm
+// Uncomment for publishing via "publish uploadArchives"
+// uploadArchives.dependsOn tasks.nbm
 publish.dependsOn tasks.nbm
 artifacts {
     archives jar
@@ -391,17 +410,21 @@ if (gradle.startParameter.taskNames.contains("uploadArchives") && !version.endsW
         releaseArtifacts sourcesJar
     }
 
-    signing {
-        sign tasks.nbm.outputFile
-        sign configurations.releaseArtifacts
-    }
+// Uncomment when using, breaks with newer gradle versions
+//    signing {
+//        sign tasks.nbm.outputFile
+//        sign configurations.releaseArtifacts
+//    }
 
+    // Old publishing, because newer might not work
+    // Needs 'maven' plugin too
     uploadArchives {
         repositories {
             mavenDeployer {
-//                beforeDeployment {
-//                    MavenDeployment deployment -> signing.signPom(deployment)
-//                }
+            	// Uncomment when using, breaks with newer gradle versions
+                // beforeDeployment {
+                //    MavenDeployment deployment -> signing.signPom(deployment)
+                // }
 
                 repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
                     authentication(userName: ossrhUsername, password: ossrhPassword)
