@@ -10,7 +10,7 @@ Published as: https://plugins.netbeans.apache.org/catalogue/?id=59
 Screenshot
 ----------
 
-![BinEd-Editor Screenshot](images/bined-screenshot.png?raw=true)
+![BinEd-Editor Screenshot](images/bined-netbeans-screenshot.png?raw=true)
 
 Features
 --------

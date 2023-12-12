@@ -40,7 +40,7 @@ ext.scriptFile = { String fileName ->
     return new File(new File(rootDir, 'gradle'), fileName)
 }
 
-version = '0.2.5'
+version = '0.2.6-SNAPSHOT'
 group = 'org.exbin.bined.netbeans'
 
 sourceCompatibility = '1.8'
