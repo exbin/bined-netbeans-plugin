@@ -22,11 +22,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import org.exbin.auxiliary.paged_data.BinaryData;
-import org.exbin.auxiliary.paged_data.ByteArrayData;
-import org.exbin.auxiliary.paged_data.EditableBinaryData;
-import org.exbin.auxiliary.paged_data.OutOfBoundsException;
-import org.exbin.auxiliary.paged_data.PagedData;
+import org.exbin.auxiliary.binary_data.BinaryData;
+import org.exbin.auxiliary.binary_data.ByteArrayData;
+import org.exbin.auxiliary.binary_data.EditableBinaryData;
+import org.exbin.auxiliary.binary_data.OutOfBoundsException;
+import org.exbin.auxiliary.binary_data.paged.PagedData;
 import org.exbin.xbup.core.util.StreamUtils;
 import org.openide.filesystems.FileObject;
 

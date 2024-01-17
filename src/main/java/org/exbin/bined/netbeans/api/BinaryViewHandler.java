@@ -15,7 +15,7 @@
  */
 package org.exbin.bined.netbeans.api;
 
-import org.exbin.auxiliary.paged_data.BinaryData;
+import org.exbin.auxiliary.binary_data.BinaryData;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

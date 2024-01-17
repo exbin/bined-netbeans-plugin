@@ -31,6 +31,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.ListSelectionEvent;
+import org.exbin.bined.extended.theme.ExtendedBackgroundPaintMode;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.exbin.bined.netbeans.options.gui.IntegrationOptionsPanel;
 import org.exbin.bined.netbeans.options.impl.IntegrationOptionsImpl;
@@ -128,6 +129,62 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
     public BinEdOptionsPanel(BinEdOptionsPanelController controller) {
 //        this.controller = controller;
         initComponents();
+
+        List<String> fileHandlingModes = new ArrayList<>();
+        fileHandlingModes.add(resourceBundle.getString("fileHandlingMode.memory"));
+        fileHandlingModes.add(resourceBundle.getString("fileHandlingMode.delta"));
+        editorOptionsPanel.setFileHandlingModes(fileHandlingModes);
+        List<String> enderKeyHandlingModes = new ArrayList<>();
+        enderKeyHandlingModes.add(resourceBundle.getString("enterKeyHandlingMode.platformSpecific"));
+        enderKeyHandlingModes.add(resourceBundle.getString("enterKeyHandlingMode.cr"));
+        enderKeyHandlingModes.add(resourceBundle.getString("enterKeyHandlingMode.lf"));
+        enderKeyHandlingModes.add(resourceBundle.getString("enterKeyHandlingMode.crlf"));
+        enderKeyHandlingModes.add(resourceBundle.getString("enterKeyHandlingMode.ignore"));
+        editorOptionsPanel.setEnterKeyHandlingModes(enderKeyHandlingModes);
+        List<String> tabKeyHandlingModes = new ArrayList<>();
+        tabKeyHandlingModes.add(resourceBundle.getString("tabKeyHandlingMode.platformSpecific"));
+        tabKeyHandlingModes.add(resourceBundle.getString("tabKeyHandlingMode.insertTab"));
+        tabKeyHandlingModes.add(resourceBundle.getString("tabKeyHandlingMode.insertSpaces"));
+        tabKeyHandlingModes.add(resourceBundle.getString("tabKeyHandlingMode.cycleToNextSection"));
+        tabKeyHandlingModes.add(resourceBundle.getString("tabKeyHandlingMode.cycleToPreviousSection"));
+        tabKeyHandlingModes.add(resourceBundle.getString("tabKeyHandlingMode.ignore"));
+        editorOptionsPanel.setTabKeyHandlingModes(tabKeyHandlingModes);
+
+        List<String> viewModes = new ArrayList<>();
+        viewModes.add(resourceBundle.getString("codeAreaViewMode.dual"));
+        viewModes.add(resourceBundle.getString("codeAreaViewMode.codeMatrix"));
+        viewModes.add(resourceBundle.getString("codeAreaViewMode.textPreview"));
+        codeAreaOptionsPanel.setViewModes(viewModes);
+
+        List<String> codeTypes = new ArrayList<>();
+        codeTypes.add(resourceBundle.getString("codeAreaCodeType.binary"));
+        codeTypes.add(resourceBundle.getString("codeAreaCodeType.octal"));
+        codeTypes.add(resourceBundle.getString("codeAreaCodeType.decimal"));
+        codeTypes.add(resourceBundle.getString("codeAreaCodeType.hexadecimal"));
+        codeAreaOptionsPanel.setCodeTypes(codeTypes);
+
+        List<String> positionCodeTypes = new ArrayList<>();
+        positionCodeTypes.add(resourceBundle.getString("positionCodeAreaCodeType.octal"));
+        positionCodeTypes.add(resourceBundle.getString("positionCodeAreaCodeType.decimal"));
+        positionCodeTypes.add(resourceBundle.getString("positionCodeAreaCodeType.hexadecimal"));
+        codeAreaOptionsPanel.setPositionCodeTypes(positionCodeTypes);
+
+        List<String> charactersCases = new ArrayList<>();
+        charactersCases.add(resourceBundle.getString("codeAreaCharactersCase.lower"));
+        charactersCases.add(resourceBundle.getString("codeAreaCharactersCase.higher"));
+        codeAreaOptionsPanel.setCharactersCases(charactersCases);
+
+        List<String> cursorPositionCodeTypes = new ArrayList<>();
+        cursorPositionCodeTypes.add(resourceBundle.getString("cursorPositionCodeType.octal"));
+        cursorPositionCodeTypes.add(resourceBundle.getString("cursorPositionCodeType.decimal"));
+        cursorPositionCodeTypes.add(resourceBundle.getString("cursorPositionCodeType.hexadecimal"));
+        statusOptionsPanel.setCursorPositionCodeTypes(cursorPositionCodeTypes);
+
+        List<String> documentSizeCodeTypes = new ArrayList<>();
+        documentSizeCodeTypes.add(resourceBundle.getString("documentSizeCodeType.octal"));
+        documentSizeCodeTypes.add(resourceBundle.getString("documentSizeCodeType.decimal"));
+        documentSizeCodeTypes.add(resourceBundle.getString("documentSizeCodeType.hexadecimal"));
+        statusOptionsPanel.setDocumentSizeCodeTypes(documentSizeCodeTypes);
 
         categoryModel.addElement(new CategoryItem("Integration", integrationOptionsPanel));
         categoryModel.addElement(new CategoryItem("Editor", editorOptionsPanel));
@@ -333,7 +390,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
         });
 
         themeProfilesPanel.setAddProfileOperation((JComponent parentComponent, String profileName) -> {
-            ThemeProfilePanel themeProfilePanel = new ThemeProfilePanel();
+            ThemeProfilePanel themeProfilePanel = createThemeProfilePanel();
             themeProfilePanel.setThemeProfile(new ExtendedCodeAreaThemeProfile());
             NamedProfilePanel namedProfilePanel = new NamedProfilePanel(themeProfilePanel);
             namedProfilePanel.setProfileName(profileName);
@@ -362,7 +419,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
             return result.profile;
         });
         themeProfilesPanel.setEditProfileOperation((JComponent parentComponent, ThemeProfilesPanel.ThemeProfile profileRecord) -> {
-            ThemeProfilePanel themeProfilePanel = new ThemeProfilePanel();
+            ThemeProfilePanel themeProfilePanel = createThemeProfilePanel();
             NamedProfilePanel namedProfilePanel = new NamedProfilePanel(themeProfilePanel);
             DefaultControlPanel controlPanel = new DefaultControlPanel();
             JPanel dialogPanel = WindowUtils.createDialogPanel(namedProfilePanel, controlPanel);
@@ -391,7 +448,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
             return result.profile;
         });
         themeProfilesPanel.setCopyProfileOperation((JComponent parentComponent, ThemeProfilesPanel.ThemeProfile profileRecord) -> {
-            ThemeProfilePanel themeProfilePanel = new ThemeProfilePanel();
+            ThemeProfilePanel themeProfilePanel = createThemeProfilePanel();
             themeProfilePanel.setThemeProfile(new ExtendedCodeAreaThemeProfile());
             NamedProfilePanel namedProfilePanel = new NamedProfilePanel(themeProfilePanel);
             DefaultControlPanel controlPanel = new DefaultControlPanel();
@@ -780,6 +837,17 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
     private static final class ColorProfileResult {
 
         ColorProfilesPanel.ColorProfile profile;
+    }
+
+    @Nonnull
+    private ThemeProfilePanel createThemeProfilePanel() {
+        ThemeProfilePanel themeProfilePanel = new ThemeProfilePanel();
+        List<String> backgroundModes = new ArrayList<>();
+        for (ExtendedBackgroundPaintMode mode : ExtendedBackgroundPaintMode.values()) {
+            backgroundModes.add(resourceBundle.getString("backgroundPaintMode." + mode.name().toLowerCase()));
+        }
+        themeProfilePanel.setBackgroundModes(backgroundModes);
+        return themeProfilePanel;
     }
 
     @ParametersAreNonnullByDefault

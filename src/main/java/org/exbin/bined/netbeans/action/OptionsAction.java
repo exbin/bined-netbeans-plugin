@@ -17,9 +17,7 @@ package org.exbin.bined.netbeans.action;
 
 import org.exbin.bined.netbeans.gui.BinEdOptionsPanel;
 import org.exbin.bined.netbeans.gui.BinEdOptionsPanelBorder;
-import org.exbin.bined.netbeans.main.BinEdEditorComponent;
 import org.exbin.bined.swing.extended.ExtCodeArea;
-import org.exbin.framework.bined.gui.BinEdComponentFileApi;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
 import org.exbin.framework.editor.text.service.TextFontService;
 import org.exbin.framework.utils.WindowUtils;
@@ -34,7 +32,15 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import javax.annotation.Nullable;
+import javax.swing.JTextField;
 import org.exbin.bined.netbeans.Installer;
+import org.exbin.bined.netbeans.main.BinEdManager;
+import org.exbin.framework.bined.BinEdFileHandler;
+import org.exbin.framework.bined.gui.BinEdComponentFileApi;
+import org.exbin.framework.bined.gui.BinEdComponentPanel;
+import org.exbin.framework.editor.text.TextFontApi;
+import org.exbin.framework.file.api.FileHandler;
 
 /**
  * Options action.
@@ -44,18 +50,19 @@ import org.exbin.bined.netbeans.Installer;
 @ParametersAreNonnullByDefault
 public class OptionsAction extends AbstractAction {
 
-    private final BinEdEditorComponent editorComponent;
+    private final BinEdComponentPanel componentPanel;
+    private final FileHandler fileHandler;
     private final BinaryEditorPreferences preferences;
 
-    public OptionsAction(BinEdEditorComponent editorComponent, BinaryEditorPreferences preferences) {
-        this.editorComponent = editorComponent;
+    public OptionsAction(BinEdComponentPanel componentPanel, @Nullable FileHandler fileHandler, BinaryEditorPreferences preferences) {
+        this.componentPanel = componentPanel;
+        this.fileHandler = fileHandler;
         this.preferences = preferences;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        ExtCodeArea codeArea = editorComponent.getCodeArea();
-        BinEdComponentFileApi fileApi = editorComponent.getFileApi();
+        ExtCodeArea codeArea = componentPanel.getCodeArea();
         final BinEdOptionsPanelBorder optionsPanelWrapper = new BinEdOptionsPanelBorder();
         optionsPanelWrapper.setPreferredSize(new Dimension(700, 460));
         BinEdOptionsPanel optionsPanel = optionsPanelWrapper.getOptionsPanel();
@@ -70,7 +77,7 @@ public class OptionsAction extends AbstractAction {
             @Nonnull
             @Override
             public Font getDefaultFont() {
-                return editorComponent.getDefaultFont();
+                return fileHandler == null ? new JTextField().getFont() : ((TextFontApi) fileHandler).getDefaultFont();
             }
 
             @Override
@@ -79,25 +86,34 @@ public class OptionsAction extends AbstractAction {
             }
         });
         optionsPanel.loadFromPreferences();
-        editorComponent.updateApplyOptions(optionsPanel);
+//        editorComponent.updateApplyOptions(optionsPanel);
         OptionsControlPanel optionsControlPanel = new OptionsControlPanel();
         JPanel dialogPanel = WindowUtils.createDialogPanel(optionsPanelWrapper, optionsControlPanel);
-        WindowUtils.DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, editorComponent.getComponentPanel(), "Options", Dialog.ModalityType.APPLICATION_MODAL);
+        WindowUtils.DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, componentPanel, "Options", Dialog.ModalityType.APPLICATION_MODAL);
         optionsControlPanel.setHandler((OptionsControlHandler.ControlActionType actionType) -> {
             if (actionType != OptionsControlHandler.ControlActionType.CANCEL) {
                 optionsPanel.applyToOptions();
                 if (actionType == OptionsControlHandler.ControlActionType.SAVE) {
                     optionsPanel.saveToPreferences();
                 }
-                editorComponent.applyOptions(optionsPanel);
+                BinEdManager binedManager = BinEdManager.getInstance();
+                if (fileHandler != null) {
+                    ((BinEdComponentFileApi) fileHandler).getEditorComponent()
+                            .applyOptions(optionsPanel,
+                                    binedManager.getEncodingsHandler(),
+                                    ((TextFontApi) fileHandler).getDefaultFont());
+                    if (fileHandler instanceof BinEdFileHandler) {
+                        ((BinEdFileHandler) fileHandler).switchFileHandlingMode(optionsPanel.getEditorOptions()
+                                .getFileHandlingMode());
+                    }
+                }
                 Installer.applyIntegrationOptions(optionsPanel.getIntegrationOptions());
-                fileApi.switchFileHandlingMode(optionsPanel.getEditorOptions().getFileHandlingMode());
                 codeArea.repaint();
             }
 
             dialog.close();
         });
-        dialog.showCentered(editorComponent.getComponentPanel());
+        dialog.showCentered(componentPanel);
         dialog.dispose();
     }
 }

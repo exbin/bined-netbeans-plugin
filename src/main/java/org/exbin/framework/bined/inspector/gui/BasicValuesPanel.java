@@ -23,7 +23,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.InputMismatchException;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
@@ -44,10 +43,9 @@ import org.exbin.bined.operation.undo.BinaryDataUndoUpdateListener;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.utils.LanguageUtils;
 import org.exbin.framework.utils.WindowUtils;
-import org.exbin.auxiliary.paged_data.BinaryData;
-import org.exbin.auxiliary.paged_data.ByteArrayEditableData;
-import org.exbin.auxiliary.paged_data.EditableBinaryData;
-import org.exbin.bined.capability.EditModeCapable;
+import org.exbin.auxiliary.binary_data.BinaryData;
+import org.exbin.auxiliary.binary_data.ByteArrayEditableData;
+import org.exbin.auxiliary.binary_data.EditableBinaryData;
 import org.exbin.framework.bined.inspector.BasicValuesPositionColorModifier;
 
 /**
@@ -62,7 +60,7 @@ public class BasicValuesPanel extends javax.swing.JPanel {
     public static final int SWORD_MIN_VALUE = -32768;
     public static final int SWORD_MAX_VALUE = 32767;
     public static final int UWORD_MAX_VALUE = 65535;
-    public static final long UINT_MAX_VALUE = 4294967295l;
+    public static final long UINT_MAX_VALUE = 4294967295L;
     public static final BigInteger ULONG_MAX_VALUE = new BigInteger("4294967295");
     public static final BigInteger BIG_INTEGER_BYTE_MASK = BigInteger.valueOf(255);
     public static final String VALUE_OUT_OF_RANGE = "Value is out of range";
@@ -748,9 +746,7 @@ public class BasicValuesPanel extends javax.swing.JPanel {
             updateValues();
         };
         codeArea.addDataChangedListener(dataChangedListener);
-        caretMovedListener = (CodeAreaCaretPosition caretPosition) -> {
-            updateValues();
-        };
+        caretMovedListener = (CodeAreaCaretPosition caretPosition) -> updateValues();
         codeArea.addCaretMovedListener(caretMovedListener);
         undoUpdateListener = new BinaryDataUndoUpdateListener() {
             @Override
@@ -805,7 +801,7 @@ public class BasicValuesPanel extends javax.swing.JPanel {
 
         if (dataPosition < dataSize) {
             int availableData = dataSize - dataPosition >= CACHE_SIZE ? CACHE_SIZE : (int) (dataSize - dataPosition);
-            BinaryData contentData = Objects.requireNonNull(codeArea.getContentData());
+            BinaryData contentData = codeArea.getContentData();
             contentData.copyToArray(dataPosition, valuesCache, 0, availableData);
             if (availableData < CACHE_SIZE) {
                 Arrays.fill(valuesCache, availableData, CACHE_SIZE, (byte) 0);
@@ -858,7 +854,7 @@ public class BasicValuesPanel extends javax.swing.JPanel {
     }
 
     private boolean isEditable() {
-        return ((EditModeCapable) codeArea).isEditable();
+        return codeArea.isEditable();
     }
 
     @Nonnull
@@ -923,9 +919,7 @@ public class BasicValuesPanel extends javax.swing.JPanel {
         }
 
         private void scheduleNextStep(final ValuesPanelField valuesPanelField) {
-            SwingUtilities.invokeLater(() -> {
-                updateValue(valuesPanelField);
-            });
+            SwingUtilities.invokeLater(() -> updateValue(valuesPanelField));
         }
 
         public boolean isUpdateInProgress() {
@@ -1021,11 +1015,11 @@ public class BasicValuesPanel extends javax.swing.JPanel {
                 case INTEGER: {
                     long intValue = signed
                             ? (byteOrder == ByteOrder.LITTLE_ENDIAN
-                                    ? (values[0] & 0xffl) | ((values[1] & 0xffl) << 8) | ((values[2] & 0xffl) << 16) | (values[3] << 24)
-                                    : (values[3] & 0xffl) | ((values[2] & 0xffl) << 8) | ((values[1] & 0xffl) << 16) | (values[0] << 24))
+                                    ? (values[0] & 0xffL) | ((values[1] & 0xffL) << 8) | ((values[2] & 0xffL) << 16) | (values[3] << 24)
+                                    : (values[3] & 0xffL) | ((values[2] & 0xffL) << 8) | ((values[1] & 0xffL) << 16) | (values[0] << 24))
                             : (byteOrder == ByteOrder.LITTLE_ENDIAN
-                                    ? (values[0] & 0xffl) | ((values[1] & 0xffl) << 8) | ((values[2] & 0xffl) << 16) | ((values[3] & 0xffl) << 24)
-                                    : (values[3] & 0xffl) | ((values[2] & 0xffl) << 8) | ((values[1] & 0xffl) << 16) | ((values[0] & 0xffl) << 24));
+                                    ? (values[0] & 0xffL) | ((values[1] & 0xffL) << 8) | ((values[2] & 0xffL) << 16) | ((values[3] & 0xffL) << 24)
+                                    : (values[3] & 0xffL) | ((values[2] & 0xffL) << 8) | ((values[1] & 0xffL) << 16) | ((values[0] & 0xffL) << 24));
                     intTextField.setText(String.valueOf(intValue));
                     break;
                 }
@@ -1039,11 +1033,11 @@ public class BasicValuesPanel extends javax.swing.JPanel {
                         longTextField.setText(String.valueOf(byteBuffer.getLong()));
                     } else {
                         long longValue = byteOrder == ByteOrder.LITTLE_ENDIAN
-                                ? (values[0] & 0xffl) | ((values[1] & 0xffl) << 8) | ((values[2] & 0xffl) << 16) | ((values[3] & 0xffl) << 24)
-                                | ((values[4] & 0xffl) << 32) | ((values[5] & 0xffl) << 40) | ((values[6] & 0xffl) << 48)
-                                : (values[7] & 0xffl) | ((values[6] & 0xffl) << 8) | ((values[5] & 0xffl) << 16) | ((values[4] & 0xffl) << 24)
-                                | ((values[3] & 0xffl) << 32) | ((values[2] & 0xffl) << 40) | ((values[1] & 0xffl) << 48);
-                        BigInteger bigInt1 = BigInteger.valueOf(values[byteOrder == ByteOrder.LITTLE_ENDIAN ? 7 : 0] & 0xffl);
+                                ? (values[0] & 0xffL) | ((values[1] & 0xffL) << 8) | ((values[2] & 0xffL) << 16) | ((values[3] & 0xffL) << 24)
+                                | ((values[4] & 0xffL) << 32) | ((values[5] & 0xffL) << 40) | ((values[6] & 0xffL) << 48)
+                                : (values[7] & 0xffL) | ((values[6] & 0xffL) << 8) | ((values[5] & 0xffL) << 16) | ((values[4] & 0xffL) << 24)
+                                | ((values[3] & 0xffL) << 32) | ((values[2] & 0xffL) << 40) | ((values[1] & 0xffL) << 48);
+                        BigInteger bigInt1 = BigInteger.valueOf(values[byteOrder == ByteOrder.LITTLE_ENDIAN ? 7 : 0] & 0xffL);
                         BigInteger bigInt2 = bigInt1.shiftLeft(56);
                         BigInteger bigInt3 = bigInt2.add(BigInteger.valueOf(longValue));
                         longTextField.setText(bigInt3.toString());

@@ -20,12 +20,12 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.EditMode;
-import org.exbin.auxiliary.paged_data.BinaryData;
+import org.exbin.auxiliary.binary_data.BinaryData;
 import org.exbin.bined.netbeans.debug.DebugViewDataProvider;
-import org.exbin.bined.netbeans.gui.BinEdComponentPanel;
-import org.exbin.bined.netbeans.main.BinEdEditorComponent;
-import org.exbin.bined.netbeans.main.BinEdFileManager;
 import org.exbin.bined.netbeans.main.BinEdManager;
+import org.exbin.framework.bined.BinEdEditorComponent;
+import org.exbin.framework.bined.BinEdFileManager;
+import org.exbin.framework.bined.gui.BinEdComponentPanel;
 
 /**
  * Panel to show debug view.
@@ -38,11 +38,15 @@ public class DebugViewPanel extends javax.swing.JPanel {
     private final List<DebugViewDataProvider> providers = new ArrayList<>();
     private int selectedProvider = 0;
 
-    private final BinEdEditorComponent binEdEditorComponent;
+    private final BinEdEditorComponent editorComponent;
 
     public DebugViewPanel() {
         BinEdManager binEdManager = BinEdManager.getInstance();
-        binEdEditorComponent = binEdManager.createBinEdEditor();
+        editorComponent = new BinEdEditorComponent();
+        BinEdFileManager fileManager = binEdManager.getFileManager();
+        BinEdComponentPanel componentPanel = editorComponent.getComponentPanel();
+        fileManager.initComponentPanel(componentPanel);
+        binEdManager.initEditorComponent(editorComponent);
 
         initComponents();
         init();
@@ -51,7 +55,7 @@ public class DebugViewPanel extends javax.swing.JPanel {
     private void init() {
         BinEdManager binEdManager = BinEdManager.getInstance();
         BinEdFileManager fileManager = binEdManager.getFileManager();
-        BinEdComponentPanel componentPanel = binEdEditorComponent.getComponentPanel();
+        BinEdComponentPanel componentPanel = editorComponent.getComponentPanel();
         fileManager.initComponentPanel(componentPanel);
 
         componentPanel.getCodeArea().setEditMode(EditMode.READ_ONLY);
@@ -102,6 +106,6 @@ public class DebugViewPanel extends javax.swing.JPanel {
     }
 
     public void setContentData(BinaryData data) {
-        binEdEditorComponent.setContentData(data);
+        editorComponent.setContentData(data);
     }
 }

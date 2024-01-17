@@ -17,7 +17,7 @@ package org.exbin.bined.netbeans.debug;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import org.exbin.auxiliary.paged_data.BinaryData;
+import org.exbin.auxiliary.binary_data.BinaryData;
 
 /**
  * Data source for debugging.

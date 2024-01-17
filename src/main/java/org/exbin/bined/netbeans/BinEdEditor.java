@@ -15,17 +15,21 @@
  */
 package org.exbin.bined.netbeans;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.Action;
 import javax.swing.JComponent;
-import org.exbin.bined.netbeans.main.BinEdFileHandler;
-import org.exbin.bined.netbeans.main.BinEdFileManager;
+import org.exbin.bined.EditMode;
 import org.exbin.bined.netbeans.main.BinEdManager;
-import org.exbin.bined.netbeans.options.IntegrationOptions;
+import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
+import org.exbin.bined.swing.extended.ExtCodeArea;
+import org.exbin.framework.bined.BinEdFileHandler;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.MultiViewElementCallback;
@@ -37,6 +41,7 @@ import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
+import org.openide.util.Utilities;
 import org.openide.windows.TopComponent;
 
 /**
@@ -73,9 +78,8 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
     public BinEdEditor(Lookup lookup) {
         this.lookup = lookup;
         editorFile = new BinEdFileHandler();
-        editorFile.detachToolbar();
-        BinEdFileManager fileManager = BinEdManager.getInstance().getFileManager();
-        fileManager.initFileHandler(editorFile);
+        BinaryUndoSwingHandler undoHandler = new BinaryUndoSwingHandler(editorFile.getCodeArea(), new UndoRedo.Manager());
+        editorFile.getEditorComponent().setUndoHandler(undoHandler);
     }
 
     public static void registerIntegration() {
@@ -100,13 +104,13 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
     @Nonnull
     @Override
     public JComponent getVisualRepresentation() {
-        return editorFile.getComponent();
+        return editorFile.getEditorComponent().getComponent();
     }
 
     @Nonnull
     @Override
     public JComponent getToolbarRepresentation() {
-        return editorFile.getToolBar();
+        return editorFile.getEditorComponent().getToolbarPanel().getToolBar();
     }
 
     @Override
@@ -116,7 +120,8 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
 
     @Override
     public CloseOperationState canCloseElement() {
-        if (editorFile.releaseFile()) {
+        BinEdManager binedManager = BinEdManager.getInstance();
+        if (binedManager.releaseFile(editorFile)) {
             return CloseOperationState.STATE_OK;        
         }
         
@@ -155,7 +160,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
                 ((BinEdDataObject) dataObject).setVisualEditor(this);
             }
 
-            editorFile.openFile(dataObject);
+            openFile(editorFile, dataObject);
 
             if (callback != null) {
                 callback.updateTitle(dataObject.getPrimaryFile().getNameExt());
@@ -179,7 +184,8 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
     @Nonnull
     @Override
     public UndoRedo getUndoRedo() {
-        return editorFile.getUndoRedo();
+        BinaryUndoSwingHandler undoHandler = (BinaryUndoSwingHandler) editorFile.getUndoHandler();
+        return undoHandler.getUndoManager();
     }
 
     @Nonnull
@@ -190,6 +196,35 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
 
     public void save() {
         editorFile.saveFile();
+    }
+
+    public void openFile(BinEdFileHandler fileHandler, DataObject dataObject) {
+        ExtCodeArea codeArea = fileHandler.getCodeArea();
+        boolean editable = dataObject.getPrimaryFile().canWrite();
+        URI fileUri = dataObject.getPrimaryFile().toURI();
+        if (fileUri == null) {
+            InputStream stream = null;
+            try {
+                stream = dataObject.getPrimaryFile().getInputStream();
+                if (stream != null) {
+                    fileHandler.loadFromStream(stream);
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(BinEdFileHandler.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                if (stream != null) {
+                    try {
+                        stream.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(BinEdFileHandler.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        } else {
+            codeArea.setEditMode(editable ? EditMode.EXPANDING : EditMode.READ_ONLY);
+            File file = Utilities.toFile(fileUri);
+            fileHandler.loadFromFile(file.toURI(), null);
+        }
     }
 
     public static void install() {

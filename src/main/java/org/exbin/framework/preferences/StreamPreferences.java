@@ -208,9 +208,9 @@ public class StreamPreferences extends AbstractPreferences {
         @Override
         public InputSource resolveEntity(String publicId, String systemId)
                 throws SAXException {
-            if (systemId.equals(PRECERENCES_DTD_URI)) {
-                InputSource is = new InputSource(new StringReader(PREFERENCES_DTD));
-                is.setSystemId(PRECERENCES_DTD_URI);
+            if (systemId.equals(StreamPreferences.PRECERENCES_DTD_URI)) {
+                InputSource is = new InputSource(new StringReader(StreamPreferences.PREFERENCES_DTD));
+                is.setSystemId(StreamPreferences.PRECERENCES_DTD_URI);
                 return is;
             }
             throw new SAXException("Invalid system identifier: " + systemId);

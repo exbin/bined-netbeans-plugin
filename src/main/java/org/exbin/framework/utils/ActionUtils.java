@@ -61,6 +61,12 @@ public class ActionUtils {
      * Value is Boolean.
      */
     public static final String ACTION_DIALOG_MODE = "dialogMode";
+    /**
+     * Menu creation handler.
+     *
+     * Value is MenuCreation.
+     */
+    public static final String ACTION_MENU_CREATION = "menu_creation";
 
     public static final String ACTION_ID = "actionId";
     public static final String ACTION_NAME_POSTFIX = ".text";
@@ -91,7 +97,7 @@ public class ActionUtils {
      * @param resourceClass resourceClass
      * @param actionId action identifier and bundle key prefix
      */
-    public static void setupAction(Action action, ResourceBundle bundle, Class resourceClass, String actionId) {
+    public static void setupAction(Action action, ResourceBundle bundle, Class<?> resourceClass, String actionId) {
         action.putValue(Action.NAME, bundle.getString(actionId + ACTION_NAME_POSTFIX));
         action.putValue(ACTION_ID, actionId);
 
@@ -202,6 +208,26 @@ public class ActionUtils {
             modifiers = ((ActionEvent) currentEvent).getModifiers();
         }
         return modifiers;
+    }
+
+    @ParametersAreNonnullByDefault
+    public static interface MenuCreation {
+
+        /**
+         * Checks whether menu item should be created.
+         *
+         * @param menuId menu ID
+         * @return true if menu item should be created
+         */
+        boolean shouldCreate(String menuId);
+
+        /**
+         * Called when new menu item is created.
+         *
+         * @param menuItem new menu item instance
+         * @param menuId menu ID
+         */
+        void onCreate(JMenuItem menuItem, String menuId);
     }
 
     /**

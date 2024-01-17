@@ -17,8 +17,12 @@ package org.exbin.bined.netbeans;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -26,8 +30,10 @@ import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
-import org.exbin.bined.netbeans.main.BinEdFileHandler;
-import org.exbin.bined.netbeans.main.BinEdManager;
+import org.exbin.bined.EditMode;
+import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
+import org.exbin.bined.swing.extended.ExtCodeArea;
+import org.exbin.framework.bined.BinEdFileHandler;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
@@ -36,6 +42,7 @@ import org.openide.awt.UndoRedo;
 import org.openide.loaders.DataObject;
 import org.openide.nodes.Node;
 import org.openide.util.NbBundle;
+import org.openide.util.Utilities;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.windows.TopComponent;
@@ -57,6 +64,9 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     private static final String BINARY_EDITOR_TOP_COMPONENT_STRING = "CTL_BinaryEditorTopComponent";
     private static final String BINARY_EDITOR_TOP_COMPONENT_HINT_STRING = "HINT_BinaryEditorTopComponent";
 
+    private DataObject dataObject;
+    private final InstanceContent content = new InstanceContent();
+
     private final BinEdFileHandler editorFile;
 
     private final BinaryEditorNode node;
@@ -70,24 +80,24 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
         node = new BinaryEditorNode(this);
         editorFile = new BinEdFileHandler();
-        BinEdManager binEdManager = BinEdManager.getInstance();
-        binEdManager.getFileManager().initFileHandler(editorFile);
+        BinaryUndoSwingHandler undoHandler = new BinaryUndoSwingHandler(editorFile.getCodeArea(), new UndoRedo.Manager());
+        editorFile.getEditorComponent().setUndoHandler(undoHandler);
         savable = new BinaryEditorTopComponentSavable(editorFile);
 
-        add(editorFile.getComponent(), BorderLayout.CENTER);
+        add(editorFile.getEditorComponent().getComponent(), BorderLayout.CENTER);
 
-        editorFile.getContent().add(node);
+        content.add(node);
 
         setActivatedNodes(new Node[]{node});
 
         setName(NbBundle.getMessage(BinaryEditorTopComponent.class, BINARY_EDITOR_TOP_COMPONENT_STRING));
         setToolTipText(NbBundle.getMessage(BinaryEditorTopComponent.class, BINARY_EDITOR_TOP_COMPONENT_HINT_STRING));
 
-        editorFile.setModifiedChangeListener(() -> {
-            updateModified();
-        });
+        // TODO
+//        editorFile.setModifiedChangeListener(() -> {
+//            updateModified();
+//        });
 
-        InstanceContent content = editorFile.getContent();
         associateLookup(new AbstractLookup(content));
     }
 
@@ -95,7 +105,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         displayName = dataObject.getPrimaryFile().getNameExt();
         setHtmlDisplayName(displayName);
 
-        editorFile.openFile(dataObject);
+        this.dataObject = dataObject;
+        openFile(editorFile);
         savable.setDataObject(dataObject);
         opened = true;
     }
@@ -123,7 +134,6 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     }
 
     private void updateModified() {
-        InstanceContent content = editorFile.getContent();
         boolean modified = editorFile.isModified();
         final String htmlDisplayName;
         if (modified && opened) {
@@ -151,7 +161,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
     @Override
     public UndoRedo getUndoRedo() {
-        return editorFile.getUndoRedo();
+        BinaryUndoSwingHandler undoHandler = (BinaryUndoSwingHandler) editorFile.getUndoHandler();
+        return undoHandler.getUndoManager();
     }
 
     /**
@@ -232,5 +243,34 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     @Override
     public void componentDeactivated() {
         super.componentDeactivated();
+    }
+
+    public void openFile(BinEdFileHandler fileHandler) {
+        ExtCodeArea codeArea = fileHandler.getCodeArea();
+        boolean editable = dataObject.getPrimaryFile().canWrite();
+        URI fileUri = dataObject.getPrimaryFile().toURI();
+        if (fileUri == null) {
+            InputStream stream = null;
+            try {
+                stream = dataObject.getPrimaryFile().getInputStream();
+                if (stream != null) {
+                    fileHandler.loadFromStream(stream);
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(BinEdFileHandler.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                if (stream != null) {
+                    try {
+                        stream.close();
+                    } catch (IOException ex) {
+                        Logger.getLogger(BinEdFileHandler.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        } else {
+            codeArea.setEditMode(editable ? EditMode.EXPANDING : EditMode.READ_ONLY);
+            File file = Utilities.toFile(fileUri);
+            fileHandler.loadFromFile(file.toURI(), null);
+        }
     }
 }
