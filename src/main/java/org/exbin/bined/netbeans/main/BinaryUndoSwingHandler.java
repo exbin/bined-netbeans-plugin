@@ -251,7 +251,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoHandler {
     }
 
     public void setUndoMaxCount(long maxUndo) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -260,7 +260,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoHandler {
     }
 
     public void setUndoMaximumSize(long maxSize) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException();
     }
     
     @Nonnull
@@ -291,7 +291,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoHandler {
     @Nonnull
     @Override
     public List<BinaryDataCommand> getCommandList() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException();
     }
 
     /**

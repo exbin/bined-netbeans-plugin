@@ -21,11 +21,13 @@ import java.awt.Dialog;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -76,6 +78,7 @@ import org.exbin.framework.editor.text.options.gui.TextFontOptionsPanel;
 import org.exbin.framework.editor.text.gui.AddEncodingPanel;
 import org.exbin.framework.editor.text.gui.TextFontPanel;
 import org.exbin.framework.editor.text.service.TextFontService;
+import org.exbin.framework.options.model.LanguageRecord;
 import org.exbin.framework.utils.LanguageUtils;
 import org.exbin.framework.utils.WindowUtils;
 import org.exbin.framework.utils.WindowUtils.DialogWrapper;
@@ -92,7 +95,9 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
 
     private BinaryEditorPreferences preferences;
 //    private final BinEdOptionsPanelController controller;
-    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(BinEdOptionsPanel.class);
+    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/options/resources/MainOptionsManager");
+    private final java.util.ResourceBundle treeResourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/options/gui/resources/OptionsTreePanel");
+    private final java.util.ResourceBundle managerResourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/bined/resources/BinedOptionsManager");
 
     private DefaultListModel<CategoryItem> categoryModel = new DefaultListModel<>();
     private JPanel currentCategoryPanel = null;
@@ -130,71 +135,79 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
 //        this.controller = controller;
         initComponents();
 
+        integrationOptionsPanel.setDefaultLocaleName("<" + resourceBundle.getString("locale.defaultLanguage") + ">");
+        List<LanguageRecord> languageLocales = new ArrayList<>();
+        languageLocales.add(new LanguageRecord(Locale.ROOT, null));
+        languageLocales.add(new LanguageRecord(new Locale("en", "US"), new ImageIcon(getClass().getResource(
+                resourceBundle.getString("locale.englishFlag")))));
+        languageLocales.addAll(LanguageUtils.getLanguageRecords());
+        integrationOptionsPanel.setLanguageLocales(languageLocales);
         List<String> fileHandlingModes = new ArrayList<>();
-        fileHandlingModes.add(resourceBundle.getString("fileHandlingMode.memory"));
-        fileHandlingModes.add(resourceBundle.getString("fileHandlingMode.delta"));
+        fileHandlingModes.add(managerResourceBundle.getString("fileHandlingMode.memory"));
+        fileHandlingModes.add(managerResourceBundle.getString("fileHandlingMode.delta"));
         editorOptionsPanel.setFileHandlingModes(fileHandlingModes);
         List<String> enderKeyHandlingModes = new ArrayList<>();
-        enderKeyHandlingModes.add(resourceBundle.getString("enterKeyHandlingMode.platformSpecific"));
-        enderKeyHandlingModes.add(resourceBundle.getString("enterKeyHandlingMode.cr"));
-        enderKeyHandlingModes.add(resourceBundle.getString("enterKeyHandlingMode.lf"));
-        enderKeyHandlingModes.add(resourceBundle.getString("enterKeyHandlingMode.crlf"));
-        enderKeyHandlingModes.add(resourceBundle.getString("enterKeyHandlingMode.ignore"));
+        enderKeyHandlingModes.add(managerResourceBundle.getString("enterKeyHandlingMode.platformSpecific"));
+        enderKeyHandlingModes.add(managerResourceBundle.getString("enterKeyHandlingMode.cr"));
+        enderKeyHandlingModes.add(managerResourceBundle.getString("enterKeyHandlingMode.lf"));
+        enderKeyHandlingModes.add(managerResourceBundle.getString("enterKeyHandlingMode.crlf"));
+        enderKeyHandlingModes.add(managerResourceBundle.getString("enterKeyHandlingMode.ignore"));
         editorOptionsPanel.setEnterKeyHandlingModes(enderKeyHandlingModes);
         List<String> tabKeyHandlingModes = new ArrayList<>();
-        tabKeyHandlingModes.add(resourceBundle.getString("tabKeyHandlingMode.platformSpecific"));
-        tabKeyHandlingModes.add(resourceBundle.getString("tabKeyHandlingMode.insertTab"));
-        tabKeyHandlingModes.add(resourceBundle.getString("tabKeyHandlingMode.insertSpaces"));
-        tabKeyHandlingModes.add(resourceBundle.getString("tabKeyHandlingMode.cycleToNextSection"));
-        tabKeyHandlingModes.add(resourceBundle.getString("tabKeyHandlingMode.cycleToPreviousSection"));
-        tabKeyHandlingModes.add(resourceBundle.getString("tabKeyHandlingMode.ignore"));
+        tabKeyHandlingModes.add(managerResourceBundle.getString("tabKeyHandlingMode.platformSpecific"));
+        tabKeyHandlingModes.add(managerResourceBundle.getString("tabKeyHandlingMode.insertTab"));
+        tabKeyHandlingModes.add(managerResourceBundle.getString("tabKeyHandlingMode.insertSpaces"));
+        tabKeyHandlingModes.add(managerResourceBundle.getString("tabKeyHandlingMode.cycleToNextSection"));
+        tabKeyHandlingModes.add(managerResourceBundle.getString("tabKeyHandlingMode.cycleToPreviousSection"));
+        tabKeyHandlingModes.add(managerResourceBundle.getString("tabKeyHandlingMode.ignore"));
         editorOptionsPanel.setTabKeyHandlingModes(tabKeyHandlingModes);
 
         List<String> viewModes = new ArrayList<>();
-        viewModes.add(resourceBundle.getString("codeAreaViewMode.dual"));
-        viewModes.add(resourceBundle.getString("codeAreaViewMode.codeMatrix"));
-        viewModes.add(resourceBundle.getString("codeAreaViewMode.textPreview"));
+        viewModes.add(managerResourceBundle.getString("codeAreaViewMode.dual"));
+        viewModes.add(managerResourceBundle.getString("codeAreaViewMode.codeMatrix"));
+        viewModes.add(managerResourceBundle.getString("codeAreaViewMode.textPreview"));
         codeAreaOptionsPanel.setViewModes(viewModes);
 
         List<String> codeTypes = new ArrayList<>();
-        codeTypes.add(resourceBundle.getString("codeAreaCodeType.binary"));
-        codeTypes.add(resourceBundle.getString("codeAreaCodeType.octal"));
-        codeTypes.add(resourceBundle.getString("codeAreaCodeType.decimal"));
-        codeTypes.add(resourceBundle.getString("codeAreaCodeType.hexadecimal"));
+        codeTypes.add(managerResourceBundle.getString("codeAreaCodeType.binary"));
+        codeTypes.add(managerResourceBundle.getString("codeAreaCodeType.octal"));
+        codeTypes.add(managerResourceBundle.getString("codeAreaCodeType.decimal"));
+        codeTypes.add(managerResourceBundle.getString("codeAreaCodeType.hexadecimal"));
         codeAreaOptionsPanel.setCodeTypes(codeTypes);
 
         List<String> positionCodeTypes = new ArrayList<>();
-        positionCodeTypes.add(resourceBundle.getString("positionCodeAreaCodeType.octal"));
-        positionCodeTypes.add(resourceBundle.getString("positionCodeAreaCodeType.decimal"));
-        positionCodeTypes.add(resourceBundle.getString("positionCodeAreaCodeType.hexadecimal"));
+        positionCodeTypes.add(managerResourceBundle.getString("positionCodeAreaCodeType.octal"));
+        positionCodeTypes.add(managerResourceBundle.getString("positionCodeAreaCodeType.decimal"));
+        positionCodeTypes.add(managerResourceBundle.getString("positionCodeAreaCodeType.hexadecimal"));
         codeAreaOptionsPanel.setPositionCodeTypes(positionCodeTypes);
 
         List<String> charactersCases = new ArrayList<>();
-        charactersCases.add(resourceBundle.getString("codeAreaCharactersCase.lower"));
-        charactersCases.add(resourceBundle.getString("codeAreaCharactersCase.higher"));
+        charactersCases.add(managerResourceBundle.getString("codeAreaCharactersCase.lower"));
+        charactersCases.add(managerResourceBundle.getString("codeAreaCharactersCase.higher"));
         codeAreaOptionsPanel.setCharactersCases(charactersCases);
 
         List<String> cursorPositionCodeTypes = new ArrayList<>();
-        cursorPositionCodeTypes.add(resourceBundle.getString("cursorPositionCodeType.octal"));
-        cursorPositionCodeTypes.add(resourceBundle.getString("cursorPositionCodeType.decimal"));
-        cursorPositionCodeTypes.add(resourceBundle.getString("cursorPositionCodeType.hexadecimal"));
+        cursorPositionCodeTypes.add(managerResourceBundle.getString("cursorPositionCodeType.octal"));
+        cursorPositionCodeTypes.add(managerResourceBundle.getString("cursorPositionCodeType.decimal"));
+        cursorPositionCodeTypes.add(managerResourceBundle.getString("cursorPositionCodeType.hexadecimal"));
         statusOptionsPanel.setCursorPositionCodeTypes(cursorPositionCodeTypes);
 
         List<String> documentSizeCodeTypes = new ArrayList<>();
-        documentSizeCodeTypes.add(resourceBundle.getString("documentSizeCodeType.octal"));
-        documentSizeCodeTypes.add(resourceBundle.getString("documentSizeCodeType.decimal"));
-        documentSizeCodeTypes.add(resourceBundle.getString("documentSizeCodeType.hexadecimal"));
+        documentSizeCodeTypes.add(managerResourceBundle.getString("documentSizeCodeType.octal"));
+        documentSizeCodeTypes.add(managerResourceBundle.getString("documentSizeCodeType.decimal"));
+        documentSizeCodeTypes.add(managerResourceBundle.getString("documentSizeCodeType.hexadecimal"));
         statusOptionsPanel.setDocumentSizeCodeTypes(documentSizeCodeTypes);
 
-        categoryModel.addElement(new CategoryItem("Integration", integrationOptionsPanel));
-        categoryModel.addElement(new CategoryItem("Editor", editorOptionsPanel));
-        categoryModel.addElement(new CategoryItem("Status Panel", statusOptionsPanel));
-        categoryModel.addElement(new CategoryItem("Code Area", codeAreaOptionsPanel));
-        categoryModel.addElement(new CategoryItem("Font", fontOptionsPanel));
-        categoryModel.addElement(new CategoryItem("Encoding", encodingOptionsPanel));
-        categoryModel.addElement(new CategoryItem("Layout Profiles", layoutSelectionPanel));
-        categoryModel.addElement(new CategoryItem("Theme Profiles", themeSelectionPanel));
-        categoryModel.addElement(new CategoryItem("Colors Profiles", colorSelectionPanel));
+        categoryModel.addElement(new CategoryItem(integrationOptionsPanel.getResourceBundle().getString("options.caption"), integrationOptionsPanel));
+        categoryModel.addElement(new CategoryItem(editorOptionsPanel.getResourceBundle().getString("options.caption"), editorOptionsPanel));
+        categoryModel.addElement(new CategoryItem(statusOptionsPanel.getResourceBundle().getString("options.caption"), statusOptionsPanel));
+        categoryModel.addElement(new CategoryItem(codeAreaOptionsPanel.getResourceBundle().getString("options.caption"), codeAreaOptionsPanel));
+        categoryModel.addElement(new CategoryItem(fontOptionsPanel.getResourceBundle().getString("options.caption"), fontOptionsPanel));
+        categoryModel.addElement(new CategoryItem(encodingOptionsPanel.getResourceBundle().getString("options.caption"), encodingOptionsPanel));
+        categoryModel.addElement(new CategoryItem(LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/bined/options/gui/resources/LayoutProfilesOptionsPanel").getString("options.caption"), layoutSelectionPanel));
+        categoryModel.addElement(new CategoryItem(LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/bined/options/gui/resources/ThemeProfilesOptionsPanel").getString("options.caption"), themeSelectionPanel));
+        categoryModel.addElement(new CategoryItem(LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/bined/options/gui/resources/ColorProfilesOptionsPanel").getString("options.caption"), colorSelectionPanel));
+        categoryModel.addElement(new CategoryItem(dataInspectorOptionsPanel.getResourceBundle().getString("options.caption"), dataInspectorOptionsPanel));
         categoriesList.setModel(categoryModel);
 
         categoriesList.addListSelectionListener((ListSelectionEvent e) -> {
@@ -223,7 +236,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
             addEncodingPanel.setUsedEncodings(usedEncodings);
             DefaultControlPanel encodingsControlPanel = new DefaultControlPanel(addEncodingPanel.getResourceBundle());
             JPanel dialogPanel = WindowUtils.createDialogPanel(addEncodingPanel, encodingsControlPanel);
-            final DialogWrapper addEncodingDialog = WindowUtils.createDialog(dialogPanel, this, "Add Encodings", java.awt.Dialog.ModalityType.APPLICATION_MODAL);
+            final DialogWrapper addEncodingDialog = WindowUtils.createDialog(dialogPanel, this, addEncodingPanel.getResourceBundle().getString("dialog.title"), Dialog.ModalityType.APPLICATION_MODAL);
             encodingsControlPanel.setHandler((DefaultControlHandler.ControlActionType actionType) -> {
                 if (actionType == DefaultControlHandler.ControlActionType.OK) {
                     result.addAll(addEncodingPanel.getEncodings());
@@ -243,7 +256,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
                 fontPanel.setStoredFont(currentFont);
                 DefaultControlPanel controlPanel = new DefaultControlPanel();
                 JPanel dialogPanel = WindowUtils.createDialogPanel(fontPanel, controlPanel);
-                final DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, BinEdOptionsPanel.this, "Select Font", java.awt.Dialog.ModalityType.APPLICATION_MODAL);
+                final DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, BinEdOptionsPanel.this, fontPanel.getResourceBundle().getString("dialog.title"), java.awt.Dialog.ModalityType.APPLICATION_MODAL);
                 controlPanel.setHandler((DefaultControlHandler.ControlActionType actionType) -> {
                     if (actionType != DefaultControlHandler.ControlActionType.CANCEL) {
                         result.font = fontPanel.getStoredFont();
@@ -844,7 +857,7 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
         ThemeProfilePanel themeProfilePanel = new ThemeProfilePanel();
         List<String> backgroundModes = new ArrayList<>();
         for (ExtendedBackgroundPaintMode mode : ExtendedBackgroundPaintMode.values()) {
-            backgroundModes.add(resourceBundle.getString("backgroundPaintMode." + mode.name().toLowerCase()));
+            backgroundModes.add(managerResourceBundle.getString("backgroundPaintMode." + mode.name().toLowerCase()));
         }
         themeProfilePanel.setBackgroundModes(backgroundModes);
         return themeProfilePanel;

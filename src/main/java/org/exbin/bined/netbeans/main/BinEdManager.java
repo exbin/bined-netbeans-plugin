@@ -49,6 +49,7 @@ import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import java.awt.Component;
 import java.awt.Dialog;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -60,7 +61,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import javax.swing.JTextField;
 import org.exbin.auxiliary.binary_data.delta.DeltaDocument;
 import org.exbin.bined.CodeAreaCaretPosition;
 import org.exbin.bined.EditMode;
@@ -120,15 +120,23 @@ import org.exbin.framework.utils.LanguageUtils;
  * @author ExBin Project (https://exbin.org)
  */
 @ParametersAreNonnullByDefault
-public class BinEdManager {
+public final class BinEdManager {
 
-    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(BinEdManager.class);
-
-    private static BinEdManager instance;
+    private java.util.ResourceBundle resourceBundle;
+    private java.util.ResourceBundle frameResourceBundle;
+    private java.util.ResourceBundle fileResourceBundle;
+    private java.util.ResourceBundle optionsResourceBundle;
+    private java.util.ResourceBundle operationResourceBundle;
+    private java.util.ResourceBundle searchResourceBundle;
+    private java.util.ResourceBundle compareResourceBundle;
+    private java.util.ResourceBundle inspectorResourceBundle;
+    private java.util.ResourceBundle toolContentResourceBundle;
+    private java.util.ResourceBundle actionPopupResourceBundle;
+    private java.util.ResourceBundle aboutResourceBundle;
+    private java.util.ResourceBundle onlineHelpResourceBundle;
 
     private static final String FRAMEWORK_TANGO_ICON_THEME_PREFIX = "/org/exbin/framework/action/resources/icons/tango-icon-theme/16x16/actions/";
-    private static final FileHandlingMode DEFAULT_FILE_HANDLING_MODE = FileHandlingMode.DELTA;
-    private static final String ONLINE_HELP_URL = "https://bined.exbin.org/intellij-plugin/?manual";
+    private static final String ONLINE_HELP_URL = "https://bined.exbin.org/netbeans-plugin/?manual";
 
     private final Application application = new Application();
     private final BinaryEditorPreferences preferences;
@@ -137,23 +145,28 @@ public class BinEdManager {
     private FindReplaceActions findReplaceActions;
     private BookmarksManager bookmarksManager;
     private MacroManager macroManager;
-    private EncodingsHandler encodingsHandler = new EncodingsHandler();
+    private EncodingsHandler encodingsHandler;
+    private final EditorProviderImpl editorProvider = new EditorProviderImpl();
 
     private final List<InsertDataMethod> insertDataComponents = new ArrayList<>();
     private final List<ConvertDataMethod> convertDataComponents = new ArrayList<>();
     private BasicValuesPositionColorModifier basicValuesColorModifier = new BasicValuesPositionColorModifier();
 
     private BinEdManager() {
+        languageChanged();
         preferences = new BinaryEditorPreferences(application.getAppPreferences());
         fileManager.setApplication(application);
         bookmarksManager = new BookmarksManager();
         bookmarksManager.setApplication(application);
+        bookmarksManager.setEditorProvider(editorProvider);
         ((ManageBookmarksAction) bookmarksManager.getManageBookmarksAction()).setBookmarksManager(bookmarksManager);
         macroManager = new MacroManager();
         macroManager.setApplication(application);
+        macroManager.setEditorProvider(editorProvider);
         ((ManageMacrosAction) macroManager.getManageMacrosAction()).setMacroManager(macroManager);
         findReplaceActions = new FindReplaceActions();
-        findReplaceActions.setup(application, null, resourceBundle);
+        findReplaceActions.setup(application, editorProvider, searchResourceBundle);
+        encodingsHandler = new EncodingsHandler();
         encodingsHandler.setApplication(application);
 
         SimpleFillDataMethod simpleFillDataMethod = new SimpleFillDataMethod();
@@ -180,33 +193,76 @@ public class BinEdManager {
             }
         });
 
-        fileManager.addActionStatusUpdateListener((codeArea) -> {
-            findReplaceActions.updateForActiveFile();
-        });
+        fileManager.addActionStatusUpdateListener(codeArea -> findReplaceActions.updateForActiveFile());
         fileManager.addBinEdComponentExtension((BinEdComponentPanel component) -> Optional.of(new BinEdComponentSearch()));
 
-        fileManager.setCommandHandlerProvider((codeArea, undoHandler) -> new CodeAreaMacroCommandHandler(codeArea, undoHandler));
+        fileManager.setCommandHandlerProvider(CodeAreaMacroCommandHandler::new);
         findReplaceActions.addFindAgainListener();
     }
 
-    @Nonnull
-    public static synchronized BinEdManager getInstance() {
-        if (instance == null) {
-            instance = new BinEdManager();
-            instance.init();
-        }
+    private static class SingletonHelper {
+        private static final BinEdManager INSTANCE = new BinEdManager();
 
-        return instance;
+        static {
+            INSTANCE.init();
+        }
+    }
+
+    @Nonnull
+    public static BinEdManager getInstance() {
+        return SingletonHelper.INSTANCE;
     }
 
     private void init() {
         bookmarksManager.init();
         macroManager.init();
         encodingsHandler.init();
+        encodingsHandler.loadFromPreferences(preferences.getEncodingPreferences());
     }
 
-    @Nonnull
+    public void languageChanged() {
+        resourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/bined/resources/BinedModule");
+        frameResourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/frame/resources/FrameModule");
+        fileResourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/file/resources/FileModule");
+        optionsResourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/options/resources/OptionsModule");
+        operationResourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/bined/operation/resources/BinedOperationModule");
+        searchResourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/bined/search/resources/BinedSearchModule");
+        compareResourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/bined/compare/resources/BinedCompareModule");
+        inspectorResourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/bined/inspector/resources/BinedInspectorModule");
+        toolContentResourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/bined/tool/content/resources/BinedToolContentModule");
+        actionPopupResourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/popup/resources/DefaultPopupMenu");
+        aboutResourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/about/action/resources/AboutAction");
+        onlineHelpResourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/help/online/action/resources/OnlineHelpAction");
+
+        if (bookmarksManager != null) {
+            bookmarksManager = new BookmarksManager();
+            bookmarksManager.setApplication(application);
+            bookmarksManager.setEditorProvider(editorProvider);
+            ((ManageBookmarksAction) bookmarksManager.getManageBookmarksAction()).setBookmarksManager(bookmarksManager);
+            bookmarksManager.init();
+        }
+        if (macroManager != null) {
+            macroManager = new MacroManager();
+            macroManager.setApplication(application);
+            macroManager.setEditorProvider(editorProvider);
+            ((ManageMacrosAction) macroManager.getManageMacrosAction()).setMacroManager(macroManager);
+            macroManager.init();
+        }
+        if (findReplaceActions != null) {
+            findReplaceActions = new FindReplaceActions();
+            findReplaceActions.setup(application, editorProvider, searchResourceBundle);
+            findReplaceActions.addFindAgainListener();
+        }
+        if (encodingsHandler != null) {
+            encodingsHandler = new EncodingsHandler();
+            encodingsHandler.setApplication(application);
+            encodingsHandler.init();
+            encodingsHandler.loadFromPreferences(preferences.getEncodingPreferences());
+        }
+    }
+
     public void initFileHandler(FileHandler fileHandler) {
+        editorProvider.setFileHandler(fileHandler);
         BinEdEditorComponent editorComponent = ((BinEdComponentFileApi) fileHandler).getEditorComponent();
         initEditorComponent(editorComponent, fileHandler);
     }
@@ -244,6 +300,10 @@ public class BinEdManager {
                         findReplaceActions.getEditFindAction().actionPerformed(new ActionEvent(keyEvent.getSource(), keyEvent.getID(), ""));
                         break;
                     }
+                    case KeyEvent.VK_H: {
+                        findReplaceActions.getEditReplaceAction().actionPerformed(new ActionEvent(keyEvent.getSource(), keyEvent.getID(), ""));
+                        break;
+                    }
                     case KeyEvent.VK_G: {
                         if (codeArea.isEditable()) {
                             GoToPositionAction goToPositionAction = new GoToPositionAction();
@@ -256,7 +316,7 @@ public class BinEdManager {
                     case KeyEvent.VK_I: {
                         if (codeArea.isEditable()) {
                             InsertDataAction insertDataAction = new InsertDataAction();
-                            insertDataAction.setup(application, resourceBundle);
+                            insertDataAction.setup(application, operationResourceBundle);
                             insertDataAction.updateForActiveCodeArea(codeArea);
                             insertDataAction.setInsertDataComponents(insertDataComponents);
                             insertDataAction.actionPerformed(new ActionEvent(keyEvent.getSource(),
@@ -268,7 +328,7 @@ public class BinEdManager {
                     case KeyEvent.VK_M: {
                         if (codeArea.isEditable()) {
                             ConvertDataAction convertDataAction = new ConvertDataAction();
-                            convertDataAction.setup(application, resourceBundle);
+                            convertDataAction.setup(application, operationResourceBundle);
                             convertDataAction.updateForActiveCodeArea(codeArea);
                             convertDataAction.setConvertDataComponents(convertDataComponents);
                             convertDataAction.actionPerformed(new ActionEvent(keyEvent.getSource(),
@@ -332,6 +392,15 @@ public class BinEdManager {
         toolbarPanel.setOptionsAction(createOptionsAction(editorComponent, fileHandler));
         toolbarPanel.setOnlineHelpAction(createOnlineHelpAction());
 
+        Font defaultFont = null;
+        if (fileHandler != null ) {
+            // TODO FIX uses codeArea.getFont() which can return null on some systems / LaFs
+            defaultFont = ((TextFontApi) fileHandler).getDefaultFont();
+        }
+        if (defaultFont == null) {
+            defaultFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
+        }
+
         editorComponent.applyOptions(new BinEdApplyOptions() {
             @Nonnull
             @Override
@@ -392,7 +461,7 @@ public class BinEdManager {
             public CodeAreaThemeOptions getThemeOptions() {
                 return preferences.getThemePreferences();
             }
-        }, encodingsHandler, fileHandler == null ? new JTextField().getFont() : ((TextFontApi) fileHandler).getDefaultFont());
+        }, encodingsHandler, defaultFont);
     }
 
     @Nonnull
@@ -434,11 +503,8 @@ public class BinEdManager {
     public void createContextMenu(BinEdEditorComponent editorComponent, @Nullable FileHandler fileHandler, final JPopupMenu menu, PopupMenuVariant variant, int x, int y) {
         ExtCodeArea codeArea = editorComponent.getCodeArea();
         BasicCodeAreaZone positionZone = codeArea.getPainter().getPositionZone(x, y);
-        EditorProvider editorProvider = new EditorProviderImpl(fileHandler);
-        findReplaceActions.setup(application, editorProvider, resourceBundle);
+        editorProvider.setFileHandler(fileHandler);
         findReplaceActions.updateForActiveFile();
-        bookmarksManager.setEditorProvider(editorProvider);
-        macroManager.setEditorProvider(editorProvider);
 
         if (variant == PopupMenuVariant.EDITOR) {
             switch (positionZone) {
@@ -448,7 +514,8 @@ public class BinEdManager {
                     break;
                 }
                 default: {
-                    JMenu showMenu = new JMenu("Show");
+                    JMenu showMenu = new JMenu(resourceBundle.getString("popupShowSubMenu.text"));
+                    showMenu.setToolTipText(resourceBundle.getString("popupShowSubMenu.shortDescription"));
                     showMenu.add(createShowHeaderMenuItem(codeArea));
                     showMenu.add(createShowRowPositionMenuItem(codeArea));
                     showMenu.add(createShowInspectorPanel(editorComponent.getComponentPanel()));
@@ -478,7 +545,8 @@ public class BinEdManager {
                 break;
             }
             default: {
-                final JMenuItem cutMenuItem = new JMenuItem("Cut");
+                final JMenuItem cutMenuItem = new JMenuItem(actionPopupResourceBundle.getString("popupCutAction.text"));
+                cutMenuItem.setToolTipText(actionPopupResourceBundle.getString("popupCutAction.shortDescription"));
                 ImageIcon cutMenuItemIcon = new ImageIcon(getClass().getResource(FRAMEWORK_TANGO_ICON_THEME_PREFIX + "edit-cut.png"));
                 cutMenuItem.setIcon(cutMenuItemIcon);
                 cutMenuItem.setDisabledIcon(new ImageIcon(GrayFilter.createDisabledImage(cutMenuItemIcon.getImage())));
@@ -490,7 +558,8 @@ public class BinEdManager {
                 });
                 menu.add(cutMenuItem);
 
-                final JMenuItem copyMenuItem = new JMenuItem("Copy");
+                final JMenuItem copyMenuItem = new JMenuItem(actionPopupResourceBundle.getString("popupCopyAction.text"));
+                copyMenuItem.setToolTipText(actionPopupResourceBundle.getString("popupCopyAction.shortDescription"));
                 ImageIcon copyMenuItemIcon = new ImageIcon(getClass().getResource(FRAMEWORK_TANGO_ICON_THEME_PREFIX + "edit-copy.png"));
                 copyMenuItem.setIcon(copyMenuItemIcon);
                 copyMenuItem.setDisabledIcon(new ImageIcon(GrayFilter.createDisabledImage(copyMenuItemIcon.getImage())));
@@ -502,7 +571,8 @@ public class BinEdManager {
                 });
                 menu.add(copyMenuItem);
 
-                final JMenuItem copyAsCodeMenuItem = new JMenuItem("Copy as Code");
+                final JMenuItem copyAsCodeMenuItem = new JMenuItem(resourceBundle.getString("copyAsCodeAction.text"));
+                copyAsCodeMenuItem.setToolTipText(resourceBundle.getString("copyAsCodeAction.shortDescription"));
                 copyAsCodeMenuItem.setEnabled(codeArea.hasSelection());
                 copyAsCodeMenuItem.addActionListener((ActionEvent e) -> {
                     codeArea.copyAsCode();
@@ -510,7 +580,8 @@ public class BinEdManager {
                 });
                 menu.add(copyAsCodeMenuItem);
 
-                final JMenuItem pasteMenuItem = new JMenuItem("Paste");
+                final JMenuItem pasteMenuItem = new JMenuItem(actionPopupResourceBundle.getString("popupPasteAction.text"));
+                pasteMenuItem.setToolTipText(actionPopupResourceBundle.getString("popupPasteAction.shortDescription"));
                 ImageIcon pasteMenuItemIcon = new ImageIcon(getClass().getResource(FRAMEWORK_TANGO_ICON_THEME_PREFIX + "edit-paste.png"));
                 pasteMenuItem.setIcon(pasteMenuItemIcon);
                 pasteMenuItem.setDisabledIcon(new ImageIcon(GrayFilter.createDisabledImage(pasteMenuItemIcon.getImage())));
@@ -522,7 +593,8 @@ public class BinEdManager {
                 });
                 menu.add(pasteMenuItem);
 
-                final JMenuItem pasteFromCodeMenuItem = new JMenuItem("Paste from Code");
+                final JMenuItem pasteFromCodeMenuItem = new JMenuItem(resourceBundle.getString("pasteFromCodeAction.text"));
+                pasteFromCodeMenuItem.setToolTipText(resourceBundle.getString("pasteFromCodeAction.shortDescription"));
                 pasteFromCodeMenuItem.setEnabled(codeArea.canPaste() && codeArea.isEditable());
                 pasteFromCodeMenuItem.addActionListener((ActionEvent e) -> {
                     try {
@@ -534,7 +606,8 @@ public class BinEdManager {
                 });
                 menu.add(pasteFromCodeMenuItem);
 
-                final JMenuItem deleteMenuItem = new JMenuItem("Delete");
+                final JMenuItem deleteMenuItem = new JMenuItem(actionPopupResourceBundle.getString("popupDeleteAction.text"));
+                deleteMenuItem.setToolTipText(actionPopupResourceBundle.getString("popupDeleteAction.shortDescription"));
                 ImageIcon deleteMenuItemIcon = new ImageIcon(getClass().getResource(FRAMEWORK_TANGO_ICON_THEME_PREFIX + "edit-delete.png"));
                 deleteMenuItem.setIcon(deleteMenuItemIcon);
                 deleteMenuItem.setDisabledIcon(new ImageIcon(GrayFilter.createDisabledImage(deleteMenuItemIcon.getImage())));
@@ -546,7 +619,8 @@ public class BinEdManager {
                 });
                 menu.add(deleteMenuItem);
 
-                final JMenuItem selectAllMenuItem = new JMenuItem("Select All");
+                final JMenuItem selectAllMenuItem = new JMenuItem(actionPopupResourceBundle.getString("popupSelectAllAction.text"));
+                selectAllMenuItem.setToolTipText(actionPopupResourceBundle.getString("popupSelectAllAction.shortDescription"));
                 selectAllMenuItem.setIcon(new ImageIcon(getClass().getResource(FRAMEWORK_TANGO_ICON_THEME_PREFIX + "edit-select-all.png")));
                 selectAllMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ActionUtils.getMetaMask()));
                 selectAllMenuItem.addActionListener((ActionEvent e) -> {
@@ -557,44 +631,54 @@ public class BinEdManager {
 
                 menu.add(ActionUtils.actionToMenuItem(createEditSelectionAction(codeArea)));
 
-                menu.add(ActionUtils.actionToMenuItem(createInsertDataAction(editorComponent)));
-                menu.add(ActionUtils.actionToMenuItem(createConvertDataAction(editorComponent)));
+                if (fileHandler != null) {
+                    menu.add(ActionUtils.actionToMenuItem(createInsertDataAction(editorComponent)));
+                    menu.add(ActionUtils.actionToMenuItem(createConvertDataAction(editorComponent)));
+                }
 
                 menu.addSeparator();
 
                 menu.add(ActionUtils.actionToMenuItem(createGoToAction(codeArea)));
 
-                menu.add(ActionUtils.actionToMenuItem(findReplaceActions.getEditFindAction()));
-                menu.add(ActionUtils.actionToMenuItem(findReplaceActions.getEditReplaceAction()));
+                if (fileHandler != null) {
+                    // TODO Make available in next version
+                    findReplaceActions.resetActions();
+                    menu.add(ActionUtils.actionToMenuItem(findReplaceActions.getEditFindAction()));
+                    menu.add(ActionUtils.actionToMenuItem(findReplaceActions.getEditReplaceAction()));
 
-                JMenu bookmarksMenu = bookmarksManager.getBookmarksMenu();
-                bookmarksManager.updateBookmarksMenu();
-                menu.add(bookmarksMenu);
+                    bookmarksManager.resetBookmarksMenu();
+                    JMenu bookmarksMenu = bookmarksManager.getBookmarksMenu();
+                    bookmarksManager.updateBookmarksMenu();
+                    menu.add(bookmarksMenu);
 
-                JMenu macrosMenu = macroManager.getMacrosMenu();
-                macroManager.updateMacrosMenu();
-                macroManager.notifyMacroRecordingChange(codeArea);
-                menu.add(macrosMenu);
+                    macroManager.resetMacrosMenu();
+                    macroManager.setEditorProvider(editorProvider);
+                    JMenu macrosMenu = macroManager.getMacrosMenu();
+                    macroManager.updateMacrosMenu();
+                    macroManager.notifyMacroRecordingChange(codeArea);
+                    menu.add(macrosMenu);
+                }
             }
         }
 
         menu.addSeparator();
 
-        JMenu toolsMenu = new JMenu("Tools");
-        toolsMenu.add(ActionUtils.actionToMenuItem(createCompareFilesAction(codeArea, editorProvider)));
-        toolsMenu.add(ActionUtils.actionToMenuItem(createClipboardContentAction(editorProvider)));
-        toolsMenu.add(ActionUtils.actionToMenuItem(createDragDropContentAction(editorProvider)));
+        JMenu toolsMenu = new JMenu(frameResourceBundle.getString("toolsMenu.text"));
+        if (fileHandler != null) {
+            toolsMenu.add(ActionUtils.actionToMenuItem(createCompareFilesAction(codeArea)));
+        }
+        toolsMenu.add(ActionUtils.actionToMenuItem(createClipboardContentAction()));
+        toolsMenu.add(ActionUtils.actionToMenuItem(createDragDropContentAction()));
         menu.add(toolsMenu);
 
-        if (editorComponent != null) {
-            if (fileHandler instanceof BinEdFileHandler || fileHandler instanceof BinEdFileDataWrapper) {
-                JMenuItem reloadFileMenuItem = createReloadFileMenuItem(fileHandler, editorProvider);
-                menu.add(reloadFileMenuItem);
-            }
+        if (fileHandler instanceof BinEdFileHandler || fileHandler instanceof BinEdFileDataWrapper) {
+            JMenuItem reloadFileMenuItem = createReloadFileMenuItem(fileHandler);
+            menu.add(reloadFileMenuItem);
         }
 
-        if (editorComponent != null) {
-            final JMenuItem optionsMenuItem = new JMenuItem("Options...");
+        if (fileHandler != null) {
+            final JMenuItem optionsMenuItem = new JMenuItem(optionsResourceBundle.getString("optionsAction.text") + "...");
+            optionsMenuItem.setToolTipText(optionsResourceBundle.getString("optionsAction.shortDescription"));
             optionsMenuItem.setIcon(new ImageIcon(getClass().getResource(
                     "/org/exbin/framework/options/gui/resources/icons/Preferences16.gif")));
             optionsMenuItem.addActionListener(createOptionsAction(editorComponent, fileHandler));
@@ -610,12 +694,14 @@ public class BinEdManager {
             default: {
                 menu.addSeparator();
 
-                final JMenuItem onlineHelpMenuItem = new JMenuItem("Online Help...");
+                final JMenuItem onlineHelpMenuItem = new JMenuItem(onlineHelpResourceBundle.getString("onlineHelpAction.text") + "...");
+                onlineHelpMenuItem.setToolTipText(onlineHelpResourceBundle.getString("onlineHelpAction.shortDescription"));
                 onlineHelpMenuItem.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/bined/resources/icons/open_icon_library/icons/png/16x16/actions/help.png")));
                 onlineHelpMenuItem.addActionListener(createOnlineHelpAction());
                 menu.add(onlineHelpMenuItem);
 
-                final JMenuItem aboutMenuItem = new JMenuItem("About...");
+                final JMenuItem aboutMenuItem = new JMenuItem(aboutResourceBundle.getString("aboutAction.text") + "...");
+                aboutMenuItem.setToolTipText(aboutResourceBundle.getString("aboutAction.shortDescription"));
                 aboutMenuItem.addActionListener((ActionEvent e) -> {
                     AboutPanel aboutPanel = new AboutPanel();
                     aboutPanel.setupFields();
@@ -667,7 +753,7 @@ public class BinEdManager {
     @Nonnull
     private InsertDataAction createInsertDataAction(BinEdEditorComponent editorComponent) {
         InsertDataAction insertDataAction = new InsertDataAction();
-        insertDataAction.setup(application, resourceBundle);
+        insertDataAction.setup(application, operationResourceBundle);
         insertDataAction.updateForActiveCodeArea(editorComponent.getCodeArea());
         insertDataAction.setInsertDataComponents(insertDataComponents);
         return insertDataAction;
@@ -676,23 +762,24 @@ public class BinEdManager {
     @Nonnull
     private ConvertDataAction createConvertDataAction(BinEdEditorComponent editorComponent) {
         ConvertDataAction convertDataAction = new ConvertDataAction();
-        convertDataAction.setup(application, resourceBundle);
+        convertDataAction.setup(application, operationResourceBundle);
         convertDataAction.updateForActiveCodeArea(editorComponent.getCodeArea());
         convertDataAction.setConvertDataComponents(convertDataComponents);
         return convertDataAction;
     }
 
     @Nonnull
-    private CompareFilesAction createCompareFilesAction(ExtCodeArea codeArea, EditorProvider editorProvider) {
+    private CompareFilesAction createCompareFilesAction(ExtCodeArea codeArea) {
         CompareFilesAction compareFilesAction = new CompareFilesAction();
-        compareFilesAction.setup(application, editorProvider, resourceBundle);
+        compareFilesAction.setup(application, editorProvider, compareResourceBundle);
         compareFilesAction.setCodeArea(codeArea);
         return compareFilesAction;
     }
 
     @Nonnull
-    private JMenuItem createReloadFileMenuItem(FileHandler fileHandler, EditorProvider editorProvider) {
-        final JMenuItem reloadFileMenuItem = new JMenuItem("Reload File");
+    private JMenuItem createReloadFileMenuItem(FileHandler fileHandler) {
+        final JMenuItem reloadFileMenuItem = new JMenuItem(resourceBundle.getString("reloadFileAction.text"));
+        reloadFileMenuItem.setToolTipText(resourceBundle.getString("reloadFileAction.shortDescription"));
         reloadFileMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, ActionUtils.getMetaMask() + KeyEvent.ALT_DOWN_MASK));
         reloadFileMenuItem.addActionListener(new AbstractAction() {
             @Override
@@ -711,7 +798,8 @@ public class BinEdManager {
 
     @Nonnull
     private JMenuItem createShowHeaderMenuItem(ExtCodeArea codeArea) {
-        final JCheckBoxMenuItem showHeader = new JCheckBoxMenuItem("Show Header");
+        final JCheckBoxMenuItem showHeader = new JCheckBoxMenuItem(resourceBundle.getString("showHeaderAction.text"));
+        showHeader.setToolTipText(resourceBundle.getString("showHeaderAction.shortDescription"));
         showHeader.setSelected(codeArea.getLayoutProfile().isShowHeader());
         showHeader.addActionListener(new AbstractAction() {
             @Override
@@ -730,7 +818,8 @@ public class BinEdManager {
 
     @Nonnull
     private JMenuItem createShowRowPositionMenuItem(ExtCodeArea codeArea) {
-        final JCheckBoxMenuItem showRowPosition = new JCheckBoxMenuItem("Show Row Position");
+        final JCheckBoxMenuItem showRowPosition = new JCheckBoxMenuItem(resourceBundle.getString("showRowPositionAction.text"));
+        showRowPosition.setToolTipText(resourceBundle.getString("showRowPositionAction.shortDescription"));
         showRowPosition.setSelected(codeArea.getLayoutProfile().isShowRowPosition());
         showRowPosition.addActionListener(new AbstractAction() {
             @Override
@@ -749,10 +838,12 @@ public class BinEdManager {
 
     @Nonnull
     private JMenuItem createPositionCodeTypeMenuItem(ExtCodeArea codeArea) {
-        JMenu menu = new JMenu("Position Code Type");
+        JMenu menu = new JMenu(resourceBundle.getString("positionCodeTypeSubMenu.text"));
+        menu.setToolTipText(resourceBundle.getString("positionCodeTypeSubMenu.shortDescription"));
         PositionCodeType codeType = codeArea.getPositionCodeType();
 
-        final JRadioButtonMenuItem octalCodeTypeMenuItem = new JRadioButtonMenuItem("Octal");
+        final JRadioButtonMenuItem octalCodeTypeMenuItem = new JRadioButtonMenuItem(resourceBundle.getString("octalCodeTypeAction.text"));
+        octalCodeTypeMenuItem.setToolTipText(resourceBundle.getString("octalCodeTypeAction.shortDescription"));
         octalCodeTypeMenuItem.setSelected(codeType == PositionCodeType.OCTAL);
         octalCodeTypeMenuItem.addActionListener(new AbstractAction() {
             @Override
@@ -763,7 +854,8 @@ public class BinEdManager {
         });
         menu.add(octalCodeTypeMenuItem);
 
-        final JRadioButtonMenuItem decimalCodeTypeMenuItem = new JRadioButtonMenuItem("Decimal");
+        final JRadioButtonMenuItem decimalCodeTypeMenuItem = new JRadioButtonMenuItem(resourceBundle.getString("decimalCodeTypeAction.text"));
+        decimalCodeTypeMenuItem.setToolTipText(resourceBundle.getString("decimalCodeTypeAction.shortDescription"));
         decimalCodeTypeMenuItem.setSelected(codeType == PositionCodeType.DECIMAL);
         decimalCodeTypeMenuItem.addActionListener(new AbstractAction() {
             @Override
@@ -774,7 +866,8 @@ public class BinEdManager {
         });
         menu.add(decimalCodeTypeMenuItem);
 
-        final JRadioButtonMenuItem hexadecimalCodeTypeMenuItem = new JRadioButtonMenuItem("Hexadecimal");
+        final JRadioButtonMenuItem hexadecimalCodeTypeMenuItem = new JRadioButtonMenuItem(resourceBundle.getString("hexadecimalCodeTypeAction.text"));
+        hexadecimalCodeTypeMenuItem.setToolTipText(resourceBundle.getString("hexadecimalCodeTypeAction.shortDescription"));
         hexadecimalCodeTypeMenuItem.setSelected(codeType == PositionCodeType.HEXADECIMAL);
         hexadecimalCodeTypeMenuItem.addActionListener(new AbstractAction() {
             @Override
@@ -789,27 +882,29 @@ public class BinEdManager {
     }
 
     @Nonnull
-    public ClipboardContentAction createClipboardContentAction(EditorProvider editorProvider) {
+    public ClipboardContentAction createClipboardContentAction() {
         ClipboardContentAction clipboardContentAction = new ClipboardContentAction();
-        clipboardContentAction.setup(application, resourceBundle);
+        clipboardContentAction.setup(application, toolContentResourceBundle);
         return clipboardContentAction;
     }
 
     @Nonnull
-    public DragDropContentAction createDragDropContentAction(EditorProvider editorProvider) {
+    public DragDropContentAction createDragDropContentAction() {
         DragDropContentAction dragDropContentAction = new DragDropContentAction();
-        dragDropContentAction.setup(application, resourceBundle);
+        dragDropContentAction.setup(application, toolContentResourceBundle);
         return dragDropContentAction;
     }
 
     @Nonnull
     public JMenuItem createShowInspectorPanel(BinEdComponentPanel binEdComponentPanel) {
-        JCheckBoxMenuItem clipboardContentMenuItem = new JCheckBoxMenuItem("Inspector Panel");
-//        clipboardContentMenuItem.setSelected(inspectorSupport.isShowParsingPanel(binEdComponentPanel));
-//        clipboardContentMenuItem.addActionListener(event -> {
-//            inspectorSupport.showParsingPanelAction(binEdComponentPanel).actionPerformed(event);
-//        });
-        return clipboardContentMenuItem;
+        BinEdComponentInspector componentExtension = binEdComponentPanel.getComponentExtension(BinEdComponentInspector.class);
+        JCheckBoxMenuItem showInspectorPanelMenuItem = new JCheckBoxMenuItem(inspectorResourceBundle.getString("showParsingPanelAction.text"));
+        showInspectorPanelMenuItem.setToolTipText(inspectorResourceBundle.getString("showParsingPanelAction.shortDescription"));
+        showInspectorPanelMenuItem.setSelected(componentExtension.isShowParsingPanel());
+        showInspectorPanelMenuItem.addActionListener(event -> {
+            componentExtension.setShowParsingPanel(!componentExtension.isShowParsingPanel());
+        });
+        return showInspectorPanelMenuItem;
     }
 
     public void addInsertDataComponent(InsertDataMethod insertDataComponent) {
@@ -818,10 +913,6 @@ public class BinEdManager {
 
     public void addConvertDataComponent(ConvertDataMethod convertDataComponent) {
         convertDataComponents.add(convertDataComponent);
-    }
-
-    private void registerCodeAreaCommandHandlerProvider(CodeAreaCommandHandlerProvider commandHandlerProvider) {
-        fileManager.setCommandHandlerProvider(commandHandlerProvider);
     }
 
     public void registerBinaryStatus(BinEdEditorComponent editorComponent, @Nullable BinEdComponentFileApi fileHandler) {
@@ -904,13 +995,11 @@ public class BinEdManager {
     public boolean releaseFile(FileHandler fileHandler) {
         while (fileHandler.isModified() && ((BinEdComponentFileApi) fileHandler).isSaveSupported()) {
             Object[] options = {
-                    "Save",
-                    "Discard",
-                    "Cancel"
+                    fileResourceBundle.getString("Question.modified_save"), fileResourceBundle.getString("Question.modified_discard"), fileResourceBundle.getString("Question.modified_cancel")
             };
             int result = JOptionPane.showOptionDialog(fileHandler.getComponent(),
-                    "Document was modified! Do you wish to save it?",
-                    "Save File?",
+                    fileResourceBundle.getString("Question.modified"),
+                    fileResourceBundle.getString("Question.modified_title"),
                     JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
                     null, options, options[0]);
@@ -939,22 +1028,28 @@ public class BinEdManager {
     @ParametersAreNonnullByDefault
     private static class EditorProviderImpl implements EditorProvider {
 
-        private FileHandler fileHandler;
+        private FileHandler fileHandler = null;
 
-        public EditorProviderImpl(@Nullable FileHandler fileHandler) {
+        public EditorProviderImpl() {
+        }
+
+        public void setFileHandler(@Nullable FileHandler fileHandler) {
             this.fileHandler = fileHandler;
         }
 
+        @Nonnull
         @Override
         public JComponent getEditorComponent() {
             return fileHandler.getComponent();
         }
 
+        @Nonnull
         @Override
         public Optional<FileHandler> getActiveFile() {
             return Optional.ofNullable(fileHandler);
         }
 
+        @Nonnull
         @Override
         public String getWindowTitle(String parentTitle) {
             throw new UnsupportedOperationException();
@@ -1016,6 +1111,7 @@ public class BinEdManager {
             throw new UnsupportedOperationException();
         }
 
+        @Nonnull
         @Override
         public Optional<File> getLastUsedDirectory() {
             throw new UnsupportedOperationException();

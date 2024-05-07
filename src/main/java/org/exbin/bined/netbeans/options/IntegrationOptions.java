@@ -15,15 +15,22 @@
  */
 package org.exbin.bined.netbeans.options;
 
+import java.util.Locale;
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
- * Binary editor preferences.
+ * BinEd plugin preferences.
  *
  * @author ExBin Project (https://exbin.org)
  */
 @ParametersAreNonnullByDefault
 public interface IntegrationOptions {
+
+    @Nonnull
+    Locale getLanguageLocale();
+
+    void setLanguageLocale(Locale languageLocale);
 
     boolean isRegisterFileMenuOpenAsBinary();
 

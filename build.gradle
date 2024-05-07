@@ -88,7 +88,7 @@ compileJava.options.sourcepath = sourceSets.main.resources.sourceDirectories
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 def configureExec(task) {
-    task.main = mainClass
+    task.mainClass = mainClass
     task.classpath = sourceSets.main.runtimeClasspath
     if (hasProperty('appArgs')) {
         task.args appArgs
@@ -149,6 +149,14 @@ compileTestJava.dependsOn(jar)
 
 configurations {
     tests
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs("${rootDir}/src/main/languages")
+        }
+    }
 }
 
 javadoc {

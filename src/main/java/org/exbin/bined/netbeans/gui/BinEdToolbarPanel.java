@@ -40,17 +40,19 @@ import org.exbin.framework.utils.LanguageUtils;
 @ParametersAreNonnullByDefault
 public class BinEdToolbarPanel extends javax.swing.JPanel {
 
-    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(BinEdToolbarPanel.class);
+    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/bined/resources/BinedModule");
+    private final java.util.ResourceBundle optionsResourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/options/resources/OptionsModule");
+    private final java.util.ResourceBundle onlineHelpResourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/help/online/action/resources/OnlineHelpAction");
 
     private final Control codeAreaControl;
     private AbstractAction optionsAction;
     private AbstractAction onlineHelpAction;
 
     private final AbstractAction cycleCodeTypesAction;
-    private final JRadioButtonMenuItem binaryCodeTypeAction;
-    private final JRadioButtonMenuItem octalCodeTypeAction;
-    private final JRadioButtonMenuItem decimalCodeTypeAction;
-    private final JRadioButtonMenuItem hexadecimalCodeTypeAction;
+    private final JRadioButtonMenuItem binaryCodeTypeMenuItem;
+    private final JRadioButtonMenuItem octalCodeTypeMenuItem;
+    private final JRadioButtonMenuItem decimalCodeTypeMenuItem;
+    private final JRadioButtonMenuItem hexadecimalCodeTypeMenuItem;
     private final ButtonGroup codeTypeButtonGroup;
     private DropDownButton codeTypeDropDown;
 
@@ -59,38 +61,50 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         this.codeAreaControl = codeAreaControl;
 
         codeTypeButtonGroup = new ButtonGroup();
-        binaryCodeTypeAction = new JRadioButtonMenuItem(new AbstractAction("Binary") {
+        Action binaryCodeTypeAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 codeAreaControl.setCodeType(CodeType.BINARY);
                 updateCycleButtonState();
             }
-        });
-        codeTypeButtonGroup.add(binaryCodeTypeAction);
-        octalCodeTypeAction = new JRadioButtonMenuItem(new AbstractAction("Octal") {
+        };
+        binaryCodeTypeAction.putValue(Action.NAME, resourceBundle.getString("binaryCodeTypeAction.text"));
+        binaryCodeTypeAction.putValue(Action.SHORT_DESCRIPTION, resourceBundle.getString("binaryCodeTypeAction.shortDescription"));
+        binaryCodeTypeMenuItem = new JRadioButtonMenuItem(binaryCodeTypeAction);
+        codeTypeButtonGroup.add(binaryCodeTypeMenuItem);
+        Action octalCodeTypeAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 codeAreaControl.setCodeType(CodeType.OCTAL);
                 updateCycleButtonState();
             }
-        });
-        codeTypeButtonGroup.add(octalCodeTypeAction);
-        decimalCodeTypeAction = new JRadioButtonMenuItem(new AbstractAction("Decimal") {
+        };
+        octalCodeTypeAction.putValue(Action.NAME, resourceBundle.getString("octalCodeTypeAction.text"));
+        octalCodeTypeAction.putValue(Action.SHORT_DESCRIPTION, resourceBundle.getString("octalCodeTypeAction.shortDescription"));
+        octalCodeTypeMenuItem = new JRadioButtonMenuItem(octalCodeTypeAction);
+        codeTypeButtonGroup.add(octalCodeTypeMenuItem);
+        Action decimalCodeTypeAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 codeAreaControl.setCodeType(CodeType.DECIMAL);
                 updateCycleButtonState();
             }
-        });
-        codeTypeButtonGroup.add(decimalCodeTypeAction);
-        hexadecimalCodeTypeAction = new JRadioButtonMenuItem(new AbstractAction("Hexadecimal") {
+        };
+        decimalCodeTypeAction.putValue(Action.NAME, resourceBundle.getString("decimalCodeTypeAction.text"));
+        decimalCodeTypeAction.putValue(Action.SHORT_DESCRIPTION, resourceBundle.getString("decimalCodeTypeAction.shortDescription"));
+        decimalCodeTypeMenuItem = new JRadioButtonMenuItem(decimalCodeTypeAction);
+        codeTypeButtonGroup.add(decimalCodeTypeMenuItem);
+        Action hexadecimalCodeTypeAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 codeAreaControl.setCodeType(CodeType.HEXADECIMAL);
                 updateCycleButtonState();
             }
-        });
-        codeTypeButtonGroup.add(hexadecimalCodeTypeAction);
+        };
+        hexadecimalCodeTypeAction.putValue(Action.NAME, resourceBundle.getString("hexadecimalCodeTypeAction.text"));
+        hexadecimalCodeTypeAction.putValue(Action.SHORT_DESCRIPTION, resourceBundle.getString("hexadecimalCodeTypeAction.shortDescription"));
+        hexadecimalCodeTypeMenuItem = new JRadioButtonMenuItem(hexadecimalCodeTypeAction);
+        codeTypeButtonGroup.add(hexadecimalCodeTypeMenuItem);
         cycleCodeTypesAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -107,12 +121,12 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     }
 
     private void init() {
-        cycleCodeTypesAction.putValue(Action.SHORT_DESCRIPTION, "Cycle thru code types");
+        cycleCodeTypesAction.putValue(Action.SHORT_DESCRIPTION, resourceBundle.getString("cycleCodeTypesAction.shortDescription"));
         JPopupMenu cycleCodeTypesPopupMenu = new JPopupMenu();
-        cycleCodeTypesPopupMenu.add(binaryCodeTypeAction);
-        cycleCodeTypesPopupMenu.add(octalCodeTypeAction);
-        cycleCodeTypesPopupMenu.add(decimalCodeTypeAction);
-        cycleCodeTypesPopupMenu.add(hexadecimalCodeTypeAction);
+        cycleCodeTypesPopupMenu.add(binaryCodeTypeMenuItem);
+        cycleCodeTypesPopupMenu.add(octalCodeTypeMenuItem);
+        cycleCodeTypesPopupMenu.add(decimalCodeTypeMenuItem);
+        cycleCodeTypesPopupMenu.add(hexadecimalCodeTypeMenuItem);
         codeTypeDropDown = new DropDownButton(cycleCodeTypesAction, cycleCodeTypesPopupMenu);
         updateCycleButtonState();
         controlToolBar.add(codeTypeDropDown);
@@ -127,7 +141,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
                 }
             }
         });
-        optionsButton.setToolTipText("Options");
+        optionsButton.setToolTipText(optionsResourceBundle.getString("optionsAction.text"));
         optionsButton.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/options/gui/resources/icons/Preferences16.gif")));
         controlToolBar.add(optionsButton);
 
@@ -140,7 +154,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
                 }
             }
         });
-        onlineHelpButton.setToolTipText("Online Help");
+        onlineHelpButton.setToolTipText(onlineHelpResourceBundle.getString("onlineHelpAction.text"));
         onlineHelpButton.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/bined/resources/icons/open_icon_library/icons/png/16x16/actions/help.png")));
         controlToolBar.add(onlineHelpButton);
     }
@@ -158,26 +172,26 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         codeTypeDropDown.setActionText(codeType.name().substring(0, 3));
         switch (codeType) {
             case BINARY: {
-                if (!binaryCodeTypeAction.isSelected()) {
-                    binaryCodeTypeAction.setSelected(true);
+                if (!binaryCodeTypeMenuItem.isSelected()) {
+                    binaryCodeTypeMenuItem.setSelected(true);
                 }
                 break;
             }
             case OCTAL: {
-                if (!octalCodeTypeAction.isSelected()) {
-                    octalCodeTypeAction.setSelected(true);
+                if (!octalCodeTypeMenuItem.isSelected()) {
+                    octalCodeTypeMenuItem.setSelected(true);
                 }
                 break;
             }
             case DECIMAL: {
-                if (!decimalCodeTypeAction.isSelected()) {
-                    decimalCodeTypeAction.setSelected(true);
+                if (!decimalCodeTypeMenuItem.isSelected()) {
+                    decimalCodeTypeMenuItem.setSelected(true);
                 }
                 break;
             }
             case HEXADECIMAL: {
-                if (!hexadecimalCodeTypeAction.isSelected()) {
-                    hexadecimalCodeTypeAction.setSelected(true);
+                if (!hexadecimalCodeTypeMenuItem.isSelected()) {
+                    hexadecimalCodeTypeMenuItem.setSelected(true);
                 }
                 break;
             }
@@ -220,11 +234,10 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         separator1 = new javax.swing.JToolBar.Separator();
 
         controlToolBar.setBorder(null);
-        controlToolBar.setFloatable(false);
         controlToolBar.setRollover(true);
 
         showUnprintablesToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/exbin/bined/netbeans/resources/icons/insert-pilcrow.png"))); // NOI18N
-        showUnprintablesToggleButton.setToolTipText(resourceBundle.getString("showUnprintablesToggleButton.toolTipText")); // NOI18N
+        showUnprintablesToggleButton.setToolTipText(resourceBundle.getString("viewUnprintablesAction.text")); // NOI18N
         showUnprintablesToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showUnprintablesToggleButtonActionPerformed(evt);

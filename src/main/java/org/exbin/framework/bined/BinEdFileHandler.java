@@ -99,6 +99,7 @@ public class BinEdFileHandler implements FileHandler, UndoFileHandler, BinEdComp
         editorComponent.setUndoHandler(undoHandler);
         defaultFont = codeArea.getCodeFont();
         defaultColors = (ExtendedCodeAreaColorProfile) codeArea.getColorsProfile();
+        binEdManager.getFileManager().initCommandHandler(editorComponent.getComponentPanel());
     
         if (undoHandlerWrapper == null) {
             undoHandlerWrapper = new UndoHandlerWrapper();
@@ -198,6 +199,7 @@ public class BinEdFileHandler implements FileHandler, UndoFileHandler, BinEdComp
 
     private void fileSync() {
         documentOriginalSize = getCodeArea().getDataSize();
+        editorComponent.getStatusPanel().setCurrentDocumentSize(documentOriginalSize, documentOriginalSize);
         undoHandlerWrapper.setSyncPoint();
     }
 
@@ -312,6 +314,7 @@ public class BinEdFileHandler implements FileHandler, UndoFileHandler, BinEdComp
                 Logger.getLogger(BinEdFileHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        fileSync();
     }
 
     public void reloadFile() {

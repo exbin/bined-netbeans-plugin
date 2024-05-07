@@ -1,5 +1,6 @@
 0.2.6
 - Added support for basic macro
+- Added support for language switching (zh, jp, ko)
 
 0.2.5 (2023-11-28)
 - Added convert data action

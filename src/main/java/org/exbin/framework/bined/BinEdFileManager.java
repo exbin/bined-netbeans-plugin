@@ -70,7 +70,7 @@ public class BinEdFileManager {
         
         for (BinEdFileExtension fileExtension : binEdComponentExtensions) {
             Optional<BinEdComponentPanel.BinEdComponentExtension> componentExtension = fileExtension.createComponentExtension(componentPanel);
-            componentExtension.ifPresent((extension) -> {
+            componentExtension.ifPresent(extension -> {
                 extension.setApplication(application);
                 extension.onCreate(componentPanel);
                 componentPanel.addComponentExtension(extension);
@@ -95,7 +95,6 @@ public class BinEdFileManager {
 
         TextFontPreferences textFontPreferences = binaryEditorPreferences.getFontPreferences();
         ((FontCapable) codeArea).setCodeFont(textFontPreferences.isUseDefaultFont() ? CodeAreaPreferences.DEFAULT_FONT : textFontPreferences.getFont(CodeAreaPreferences.DEFAULT_FONT));
-        initCommandHandler(componentPanel);
     }
 
     public void initCommandHandler(BinEdComponentPanel componentPanel) {

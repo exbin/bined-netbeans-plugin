@@ -252,6 +252,11 @@ public class MacroManager {
         }
         return macrosMenu;
     }
+    
+    public void resetMacrosMenu() {
+        // Temporary workaround for language resetting
+        macrosMenu = null;
+    }
 
     public void registerMacrosPopupMenuActions() {
 /*        ActionModuleApi actionModule = application.getModuleRepository().getModuleByInterface(ActionModuleApi.class);
