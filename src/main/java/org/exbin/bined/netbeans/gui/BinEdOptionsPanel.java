@@ -22,6 +22,7 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.ResourceBundle;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -654,6 +655,11 @@ public class BinEdOptionsPanel extends javax.swing.JPanel implements BinEdApplyO
             dialog.showCentered(parentComponent);
             return result.profile;
         });
+    }
+
+    @Nonnull
+    public ResourceBundle getResourceBundle() {
+        return treeResourceBundle;
     }
 
     public void setPreferences(BinaryEditorPreferences preferences) {

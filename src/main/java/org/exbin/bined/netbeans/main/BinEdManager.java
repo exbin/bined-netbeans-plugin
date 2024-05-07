@@ -72,7 +72,6 @@ import org.exbin.framework.bined.BinEdEditorComponent;
 import org.exbin.framework.bined.BinEdFileHandler;
 import org.exbin.framework.bined.BinEdFileManager;
 import org.exbin.framework.bined.BinaryStatusApi;
-import org.exbin.framework.bined.CodeAreaCommandHandlerProvider;
 import org.exbin.framework.bined.action.EditSelectionAction;
 import org.exbin.framework.bined.action.GoToPositionAction;
 import org.exbin.framework.bined.bookmarks.BookmarksManager;

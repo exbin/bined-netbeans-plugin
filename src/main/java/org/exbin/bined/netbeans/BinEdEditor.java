@@ -28,6 +28,7 @@ import javax.swing.JComponent;
 import org.exbin.bined.EditMode;
 import org.exbin.bined.netbeans.main.BinEdManager;
 import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
+import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.BinEdFileHandler;
 import org.netbeans.core.spi.multiview.CloseOperationState;
@@ -83,8 +84,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
     }
 
     public static void registerIntegration() {
-        // TODO: Doesn't work
-/*        Installer.addIntegrationOptionsListener(new Installer.IntegrationOptionsListener() {
+        Installer.addIntegrationOptionsListener(new Installer.IntegrationOptionsListener() {
             @Override
             public void integrationInit(IntegrationOptions integrationOptions) {
                 if (integrationOptions.isRegisterBinaryMultiview()) {
@@ -98,7 +98,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
             public void uninstallIntegration() {
                 uninstall();
             }
-        }); */
+        });
     }
 
     @Nonnull

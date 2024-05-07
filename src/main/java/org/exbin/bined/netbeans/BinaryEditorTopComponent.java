@@ -31,6 +31,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import org.exbin.bined.EditMode;
+import org.exbin.bined.netbeans.main.BinEdManager;
 import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.BinEdFileHandler;
@@ -82,6 +83,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         editorFile = new BinEdFileHandler();
         BinaryUndoSwingHandler undoHandler = new BinaryUndoSwingHandler(editorFile.getCodeArea(), new UndoRedo.Manager());
         editorFile.getEditorComponent().setUndoHandler(undoHandler);
+        // Setting undo handler resets command handler so let's reiniciate - rework later
+        BinEdManager.getInstance().getFileManager().initCommandHandler(editorFile.getComponent());
         savable = new BinaryEditorTopComponentSavable(editorFile);
 
         add(editorFile.getEditorComponent().getComponent(), BorderLayout.CENTER);

@@ -16,7 +16,6 @@
 package org.exbin.framework.utils;
 
 import org.exbin.bined.netbeans.main.BinEdManager;
-import org.exbin.framework.api.LanguageProvider;
 import org.exbin.framework.options.model.LanguageRecord;
 
 import java.util.ArrayList;

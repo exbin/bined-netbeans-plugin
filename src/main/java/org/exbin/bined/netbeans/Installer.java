@@ -17,11 +17,14 @@ package org.exbin.bined.netbeans;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.exbin.bined.netbeans.preferences.IntegrationPreferences;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
+import org.exbin.framework.options.model.LanguageRecord;
 import org.exbin.framework.preferences.PreferencesWrapper;
+import org.exbin.framework.utils.LanguageUtils;
 import org.openide.modules.ModuleInstall;
 import org.openide.util.NbPreferences;
 import org.openide.windows.WindowManager;
@@ -72,6 +75,28 @@ public class Installer extends ModuleInstall {
     }
 
     public static void applyIntegrationOptions(IntegrationOptions integrationOptions) {
+        Locale languageLocale = integrationOptions.getLanguageLocale();
+        if (languageLocale.equals(Locale.ROOT)) {
+            // Try to match to IDE locale
+            Locale ideLocale = Locale.getDefault();
+            List<Locale> locales = new ArrayList<>();
+            for (LanguageRecord languageRecord : LanguageUtils.getLanguageRecords()) {
+                locales.add(languageRecord.getLocale());
+            }
+            List<Locale.LanguageRange> localeRange = new ArrayList<>();
+            String languageTag = ideLocale.toLanguageTag();
+            if ("zh-CN".equals(languageTag)) {
+                // TODO detect match to zh_Hans somehow
+                languageTag = "zh";
+            }
+            localeRange.add(new Locale.LanguageRange(languageTag));
+            List<Locale> match = Locale.filter(localeRange, locales);
+            if (!match.isEmpty()) {
+                LanguageUtils.setLanguageLocale(match.get(0));
+            }
+        } else {
+            LanguageUtils.setLanguageLocale(languageLocale);
+        }
         for (IntegrationOptionsListener listener : INTEGRATION_OPTIONS_LISTENERS) {
             listener.integrationInit(integrationOptions);
         }

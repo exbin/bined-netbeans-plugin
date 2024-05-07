@@ -22,9 +22,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.EditMode;
 import org.exbin.auxiliary.binary_data.BinaryData;
 import org.exbin.bined.netbeans.debug.DebugViewDataProvider;
-import org.exbin.bined.netbeans.main.BinEdManager;
+import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.BinEdEditorComponent;
-import org.exbin.framework.bined.BinEdFileManager;
 import org.exbin.framework.bined.gui.BinEdComponentPanel;
 
 /**
@@ -38,29 +37,33 @@ public class DebugViewPanel extends javax.swing.JPanel {
     private final List<DebugViewDataProvider> providers = new ArrayList<>();
     private int selectedProvider = 0;
 
-    private final BinEdEditorComponent editorComponent;
+    private final BinEdEditorComponent binEdEditorComponent;
 
     public DebugViewPanel() {
-        BinEdManager binEdManager = BinEdManager.getInstance();
-        editorComponent = new BinEdEditorComponent();
-        BinEdFileManager fileManager = binEdManager.getFileManager();
-        BinEdComponentPanel componentPanel = editorComponent.getComponentPanel();
-        fileManager.initComponentPanel(componentPanel);
-        binEdManager.initEditorComponent(editorComponent);
+        binEdEditorComponent = new BinEdEditorComponent();
+//        BinEdManager binEdManager = BinEdManager.getInstance();
+//        binEdEditorComponent = new BinEdEditorComponent();
+//        BinEdFileManager fileManager = binEdManager.getFileManager();
+//        BinEdComponentPanel componentPanel = binEdEditorComponent.getComponentPanel();
+//        fileManager.initComponentPanel(componentPanel);
+//        binEdManager.initEditorComponent(binEdEditorComponent);
 
         initComponents();
         init();
     }
 
     private void init() {
-        BinEdManager binEdManager = BinEdManager.getInstance();
-        BinEdFileManager fileManager = binEdManager.getFileManager();
-        BinEdComponentPanel componentPanel = editorComponent.getComponentPanel();
-        fileManager.initComponentPanel(componentPanel);
+        // TODO
+//        BinEdManager binEdManager = BinEdManager.getInstance();
+//        BinEdFileManager fileManager = binEdManager.getFileManager();
+        BinEdComponentPanel componentPanel = binEdEditorComponent.getComponentPanel();
+//        fileManager.initComponentPanel(componentPanel);
+//        binEdManager.initEditorComponent(binEdEditorComponent);
 
-        componentPanel.getCodeArea().setEditMode(EditMode.READ_ONLY);
+        ExtCodeArea codeArea = componentPanel.getCodeArea();
+        codeArea.setEditMode(EditMode.READ_ONLY);
 
-        this.add(componentPanel, BorderLayout.CENTER);
+        this.add(binEdEditorComponent.getComponentPanel(), BorderLayout.CENTER);
     }
 
     /**
@@ -74,14 +77,13 @@ public class DebugViewPanel extends javax.swing.JPanel {
 
         providerComboBox = new javax.swing.JComboBox<>();
 
-        setLayout(new java.awt.BorderLayout());
-
         providerComboBox.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 providerComboBoxItemStateChanged(evt);
             }
         });
-        add(providerComboBox, java.awt.BorderLayout.PAGE_START);
+
+        setLayout(new java.awt.BorderLayout());
     }// </editor-fold>//GEN-END:initComponents
 
     private void providerComboBoxItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_providerComboBoxItemStateChanged
@@ -99,6 +101,7 @@ public class DebugViewPanel extends javax.swing.JPanel {
     public void addProvider(DebugViewDataProvider provider) {
         if (providers.isEmpty()) {
             setContentData(provider.getData());
+            add(providerComboBox, java.awt.BorderLayout.PAGE_START);
         }
 
         providers.add(provider);
@@ -106,6 +109,8 @@ public class DebugViewPanel extends javax.swing.JPanel {
     }
 
     public void setContentData(BinaryData data) {
-        editorComponent.setContentData(data);
+        binEdEditorComponent.setContentData(data);
+        long dataSize = data == null ? 0 : data.getDataSize();
+        // TODO binEdEditorComponent.getStatusPanel().setCurrentDocumentSize(dataSize, dataSize);
     }
 }
