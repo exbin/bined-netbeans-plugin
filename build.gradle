@@ -40,7 +40,7 @@ ext.scriptFile = { String fileName ->
     return new File(new File(rootDir, 'gradle'), fileName)
 }
 
-version = '0.2.6-SNAPSHOT'
+version = '0.2.6'
 group = 'org.exbin.bined.netbeans'
 
 sourceCompatibility = '1.8'
@@ -236,6 +236,9 @@ nbm {
     }
     //    moduleInstall = 'org.netbeans.gradle.project.NbGradleModuleInstall'
     localizingBundle = 'org/exbin/bined/netbeans/Bundle.properties'
+    friendPackages {
+        add('org.exbin.bined.netbeans.api.*')
+    }
 
 // Uncomment for releases for self-signing nbm
 //    keyStore {
@@ -303,10 +306,10 @@ dependencies {
     implementation binaryDataLibrary('binary_data-paged')
     implementation binaryDataLibrary('binary_data-delta')
 
-    implementation 'com.google.code.findbugs:jsr305:3.0.2'
-    implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.70'
+    compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
+    implementation group: 'org.bouncycastle', name: 'bcprov-jdk18on', version: '1.78.1'
 
-    testImplementation 'junit:junit:4.12.2'
+//    testImplementation 'junit:junit:4.12.2'
 
     if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
         // Workaround for @javax.annotation.Generated
@@ -361,7 +364,7 @@ publishing {
                 if (VersionNumber.parse(gradle.gradleVersion) >= VersionNumber.parse('5.0')) {
                     archiveClassifier = 'sources'
                 } else {
-                   	classifier = 'sources'
+                    classifier = 'sources'
                 }
             }
             artifact (javadocJar) {

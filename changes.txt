@@ -1,4 +1,4 @@
-0.2.6
+0.2.6 (2024-05-12)
 - Added support for basic macro
 - Added support for language switching (zh, jp, ko)
 

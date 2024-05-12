@@ -84,7 +84,8 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
     }
 
     public static void registerIntegration() {
-        Installer.addIntegrationOptionsListener(new Installer.IntegrationOptionsListener() {
+        // TODO: Multiview doesn't work
+        /* Installer.addIntegrationOptionsListener(new Installer.IntegrationOptionsListener() {
             @Override
             public void integrationInit(IntegrationOptions integrationOptions) {
                 if (integrationOptions.isRegisterBinaryMultiview()) {
@@ -98,7 +99,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
             public void uninstallIntegration() {
                 uninstall();
             }
-        });
+        }); */
     }
 
     @Nonnull

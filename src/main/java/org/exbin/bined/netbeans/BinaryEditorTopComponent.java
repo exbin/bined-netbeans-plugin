@@ -35,6 +35,8 @@ import org.exbin.bined.netbeans.main.BinEdManager;
 import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.BinEdFileHandler;
+import org.exbin.framework.bined.UndoHandlerWrapper;
+import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
@@ -69,6 +71,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     private final InstanceContent content = new InstanceContent();
 
     private final BinEdFileHandler editorFile;
+    private final BinaryUndoSwingHandler undoHandler;
 
     private final BinaryEditorNode node;
 
@@ -81,7 +84,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
         node = new BinaryEditorNode(this);
         editorFile = new BinEdFileHandler();
-        BinaryUndoSwingHandler undoHandler = new BinaryUndoSwingHandler(editorFile.getCodeArea(), new UndoRedo.Manager());
+        undoHandler = new BinaryUndoSwingHandler(editorFile.getCodeArea(), new UndoRedo.Manager());
+        ((UndoHandlerWrapper) editorFile.getUndoHandler()).setHandler(undoHandler);
         editorFile.getEditorComponent().setUndoHandler(undoHandler);
         // Setting undo handler resets command handler so let's reiniciate - rework later
         BinEdManager.getInstance().getFileManager().initCommandHandler(editorFile.getComponent());
@@ -164,7 +168,6 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
     @Override
     public UndoRedo getUndoRedo() {
-        BinaryUndoSwingHandler undoHandler = (BinaryUndoSwingHandler) editorFile.getUndoHandler();
         return undoHandler.getUndoManager();
     }
 
@@ -252,6 +255,9 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         ExtCodeArea codeArea = fileHandler.getCodeArea();
         boolean editable = dataObject.getPrimaryFile().canWrite();
         URI fileUri = dataObject.getPrimaryFile().toURI();
+        // TODO pass handling mode correctly
+        BinaryEditorPreferences preferences = BinEdManager.getInstance().getPreferences();
+        fileHandler.setNewData(preferences.getEditorPreferences().getFileHandlingMode());
         if (fileUri == null) {
             InputStream stream = null;
             try {
@@ -275,5 +281,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             File file = Utilities.toFile(fileUri);
             fileHandler.loadFromFile(file.toURI(), null);
         }
+
+        // TODO update status correctly
+        BinEdManager.getInstance().updateStatus(fileHandler.getEditorComponent(), fileHandler.getDocumentOriginalSize());
     }
 }

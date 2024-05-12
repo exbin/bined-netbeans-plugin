@@ -250,19 +250,11 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoHandler {
         setCommandPosition(syncPointPosition);
     }
 
-    public void setUndoMaxCount(long maxUndo) {
-        throw new UnsupportedOperationException();
-    }
-
     @Override
     public long getUndoMaximumSize() {
         return 0;
     }
 
-    public void setUndoMaximumSize(long maxSize) {
-        throw new UnsupportedOperationException();
-    }
-    
     @Nonnull
     public UndoRedo.Manager getUndoManager() {
         return undoManager;

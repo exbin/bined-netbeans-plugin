@@ -23,6 +23,7 @@ import java.awt.event.ActionListener;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.ResourceBundle;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -44,6 +45,7 @@ import org.exbin.auxiliary.binary_data.BinaryData;
 import org.exbin.auxiliary.binary_data.ByteArrayData;
 import org.exbin.bined.netbeans.debug.DebugViewDataProvider;
 import org.exbin.bined.netbeans.debug.DefaultDebugViewDataProvider;
+import org.exbin.framework.utils.LanguageUtils;
 import org.netbeans.api.debugger.jpda.ClassVariable;
 import org.netbeans.api.debugger.jpda.Field;
 import org.netbeans.api.debugger.jpda.JPDAArrayType;
@@ -114,11 +116,12 @@ public final class BinaryDebugAction implements ActionListener {
     }
 
     public static void actionPerformed(Component parent, Object variableObject) {
+        ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(DebugViewPanel.class);
         DebugViewPanel debugViewPanel = new DebugViewPanel();
         debugViewPanel.setPreferredSize(new Dimension(800, 500));
         CloseControlPanel controlPanel = new CloseControlPanel();
         JPanel dialogPanel = WindowUtils.createDialogPanel(debugViewPanel, controlPanel);
-        WindowUtils.DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, parent, "View as Binary", Dialog.ModalityType.APPLICATION_MODAL);
+        WindowUtils.DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, parent, resourceBundle.getString("dialog.title"), Dialog.ModalityType.APPLICATION_MODAL);
 
         BinaryData data;
         if (variableObject instanceof ObjectVariable) {

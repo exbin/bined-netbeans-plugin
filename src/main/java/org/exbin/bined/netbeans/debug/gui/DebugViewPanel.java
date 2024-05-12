@@ -18,12 +18,15 @@ package org.exbin.bined.netbeans.debug.gui;
 import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.EditMode;
 import org.exbin.auxiliary.binary_data.BinaryData;
 import org.exbin.bined.netbeans.debug.DebugViewDataProvider;
+import org.exbin.bined.netbeans.main.BinEdManager;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.BinEdEditorComponent;
+import org.exbin.framework.bined.BinEdFileManager;
 import org.exbin.framework.bined.gui.BinEdComponentPanel;
 
 /**
@@ -41,29 +44,22 @@ public class DebugViewPanel extends javax.swing.JPanel {
 
     public DebugViewPanel() {
         binEdEditorComponent = new BinEdEditorComponent();
-//        BinEdManager binEdManager = BinEdManager.getInstance();
-//        binEdEditorComponent = new BinEdEditorComponent();
-//        BinEdFileManager fileManager = binEdManager.getFileManager();
-//        BinEdComponentPanel componentPanel = binEdEditorComponent.getComponentPanel();
-//        fileManager.initComponentPanel(componentPanel);
-//        binEdManager.initEditorComponent(binEdEditorComponent);
 
         initComponents();
         init();
     }
 
     private void init() {
-        // TODO
-//        BinEdManager binEdManager = BinEdManager.getInstance();
-//        BinEdFileManager fileManager = binEdManager.getFileManager();
+        BinEdManager binEdManager = BinEdManager.getInstance();
+        BinEdFileManager fileManager = binEdManager.getFileManager();
         BinEdComponentPanel componentPanel = binEdEditorComponent.getComponentPanel();
-//        fileManager.initComponentPanel(componentPanel);
-//        binEdManager.initEditorComponent(binEdEditorComponent);
+        fileManager.initComponentPanel(componentPanel);
+        binEdManager.initEditorComponent(binEdEditorComponent);
 
         ExtCodeArea codeArea = componentPanel.getCodeArea();
         codeArea.setEditMode(EditMode.READ_ONLY);
 
-        this.add(binEdEditorComponent.getComponentPanel(), BorderLayout.CENTER);
+        this.add(binEdEditorComponent.getComponent(), BorderLayout.CENTER);
     }
 
     /**
@@ -108,9 +104,9 @@ public class DebugViewPanel extends javax.swing.JPanel {
         providerComboBox.addItem(provider.getName());
     }
 
-    public void setContentData(BinaryData data) {
+    public void setContentData(@Nullable BinaryData data) {
         binEdEditorComponent.setContentData(data);
         long dataSize = data == null ? 0 : data.getDataSize();
-        // TODO binEdEditorComponent.getStatusPanel().setCurrentDocumentSize(dataSize, dataSize);
+        binEdEditorComponent.getStatusPanel().setCurrentDocumentSize(dataSize, dataSize);
     }
 }
