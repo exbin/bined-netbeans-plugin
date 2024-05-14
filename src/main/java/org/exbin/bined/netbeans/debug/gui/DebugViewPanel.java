@@ -23,7 +23,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.EditMode;
 import org.exbin.auxiliary.binary_data.BinaryData;
 import org.exbin.bined.netbeans.debug.DebugViewDataProvider;
-import org.exbin.bined.netbeans.main.BinEdManager;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.BinEdEditorComponent;
 import org.exbin.framework.bined.BinEdFileManager;

@@ -28,9 +28,10 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JToolBar;
 import org.exbin.bined.CodeType;
+import org.exbin.framework.App;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
 import org.exbin.framework.action.gui.DropDownButton;
-import org.exbin.framework.utils.LanguageUtils;
+import org.exbin.framework.language.api.LanguageModuleApi;
 
 /**
  * Binary editor toolbar panel.
@@ -40,9 +41,9 @@ import org.exbin.framework.utils.LanguageUtils;
 @ParametersAreNonnullByDefault
 public class BinEdToolbarPanel extends javax.swing.JPanel {
 
-    private final java.util.ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/bined/resources/BinedModule");
-    private final java.util.ResourceBundle optionsResourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/options/resources/OptionsModule");
-    private final java.util.ResourceBundle onlineHelpResourceBundle = LanguageUtils.getResourceBundleByBundleName("org/exbin/framework/help/online/action/resources/OnlineHelpAction");
+    private final java.util.ResourceBundle resourceBundle = App.getModule(LanguageModuleApi.class).getResourceBundleByBundleName("org/exbin/framework/bined/resources/BinedModule");
+    private final java.util.ResourceBundle optionsResourceBundle = App.getModule(LanguageModuleApi.class).getResourceBundleByBundleName("org/exbin/framework/options/resources/OptionsModule");
+    private final java.util.ResourceBundle onlineHelpResourceBundle = App.getModule(LanguageModuleApi.class).getResourceBundleByBundleName("org/exbin/framework/help/online/action/resources/OnlineHelpAction");
 
     private final Control codeAreaControl;
     private AbstractAction optionsAction;

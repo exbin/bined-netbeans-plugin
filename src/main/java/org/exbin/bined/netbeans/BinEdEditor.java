@@ -26,7 +26,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import org.exbin.bined.EditMode;
-import org.exbin.bined.netbeans.main.BinEdManager;
 import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.exbin.bined.swing.extended.ExtCodeArea;
@@ -80,7 +79,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
         this.lookup = lookup;
         editorFile = new BinEdFileHandler();
         BinaryUndoSwingHandler undoHandler = new BinaryUndoSwingHandler(editorFile.getCodeArea(), new UndoRedo.Manager());
-        editorFile.getEditorComponent().setUndoHandler(undoHandler);
+        editorFile.getComponent().setUndoHandler(undoHandler);
     }
 
     public static void registerIntegration() {
@@ -105,13 +104,13 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
     @Nonnull
     @Override
     public JComponent getVisualRepresentation() {
-        return editorFile.getEditorComponent().getComponent();
+        return editorFile.getComponent();
     }
 
     @Nonnull
     @Override
     public JComponent getToolbarRepresentation() {
-        return editorFile.getEditorComponent().getToolbarPanel().getToolBar();
+        return editorFile.getComponent().getToolbarPanel().getToolBar();
     }
 
     @Override

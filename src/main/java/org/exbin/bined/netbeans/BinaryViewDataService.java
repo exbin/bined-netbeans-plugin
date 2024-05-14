@@ -24,7 +24,7 @@ import org.exbin.auxiliary.binary_data.BinaryData;
 import org.exbin.framework.bined.objectdata.ObjectValueConvertor;
 import org.exbin.bined.netbeans.api.BinaryViewHandler;
 import org.exbin.bined.netbeans.debug.gui.DebugViewPanel;
-import org.exbin.framework.utils.WindowUtils.DialogWrapper;
+//import org.exbin.framework.utils.WindowUtils.DialogWrapper;
 //import org.netbeans.api.project.Project;
 //import org.netbeans.api.project.ProjectManager;
 import org.openide.util.lookup.ServiceProvider;
@@ -67,22 +67,21 @@ public class BinaryViewDataService implements BinaryViewHandler {
         return Optional.empty();
     }
 
-    @Nonnull
-    @Override
-    public DialogWrapper createBinaryViewDialog(@Nullable BinaryData binaryData) {
-        throw new UnsupportedOperationException("Not supported yet.");
+//    @Nonnull
+//    @Override
+//    public DialogWrapper createBinaryViewDialog(@Nullable BinaryData binaryData) {
 //        Project project = ProjectManager.getInstance().getDefaultProject();
 //        DataDialog dialog = new DataDialog(project, binaryData);
 //        dialog.setTitle("View Binary Data");
 //        return dialog;
-    }
+//    }
 
-    @Nonnull
-    @Override
-    public DialogWrapper createBinaryViewDialog(Object instance) {
-        Optional<BinaryData> binaryData = valueConvertor.process(instance);
-        return createBinaryViewDialog(binaryData.orElse(null));
-    }
+//    @Nonnull
+//    @Override
+//    public DialogWrapper createBinaryViewDialog(Object instance) {
+//        Optional<BinaryData> binaryData = valueConvertor.process(instance);
+//        return createBinaryViewDialog(binaryData.orElse(null));
+//    }
 
 //    @ParametersAreNonnullByDefault
 //    private static class DataDialog extends DialogWrapper {

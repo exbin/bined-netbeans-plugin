@@ -22,6 +22,8 @@ package org.exbin.bined.netbeans;
  */
 public final class BinEdNetBeansPlugin {
 
+    public static final String PLUGIN_PREFIX = "BinEdPlugin.";
+
     private BinEdNetBeansPlugin() {
     }
 }

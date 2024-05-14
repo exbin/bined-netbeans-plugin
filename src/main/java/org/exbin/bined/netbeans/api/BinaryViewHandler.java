@@ -22,7 +22,6 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JComponent;
 import java.util.Optional;
-import org.exbin.framework.utils.WindowUtils.DialogWrapper;
 
 /**
  * BinEd View Data Handler.
@@ -65,8 +64,8 @@ public interface BinaryViewHandler {
      * @param binaryData binary data
      * @return binary view dialog
      */
-    @Nonnull
-    DialogWrapper createBinaryViewDialog(@Nullable BinaryData binaryData);
+//    @Nonnull
+//    DialogWrapper createBinaryViewDialog(@Nullable BinaryData binaryData);
 
     /**
      * Shows dialog for object instance if possible.
@@ -74,6 +73,6 @@ public interface BinaryViewHandler {
      * @param instance class instance
      * @return binary view dialog
      */
-    @Nonnull
-    DialogWrapper createBinaryViewDialog(Object instance);
+//    @Nonnull
+//    DialogWrapper createBinaryViewDialog(Object instance);
 }

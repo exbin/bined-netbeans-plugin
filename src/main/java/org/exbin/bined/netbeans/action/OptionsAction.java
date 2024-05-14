@@ -15,14 +15,11 @@
  */
 package org.exbin.bined.netbeans.action;
 
-import org.exbin.bined.netbeans.gui.BinEdOptionsPanel;
-import org.exbin.bined.netbeans.gui.BinEdOptionsPanelBorder;
+import org.exbin.bined.netbeans.options.gui.BinEdOptionsPanelBorder;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
 import org.exbin.framework.editor.text.service.TextFontService;
 import org.exbin.framework.utils.WindowUtils;
-import org.exbin.framework.utils.gui.OptionsControlPanel;
-import org.exbin.framework.utils.handler.OptionsControlHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -35,12 +32,13 @@ import java.awt.event.ActionEvent;
 import javax.annotation.Nullable;
 import javax.swing.JTextField;
 import org.exbin.bined.netbeans.Installer;
-import org.exbin.bined.netbeans.main.BinEdManager;
 import org.exbin.framework.bined.BinEdFileHandler;
 import org.exbin.framework.bined.gui.BinEdComponentFileApi;
 import org.exbin.framework.bined.gui.BinEdComponentPanel;
 import org.exbin.framework.editor.text.TextFontApi;
 import org.exbin.framework.file.api.FileHandler;
+import org.exbin.framework.window.api.gui.OptionsControlPanel;
+import org.exbin.framework.window.api.handler.OptionsControlHandler;
 
 /**
  * Options action.
@@ -62,7 +60,8 @@ public class OptionsAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        ExtCodeArea codeArea = componentPanel.getCodeArea();
+        throw new UnsupportedOperationException("Not supported yet.");
+/*        ExtCodeArea codeArea = componentPanel.getCodeArea();
         final BinEdOptionsPanelBorder optionsPanelWrapper = new BinEdOptionsPanelBorder();
         optionsPanelWrapper.setPreferredSize(new Dimension(700, 460));
         BinEdOptionsPanel optionsPanel = optionsPanelWrapper.getOptionsPanel();
@@ -96,7 +95,6 @@ public class OptionsAction extends AbstractAction {
                 if (actionType == OptionsControlHandler.ControlActionType.SAVE) {
                     optionsPanel.saveToPreferences();
                 }
-                BinEdManager binedManager = BinEdManager.getInstance();
                 if (fileHandler != null) {
                     ((BinEdComponentFileApi) fileHandler).getEditorComponent()
                             .applyOptions(optionsPanel,
@@ -114,6 +112,6 @@ public class OptionsAction extends AbstractAction {
             dialog.close();
         });
         dialog.showCentered(componentPanel);
-        dialog.dispose();
+        dialog.dispose(); */
     }
 }

@@ -17,9 +17,9 @@ package org.exbin.bined.netbeans.preferences;
 
 import java.util.Locale;
 import javax.annotation.Nonnull;
-import org.exbin.framework.api.Preferences;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
+import org.exbin.framework.preferences.api.Preferences;
 
 /**
  * Integration preferences.

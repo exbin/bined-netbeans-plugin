@@ -31,7 +31,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import org.exbin.bined.EditMode;
-import org.exbin.bined.netbeans.main.BinEdManager;
 import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.BinEdFileHandler;

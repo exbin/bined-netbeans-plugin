@@ -40,12 +40,15 @@ import org.exbin.bined.netbeans.debug.array.ShortArrayPageProvider;
 import org.exbin.bined.netbeans.debug.gui.DebugViewPanel;
 import org.exbin.framework.bined.inspector.gui.BasicValuesPanel;
 import org.exbin.framework.utils.WindowUtils;
-import org.exbin.framework.utils.gui.CloseControlPanel;
+import org.exbin.framework.window.api.gui.CloseControlPanel;
 import org.exbin.auxiliary.binary_data.BinaryData;
 import org.exbin.auxiliary.binary_data.ByteArrayData;
 import org.exbin.bined.netbeans.debug.DebugViewDataProvider;
 import org.exbin.bined.netbeans.debug.DefaultDebugViewDataProvider;
-import org.exbin.framework.utils.LanguageUtils;
+import org.exbin.framework.App;
+import org.exbin.framework.language.api.LanguageModuleApi;
+import org.exbin.framework.window.api.WindowHandler;
+import org.exbin.framework.window.api.WindowModuleApi;
 import org.netbeans.api.debugger.jpda.ClassVariable;
 import org.netbeans.api.debugger.jpda.Field;
 import org.netbeans.api.debugger.jpda.JPDAArrayType;
@@ -116,13 +119,14 @@ public final class BinaryDebugAction implements ActionListener {
     }
 
     public static void actionPerformed(Component parent, Object variableObject) {
-        ResourceBundle resourceBundle = LanguageUtils.getResourceBundleByClass(DebugViewPanel.class);
+        ResourceBundle resourceBundle = App.getModule(LanguageModuleApi.class).getBundle(DebugViewPanel.class);
+        WindowModuleApi windowModule = App.getModule(WindowModuleApi.class);
         DebugViewPanel debugViewPanel = new DebugViewPanel();
         debugViewPanel.setPreferredSize(new Dimension(800, 500));
         CloseControlPanel controlPanel = new CloseControlPanel();
-        JPanel dialogPanel = WindowUtils.createDialogPanel(debugViewPanel, controlPanel);
-        WindowUtils.DialogWrapper dialog = WindowUtils.createDialog(dialogPanel, parent, resourceBundle.getString("dialog.title"), Dialog.ModalityType.APPLICATION_MODAL);
-
+        JPanel dialogPanel = windowModule.createDialogPanel(debugViewPanel, controlPanel);
+        WindowHandler dialog = windowModule.createDialog(parent, Dialog.ModalityType.APPLICATION_MODAL, dialogPanel);
+        windowModule.setWindowTitle(dialog, resourceBundle);
         BinaryData data;
         if (variableObject instanceof ObjectVariable) {
             JPDAClassType classType = ((ObjectVariable) variableObject).getClassType();

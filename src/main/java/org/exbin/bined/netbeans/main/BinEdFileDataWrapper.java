@@ -27,7 +27,7 @@ import org.exbin.auxiliary.binary_data.ByteArrayData;
 import org.exbin.auxiliary.binary_data.EditableBinaryData;
 import org.exbin.auxiliary.binary_data.OutOfBoundsException;
 import org.exbin.auxiliary.binary_data.paged.PagedData;
-import org.exbin.xbup.core.util.StreamUtils;
+import org.exbin.bined.netbeans.utils.StreamUtils;
 import org.openide.filesystems.FileObject;
 
 /**
