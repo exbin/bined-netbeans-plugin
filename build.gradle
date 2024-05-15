@@ -238,7 +238,7 @@ nbm {
     }
     //    moduleInstall = 'org.netbeans.gradle.project.NbGradleModuleInstall'
     localizingBundle = 'org/exbin/bined/netbeans/Bundle.properties'
-    publicPackages {
+    friendPackages {
         add('org.exbin.bined.netbeans.api.*')
     }
 

@@ -25,11 +25,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.Action;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 import org.exbin.bined.EditMode;
 import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.BinEdFileHandler;
+import org.exbin.framework.bined.UndoHandlerWrapper;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.MultiViewElementCallback;
@@ -110,7 +112,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
     @Nonnull
     @Override
     public JComponent getToolbarRepresentation() {
-        return editorFile.getComponent().getToolbarPanel().getToolBar();
+        return new JPanel(); // TODO editorFile.getComponent().getToolbarPanel().getToolBar();
     }
 
     @Override
@@ -120,10 +122,10 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
 
     @Override
     public CloseOperationState canCloseElement() {
-        BinEdManager binedManager = BinEdManager.getInstance();
-        if (binedManager.releaseFile(editorFile)) {
-            return CloseOperationState.STATE_OK;        
-        }
+        // TODO
+//        if (binedManager.releaseFile(editorFile)) {
+//            return CloseOperationState.STATE_OK;        
+//        }
         
         return MultiViewFactory.createUnsafeCloseState("", null, null);
     }
@@ -184,8 +186,8 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
     @Nonnull
     @Override
     public UndoRedo getUndoRedo() {
-        BinaryUndoSwingHandler undoHandler = (BinaryUndoSwingHandler) editorFile.getUndoHandler();
-        return undoHandler.getUndoManager();
+// TODO        BinaryUndoSwingHandler undoHandler = (BinaryUndoSwingHandler) ((UndoHandlerWrapper) editorFile.getUndoHandler());
+        return null; // undoHandler.getUndoManager();
     }
 
     @Nonnull

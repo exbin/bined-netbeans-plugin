@@ -45,7 +45,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     private final java.util.ResourceBundle optionsResourceBundle = App.getModule(LanguageModuleApi.class).getResourceBundleByBundleName("org/exbin/framework/options/resources/OptionsModule");
     private final java.util.ResourceBundle onlineHelpResourceBundle = App.getModule(LanguageModuleApi.class).getResourceBundleByBundleName("org/exbin/framework/help/online/action/resources/OnlineHelpAction");
 
-    private final Control codeAreaControl;
+    private Control codeAreaControl;
     private AbstractAction optionsAction;
     private AbstractAction onlineHelpAction;
 
@@ -57,10 +57,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     private final ButtonGroup codeTypeButtonGroup;
     private DropDownButton codeTypeDropDown;
 
-    public BinEdToolbarPanel(JComponent targetComponent, Control codeAreaControl) {
-        // BinaryEditorPreferences preferences, ExtCodeArea codeArea, AbstractAction optionsAction, AbstractAction onlineHelpAction
-        this.codeAreaControl = codeAreaControl;
-
+    public BinEdToolbarPanel() {
         codeTypeButtonGroup = new ButtonGroup();
         Action binaryCodeTypeAction = new AbstractAction() {
             @Override
@@ -129,7 +126,6 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         cycleCodeTypesPopupMenu.add(decimalCodeTypeMenuItem);
         cycleCodeTypesPopupMenu.add(hexadecimalCodeTypeMenuItem);
         codeTypeDropDown = new DropDownButton(cycleCodeTypesAction, cycleCodeTypesPopupMenu);
-        updateCycleButtonState();
         controlToolBar.add(codeTypeDropDown);
 
         controlToolBar.addSeparator();
@@ -143,7 +139,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
             }
         });
         optionsButton.setToolTipText(optionsResourceBundle.getString("optionsAction.text"));
-        optionsButton.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/options/gui/resources/icons/Preferences16.gif")));
+        optionsButton.setIcon(new ImageIcon(getClass().getResource("/org/exbin/bined/netbeans/resources/icons/Preferences16.gif")));
         controlToolBar.add(optionsButton);
 
         JButton onlineHelpButton = new JButton();
@@ -156,8 +152,17 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
             }
         });
         onlineHelpButton.setToolTipText(onlineHelpResourceBundle.getString("onlineHelpAction.text"));
-        onlineHelpButton.setIcon(new ImageIcon(getClass().getResource("/org/exbin/framework/bined/resources/icons/open_icon_library/icons/png/16x16/actions/help.png")));
+        onlineHelpButton.setIcon(new ImageIcon(getClass().getResource("/org/exbin/bined/netbeans/resources/icons/help.png")));
         controlToolBar.add(onlineHelpButton);
+    }
+
+    public void setTargetComponent(JComponent targetComponent) {
+        // controlToolBar.setTargetComponent(targetComponent);
+    }
+
+    public void setCodeAreaControl(Control codeAreaControl) {
+        this.codeAreaControl = codeAreaControl;
+        updateCycleButtonState();
     }
 
     public void setOptionsAction(AbstractAction optionsAction) {

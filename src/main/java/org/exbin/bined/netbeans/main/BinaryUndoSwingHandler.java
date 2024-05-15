@@ -24,9 +24,9 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoableEdit;
 import org.exbin.bined.operation.BinaryDataCommand;
+import org.exbin.bined.operation.BinaryDataCommandSequenceListener;
 import org.exbin.bined.operation.undo.BinaryDataUndoableCommandSequence;
 import org.exbin.bined.swing.CodeAreaCore;
-import org.exbin.framework.operation.api.CommandSequenceListener;
 import org.openide.awt.UndoRedo;
 
 /**
@@ -38,7 +38,7 @@ import org.openide.awt.UndoRedo;
 public class BinaryUndoSwingHandler implements BinaryDataUndoableCommandSequence {
 
     private final CodeAreaCore codeArea;
-    private final List<CommandSequenceListener> listeners = new ArrayList<>();
+    private final List<BinaryDataCommandSequenceListener> listeners = new ArrayList<>();
     private final UndoRedo.Manager undoManager;
     private long commandPosition;
     private long syncPointPosition = -1;
@@ -77,6 +77,11 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoableCommandSequence
         commandAdded(command);
     }
 
+    @Override
+    public void executeScheduled(int count) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
     private void commandAdded(final BinaryDataCommand command) {
         UndoableEdit edit = new UndoableEdit() {
             @Override
@@ -270,12 +275,12 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoableCommandSequence
     }
 
     @Override
-    public void addCommandSequenceListener(CommandSequenceListener listener) {
+    public void addCommandSequenceListener(BinaryDataCommandSequenceListener listener) {
         listeners.add(listener);
     }
 
     @Override
-    public void removeCommandSequenceListener(CommandSequenceListener listener) {
+    public void removeCommandSequenceListener(BinaryDataCommandSequenceListener listener) {
         listeners.remove(listener);
     }
 }

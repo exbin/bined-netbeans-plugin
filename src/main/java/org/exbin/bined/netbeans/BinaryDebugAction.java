@@ -47,6 +47,8 @@ import org.exbin.bined.netbeans.debug.DebugViewDataProvider;
 import org.exbin.bined.netbeans.debug.DefaultDebugViewDataProvider;
 import org.exbin.framework.App;
 import org.exbin.framework.language.api.LanguageModuleApi;
+import org.exbin.framework.preferences.api.Preferences;
+import org.exbin.framework.preferences.api.PreferencesModuleApi;
 import org.exbin.framework.window.api.WindowHandler;
 import org.exbin.framework.window.api.WindowModuleApi;
 import org.netbeans.api.debugger.jpda.ClassVariable;
@@ -348,7 +350,9 @@ public final class BinaryDebugAction implements ActionListener {
     }
 
     public static boolean isWatchesViewNested() {
-        java.util.prefs.Preferences preferences = NbPreferences.forModule(ContextProvider.class).node(PREFERENCES_NAME); // NOI18N
+        PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
+        // java.util.prefs.Preferences preferences = NbPreferences.forModule(ContextProvider.class).node(PREFERENCES_NAME); // NOI18N
+        Preferences preferences = preferencesModule.getAppPreferences();
         return preferences.getBoolean(SHOW_WATCHES, true);
     }
 }
