@@ -17,6 +17,7 @@ package org.exbin.bined.netbeans.main;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.event.UndoableEditEvent;
@@ -24,8 +25,8 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoableEdit;
 import org.exbin.bined.operation.BinaryDataCommand;
-import org.exbin.bined.operation.BinaryDataCommandSequenceListener;
-import org.exbin.bined.operation.undo.BinaryDataUndoableCommandSequence;
+import org.exbin.bined.operation.undo.BinaryDataUndoRedoChangeListener;
+import org.exbin.bined.operation.undo.BinaryDataUndoRedo;
 import org.exbin.bined.swing.CodeAreaCore;
 import org.openide.awt.UndoRedo;
 
@@ -35,10 +36,10 @@ import org.openide.awt.UndoRedo;
  * @author ExBin Project (https://exbin.org)
  */
 @ParametersAreNonnullByDefault
-public class BinaryUndoSwingHandler implements BinaryDataUndoableCommandSequence {
+public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
 
     private final CodeAreaCore codeArea;
-    private final List<BinaryDataCommandSequenceListener> listeners = new ArrayList<>();
+    private final List<BinaryDataUndoRedoChangeListener> listeners = new ArrayList<>();
     private final UndoRedo.Manager undoManager;
     private long commandPosition;
     private long syncPointPosition = -1;
@@ -71,17 +72,6 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoableCommandSequence
         commandAdded(command);
     }
 
-    @Override
-    public void schedule(BinaryDataCommand command) {
-        command.redo();
-        commandAdded(command);
-    }
-
-    @Override
-    public void executeScheduled(int count) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-    
     private void commandAdded(final BinaryDataCommand command) {
         UndoableEdit edit = new UndoableEdit() {
             @Override
@@ -149,7 +139,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoableCommandSequence
 
         commandPosition++;
         undoUpdated();
-        listeners.forEach((listener) -> listener.sequenceChanged());
+        listeners.forEach((listener) -> listener.undoChanged());
     }
 
     /**
@@ -265,7 +255,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoableCommandSequence
 
     private void undoUpdated() {
         codeArea.notifyDataChanged();
-        listeners.forEach((listener) -> listener.sequenceChanged());
+        listeners.forEach((listener) -> listener.undoChanged());
     }
 
     @Nonnull
@@ -275,12 +265,27 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoableCommandSequence
     }
 
     @Override
-    public void addCommandSequenceListener(BinaryDataCommandSequenceListener listener) {
+    public Optional<BinaryDataCommand> getTopUndoCommand() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public long getCommandsCount() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean isModified() {
+        return commandPosition != syncPointPosition;
+    }
+
+    @Override
+    public void addChangeListener(BinaryDataUndoRedoChangeListener listener) {
         listeners.add(listener);
     }
 
     @Override
-    public void removeCommandSequenceListener(BinaryDataCommandSequenceListener listener) {
+    public void removeChangeListener(BinaryDataUndoRedoChangeListener listener) {
         listeners.remove(listener);
     }
 }

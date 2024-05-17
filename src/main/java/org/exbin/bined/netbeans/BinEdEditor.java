@@ -81,7 +81,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
         this.lookup = lookup;
         editorFile = new BinEdFileHandler();
         BinaryUndoSwingHandler undoHandler = new BinaryUndoSwingHandler(editorFile.getCodeArea(), new UndoRedo.Manager());
-        editorFile.getComponent().setUndoHandler(undoHandler);
+        editorFile.getComponent().setUndoRedo(undoHandler);
     }
 
     public static void registerIntegration() {

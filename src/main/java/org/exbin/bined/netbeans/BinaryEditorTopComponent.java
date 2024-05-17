@@ -99,8 +99,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         BinEdFileManager fileManager = binedModule.getFileManager();
         fileManager.initFileHandler(editorFile);
         undoHandler = new BinaryUndoSwingHandler(editorFile.getCodeArea(), new UndoRedo.Manager());
-        ((UndoHandlerWrapper) editorFile.getUndoHandler()).setHandler(undoHandler);
-        editorFile.getComponent().setUndoHandler(undoHandler);
+        ((UndoHandlerWrapper) editorFile.getUndoRedo()).setUndoRedo(undoHandler);
+        editorFile.getComponent().setUndoRedo(undoHandler);
         // Setting undo handler resets command handler so let's reiniciate - rework later
         fileManager.initCommandHandler(editorFile.getComponent());
         savable = new BinaryEditorTopComponentSavable(editorFile);

@@ -34,7 +34,8 @@ import org.exbin.framework.editor.api.MultiEditorProvider;
 import org.exbin.framework.file.api.FileHandler;
 import org.exbin.framework.file.api.FileType;
 import org.exbin.framework.frame.api.FrameModuleApi;
-import org.exbin.framework.operation.undo.api.UndoRedoHandler;
+import org.exbin.framework.operation.undo.api.UndoRedoControl;
+import org.exbin.framework.operation.undo.api.UndoRedoState;
 import org.exbin.framework.utils.ClipboardActionsHandler;
 
 /**
@@ -122,17 +123,17 @@ public class BinEdNetBeansEditorProvider implements MultiEditorProvider {
 
         ExtCodeArea extCodeArea = null;
         ClipboardActionsHandler clipboardActionsHandler = null;
-        UndoRedoHandler undoHandler = null;
+        UndoRedoControl undoRedo = null;
         if (activeFile instanceof BinEdFileHandler) {
             BinEdFileHandler binEdFileHandler = (BinEdFileHandler) activeFile;
             extCodeArea = binEdFileHandler.getCodeArea();
-            undoHandler = binEdFileHandler.getUndoHandler();
+            undoRedo = binEdFileHandler.getUndoRedo();
             clipboardActionsHandler = binEdFileHandler;
         }
 
         componentActivationListener.updated(FileHandler.class, activeFile);
         componentActivationListener.updated(CodeAreaCore.class, extCodeArea);
-        componentActivationListener.updated(UndoRedoHandler.class, undoHandler);
+        componentActivationListener.updated(UndoRedoState.class, undoRedo);
         componentActivationListener.updated(ClipboardActionsHandler.class, clipboardActionsHandler);
 
         //        if (this.undoHandler != null) {
