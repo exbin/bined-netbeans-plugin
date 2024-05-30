@@ -40,7 +40,7 @@ import org.exbin.framework.App;
 import org.exbin.framework.bined.BinEdFileHandler;
 import org.exbin.framework.bined.BinEdFileManager;
 import org.exbin.framework.bined.BinedModule;
-import org.exbin.framework.bined.UndoHandlerWrapper;
+import org.exbin.framework.bined.UndoRedoWrapper;
 import org.exbin.framework.bined.gui.BinaryStatusPanel;
 import org.exbin.framework.bined.preferences.EditorPreferences;
 import org.exbin.framework.preferences.api.Preferences;
@@ -99,7 +99,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         BinEdFileManager fileManager = binedModule.getFileManager();
         fileManager.initFileHandler(editorFile);
         undoHandler = new BinaryUndoSwingHandler(editorFile.getCodeArea(), new UndoRedo.Manager());
-        ((UndoHandlerWrapper) editorFile.getUndoRedo()).setUndoRedo(undoHandler);
+        ((UndoRedoWrapper) editorFile.getUndoRedo()).setUndoRedo(undoHandler);
         editorFile.getComponent().setUndoRedo(undoHandler);
         // Setting undo handler resets command handler so let's reiniciate - rework later
         fileManager.initCommandHandler(editorFile.getComponent());

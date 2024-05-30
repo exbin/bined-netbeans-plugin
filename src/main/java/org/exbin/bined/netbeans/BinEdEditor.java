@@ -31,7 +31,6 @@ import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.exbin.bined.swing.extended.ExtCodeArea;
 import org.exbin.framework.bined.BinEdFileHandler;
-import org.exbin.framework.bined.UndoHandlerWrapper;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.MultiViewElementCallback;

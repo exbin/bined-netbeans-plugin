@@ -27,6 +27,7 @@ import javax.swing.undo.UndoableEdit;
 import org.exbin.bined.operation.BinaryDataCommand;
 import org.exbin.bined.operation.undo.BinaryDataUndoRedoChangeListener;
 import org.exbin.bined.operation.undo.BinaryDataUndoRedo;
+import org.exbin.bined.operation.undo.BinaryDataUndoableCommand;
 import org.exbin.bined.swing.CodeAreaCore;
 import org.openide.awt.UndoRedo;
 
@@ -41,8 +42,8 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
     private final CodeAreaCore codeArea;
     private final List<BinaryDataUndoRedoChangeListener> listeners = new ArrayList<>();
     private final UndoRedo.Manager undoManager;
-    private long commandPosition;
-    private long syncPointPosition = -1;
+    private int commandPosition;
+    private int syncPointPosition = -1;
 
     /**
      * Creates a new instance.
@@ -77,25 +78,25 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
             @Override
             public void undo() throws CannotUndoException {
                 commandPosition--;
-                command.undo();
+                ((BinaryDataUndoableCommand) command).undo();
                 undoUpdated();
             }
 
             @Override
             public boolean canUndo() {
-                return command.canUndo();
+                return undoManager.canUndo();
             }
 
             @Override
             public void redo() throws CannotRedoException {
                 commandPosition++;
-                command.redo();
+                ((BinaryDataUndoableCommand) command).redo();
                 undoUpdated();
             }
 
             @Override
             public boolean canRedo() {
-                return command.canUndo();
+                return undoManager.canRedo();
             }
 
             @Override
@@ -208,7 +209,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
     }
 
     @Override
-    public long getCommandPosition() {
+    public int getCommandPosition() {
         return commandPosition;
     }
 
@@ -226,12 +227,12 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
     }
 
     @Override
-    public long getSyncPosition() {
+    public int getSyncPosition() {
         return syncPointPosition;
     }
 
     @Override
-    public void setSyncPosition(long syncPosition) {
+    public void setSyncPosition(int syncPosition) {
         this.syncPointPosition = syncPosition;
     }
 
@@ -245,11 +246,11 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
      *
      * @param targetPosition desired position
      */
-    public void setCommandPosition(long targetPosition) {
+    public void setCommandPosition(int targetPosition) {
         if (targetPosition < commandPosition) {
-            performUndo((int) (commandPosition - targetPosition));
+            performUndo(commandPosition - targetPosition);
         } else if (targetPosition > commandPosition) {
-            performRedo((int) (targetPosition - commandPosition));
+            performRedo(targetPosition - commandPosition);
         }
     }
 
@@ -270,7 +271,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
     }
 
     @Override
-    public long getCommandsCount() {
+    public int getCommandsCount() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
