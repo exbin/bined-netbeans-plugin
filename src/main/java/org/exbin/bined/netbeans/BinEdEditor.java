@@ -29,7 +29,7 @@ import javax.swing.JPanel;
 import org.exbin.bined.EditMode;
 import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
-import org.exbin.bined.swing.extended.ExtCodeArea;
+import org.exbin.bined.swing.section.SectCodeArea;
 import org.exbin.framework.bined.BinEdFileHandler;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
@@ -200,7 +200,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
     }
 
     public void openFile(BinEdFileHandler fileHandler, DataObject dataObject) {
-        ExtCodeArea codeArea = fileHandler.getCodeArea();
+        SectCodeArea codeArea = fileHandler.getCodeArea();
         boolean editable = dataObject.getPrimaryFile().canWrite();
         URI fileUri = dataObject.getPrimaryFile().toURI();
         if (fileUri == null) {

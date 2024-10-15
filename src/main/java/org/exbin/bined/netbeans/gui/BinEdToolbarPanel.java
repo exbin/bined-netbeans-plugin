@@ -206,17 +206,17 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
 
     public void applyFromCodeArea() {
         updateCycleButtonState();
-        updateUnprintables();
+        updateNonprintables();
     }
 
     public void loadFromPreferences(BinaryEditorPreferences preferences) {
         codeAreaControl.setCodeType(preferences.getCodeAreaPreferences().getCodeType());
         updateCycleButtonState();
-        updateUnprintables();
+        updateNonprintables();
     }
 
-    public void updateUnprintables() {
-        showUnprintablesToggleButton.setSelected(codeAreaControl.isShowUnprintables());
+    public void updateNonprintables() {
+        showNonprintablesToggleButton.setSelected(codeAreaControl.isShowNonprintables());
     }
 
     @Override
@@ -236,20 +236,20 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         controlToolBar = new javax.swing.JToolBar();
-        showUnprintablesToggleButton = new javax.swing.JToggleButton();
+        showNonprintablesToggleButton = new javax.swing.JToggleButton();
         separator1 = new javax.swing.JToolBar.Separator();
 
         controlToolBar.setBorder(null);
         controlToolBar.setRollover(true);
 
-        showUnprintablesToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/exbin/bined/netbeans/resources/icons/insert-pilcrow.png"))); // NOI18N
-        showUnprintablesToggleButton.setToolTipText(resourceBundle.getString("viewUnprintablesAction.text")); // NOI18N
-        showUnprintablesToggleButton.addActionListener(new java.awt.event.ActionListener() {
+        showNonprintablesToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/exbin/bined/netbeans/resources/icons/insert-pilcrow.png"))); // NOI18N
+        showNonprintablesToggleButton.setToolTipText(resourceBundle.getString("viewNonprintablesAction.text")); // NOI18N
+        showNonprintablesToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showUnprintablesToggleButtonActionPerformed(evt);
+                showNonprintablesToggleButtonActionPerformed(evt);
             }
         });
-        controlToolBar.add(showUnprintablesToggleButton);
+        controlToolBar.add(showNonprintablesToggleButton);
         controlToolBar.add(separator1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -268,14 +268,14 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void showUnprintablesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showUnprintablesToggleButtonActionPerformed
-        codeAreaControl.setShowUnprintables(showUnprintablesToggleButton.isSelected());
-    }//GEN-LAST:event_showUnprintablesToggleButtonActionPerformed
+    private void showNonprintablesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showNonprintablesToggleButtonActionPerformed
+        codeAreaControl.setShowNonprintables(showNonprintablesToggleButton.isSelected());
+    }//GEN-LAST:event_showNonprintablesToggleButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar controlToolBar;
     private javax.swing.JToolBar.Separator separator1;
-    private javax.swing.JToggleButton showUnprintablesToggleButton;
+    private javax.swing.JToggleButton showNonprintablesToggleButton;
     // End of variables declaration//GEN-END:variables
 
     @ParametersAreNonnullByDefault
@@ -286,9 +286,9 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
 
         void setCodeType(CodeType codeType);
 
-        boolean isShowUnprintables();
+        boolean isShowNonprintables();
 
-        void setShowUnprintables(boolean showUnprintables);
+        void setShowNonprintables(boolean showNonprintables);
 
         void repaint();
     }

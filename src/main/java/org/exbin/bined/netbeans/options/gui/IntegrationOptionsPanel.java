@@ -105,7 +105,7 @@ public class IntegrationOptionsPanel extends javax.swing.JPanel implements Optio
                     languageText = defaultLocaleName;
                 }
                 renderer.setText(languageText);
-                ImageIcon flag = record.getFlag();
+                ImageIcon flag = record.getFlag().orElse(null);
                 if (flag != null) {
                     renderer.setIcon(flag);
                 }

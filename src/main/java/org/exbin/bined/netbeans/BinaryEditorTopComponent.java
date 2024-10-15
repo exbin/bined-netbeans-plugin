@@ -35,7 +35,7 @@ import javax.swing.SwingUtilities;
 import org.exbin.bined.EditMode;
 import org.exbin.bined.netbeans.gui.BinEdFilePanel;
 import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
-import org.exbin.bined.swing.extended.ExtCodeArea;
+import org.exbin.bined.swing.section.SectCodeArea;
 import org.exbin.framework.App;
 import org.exbin.framework.bined.BinEdFileHandler;
 import org.exbin.framework.bined.BinEdFileManager;
@@ -271,7 +271,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     }
 
     public void openFile(BinEdFileHandler fileHandler) {
-        ExtCodeArea codeArea = fileHandler.getCodeArea();
+        SectCodeArea codeArea = fileHandler.getCodeArea();
         boolean editable = dataObject.getPrimaryFile().canWrite();
         URI fileUri = dataObject.getPrimaryFile().toURI();
         // TODO pass handling mode correctly

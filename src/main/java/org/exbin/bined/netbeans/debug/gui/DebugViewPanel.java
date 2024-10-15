@@ -23,7 +23,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.bined.EditMode;
 import org.exbin.auxiliary.binary_data.BinaryData;
 import org.exbin.bined.netbeans.debug.DebugViewDataProvider;
-import org.exbin.bined.swing.extended.ExtCodeArea;
+import org.exbin.bined.swing.section.SectCodeArea;
 import org.exbin.framework.bined.BinEdEditorComponent;
 
 /**
@@ -47,7 +47,7 @@ public class DebugViewPanel extends javax.swing.JPanel {
     }
 
     private void init() {
-        ExtCodeArea codeArea = binEdEditorComponent.getCodeArea();
+        SectCodeArea codeArea = binEdEditorComponent.getCodeArea();
         codeArea.setEditMode(EditMode.READ_ONLY);
 
         this.add(binEdEditorComponent.getComponentPanel(), BorderLayout.CENTER);

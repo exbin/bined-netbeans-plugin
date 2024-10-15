@@ -16,7 +16,7 @@
 package org.exbin.bined.netbeans.action;
 
 import org.exbin.bined.netbeans.options.gui.BinEdOptionsPanelBorder;
-import org.exbin.bined.swing.extended.ExtCodeArea;
+import org.exbin.bined.swing.section.SectCodeArea;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
 import org.exbin.framework.editor.text.service.TextFontService;
 import org.exbin.framework.utils.WindowUtils;
@@ -61,7 +61,7 @@ public class OptionsAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         throw new UnsupportedOperationException("Not supported yet.");
-/*        ExtCodeArea codeArea = componentPanel.getCodeArea();
+/*        SectCodeArea codeArea = componentPanel.getCodeArea();
         final BinEdOptionsPanelBorder optionsPanelWrapper = new BinEdOptionsPanelBorder();
         optionsPanelWrapper.setPreferredSize(new Dimension(700, 460));
         BinEdOptionsPanel optionsPanel = optionsPanelWrapper.getOptionsPanel();

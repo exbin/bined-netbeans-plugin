@@ -121,7 +121,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
             @Nonnull
             @Override
             public String getPresentationName() {
-                return command.getName();
+                return command.getType().getClass().getTypeName();
             }
 
             @Nonnull

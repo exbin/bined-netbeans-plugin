@@ -16,7 +16,7 @@
 package org.exbin.bined.netbeans.gui;
 
 import org.exbin.bined.CodeType;
-import org.exbin.bined.swing.extended.ExtCodeArea;
+import org.exbin.bined.swing.section.SectCodeArea;
 import org.exbin.framework.App;
 import org.exbin.framework.bined.BinEdFileHandler;
 import org.exbin.framework.bined.BinedModule;
@@ -36,6 +36,10 @@ import javax.swing.event.PopupMenuListener;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import org.exbin.bined.CodeAreaUtils;
+import org.exbin.bined.highlight.swing.NonprintablesCodeAreaAssessor;
+import org.exbin.bined.swing.CodeAreaSwingUtils;
+import org.exbin.bined.swing.capability.ColorAssessorPainterCapable;
 
 /**
  * Binary editor file panel.
@@ -58,7 +62,7 @@ public class BinEdFilePanel extends JPanel {
     public void setFileHandler(BinEdFileHandler fileHandler) {
         this.fileHandler = fileHandler;
         BinEdComponentPanel componentPanel = fileHandler.getComponent();
-        ExtCodeArea codeArea = fileHandler.getCodeArea();
+        SectCodeArea codeArea = fileHandler.getCodeArea();
         toolbarPanel.setTargetComponent(componentPanel);
         toolbarPanel.setCodeAreaControl(new BinEdToolbarPanel.Control() {
             @Nonnull
@@ -72,13 +76,17 @@ public class BinEdFilePanel extends JPanel {
             }
 
             @Override
-            public boolean isShowUnprintables() {
-                return codeArea.isShowUnprintables();
+            public boolean isShowNonprintables() {
+                ColorAssessorPainterCapable painter = (ColorAssessorPainterCapable) codeArea.getPainter();
+                NonprintablesCodeAreaAssessor nonprintablesCodeAreaAssessor = CodeAreaSwingUtils.findColorAssessor(painter, NonprintablesCodeAreaAssessor.class);
+                return CodeAreaUtils.requireNonNull(nonprintablesCodeAreaAssessor).isShowNonprintables();
             }
 
             @Override
-            public void setShowUnprintables(boolean showUnprintables) {
-                codeArea.setShowUnprintables(showUnprintables);
+            public void setShowNonprintables(boolean showNonprintables) {
+                ColorAssessorPainterCapable painter = (ColorAssessorPainterCapable) codeArea.getPainter();
+                NonprintablesCodeAreaAssessor nonprintablesCodeAreaAssessor = CodeAreaSwingUtils.findColorAssessor(painter, NonprintablesCodeAreaAssessor.class);
+                CodeAreaUtils.requireNonNull(nonprintablesCodeAreaAssessor).setShowNonprintables(showNonprintables);
             }
 
             @Override
