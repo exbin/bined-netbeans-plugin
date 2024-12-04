@@ -52,7 +52,7 @@ ext {
     binedLibraryVersion = '0.3.0-SNAPSHOT'
     binedAppLibraryVersion = '0.3.0-SNAPSHOT'
     exbinFrameworkVersion = '0.3.0-SNAPSHOT'
-    binaryDataVersion = '0.2.1'
+    binaryDataVersion = '0.2.2-SNAPSHOT'
     repositoryName = "bined-netbeans-plugin"
     nbmVersion = version.endsWith('-SNAPSHOT') ? version.substring(0, version.length() - 9) : version
     homePageUrl = 'https://bined.exbin.org/netbeans-plugin'

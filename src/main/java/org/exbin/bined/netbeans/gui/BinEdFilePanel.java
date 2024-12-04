@@ -66,7 +66,8 @@ public class BinEdFilePanel extends JPanel {
         toolbarPanel.setTargetComponent(componentPanel);
         toolbarPanel.setCodeAreaControl(new BinEdToolbarPanel.Control() {
             @Nonnull
-            @Override public CodeType getCodeType() {
+            @Override
+            public CodeType getCodeType() {
                 return codeArea.getCodeType();
             }
 

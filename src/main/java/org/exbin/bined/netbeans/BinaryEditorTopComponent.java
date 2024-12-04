@@ -30,7 +30,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import org.exbin.bined.EditMode;
 import org.exbin.bined.netbeans.gui.BinEdFilePanel;
@@ -38,7 +37,6 @@ import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
 import org.exbin.bined.swing.section.SectCodeArea;
 import org.exbin.framework.App;
 import org.exbin.framework.bined.BinEdFileHandler;
-import org.exbin.framework.bined.BinEdFileManager;
 import org.exbin.framework.bined.BinedModule;
 import org.exbin.framework.bined.UndoRedoWrapper;
 import org.exbin.framework.bined.gui.BinaryStatusPanel;
@@ -79,7 +77,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     private final InstanceContent content = new InstanceContent();
 
     private final BinEdFilePanel filePanel;
-    private final BinEdFileHandler editorFile;
+    private final BinEdFileHandler fileHandler;
     private final BinaryUndoSwingHandler undoHandler;
 
     private final BinaryEditorNode node;
@@ -91,19 +89,19 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     public BinaryEditorTopComponent() {
         initComponents();
 
-        BinedModule binedModule = App.getModule(BinedModule.class);
         node = new BinaryEditorNode(this);
-        editorFile = new BinEdFileHandler();
+        fileHandler = new BinEdFileHandler();
         filePanel = new BinEdFilePanel();
-        filePanel.setFileHandler(editorFile);
-        BinEdFileManager fileManager = binedModule.getFileManager();
-        fileManager.initFileHandler(editorFile);
-        undoHandler = new BinaryUndoSwingHandler(editorFile.getCodeArea(), new UndoRedo.Manager());
-        ((UndoRedoWrapper) editorFile.getUndoRedo()).setUndoRedo(undoHandler);
-        editorFile.getComponent().setUndoRedo(undoHandler);
+        filePanel.setFileHandler(fileHandler);
+        BinedModule binedModule = App.getModule(BinedModule.class);
+        binedModule.getFileManager().initFileHandler(fileHandler);
+
+        undoHandler = new BinaryUndoSwingHandler(fileHandler.getCodeArea(), new UndoRedo.Manager());
+        ((UndoRedoWrapper) fileHandler.getUndoRedo()).setUndoRedo(undoHandler);
+        fileHandler.getComponent().setUndoRedo(undoHandler);
         // Setting undo handler resets command handler so let's reiniciate - rework later
-        fileManager.initCommandHandler(editorFile.getComponent());
-        savable = new BinaryEditorTopComponentSavable(editorFile);
+        binedModule.getFileManager().initCommandHandler(fileHandler.getComponent());
+        savable = new BinaryEditorTopComponentSavable(fileHandler);
 
         this.add(filePanel, BorderLayout.CENTER);
 
@@ -127,14 +125,14 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         setHtmlDisplayName(displayName);
 
         this.dataObject = dataObject;
-        openFile(editorFile);
+        openFile(fileHandler);
         savable.setDataObject(dataObject);
         opened = true;
     }
 
     @Override
     public boolean canClose() {
-        if (!editorFile.isModified()) {
+        if (!fileHandler.isModified()) {
             return true;
         }
 
@@ -148,14 +146,14 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         }
 
         if (choice == JOptionPane.YES_OPTION) {
-            editorFile.saveDocument();
+            fileHandler.saveDocument();
         }
 
         return true;
     }
 
     private void updateModified() {
-        boolean modified = editorFile.isModified();
+        boolean modified = fileHandler.isModified();
         final String htmlDisplayName;
         if (modified && opened) {
             savable.activate();
@@ -201,7 +199,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     @Override
     public void componentOpened() {
         super.componentOpened();
-        editorFile.requestFocus();
+        fileHandler.requestFocus();
     }
 
     @Override
@@ -209,7 +207,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         if (savable != null) {
             savable.deactivate();
         }
-        editorFile.closeData();
+        fileHandler.closeData();
         super.componentClosed();
     }
 
@@ -239,7 +237,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     @Nonnull
     @Override
     public CloseOperationState canCloseElement() {
-        boolean modified = editorFile.isModified();
+        boolean modified = fileHandler.isModified();
         if (modified) {
             throw new UnsupportedOperationException("Not supported yet.");
 //            return new CloseOperationState();
@@ -251,7 +249,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
     @Override
     public void componentActivated() {
         BinedModule binedModule = App.getModule(BinedModule.class);
-        ((BinEdNetBeansEditorProvider) binedModule.getEditorProvider()).setActiveFile(editorFile);
+        ((BinEdNetBeansEditorProvider) binedModule.getEditorProvider()).setActiveFile(fileHandler);
         super.componentActivated();
     }
 

@@ -15,6 +15,7 @@
  */
 package org.exbin.bined.netbeans;
 
+import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,11 +27,17 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import org.exbin.bined.EditMode;
 import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.exbin.bined.swing.section.SectCodeArea;
+import org.exbin.framework.App;
 import org.exbin.framework.bined.BinEdFileHandler;
+import org.exbin.framework.bined.BinedModule;
+import org.exbin.framework.bined.handler.CodeAreaPopupMenuHandler;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.MultiViewElementCallback;
@@ -72,15 +79,42 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
     private static final String SHADOW_EXT = "shadow";
     private static final String ORIGINAL_FILE_ATTRIBUTE = "originalFile";
 
-    private final BinEdFileHandler editorFile;
+    private final BinEdFileHandler fileHandler;
     private transient MultiViewElementCallback callback;
     private final Lookup lookup;
 
     public BinEdEditor(Lookup lookup) {
         this.lookup = lookup;
-        editorFile = new BinEdFileHandler();
-        BinaryUndoSwingHandler undoHandler = new BinaryUndoSwingHandler(editorFile.getCodeArea(), new UndoRedo.Manager());
-        editorFile.getComponent().setUndoRedo(undoHandler);
+        fileHandler = new BinEdFileHandler();
+        BinedModule binedModule = App.getModule(BinedModule.class);
+        binedModule.getFileManager().initFileHandler(fileHandler);
+        BinaryUndoSwingHandler undoHandler = new BinaryUndoSwingHandler(fileHandler.getCodeArea(), new UndoRedo.Manager());
+        fileHandler.getComponent().setUndoRedo(undoHandler);
+
+        SectCodeArea codeArea = fileHandler.getCodeArea();
+        CodeAreaPopupMenuHandler codeAreaPopupMenuHandler = binedModule.createCodeAreaPopupMenuHandler(BinedModule.PopupMenuVariant.EDITOR);
+        codeArea.setComponentPopupMenu(new JPopupMenu() {
+            @Override
+            public void show(Component invoker, int x, int y) {
+                String popupMenuId = "BinEdFilePanel.popup";
+                JPopupMenu popupMenu = codeAreaPopupMenuHandler.createPopupMenu(codeArea, popupMenuId, x, y);
+                popupMenu.addPopupMenuListener(new PopupMenuListener() {
+                    @Override
+                    public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                    }
+
+                    @Override
+                    public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                        codeAreaPopupMenuHandler.dropPopupMenu(popupMenuId);
+                    }
+
+                    @Override
+                    public void popupMenuCanceled(PopupMenuEvent e) {
+                    }
+                });
+                popupMenu.show(invoker, x, y);
+            }
+        });
     }
 
     public static void registerIntegration() {
@@ -105,7 +139,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
     @Nonnull
     @Override
     public JComponent getVisualRepresentation() {
-        return editorFile.getComponent();
+        return fileHandler.getComponent();
     }
 
     @Nonnull
@@ -125,7 +159,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
 //        if (binedManager.releaseFile(editorFile)) {
 //            return CloseOperationState.STATE_OK;        
 //        }
-        
+
         return MultiViewFactory.createUnsafeCloseState("", null, null);
     }
 
@@ -147,6 +181,8 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
 
     @Override
     public void componentActivated() {
+        BinedModule binedModule = App.getModule(BinedModule.class);
+        ((BinEdNetBeansEditorProvider) binedModule.getEditorProvider()).setActiveFile(fileHandler);
     }
 
     @Override
@@ -161,7 +197,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
                 ((BinEdDataObject) dataObject).setVisualEditor(this);
             }
 
-            openFile(editorFile, dataObject);
+            openFile(fileHandler, dataObject);
 
             if (callback != null) {
                 callback.updateTitle(dataObject.getPrimaryFile().getNameExt());
@@ -179,7 +215,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
 
     @Override
     public void componentClosed() {
-        editorFile.closeData();
+        fileHandler.closeData();
     }
 
     @Nonnull
@@ -196,7 +232,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
     }
 
     public void save() {
-        editorFile.saveFile();
+        fileHandler.saveFile();
     }
 
     public void openFile(BinEdFileHandler fileHandler, DataObject dataObject) {
@@ -262,7 +298,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
             Logger.getLogger(BinEdEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-/*        FileObject targetFolder = FileUtil.getSystemConfigFile(EDITORS_FOLDER + "/" + MULTIVIEW_FOLDER);
+        /*        FileObject targetFolder = FileUtil.getSystemConfigFile(EDITORS_FOLDER + "/" + MULTIVIEW_FOLDER);
         targetFolder.move(FileLock.NONE, targetFolder, ELEMENT_ID, SHADOW_EXT)
         FileObject elementRecord = targetFolder.getFileObject(ELEMENT_ID + "." + SHADOW_EXT);
         if (elementRecord == null) {
@@ -324,7 +360,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
         } */
     }
 
-/*
+    /*
     public static void install() {
         final FileObject editors = FileUtil.getConfigFile(EDITORS_FOLDER);
         for (FileObject mimeType : editors.getChildren()) {
@@ -417,5 +453,5 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
             Logger.getLogger(BinEdEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-*/
+     */
 }

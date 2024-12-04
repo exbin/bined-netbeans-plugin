@@ -228,6 +228,9 @@ public class Installer extends ModuleInstall {
             ResourceBundle bundle = languageModule.getBundle(BinEdNetBeansPlugin.class);
             languageModule.setAppBundle(bundle);
 
+            WindowModuleApi windowModule = App.getModule(WindowModuleApi.class);
+            windowModule.setHideHeaderPanels(true);
+
             AboutModuleApi aboutModule = App.getModule(AboutModuleApi.class);
             OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
             optionsModule.registerMenuAction();

@@ -41,9 +41,9 @@ import org.exbin.framework.language.api.LanguageModuleApi;
 @ParametersAreNonnullByDefault
 public class BinEdToolbarPanel extends javax.swing.JPanel {
 
-    private final java.util.ResourceBundle resourceBundle = App.getModule(LanguageModuleApi.class).getResourceBundleByBundleName("org/exbin/framework/bined/resources/BinedModule");
-    private final java.util.ResourceBundle optionsResourceBundle = App.getModule(LanguageModuleApi.class).getResourceBundleByBundleName("org/exbin/framework/options/resources/OptionsModule");
-    private final java.util.ResourceBundle onlineHelpResourceBundle = App.getModule(LanguageModuleApi.class).getResourceBundleByBundleName("org/exbin/framework/help/online/action/resources/OnlineHelpAction");
+    private final java.util.ResourceBundle resourceBundle;
+    private final java.util.ResourceBundle optionsResourceBundle;
+    private final java.util.ResourceBundle onlineHelpResourceBundle;
 
     private Control codeAreaControl;
     private AbstractAction optionsAction;
@@ -58,6 +58,11 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     private DropDownButton codeTypeDropDown;
 
     public BinEdToolbarPanel() {
+        LanguageModuleApi languageModule = App.getModule(LanguageModuleApi.class);
+        resourceBundle = languageModule.getResourceBundleByBundleName("org/exbin/framework/bined/resources/BinedModule");
+        optionsResourceBundle = languageModule.getResourceBundleByBundleName("org/exbin/framework/options/resources/OptionsModule");
+        onlineHelpResourceBundle = languageModule.getResourceBundleByBundleName("org/exbin/framework/help/online/action/resources/OnlineHelpAction");
+
         codeTypeButtonGroup = new ButtonGroup();
         Action binaryCodeTypeAction = new AbstractAction() {
             @Override
