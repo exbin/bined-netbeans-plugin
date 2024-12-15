@@ -26,6 +26,7 @@ import org.exbin.auxiliary.binary_data.BinaryData;
 import org.exbin.auxiliary.binary_data.ByteArrayData;
 import org.exbin.auxiliary.binary_data.EditableBinaryData;
 import org.exbin.auxiliary.binary_data.OutOfBoundsException;
+import org.exbin.auxiliary.binary_data.paged.ByteArrayPagedData;
 import org.exbin.auxiliary.binary_data.paged.PagedData;
 import org.exbin.bined.netbeans.utils.StreamUtils;
 import org.openide.filesystems.FileObject;
@@ -94,7 +95,7 @@ public class BinEdFileDataWrapper implements EditableBinaryData {
         long pageIndex = startFrom / PAGE_SIZE;
         int pageOffset = (int) (startFrom % PAGE_SIZE);
 
-        PagedData data = new PagedData();
+        ByteArrayPagedData data = new ByteArrayPagedData();
         long dataPosition = 0;
         while (length > 0) {
             int pageLength = length > PAGE_SIZE - pageOffset ? PAGE_SIZE - pageOffset : (int) length;

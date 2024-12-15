@@ -106,6 +106,7 @@ public class IntegrationOptionsImpl implements OptionsData, IntegrationOptions {
         this.registerDebugViewAsBinary = registerDebugViewAsBinary;
     }
 
+    @Override
     public boolean isRegisterByteToByteDiffTool() {
         return registerByteToByteDiffTool;
     }

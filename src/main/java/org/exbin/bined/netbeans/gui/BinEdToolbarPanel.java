@@ -16,6 +16,7 @@
 package org.exbin.bined.netbeans.gui;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.AbstractAction;
@@ -46,8 +47,8 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     private final java.util.ResourceBundle onlineHelpResourceBundle;
 
     private Control codeAreaControl;
-    private AbstractAction optionsAction;
-    private AbstractAction onlineHelpAction;
+    private ActionListener optionsAction;
+    private ActionListener onlineHelpAction;
 
     private final AbstractAction cycleCodeTypesAction;
     private final JRadioButtonMenuItem binaryCodeTypeMenuItem;
@@ -170,11 +171,11 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         updateCycleButtonState();
     }
 
-    public void setOptionsAction(AbstractAction optionsAction) {
+    public void setOptionsAction(ActionListener optionsAction) {
         this.optionsAction = optionsAction;
     }
 
-    public void setOnlineHelpAction(AbstractAction onlineHelpAction) {
+    public void setOnlineHelpAction(ActionListener onlineHelpAction) {
         this.onlineHelpAction = onlineHelpAction;
     }
 

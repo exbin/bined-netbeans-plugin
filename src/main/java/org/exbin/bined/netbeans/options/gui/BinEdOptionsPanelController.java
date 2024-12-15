@@ -17,11 +17,13 @@ package org.exbin.bined.netbeans.options.gui;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import javax.annotation.Nonnull;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import org.exbin.bined.netbeans.Installer;
+import org.exbin.framework.App;
 import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
+import org.exbin.framework.options.api.OptionsModuleApi;
+import org.exbin.framework.options.gui.OptionsListPanel;
 import org.exbin.framework.preferences.PreferencesWrapper;
 import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.util.HelpCtx;
@@ -42,21 +44,20 @@ import org.openide.util.NbPreferences;
 @org.openide.util.NbBundle.Messages({"AdvancedOption_DisplayName_BinEd=BinEd", "AdvancedOption_Keywords_BinEd=BinEd binary/hex editor"})
 public final class BinEdOptionsPanelController extends OptionsPanelController {
 
-    private JPanel panel;
+    private OptionsListPanel panel;
     private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
     private boolean changed;
 
     @Override
     public void update() {
-        // TODO getPanel().loadFromPreferences();
+        getPanel().loadAllFromPreferences();
         changed = false;
     }
 
     @Override
     public void applyChanges() {
         SwingUtilities.invokeLater(() -> {
-            // TODO getPanel().saveToPreferences();
-            // TODO Installer.applyIntegrationOptions(getPanel().getIntegrationOptions());
+            getPanel().saveAndApplyAll();
             changed = false;
         });
     }
@@ -96,10 +97,17 @@ public final class BinEdOptionsPanelController extends OptionsPanelController {
         pcs.removePropertyChangeListener(l);
     }
 
-    private JPanel getPanel() {
+    @Nonnull
+    private OptionsListPanel getPanel() {
         if (panel == null) {
-            panel = new JPanel();
-            // panel.setPreferences(new BinaryEditorPreferences(new PreferencesWrapper(NbPreferences.forModule(BinaryEditorPreferences.class))));
+            panel = new OptionsListPanel();
+            OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
+            optionsModule.passOptionsPages(panel);
+            // PreferencesModule preferencesModule = App.getModule(PreferencesModule.class);
+            // panel.setPreferences(preferencesModule.getAppPreferences());
+            panel.setPreferences(new PreferencesWrapper(NbPreferences.forModule(BinaryEditorPreferences.class)));
+            panel.pagesFinished();
+            panel.loadAllFromPreferences();
         }
         return panel;
     }

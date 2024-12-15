@@ -346,7 +346,7 @@ dependencies {
     implementation(binedLibrary("bined-swing"))
     implementation(binedLibrary("bined-swing-section"))
     implementation(binaryDataLibrary("binary_data"))
-    implementation(binaryDataLibrary("binary_data-paged"))
+    implementation(binaryDataLibrary("binary_data-array"))
     implementation(binaryDataLibrary("binary_data-delta"))
     implementation(":flatlaf-desktop-3.2")
 

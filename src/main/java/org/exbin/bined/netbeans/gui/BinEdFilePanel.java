@@ -40,6 +40,7 @@ import org.exbin.bined.CodeAreaUtils;
 import org.exbin.bined.highlight.swing.NonprintablesCodeAreaAssessor;
 import org.exbin.bined.swing.CodeAreaSwingUtils;
 import org.exbin.bined.swing.capability.ColorAssessorPainterCapable;
+import org.exbin.framework.options.api.OptionsModuleApi;
 
 /**
  * Binary editor file panel.
@@ -96,6 +97,9 @@ public class BinEdFilePanel extends JPanel {
             }
         });
         toolbarPanel.setOnlineHelpAction(createOnlineHelpAction());
+
+        OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
+        toolbarPanel.setOptionsAction(optionsModule.createOptionsAction());
 
         BinedModule binedModule = App.getModule(BinedModule.class);
         CodeAreaPopupMenuHandler codeAreaPopupMenuHandler =
