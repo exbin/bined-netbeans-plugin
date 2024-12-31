@@ -50,7 +50,7 @@ ext {
     //    netbeansVersion = 'dev-SNAPSHOT'
     netbeansVersion = 'RELEASE82'
     binedLibraryVersion = '0.3.0-SNAPSHOT'
-    binedAppLibraryVersion = '0.3.0-SNAPSHOT'
+    binedAppLibraryVersion = '0.2.4-SNAPSHOT'
     exbinFrameworkVersion = '0.3.0-SNAPSHOT'
     binaryDataVersion = '0.2.2-SNAPSHOT'
     repositoryName = "bined-netbeans-plugin"
