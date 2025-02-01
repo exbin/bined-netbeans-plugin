@@ -31,6 +31,7 @@ import org.exbin.framework.options.api.OptionsData;
 public class IntegrationOptionsImpl implements OptionsData, IntegrationOptions {
 
     private Locale languageLocale;
+    private String iconSet = "";
     private boolean registerFileMenuOpenAsBinary = true;
     private boolean registerOpenFileAsBinaryViaToolbar = true;
     private boolean registerContextOpenAsBinary = false;
@@ -50,6 +51,16 @@ public class IntegrationOptionsImpl implements OptionsData, IntegrationOptions {
     @Override
     public void setLanguageLocale(Locale languageLocale) {
         this.languageLocale = languageLocale;
+    }
+
+    @Nonnull
+    @Override
+    public String getIconSet() {
+        return iconSet;
+    }
+
+    public void setIconSet(String iconSet) {
+        this.iconSet = iconSet;
     }
 
     @Override
@@ -126,6 +137,7 @@ public class IntegrationOptionsImpl implements OptionsData, IntegrationOptions {
 
     public void loadFromPreferences(IntegrationPreferences preferences) {
         languageLocale = preferences.getLanguageLocale();
+        iconSet = preferences.getIconSet();
         registerFileMenuOpenAsBinary = preferences.isRegisterFileMenuOpenAsBinary();
         registerOpenFileAsBinaryViaToolbar = preferences.isRegisterOpenFileAsBinaryViaToolbar();
         registerContextOpenAsBinary = preferences.isRegisterContextOpenAsBinary();
@@ -138,6 +150,7 @@ public class IntegrationOptionsImpl implements OptionsData, IntegrationOptions {
 
     public void saveToPreferences(IntegrationPreferences preferences) {
         preferences.setLanguageLocale(languageLocale);
+        preferences.setIconSet(iconSet);
         preferences.setRegisterFileMenuOpenAsBinary(registerFileMenuOpenAsBinary);
         preferences.setRegisterOpenFileAsBinaryViaToolbar(registerOpenFileAsBinaryViaToolbar);
         preferences.setRegisterContextOpenAsBinary(registerContextOpenAsBinary);
@@ -150,6 +163,7 @@ public class IntegrationOptionsImpl implements OptionsData, IntegrationOptions {
 
     public void setOptions(IntegrationOptionsImpl options) {
         languageLocale = options.getLanguageLocale();
+        iconSet = options.getIconSet();
         registerFileMenuOpenAsBinary = options.isRegisterFileMenuOpenAsBinary();
         registerOpenFileAsBinaryViaToolbar = options.isRegisterOpenFileAsBinaryViaToolbar();
         registerContextOpenAsBinary = options.isRegisterContextOpenAsBinary();

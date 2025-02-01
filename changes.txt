@@ -1,4 +1,8 @@
-0.3.0
+0.2.7
+- Added Base 64 conversion
+- Added option for inspector input fields font
+- Added icon set support
+- Added more languages (de, cs, fr, it, pt, pl, ru)
 
 0.2.6 (2024-05-12)
 - Added support for basic macro

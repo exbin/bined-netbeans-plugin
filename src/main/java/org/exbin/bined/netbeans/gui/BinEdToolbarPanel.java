@@ -60,9 +60,9 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
 
     public BinEdToolbarPanel() {
         LanguageModuleApi languageModule = App.getModule(LanguageModuleApi.class);
-        resourceBundle = languageModule.getResourceBundleByBundleName("org/exbin/framework/bined/resources/BinedModule");
-        optionsResourceBundle = languageModule.getResourceBundleByBundleName("org/exbin/framework/options/resources/OptionsModule");
-        onlineHelpResourceBundle = languageModule.getResourceBundleByBundleName("org/exbin/framework/help/online/action/resources/OnlineHelpAction");
+        resourceBundle = languageModule.getBundle(org.exbin.framework.bined.BinedModule.class);
+        optionsResourceBundle = languageModule.getBundle(org.exbin.framework.options.OptionsModule.class);
+        onlineHelpResourceBundle = languageModule.getBundle(org.exbin.framework.help.online.action.OnlineHelpAction.class);
 
         codeTypeButtonGroup = new ButtonGroup();
         Action binaryCodeTypeAction = new AbstractAction() {
@@ -145,7 +145,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
             }
         });
         optionsButton.setToolTipText(optionsResourceBundle.getString("optionsAction.text"));
-        optionsButton.setIcon(new ImageIcon(getClass().getResource("/org/exbin/bined/netbeans/resources/icons/Preferences16.gif")));
+        optionsButton.setIcon(new ImageIcon(getClass().getResource(optionsResourceBundle.getString("optionsAction.smallIcon"))));
         controlToolBar.add(optionsButton);
 
         JButton onlineHelpButton = new JButton();
@@ -248,7 +248,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         controlToolBar.setBorder(null);
         controlToolBar.setRollover(true);
 
-        showNonprintablesToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/exbin/bined/netbeans/resources/icons/insert-pilcrow.png"))); // NOI18N
+        showNonprintablesToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource(resourceBundle.getString("viewNonprintablesToolbarAction.smallIcon"))));
         showNonprintablesToggleButton.setToolTipText(resourceBundle.getString("viewNonprintablesAction.text")); // NOI18N
         showNonprintablesToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -264,7 +264,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(controlToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 338, Short.MAX_VALUE))
+                .addGap(0, 354, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

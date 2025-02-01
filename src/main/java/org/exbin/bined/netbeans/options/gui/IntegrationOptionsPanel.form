@@ -20,19 +20,28 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="languageComboBox" alignment="1" max="32767" attributes="0"/>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="languageLabel" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="languageLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="iconSetLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="openFileAsBinaryCheckBox" max="32767" attributes="0"/>
-                  <Component id="openFileToolbarBinaryCheckBox" alignment="0" max="32767" attributes="0"/>
-                  <Component id="contextOpenAsBinaryCheckBox" alignment="0" max="32767" attributes="0"/>
-                  <Component id="contextToolsOpenAsBinaryCheckBox" alignment="0" max="32767" attributes="0"/>
-                  <Component id="openAsBinaryInDebugViewCheckBox" alignment="0" max="32767" attributes="0"/>
-                  <Component id="byteToByteDiffToolCheckBox" alignment="0" max="32767" attributes="0"/>
-                  <Component id="editAsBinaryForDbColumnCheckBox" alignment="1" max="32767" attributes="0"/>
-                  <Component id="binaryMultiviewCheckBox" alignment="0" max="32767" attributes="0"/>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="iconSetComboBox" alignment="0" max="32767" attributes="0"/>
+                          <Component id="editAsBinaryForDbColumnCheckBox" alignment="0" max="32767" attributes="0"/>
+                          <Component id="byteToByteDiffToolCheckBox" alignment="0" max="32767" attributes="0"/>
+                          <Component id="openAsBinaryInDebugViewCheckBox" alignment="0" max="32767" attributes="0"/>
+                          <Component id="binaryMultiviewCheckBox" alignment="0" max="32767" attributes="0"/>
+                          <Component id="contextToolsOpenAsBinaryCheckBox" alignment="0" max="32767" attributes="0"/>
+                          <Component id="contextOpenAsBinaryCheckBox" alignment="0" max="32767" attributes="0"/>
+                          <Component id="openFileToolbarBinaryCheckBox" alignment="0" max="32767" attributes="0"/>
+                          <Component id="languageComboBox" alignment="0" max="32767" attributes="0"/>
+                          <Component id="openFileAsBinaryCheckBox" alignment="1" max="32767" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
               </Group>
           </Group>
       </Group>
@@ -44,6 +53,10 @@
               <Component id="languageLabel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="languageComboBox" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="iconSetLabel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="iconSetComboBox" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="openFileAsBinaryCheckBox" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -66,6 +79,37 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
+    <Component class="javax.swing.JLabel" name="languageLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="languageLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;) + &quot; *&quot;"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="languageComboBox">
+      <Events>
+        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="languageComboBoxItemStateChanged"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JComboBox&lt;&gt;();"/>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;LanguageRecord&gt;"/>
+      </AuxValues>
+    </Component>
+    <Component class="javax.swing.JLabel" name="iconSetLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
+          <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="iconSetLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+        </Property>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="iconSetComboBox">
+      <Events>
+        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="iconSetComboBoxItemStateChanged"/>
+      </Events>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
+    </Component>
     <Component class="javax.swing.JCheckBox" name="openFileAsBinaryCheckBox">
       <Properties>
         <Property name="selected" type="boolean" value="true"/>
@@ -153,22 +197,6 @@
       <Events>
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="editAsBinaryForDbColumnCheckBoxStateChanged"/>
       </Events>
-    </Component>
-    <Component class="javax.swing.JLabel" name="languageLabel">
-      <Properties>
-        <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="languageLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;) + &quot; *&quot;"/>
-        </Property>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JComboBox" name="languageComboBox">
-      <Events>
-        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="languageComboBoxItemStateChanged"/>
-      </Events>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JComboBox&lt;&gt;();"/>
-        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;LanguageRecord&gt;"/>
-      </AuxValues>
     </Component>
   </SubComponents>
 </Form>

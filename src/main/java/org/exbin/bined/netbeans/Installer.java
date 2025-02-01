@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,6 +51,7 @@ import org.exbin.framework.action.api.PositionMenuContributionRule;
 import org.exbin.framework.action.api.PositionMode;
 import org.exbin.framework.action.api.SeparationMenuContributionRule;
 import org.exbin.framework.action.api.SeparationMode;
+import org.exbin.framework.bined.BinEdFileManager;
 import org.exbin.framework.bined.BinedModule;
 import org.exbin.framework.bined.bookmarks.BinedBookmarksModule;
 import org.exbin.framework.bined.compare.BinedCompareModule;
@@ -72,6 +74,7 @@ import org.exbin.framework.frame.FrameModule;
 import org.exbin.framework.frame.api.FrameModuleApi;
 import org.exbin.framework.help.online.HelpOnlineModule;
 import org.exbin.framework.language.LanguageModule;
+import org.exbin.framework.language.api.IconSetProvider;
 import org.exbin.framework.language.api.LanguageModuleApi;
 import org.exbin.framework.language.api.LanguageProvider;
 import org.exbin.framework.operation.undo.OperationUndoModule;
@@ -81,6 +84,18 @@ import org.exbin.framework.options.api.DefaultOptionsPage;
 import org.exbin.framework.options.api.OptionsComponent;
 import org.exbin.framework.options.api.OptionsModuleApi;
 import org.exbin.framework.options.api.OptionsPanelType;
+import org.exbin.framework.plugin.language.cs_CZ.LanguageCsCzModule;
+import org.exbin.framework.plugin.language.de_DE.LanguageDeDeModule;
+import org.exbin.framework.plugin.language.es_ES.LanguageEsEsModule;
+import org.exbin.framework.plugin.language.fr_FR.LanguageFrFrModule;
+import org.exbin.framework.plugin.language.it_IT.LanguageItItModule;
+import org.exbin.framework.plugin.language.ja_JP.LanguageJaJpModule;
+import org.exbin.framework.plugin.language.ko_KR.LanguageKoKrModule;
+import org.exbin.framework.plugin.language.pl_PL.LanguagePlPlModule;
+import org.exbin.framework.plugin.language.ru_RU.LanguageRuRuModule;
+import org.exbin.framework.plugin.language.zh_Hans.LanguageZhHansModule;
+import org.exbin.framework.plugin.language.zh_Hant.LanguageZhHantModule;
+import org.exbin.framework.plugins.iconset.material.IconSetMaterialModule;
 import org.exbin.framework.preferences.PreferencesModule;
 import org.exbin.framework.preferences.PreferencesWrapper;
 import org.exbin.framework.preferences.api.Preferences;
@@ -125,7 +140,7 @@ public class Installer extends ModuleInstall {
                 initialIntegrationOptions = new IntegrationPreferences(new PreferencesWrapper(NbPreferences.forModule(BinaryEditorPreferences.class)));
             }
 
-            applyIntegrationOptions(initialIntegrationOptions);
+            // applyIntegrationOptions(initialIntegrationOptions);
         });
     }
 
@@ -170,10 +185,18 @@ public class Installer extends ModuleInstall {
             List<Locale> match = Locale.filter(localeRange, locales);
             if (!match.isEmpty()) {
                 languageModule.switchToLanguage(match.get(0));
+            } else {
+                languageModule.switchToLanguage(Locale.US);
             }
         } else {
             languageModule.switchToLanguage(languageLocale);
         }
+
+        String iconSet = integrationOptions.getIconSet();
+        if (!iconSet.isEmpty()) {
+            languageModule.switchToIconSet(iconSet);
+        }
+
         for (IntegrationOptionsListener listener : INTEGRATION_OPTIONS_LISTENERS) {
             listener.integrationInit(integrationOptions);
         }
@@ -222,12 +245,44 @@ public class Installer extends ModuleInstall {
             modules.put(BinedBookmarksModule.class, new BinedBookmarksModule());
             modules.put(BinedMacroModule.class, new BinedMacroModule());
             modules.put(AboutModuleApi.class, new AboutModule());
+
+            // Language plugins
+            modules.put(LanguageCsCzModule.class, new LanguageCsCzModule());
+            modules.put(LanguageDeDeModule.class, new LanguageDeDeModule());
+            modules.put(LanguageEsEsModule.class, new LanguageEsEsModule());
+            modules.put(LanguageFrFrModule.class, new LanguageFrFrModule());
+            modules.put(LanguageItItModule.class, new LanguageItItModule());
+            modules.put(LanguageJaJpModule.class, new LanguageJaJpModule());
+            modules.put(LanguageKoKrModule.class, new LanguageKoKrModule());
+            modules.put(LanguagePlPlModule.class, new LanguagePlPlModule());
+            modules.put(LanguageRuRuModule.class, new LanguageRuRuModule());
+            modules.put(LanguageZhHansModule.class, new LanguageZhHansModule());
+            modules.put(LanguageZhHantModule.class, new LanguageZhHantModule());
+
+            // Iconset plugins
+            modules.put(IconSetMaterialModule.class, new IconSetMaterialModule());
         }
 
         private void init() {
             PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
             preferencesModule.setupAppPreferences(BinEdNetBeansPlugin.class);
             Preferences preferences = preferencesModule.getAppPreferences();
+
+            App.getModule(LanguageCsCzModule.class).register();
+            App.getModule(LanguageDeDeModule.class).register();
+            App.getModule(LanguageEsEsModule.class).register();
+            App.getModule(LanguageFrFrModule.class).register();
+            App.getModule(LanguageItItModule.class).register();
+            App.getModule(LanguageJaJpModule.class).register();
+            App.getModule(LanguageKoKrModule.class).register();
+            App.getModule(LanguagePlPlModule.class).register();
+            App.getModule(LanguageRuRuModule.class).register();
+            App.getModule(LanguageZhHansModule.class).register();
+            App.getModule(LanguageZhHantModule.class).register();
+            App.getModule(IconSetMaterialModule.class).register();
+
+            initialIntegrationOptions = new IntegrationPreferences(preferences);
+            applyIntegrationOptions(initialIntegrationOptions);
 
             FrameModuleApi frameModule = App.getModule(FrameModuleApi.class);
             frameModule.createMainMenu();
@@ -276,7 +331,6 @@ public class Installer extends ModuleInstall {
             binedCompareModule.registerToolsOptionsMenuActions();
 
             BinedBookmarksModule binedBookmarksModule = App.getModule(BinedBookmarksModule.class);
-            binedBookmarksModule.setEditorProvider(editorProvider);
 
             BinedMacroModule binedMacroModule = App.getModule(BinedMacroModule.class);
             binedMacroModule.setEditorProvider(editorProvider);
@@ -297,12 +351,24 @@ public class Installer extends ModuleInstall {
                         languageLocales.add(new LanguageRecord(new Locale("en", "US"), new ImageIcon(getClass().getResource(resourceBundle.getString("locale.englishFlag")))));
 
                         List<LanguageRecord> languageRecords = new ArrayList<>();
-                        languageRecords.add(new LanguageRecord(new Locale("ja", "JP"), new ImageIcon(getClass().getResource("/images/flags/jp.png"))));
-                        languageRecords.add(new LanguageRecord(Locale.forLanguageTag("zh-Hans"), new ImageIcon(getClass().getResource("/images/flags/cn.png"))));
-                        languageRecords.add(new LanguageRecord(new Locale("ko", "KR"), new ImageIcon(getClass().getResource("/images/flags/kr.png"))));
-
+                        List<LanguageProvider> languagePlugins = languageModule.getLanguagePlugins();
+                        for (LanguageProvider languageProvider : languagePlugins) {
+                            languageRecords.add(new LanguageRecord(languageProvider.getLocale(), languageProvider.getFlag().orElse(null)));
+                        }
                         languageLocales.addAll(languageRecords);
+
+                        List<String> iconSets = new ArrayList<>();
+                        iconSets.add("");
+                        List<String> iconSetNames = new ArrayList<>();
+                        iconSetNames.add(resourceBundle.getString("iconset.defaultTheme"));
+                        List<IconSetProvider> providers = App.getModule(LanguageModuleApi.class).getIconSets();
+                        for (IconSetProvider provider : providers) {
+                            iconSets.add(provider.getId());
+                            iconSetNames.add(provider.getName());
+                        }
+
                         panel.setLanguageLocales(languageLocales);
+                        panel.setIconSets(iconSets, iconSetNames);
                     }
 
                     return panel;
@@ -368,7 +434,6 @@ public class Installer extends ModuleInstall {
             menuContribution = menuManagement.registerMenuGroup(BinedModule.CODE_AREA_POPUP_MENU_ID, aboutMenuGroup);
             menuManagement.registerMenuRule(menuContribution, new PositionMenuContributionRule(PositionMode.BOTTOM_LAST));
             menuManagement.registerMenuRule(menuContribution, new SeparationMenuContributionRule(SeparationMode.ABOVE));
-            menuManagement.registerMenuRule(menuContribution, new GroupMenuContributionRule(aboutMenuGroup));
             menuContribution = menuManagement.registerMenuItem(BinedModule.CODE_AREA_POPUP_MENU_ID, helpOnlineModule.createOnlineHelpAction());
             menuManagement.registerMenuRule(menuContribution, new GroupMenuContributionRule(aboutMenuGroup));
             menuContribution = menuManagement.registerMenuItem(BinedModule.CODE_AREA_POPUP_MENU_ID, aboutModule.createAboutAction());
@@ -377,6 +442,12 @@ public class Installer extends ModuleInstall {
             ComponentActivationListener componentActivationListener
                     = frameModule.getFrameHandler().getComponentActivationListener();
             componentActivationListener.updated(EditorProvider.class, editorProvider);
+        }
+
+        @Nonnull
+        @Override
+        public Class getManifestClass() {
+            return BinEdNetBeansPlugin.class;
         }
 
         @Override
