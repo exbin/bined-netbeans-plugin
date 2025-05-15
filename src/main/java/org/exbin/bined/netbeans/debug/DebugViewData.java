@@ -16,7 +16,7 @@
 package org.exbin.bined.netbeans.debug;
 
 import org.exbin.auxiliary.binary_data.BinaryData;
-import org.exbin.auxiliary.binary_data.ByteArrayEditableData;
+import org.exbin.auxiliary.binary_data.array.ByteArrayEditableData;
 
 import java.io.IOException;
 import java.io.InputStream;

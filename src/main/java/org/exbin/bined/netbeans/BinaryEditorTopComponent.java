@@ -40,8 +40,8 @@ import org.exbin.framework.bined.BinEdFileHandler;
 import org.exbin.framework.bined.BinedModule;
 import org.exbin.framework.bined.UndoRedoWrapper;
 import org.exbin.framework.bined.gui.BinaryStatusPanel;
-import org.exbin.framework.bined.preferences.EditorPreferences;
-import org.exbin.framework.preferences.api.Preferences;
+import org.exbin.framework.bined.options.EditorOptions;
+import org.exbin.framework.preferences.api.OptionsStorage;
 import org.exbin.framework.preferences.api.PreferencesModuleApi;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.netbeans.core.spi.multiview.CloseOperationState;
@@ -97,7 +97,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         binedModule.getFileManager().initFileHandler(fileHandler);
 
         undoHandler = new BinaryUndoSwingHandler(fileHandler.getCodeArea(), new UndoRedo.Manager());
-        ((UndoRedoWrapper) fileHandler.getUndoRedo()).setUndoRedo(undoHandler);
+        ((UndoRedoWrapper) fileHandler.getUndoRedo().get()).setUndoRedo(undoHandler);
         fileHandler.getComponent().setUndoRedo(undoHandler);
         // Setting undo handler resets command handler so let's reiniciate - rework later
         binedModule.getFileManager().initCommandHandler(fileHandler.getComponent());
@@ -146,7 +146,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         }
 
         if (choice == JOptionPane.YES_OPTION) {
-            fileHandler.saveDocument();
+            fileHandler.saveFile();
         }
 
         return true;
@@ -275,9 +275,9 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         // TODO pass handling mode correctly
         
         PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
-        Preferences preferences = preferencesModule.getAppPreferences();
-        EditorPreferences editorPreferences = new EditorPreferences(preferences);
-        fileHandler.setNewData(editorPreferences.getFileHandlingMode());
+        OptionsStorage optionsStorage = preferencesModule.getAppPreferences();
+        EditorOptions editorOptions = new EditorOptions(optionsStorage);
+        fileHandler.setNewData(editorOptions.getFileHandlingMode());
         if (fileUri == null) {
             InputStream stream = null;
             try {

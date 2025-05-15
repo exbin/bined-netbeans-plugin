@@ -34,8 +34,6 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.exbin.bined.netbeans.options.gui.IntegrationOptionsPanel;
-import org.exbin.bined.netbeans.options.impl.IntegrationOptionsImpl;
-import org.exbin.bined.netbeans.preferences.IntegrationPreferences;
 import org.exbin.framework.App;
 import org.exbin.framework.Module;
 import org.exbin.framework.ModuleProvider;
@@ -44,13 +42,13 @@ import org.exbin.framework.about.api.AboutModuleApi;
 import org.exbin.framework.action.ActionModule;
 import org.exbin.framework.action.api.ActionModuleApi;
 import org.exbin.framework.action.api.ComponentActivationListener;
-import org.exbin.framework.action.api.GroupMenuContributionRule;
-import org.exbin.framework.action.api.MenuContribution;
-import org.exbin.framework.action.api.MenuManagement;
-import org.exbin.framework.action.api.PositionMenuContributionRule;
-import org.exbin.framework.action.api.PositionMode;
-import org.exbin.framework.action.api.SeparationMenuContributionRule;
-import org.exbin.framework.action.api.SeparationMode;
+import org.exbin.framework.menu.api.GroupMenuContributionRule;
+import org.exbin.framework.menu.api.MenuContribution;
+import org.exbin.framework.menu.api.MenuManagement;
+import org.exbin.framework.menu.api.PositionMenuContributionRule;
+import org.exbin.framework.menu.api.PositionMenuContributionRule.PositionMode;
+import org.exbin.framework.menu.api.SeparationMenuContributionRule;
+import org.exbin.framework.menu.api.SeparationMenuContributionRule.SeparationMode;
 import org.exbin.framework.bined.BinEdFileManager;
 import org.exbin.framework.bined.BinedModule;
 import org.exbin.framework.bined.bookmarks.BinedBookmarksModule;
@@ -60,7 +58,7 @@ import org.exbin.framework.bined.macro.BinedMacroModule;
 import org.exbin.framework.bined.objectdata.BinedObjectDataModule;
 import org.exbin.framework.bined.operation.BinedOperationModule;
 import org.exbin.framework.bined.operation.bouncycastle.BinedOperationBouncycastleModule;
-import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
+import org.exbin.framework.bined.options.BinaryEditorOptions;
 import org.exbin.framework.bined.search.BinedSearchModule;
 import org.exbin.framework.bined.tool.content.BinedToolContentModule;
 import org.exbin.framework.component.ComponentModule;
@@ -72,11 +70,15 @@ import org.exbin.framework.file.FileModule;
 import org.exbin.framework.file.api.FileModuleApi;
 import org.exbin.framework.frame.FrameModule;
 import org.exbin.framework.frame.api.FrameModuleApi;
+import org.exbin.framework.help.HelpModule;
+import org.exbin.framework.help.api.HelpModuleApi;
 import org.exbin.framework.help.online.HelpOnlineModule;
 import org.exbin.framework.language.LanguageModule;
 import org.exbin.framework.language.api.IconSetProvider;
 import org.exbin.framework.language.api.LanguageModuleApi;
 import org.exbin.framework.language.api.LanguageProvider;
+import org.exbin.framework.menu.MenuModule;
+import org.exbin.framework.menu.api.MenuModuleApi;
 import org.exbin.framework.operation.undo.OperationUndoModule;
 import org.exbin.framework.operation.undo.api.OperationUndoModuleApi;
 import org.exbin.framework.options.OptionsModule;
@@ -98,12 +100,17 @@ import org.exbin.framework.plugin.language.zh_Hant.LanguageZhHantModule;
 import org.exbin.framework.plugins.iconset.material.IconSetMaterialModule;
 import org.exbin.framework.preferences.PreferencesModule;
 import org.exbin.framework.preferences.PreferencesWrapper;
-import org.exbin.framework.preferences.api.Preferences;
+import org.exbin.framework.preferences.api.OptionsStorage;
 import org.exbin.framework.preferences.api.PreferencesModuleApi;
-import org.exbin.framework.ui.MainOptionsManager;
+import org.exbin.framework.toolbar.ToolBarModule;
+import org.exbin.framework.toolbar.api.ToolBarModuleApi;
 import org.exbin.framework.ui.UiModule;
 import org.exbin.framework.ui.api.UiModuleApi;
+import org.exbin.framework.ui.gui.LanguageOptionsPanel;
 import org.exbin.framework.ui.model.LanguageRecord;
+import org.exbin.framework.ui.theme.ThemeOptionsManager;
+import org.exbin.framework.ui.theme.UiThemeModule;
+import org.exbin.framework.ui.theme.api.UiThemeModuleApi;
 import org.exbin.framework.window.WindowModule;
 import org.exbin.framework.window.api.WindowModuleApi;
 import org.openide.modules.ModuleInstall;
@@ -118,6 +125,7 @@ import org.openide.windows.WindowManager;
 @ParametersAreNonnullByDefault
 public class Installer extends ModuleInstall {
 
+    private static final String BINARY_PLUGIN_ID = "binary";
     private static final List<IntegrationOptionsListener> INTEGRATION_OPTIONS_LISTENERS = new ArrayList<>();
 
     private static IntegrationOptions initialIntegrationOptions = null;
@@ -137,7 +145,7 @@ public class Installer extends ModuleInstall {
             if (initialIntegrationOptions == null) {
                 initIntegrations();
 
-                initialIntegrationOptions = new IntegrationPreferences(new PreferencesWrapper(NbPreferences.forModule(BinaryEditorPreferences.class)));
+                initialIntegrationOptions = new IntegrationOptions(new PreferencesWrapper(NbPreferences.forModule(BinaryEditorOptions.class)));
             }
 
             // applyIntegrationOptions(initialIntegrationOptions);
@@ -228,6 +236,10 @@ public class Installer extends ModuleInstall {
             modules.put(OptionsModuleApi.class, new OptionsModule());
             modules.put(PreferencesModuleApi.class, new PreferencesModule());
             modules.put(UiModuleApi.class, new UiModule());
+            modules.put(UiThemeModuleApi.class, new UiThemeModule());
+            modules.put(HelpModuleApi.class, new HelpModule());
+            modules.put(MenuModuleApi.class, new MenuModule());
+            modules.put(ToolBarModuleApi.class, new ToolBarModule());
             modules.put(ComponentModuleApi.class, new ComponentModule());
             modules.put(WindowModuleApi.class, new WindowModule());
             modules.put(FrameModuleApi.class, new FrameModule());
@@ -266,7 +278,7 @@ public class Installer extends ModuleInstall {
         private void init() {
             PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
             preferencesModule.setupAppPreferences(BinEdNetBeansPlugin.class);
-            Preferences preferences = preferencesModule.getAppPreferences();
+            OptionsStorage optionsStorage = preferencesModule.getAppPreferences();
 
             App.getModule(LanguageCsCzModule.class).register();
             App.getModule(LanguageDeDeModule.class).register();
@@ -281,18 +293,26 @@ public class Installer extends ModuleInstall {
             App.getModule(LanguageZhHantModule.class).register();
             App.getModule(IconSetMaterialModule.class).register();
 
-            initialIntegrationOptions = new IntegrationPreferences(preferences);
-            applyIntegrationOptions(initialIntegrationOptions);
-
-            FrameModuleApi frameModule = App.getModule(FrameModuleApi.class);
-            frameModule.createMainMenu();
-            ActionModuleApi actionModule = App.getModule(ActionModuleApi.class);
-            actionModule.registerMenuClipboardActions();
-            actionModule.registerToolBarClipboardActions();
+            BinedBookmarksModule binedBookmarksModule = App.getModule(BinedBookmarksModule.class);
+            binedBookmarksModule.register();
+            BinedMacroModule binedMacroModule = App.getModule(BinedMacroModule.class);
+            binedMacroModule.register();
+            BinedOperationBouncycastleModule binedOperationBouncycastleModule = App.getModule(BinedOperationBouncycastleModule.class);
+            binedOperationBouncycastleModule.register();
 
             LanguageModuleApi languageModule = App.getModule(LanguageModuleApi.class);
             ResourceBundle bundle = languageModule.getBundle(BinEdNetBeansPlugin.class);
             languageModule.setAppBundle(bundle);
+
+            initialIntegrationOptions = new IntegrationOptions(optionsStorage);
+            applyIntegrationOptions(initialIntegrationOptions);
+
+            UiModuleApi uiModule = App.getModule(UiModuleApi.class);
+            uiModule.executePostInitActions();
+            FrameModuleApi frameModule = App.getModule(FrameModuleApi.class);
+            frameModule.init();
+            ActionModuleApi actionModule = App.getModule(ActionModuleApi.class);
+            MenuModuleApi menuModule = App.getModule(MenuModuleApi.class);
 
             WindowModuleApi windowModule = App.getModule(WindowModuleApi.class);
             windowModule.setHideHeaderPanels(true);
@@ -300,27 +320,29 @@ public class Installer extends ModuleInstall {
             AboutModuleApi aboutModule = App.getModule(AboutModuleApi.class);
             OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
             optionsModule.setOptionsPanelType(OptionsPanelType.LIST);
-            optionsModule.registerMenuAction();
+            // optionsModule.registerMenuAction();
 
             HelpOnlineModule helpOnlineModule = App.getModule(HelpOnlineModule.class);
             try {
                 helpOnlineModule.setOnlineHelpUrl(new URL(bundle.getString("online_help_url")));
+                helpOnlineModule.registerOpeningHandler();
             } catch (MalformedURLException ex) {
                 Logger.getLogger(Installer.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             BinEdNetBeansEditorProvider editorProvider = new BinEdNetBeansEditorProvider();
+            EditorModuleApi editorModule = App.getModule(EditorModuleApi.class);
+            editorModule.registerEditor(BINARY_PLUGIN_ID, editorProvider);
             BinedModule binedModule = App.getModule(BinedModule.class);
             binedModule.setEditorProvider(editorProvider);
+            binedBookmarksModule.getBookmarksManager().setEditorProvider(editorProvider);
+            binedMacroModule.setEditorProvider(editorProvider);
 
             BinedSearchModule binedSearchModule = App.getModule(BinedSearchModule.class);
             binedSearchModule.setEditorProvider(editorProvider);
 
             BinedOperationModule binedOperationModule = App.getModule(BinedOperationModule.class);
-            binedOperationModule.setEditorProvider(editorProvider);
-
-            BinedOperationBouncycastleModule binedOperationBouncycastleModule = App.getModule(BinedOperationBouncycastleModule.class);
-            binedOperationBouncycastleModule.register();
+            binedOperationModule.addBasicMethods();
 
             BinedToolContentModule binedToolContentModule = App.getModule(BinedToolContentModule.class);
 
@@ -330,21 +352,24 @@ public class Installer extends ModuleInstall {
             BinedCompareModule binedCompareModule = App.getModule(BinedCompareModule.class);
             binedCompareModule.registerToolsOptionsMenuActions();
 
-            BinedBookmarksModule binedBookmarksModule = App.getModule(BinedBookmarksModule.class);
+            optionsModule.getOptionsPageManagement(BinedModule.MODULE_ID).registerPage(new DefaultOptionsPage<IntegrationOptions>() {
 
-            BinedMacroModule binedMacroModule = App.getModule(BinedMacroModule.class);
-            binedMacroModule.setEditorProvider(editorProvider);
-
-            optionsModule.addOptionsPage(new DefaultOptionsPage<IntegrationOptionsImpl>() {
+                public static final String PAGE_ID = "integration";
 
                 private IntegrationOptionsPanel panel;
 
                 @Nonnull
                 @Override
-                public OptionsComponent<IntegrationOptionsImpl> createPanel() {
+                public String getId() {
+                    return PAGE_ID;
+                }
+
+                @Nonnull
+                @Override
+                public OptionsComponent<IntegrationOptions> createComponent() {
                     if (panel == null) {
                         panel = new IntegrationOptionsPanel();
-                        ResourceBundle resourceBundle = App.getModule(LanguageModuleApi.class).getBundle(MainOptionsManager.class);
+                        ResourceBundle resourceBundle = App.getModule(LanguageModuleApi.class).getBundle(LanguageOptionsPanel.class);
                         panel.setDefaultLocaleName("<" + resourceBundle.getString("locale.defaultLanguage") + ">");
                         List<LanguageRecord> languageLocales = new ArrayList<>();
                         languageLocales.add(new LanguageRecord(Locale.ROOT, null));
@@ -360,7 +385,8 @@ public class Installer extends ModuleInstall {
                         List<String> iconSets = new ArrayList<>();
                         iconSets.add("");
                         List<String> iconSetNames = new ArrayList<>();
-                        iconSetNames.add(resourceBundle.getString("iconset.defaultTheme"));
+                        ResourceBundle themeResourceBundle = App.getModule(LanguageModuleApi.class).getBundle(ThemeOptionsManager.class);
+                        iconSetNames.add(themeResourceBundle.getString("iconset.defaultTheme"));
                         List<IconSetProvider> providers = App.getModule(LanguageModuleApi.class).getIconSets();
                         for (IconSetProvider provider : providers) {
                             iconSets.add(provider.getId());
@@ -382,26 +408,27 @@ public class Installer extends ModuleInstall {
 
                 @Nonnull
                 @Override
-                public IntegrationOptionsImpl createOptions() {
-                    return new IntegrationOptionsImpl();
+                public IntegrationOptions createOptions() {
+                    return new IntegrationOptions(optionsStorage);
                 }
 
                 @Override
-                public void loadFromPreferences(Preferences preferences, IntegrationOptionsImpl options) {
-                    options.loadFromPreferences(new IntegrationPreferences(preferences));
+                public void loadFromPreferences(OptionsStorage optionsStorage, IntegrationOptions options) {
+                    new IntegrationOptions(optionsStorage).copyTo(options);
                 }
 
                 @Override
-                public void saveToPreferences(Preferences preferences, IntegrationOptionsImpl options) {
-                    options.saveToPreferences(new IntegrationPreferences(preferences));
+                public void saveToPreferences(OptionsStorage optionsStorage, IntegrationOptions options) {
+                    options.copyTo(new IntegrationOptions(optionsStorage));
                 }
 
                 @Override
-                public void applyPreferencesChanges(IntegrationOptionsImpl options) {
+                public void applyPreferencesChanges(IntegrationOptions options) {
                     applyIntegrationOptions(options);
                 }
             });
             binedModule.registerCodeAreaPopupMenu();
+            editorModule.registerOptionsPanels();
             binedModule.registerOptionsPanels();
             binedSearchModule.registerEditFindPopupMenuActions();
             binedOperationModule.registerBlockEditPopupMenuActions();
@@ -409,34 +436,32 @@ public class Installer extends ModuleInstall {
             binedToolContentModule.registerDragDropContentMenu();
             binedInspectorModule.registerViewValuesPanelMenuActions();
             binedInspectorModule.registerOptionsPanels();
-            binedMacroModule.registerMacrosPopupMenuActions();
-            binedBookmarksModule.registerBookmarksPopupMenuActions();
 
             String toolsSubMenuId = BinEdNetBeansPlugin.PLUGIN_PREFIX + "toolsMenu";
-            MenuManagement menuManagement = actionModule.getMenuManagement(BinedModule.MODULE_ID);
-            menuManagement.registerMenu(toolsSubMenuId);
+            MenuManagement menuManagement = menuModule.getMenuManagement(BinedModule.CODE_AREA_POPUP_MENU_ID, BinedModule.MODULE_ID);
             Action toolsSubMenuAction = new AbstractAction(((FrameModule) frameModule).getResourceBundle().getString("toolsMenu.text")) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                 }
             };
             // toolsSubMenuAction.putValue(Action.SHORT_DESCRIPTION, ((FrameModule) frameModule).getResourceBundle().getString("toolsMenu.shortDescription"));
-            MenuContribution menuContribution = menuManagement.registerMenuItem(BinedModule.CODE_AREA_POPUP_MENU_ID, toolsSubMenuId, toolsSubMenuAction);
-            menuManagement.registerMenuRule(menuContribution, new PositionMenuContributionRule(PositionMode.BOTTOM_LAST));
-            menuContribution = menuManagement.registerMenuItem(toolsSubMenuId, binedCompareModule.createCompareFilesAction());
-            menuManagement.registerMenuRule(menuContribution, new PositionMenuContributionRule(PositionMode.TOP));
-            menuContribution = menuManagement.registerMenuItem(toolsSubMenuId, binedToolContentModule.createClipboardContentAction());
-            menuManagement.registerMenuRule(menuContribution, new PositionMenuContributionRule(PositionMode.TOP));
-            menuContribution = menuManagement.registerMenuItem(toolsSubMenuId, binedToolContentModule.createDragDropContentAction());
-            menuManagement.registerMenuRule(menuContribution, new PositionMenuContributionRule(PositionMode.TOP));
+            MenuContribution menuContribution = menuManagement.registerMenuItem(toolsSubMenuId, toolsSubMenuAction);
+            menuManagement.registerMenuRule(menuContribution, new PositionMenuContributionRule(PositionMenuContributionRule.PositionMode.BOTTOM_LAST));
+            MenuManagement subMenu = menuManagement.getSubMenu(toolsSubMenuId);
+            menuContribution = subMenu.registerMenuItem(binedCompareModule.createCompareFilesAction());
+            menuManagement.registerMenuRule(menuContribution, new PositionMenuContributionRule(PositionMenuContributionRule.PositionMode.TOP));
+            menuContribution = subMenu.registerMenuItem(binedToolContentModule.createClipboardContentAction());
+            menuManagement.registerMenuRule(menuContribution, new PositionMenuContributionRule(PositionMenuContributionRule.PositionMode.TOP));
+            menuContribution = subMenu.registerMenuItem(binedToolContentModule.createDragDropContentAction());
+            menuManagement.registerMenuRule(menuContribution, new PositionMenuContributionRule(PositionMenuContributionRule.PositionMode.TOP));
 
             String aboutMenuGroup = BinEdNetBeansPlugin.PLUGIN_PREFIX + "helpAboutMenuGroup";
-            menuContribution = menuManagement.registerMenuGroup(BinedModule.CODE_AREA_POPUP_MENU_ID, aboutMenuGroup);
-            menuManagement.registerMenuRule(menuContribution, new PositionMenuContributionRule(PositionMode.BOTTOM_LAST));
-            menuManagement.registerMenuRule(menuContribution, new SeparationMenuContributionRule(SeparationMode.ABOVE));
-            menuContribution = menuManagement.registerMenuItem(BinedModule.CODE_AREA_POPUP_MENU_ID, helpOnlineModule.createOnlineHelpAction());
+            menuContribution = menuManagement.registerMenuGroup(aboutMenuGroup);
+            menuManagement.registerMenuRule(menuContribution, new PositionMenuContributionRule(PositionMenuContributionRule.PositionMode.BOTTOM_LAST));
+            menuManagement.registerMenuRule(menuContribution, new SeparationMenuContributionRule(SeparationMenuContributionRule.SeparationMode.ABOVE));
+            menuContribution = menuManagement.registerMenuItem(helpOnlineModule.createOnlineHelpAction());
             menuManagement.registerMenuRule(menuContribution, new GroupMenuContributionRule(aboutMenuGroup));
-            menuContribution = menuManagement.registerMenuItem(BinedModule.CODE_AREA_POPUP_MENU_ID, aboutModule.createAboutAction());
+            menuContribution = menuManagement.registerMenuItem(aboutModule.createAboutAction());
             menuManagement.registerMenuRule(menuContribution, new GroupMenuContributionRule(aboutMenuGroup));
 
             ComponentActivationListener componentActivationListener

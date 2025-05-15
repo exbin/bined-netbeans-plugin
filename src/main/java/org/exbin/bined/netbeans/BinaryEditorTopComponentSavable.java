@@ -20,7 +20,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import org.exbin.framework.bined.gui.BinEdComponentFileApi;
+import org.exbin.framework.bined.BinEdFileHandler;
 import org.netbeans.spi.actions.AbstractSavable;
 import org.openide.loaders.DataObject;
 
@@ -33,9 +33,9 @@ import org.openide.loaders.DataObject;
 class BinaryEditorTopComponentSavable extends AbstractSavable {
 
     private DataObject dataObject;
-    private final BinEdComponentFileApi fileApi;
+    private final BinEdFileHandler fileApi;
 
-    public BinaryEditorTopComponentSavable(BinEdComponentFileApi fileApi) {
+    public BinaryEditorTopComponentSavable(BinEdFileHandler fileApi) {
         this.fileApi = fileApi;
     }
 
@@ -79,6 +79,6 @@ class BinaryEditorTopComponentSavable extends AbstractSavable {
 
     @Override
     protected void handleSave() throws IOException {
-        fileApi.saveDocument();
+        fileApi.saveFile();
     }
 }

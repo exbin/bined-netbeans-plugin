@@ -42,12 +42,12 @@ import org.exbin.framework.bined.inspector.gui.BasicValuesPanel;
 import org.exbin.framework.utils.WindowUtils;
 import org.exbin.framework.window.api.gui.CloseControlPanel;
 import org.exbin.auxiliary.binary_data.BinaryData;
-import org.exbin.auxiliary.binary_data.ByteArrayData;
+import org.exbin.auxiliary.binary_data.array.ByteArrayData;
 import org.exbin.bined.netbeans.debug.DebugViewDataProvider;
 import org.exbin.bined.netbeans.debug.DefaultDebugViewDataProvider;
 import org.exbin.framework.App;
 import org.exbin.framework.language.api.LanguageModuleApi;
-import org.exbin.framework.preferences.api.Preferences;
+import org.exbin.framework.preferences.api.OptionsStorage;
 import org.exbin.framework.preferences.api.PreferencesModuleApi;
 import org.exbin.framework.window.api.WindowHandler;
 import org.exbin.framework.window.api.WindowModuleApi;
@@ -352,7 +352,7 @@ public final class BinaryDebugAction implements ActionListener {
     public static boolean isWatchesViewNested() {
         PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
         // java.util.prefs.Preferences preferences = NbPreferences.forModule(ContextProvider.class).node(PREFERENCES_NAME); // NOI18N
-        Preferences preferences = preferencesModule.getAppPreferences();
-        return preferences.getBoolean(SHOW_WATCHES, true);
+        OptionsStorage optionsStorage = preferencesModule.getAppPreferences();
+        return optionsStorage.getBoolean(SHOW_WATCHES, true);
     }
 }

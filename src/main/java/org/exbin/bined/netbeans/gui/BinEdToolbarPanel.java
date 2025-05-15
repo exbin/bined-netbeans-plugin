@@ -28,10 +28,10 @@ import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JToolBar;
+import org.exbin.auxiliary.dropdownbutton.DropDownButton;
 import org.exbin.bined.CodeType;
 import org.exbin.framework.App;
-import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
-import org.exbin.framework.action.gui.DropDownButton;
+import org.exbin.framework.bined.options.BinaryEditorOptions;
 import org.exbin.framework.language.api.LanguageModuleApi;
 
 /**
@@ -215,8 +215,8 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         updateNonprintables();
     }
 
-    public void loadFromPreferences(BinaryEditorPreferences preferences) {
-        codeAreaControl.setCodeType(preferences.getCodeAreaPreferences().getCodeType());
+    public void loadFromPreferences(BinaryEditorOptions options) {
+        codeAreaControl.setCodeType(options.getCodeAreaOptions().getCodeType());
         updateCycleButtonState();
         updateNonprintables();
     }

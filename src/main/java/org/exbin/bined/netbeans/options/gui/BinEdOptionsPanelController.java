@@ -21,10 +21,14 @@ import javax.annotation.Nonnull;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import org.exbin.framework.App;
-import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
+import org.exbin.framework.bined.options.BinaryEditorOptions;
+import org.exbin.framework.options.OptionsModule;
+import org.exbin.framework.options.action.OptionsAction;
 import org.exbin.framework.options.api.OptionsModuleApi;
+import org.exbin.framework.options.api.OptionsPageReceiver;
 import org.exbin.framework.options.gui.OptionsListPanel;
 import org.exbin.framework.preferences.PreferencesWrapper;
+import org.exbin.framework.preferences.api.PreferencesModuleApi;
 import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
@@ -101,11 +105,14 @@ public final class BinEdOptionsPanelController extends OptionsPanelController {
     private OptionsListPanel getPanel() {
         if (panel == null) {
             panel = new OptionsListPanel();
-            OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
-            optionsModule.passOptionsPages(panel);
-            // PreferencesModule preferencesModule = App.getModule(PreferencesModule.class);
-            // panel.setPreferences(preferencesModule.getAppPreferences());
-            panel.setPreferences(new PreferencesWrapper(NbPreferences.forModule(BinaryEditorPreferences.class)));
+            PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
+            OptionsAction.OptionsPagesProvider optionsPagesProvider = (OptionsPageReceiver optionsTreePanel) -> {
+                OptionsModule optionsModule = (OptionsModule) App.getModule(OptionsModuleApi.class);
+                optionsModule.getOptionsPageManager().passOptionsPages(optionsTreePanel);
+            };
+
+            optionsPagesProvider.registerOptionsPages(panel);
+            panel.setPreferences(preferencesModule.getAppPreferences());
             panel.pagesFinished();
             panel.loadAllFromPreferences();
         }
