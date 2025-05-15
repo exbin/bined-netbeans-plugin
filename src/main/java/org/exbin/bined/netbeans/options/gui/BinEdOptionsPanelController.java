@@ -21,18 +21,15 @@ import javax.annotation.Nonnull;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 import org.exbin.framework.App;
-import org.exbin.framework.bined.options.BinaryEditorOptions;
 import org.exbin.framework.options.OptionsModule;
 import org.exbin.framework.options.action.OptionsAction;
 import org.exbin.framework.options.api.OptionsModuleApi;
 import org.exbin.framework.options.api.OptionsPageReceiver;
 import org.exbin.framework.options.gui.OptionsListPanel;
-import org.exbin.framework.preferences.PreferencesWrapper;
 import org.exbin.framework.preferences.api.PreferencesModuleApi;
 import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
-import org.openide.util.NbPreferences;
 
 /**
  * Binary editor options panel.

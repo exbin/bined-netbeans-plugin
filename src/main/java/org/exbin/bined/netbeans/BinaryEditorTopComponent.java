@@ -16,7 +16,6 @@
 package org.exbin.bined.netbeans;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,7 +28,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import org.exbin.bined.EditMode;
 import org.exbin.bined.netbeans.gui.BinEdFilePanel;
@@ -41,6 +39,7 @@ import org.exbin.framework.bined.BinedModule;
 import org.exbin.framework.bined.UndoRedoWrapper;
 import org.exbin.framework.bined.gui.BinaryStatusPanel;
 import org.exbin.framework.bined.options.EditorOptions;
+import org.exbin.framework.file.api.FileModuleApi;
 import org.exbin.framework.preferences.api.OptionsStorage;
 import org.exbin.framework.preferences.api.PreferencesModuleApi;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -55,7 +54,6 @@ import org.openide.util.Utilities;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.windows.TopComponent;
-import org.openide.windows.WindowManager;
 
 /**
  * Binary editor top component.
@@ -136,20 +134,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             return true;
         }
 
-        final Component parent = WindowManager.getDefault().getMainWindow();
-        final Object[] options = new Object[]{"Save", "Discard", "Cancel"};
-        final String message = "File " + displayName + " is modified. Save?";
-        final int choice = JOptionPane.showOptionDialog(parent, message, "Question", JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, null, options, JOptionPane.YES_OPTION);
-        if (choice == JOptionPane.CANCEL_OPTION) {
-            return false;
-        }
-
-        if (choice == JOptionPane.YES_OPTION) {
-            fileHandler.saveFile();
-        }
-
-        return true;
+        FileModuleApi fileModule = App.getModule(FileModuleApi.class);
+        return fileModule.getFileActions().showAskForSaveDialog(fileHandler, null, null);
     }
 
     private void updateModified() {

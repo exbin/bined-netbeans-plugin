@@ -43,7 +43,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
     private final List<BinaryDataUndoRedoChangeListener> listeners = new ArrayList<>();
     private final UndoRedo.Manager undoManager;
     private int commandPosition;
-    private int syncPointPosition = -1;
+    private int syncPosition = -1;
 
     /**
      * Creates a new instance.
@@ -214,11 +214,11 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
     }
 
     /**
-     * Performs revert to sync point.
+     * Performs revert to sync position.
      */
     @Override
     public void performSync() {
-        setCommandPosition(syncPointPosition);
+        setCommandPosition(syncPosition);
     }
 
     @Nonnull
@@ -228,17 +228,17 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
 
     @Override
     public int getSyncPosition() {
-        return syncPointPosition;
+        return syncPosition;
     }
 
     @Override
     public void setSyncPosition(int syncPosition) {
-        this.syncPointPosition = syncPosition;
+        this.syncPosition = syncPosition;
     }
 
     @Override
     public void setSyncPosition() {
-        this.syncPointPosition = commandPosition;
+        this.syncPosition = commandPosition;
     }
 
     /**
@@ -265,6 +265,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Nonnull
     @Override
     public Optional<BinaryDataCommand> getTopUndoCommand() {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -277,7 +278,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
 
     @Override
     public boolean isModified() {
-        return commandPosition != syncPointPosition;
+        return commandPosition != syncPosition;
     }
 
     @Override
