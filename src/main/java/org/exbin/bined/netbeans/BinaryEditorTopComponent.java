@@ -37,8 +37,8 @@ import org.exbin.framework.App;
 import org.exbin.framework.bined.BinEdFileHandler;
 import org.exbin.framework.bined.BinedModule;
 import org.exbin.framework.bined.UndoRedoWrapper;
+import org.exbin.framework.bined.editor.options.BinaryEditorOptions;
 import org.exbin.framework.bined.gui.BinaryStatusPanel;
-import org.exbin.framework.bined.options.EditorOptions;
 import org.exbin.framework.file.api.FileModuleApi;
 import org.exbin.framework.preferences.api.OptionsStorage;
 import org.exbin.framework.preferences.api.PreferencesModuleApi;
@@ -262,7 +262,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         
         PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
         OptionsStorage optionsStorage = preferencesModule.getAppPreferences();
-        EditorOptions editorOptions = new EditorOptions(optionsStorage);
+        BinaryEditorOptions editorOptions = new BinaryEditorOptions(optionsStorage);
         fileHandler.setNewData(editorOptions.getFileHandlingMode());
         if (fileUri == null) {
             InputStream stream = null;

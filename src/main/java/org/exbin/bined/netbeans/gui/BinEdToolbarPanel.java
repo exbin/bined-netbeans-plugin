@@ -31,8 +31,9 @@ import javax.swing.JToolBar;
 import org.exbin.auxiliary.dropdownbutton.DropDownButton;
 import org.exbin.bined.CodeType;
 import org.exbin.framework.App;
-import org.exbin.framework.bined.options.BinaryEditorOptions;
+import org.exbin.framework.bined.viewer.options.CodeAreaOptions;
 import org.exbin.framework.language.api.LanguageModuleApi;
+import org.exbin.framework.preferences.api.OptionsStorage;
 
 /**
  * Binary editor toolbar panel.
@@ -215,8 +216,8 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         updateNonprintables();
     }
 
-    public void loadFromPreferences(BinaryEditorOptions options) {
-        codeAreaControl.setCodeType(options.getCodeAreaOptions().getCodeType());
+    public void loadFromOptions(OptionsStorage options) {
+        codeAreaControl.setCodeType(new CodeAreaOptions(options).getCodeType());
         updateCycleButtonState();
         updateNonprintables();
     }

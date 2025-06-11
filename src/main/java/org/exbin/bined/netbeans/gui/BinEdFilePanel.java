@@ -49,7 +49,8 @@ import org.exbin.framework.bined.BinEdFileManager;
 import org.exbin.framework.bined.BinaryStatusApi;
 import org.exbin.framework.bined.FileHandlingMode;
 import org.exbin.framework.bined.action.GoToPositionAction;
-import org.exbin.framework.bined.options.BinaryEditorOptions;
+import org.exbin.framework.bined.editor.options.BinaryEditorOptions;
+import org.exbin.framework.bined.viewer.BinedViewerModule;
 import org.exbin.framework.file.api.FileHandler;
 import org.exbin.framework.options.api.OptionsModuleApi;
 import org.exbin.framework.preferences.api.PreferencesModuleApi;
@@ -116,6 +117,7 @@ public class BinEdFilePanel extends JPanel {
         toolbarPanel.setOptionsAction(optionsModule.createOptionsAction());
 
         BinedModule binedModule = App.getModule(BinedModule.class);
+        BinedViewerModule binedViewerModule = App.getModule(BinedViewerModule.class);
         BinEdNetBeansEditorProvider editorProvider = (BinEdNetBeansEditorProvider) binedModule.getEditorProvider();
         CodeAreaPopupMenuHandler codeAreaPopupMenuHandler =
                 binedModule.createCodeAreaPopupMenuHandler(BinedModule.PopupMenuVariant.EDITOR);
@@ -146,7 +148,7 @@ public class BinEdFilePanel extends JPanel {
         editorProvider.setActiveFile(fileHandler);
 
         BinEdFileManager fileManager = binedModule.getFileManager();
-        EncodingsHandler encodingsHandler = binedModule.getEncodingsHandler();
+        EncodingsHandler encodingsHandler = binedViewerModule.getEncodingsHandler();
         fileManager.registerStatusBar(new BinaryStatusPanel());
         fileManager.setStatusControlHandler(new BinaryStatusPanel.StatusControlHandler() {
             @Override
@@ -197,7 +199,7 @@ public class BinEdFilePanel extends JPanel {
                         BinaryEditorOptions options = new BinaryEditorOptions(preferencesModule.getAppPreferences());
                         if (editorProvider.releaseFile(fileHandler)) {
                             fileHandler.switchFileHandlingMode(newHandlingMode);
-                            options.getEditorOptions().setFileHandlingMode(newHandlingMode);
+                            options.setFileHandlingMode(newHandlingMode);
                         }
                         ((BinEdEditorProvider) editorProvider).updateStatus();
                     }
@@ -206,7 +208,7 @@ public class BinEdFilePanel extends JPanel {
         });
 
         PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
-        encodingsHandler.loadFromPreferences(new TextEncodingOptions(preferencesModule.getAppPreferences()));
+        encodingsHandler.loadFromOptions(new TextEncodingOptions(preferencesModule.getAppPreferences()));
         statusPanel = fileManager.getBinaryStatusPanel();
         add(statusPanel, BorderLayout.SOUTH);
 
