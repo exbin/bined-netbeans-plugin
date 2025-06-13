@@ -31,11 +31,13 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import org.exbin.bined.EditMode;
+import org.exbin.bined.netbeans.gui.BinEdFilePanel;
 import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.exbin.bined.swing.section.SectCodeArea;
 import org.exbin.framework.App;
 import org.exbin.framework.bined.BinEdFileHandler;
+import org.exbin.framework.bined.BinEdFileManager;
 import org.exbin.framework.bined.BinedModule;
 import org.exbin.framework.bined.handler.CodeAreaPopupMenuHandler;
 import org.netbeans.core.spi.multiview.CloseOperationState;
@@ -79,6 +81,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
     private static final String SHADOW_EXT = "shadow";
     private static final String ORIGINAL_FILE_ATTRIBUTE = "originalFile";
 
+    private final BinEdFilePanel filePanel;
     private final BinEdFileHandler fileHandler;
     private transient MultiViewElementCallback callback;
     private final Lookup lookup;
@@ -86,8 +89,10 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
     public BinEdEditor(Lookup lookup) {
         this.lookup = lookup;
         fileHandler = new BinEdFileHandler();
+        filePanel = new BinEdFilePanel();
         BinedModule binedModule = App.getModule(BinedModule.class);
-        binedModule.getFileManager().initFileHandler(fileHandler);
+        BinEdFileManager fileManager = binedModule.getFileManager();
+        fileManager.initFileHandler(fileHandler);
         BinaryUndoSwingHandler undoHandler = new BinaryUndoSwingHandler(fileHandler.getCodeArea(), new UndoRedo.Manager());
         fileHandler.getComponent().setUndoRedo(undoHandler);
 
@@ -115,6 +120,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
                 popupMenu.show(invoker, x, y);
             }
         });
+        filePanel.setFileHandler(fileHandler);
     }
 
     public static void registerIntegration() {
@@ -139,7 +145,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
     @Nonnull
     @Override
     public JComponent getVisualRepresentation() {
-        return fileHandler.getComponent();
+        return filePanel;
     }
 
     @Nonnull
@@ -155,10 +161,9 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
 
     @Override
     public CloseOperationState canCloseElement() {
-        // TODO
-//        if (binedManager.releaseFile(editorFile)) {
-//            return CloseOperationState.STATE_OK;        
-//        }
+        if (fileHandler.canSave()) {
+            return CloseOperationState.STATE_OK;        
+        }
 
         return MultiViewFactory.createUnsafeCloseState("", null, null);
     }

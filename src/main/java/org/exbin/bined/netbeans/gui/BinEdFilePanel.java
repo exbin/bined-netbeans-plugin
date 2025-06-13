@@ -72,7 +72,6 @@ public class BinEdFilePanel extends JPanel {
     public BinEdFilePanel() {
         super(new BorderLayout());
         add(toolbarPanel, BorderLayout.NORTH);
-        add(statusPanel, BorderLayout.SOUTH);
     }
 
     public void setFileHandler(BinEdFileHandler fileHandler) {
