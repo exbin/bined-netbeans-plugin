@@ -48,7 +48,8 @@ import org.exbin.framework.file.api.FileType;
 import org.exbin.framework.frame.api.FrameModuleApi;
 import org.exbin.framework.operation.undo.api.UndoRedoState;
 import org.exbin.framework.text.encoding.TextEncodingStatusApi;
-import org.exbin.framework.utils.ClipboardActionsHandler;
+import org.exbin.framework.action.api.clipboard.ClipboardSupported;
+import org.exbin.framework.action.api.clipboard.TextClipboardSupported;
 
 /**
  * Editor provider wrapper for NetBeans BinEd editor.
@@ -171,20 +172,20 @@ public class BinEdNetBeansEditorProvider implements MultiEditorProvider, BinEdEd
                 frameModule.getFrameHandler().getComponentActivationListener();
 
         SectCodeArea extCodeArea = null;
-        ClipboardActionsHandler clipboardActionsHandler = null;
+        TextClipboardSupported clipboardActionsHandler = null;
         UndoRedoState undoRedo = null;
         if (activeFile instanceof BinEdFileHandler) {
             BinEdFileHandler binEdFileHandler = (BinEdFileHandler) activeFile;
             extCodeArea = binEdFileHandler.getCodeArea();
             undoRedo = binEdFileHandler.getUndoRedo().orElse(null);
-            clipboardActionsHandler = binEdFileHandler.getClipboardActionsHandler();
+            clipboardActionsHandler = binEdFileHandler.getClipboardActionsController();
         }
 
         componentActivationListener.updated(FileHandler.class, activeFile);
         componentActivationListener.updated(FileOperations.class, this);
         componentActivationListener.updated(CodeAreaCore.class, extCodeArea);
         componentActivationListener.updated(UndoRedoState.class, undoRedo);
-        componentActivationListener.updated(ClipboardActionsHandler.class, clipboardActionsHandler);
+        componentActivationListener.updated(ClipboardSupported.class, clipboardActionsHandler);
 
         //        if (this.undoHandler != null) {
 //            this.undoHandler.setActiveFile(this.activeFile);

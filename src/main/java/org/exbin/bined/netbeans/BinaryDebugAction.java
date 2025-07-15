@@ -195,7 +195,7 @@ public final class BinaryDebugAction implements ActionListener {
             });
         }
 
-        controlPanel.setHandler(() -> {
+        controlPanel.setController(() -> {
             dialog.close();
         });
         dialog.show();
