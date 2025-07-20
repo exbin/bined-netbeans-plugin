@@ -121,7 +121,7 @@ public final class FileOpenAsBinaryAction implements ActionListener {
                 openAsBinaryAction.setAttribute(OpenAsBinaryAction.POSITION_ATTRIBUTE, actionPosition);
             }
         } catch (IOException ex) {
-            Logger.getLogger(OpenAsBinaryAction.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FileOpenAsBinaryAction.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -138,7 +138,7 @@ public final class FileOpenAsBinaryAction implements ActionListener {
                 node.refresh();
             }
         } catch (IOException ex) {
-            Logger.getLogger(OpenAsBinaryAction.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FileOpenAsBinaryAction.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
