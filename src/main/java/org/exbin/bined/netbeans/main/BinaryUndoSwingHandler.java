@@ -84,7 +84,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
 
             @Override
             public boolean canUndo() {
-                return undoManager.canUndo();
+                return true;
             }
 
             @Override
@@ -96,7 +96,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
 
             @Override
             public boolean canRedo() {
-                return undoManager.canRedo();
+                return true;
             }
 
             @Override

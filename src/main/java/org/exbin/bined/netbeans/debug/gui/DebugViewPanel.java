@@ -155,56 +155,7 @@ public class DebugViewPanel extends javax.swing.JPanel {
                         = frameModule.getFrameHandler().getComponentActivationListener();
 
                 componentActivationListener.updated(ActiveComponent.class, binaryDataComponent);
-                componentActivationListener.updated(ClipboardController.class, new TextClipboardController() {
-                    public void performCut() {
-                        codeArea.cut();
-                    }
-
-                    public void performCopy() {
-                        codeArea.copy();
-                    }
-
-                    public void performPaste() {
-                        codeArea.paste();
-                    }
-
-                    public void performDelete() {
-                        codeArea.delete();
-                    }
-
-                    public void performSelectAll() {
-                        codeArea.selectAll();
-                    }
-
-                    public boolean hasSelection() {
-                        return codeArea.hasSelection();
-                    }
-
-                    public boolean hasDataToCopy() {
-                        return hasSelection();
-                    }
-
-                    public boolean isEditable() {
-                        return codeArea.isEditable();
-                    }
-
-                    public boolean canSelectAll() {
-                        return true;
-                    }
-
-                    public boolean canPaste() {
-                        return codeArea.canPaste();
-                    }
-
-                    public boolean canDelete() {
-                        return true;
-                    }
-
-                    @Override
-                    public void setUpdateListener(ClipboardStateListener clipboardStateListener) {
-
-                    }
-                });
+                componentActivationListener.updated(ClipboardController.class, binaryDataComponent);
 
                 String popupMenuId = "DebugViewPanel.popup";
                 JPopupMenu popupMenu = codeAreaPopupMenuHandler.createPopupMenu(codeArea, popupMenuId, x, y);

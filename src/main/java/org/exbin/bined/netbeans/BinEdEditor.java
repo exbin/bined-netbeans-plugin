@@ -33,12 +33,12 @@ import javax.swing.event.PopupMenuListener;
 import org.exbin.bined.EditMode;
 import org.exbin.bined.netbeans.gui.BinEdFilePanel;
 import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
-import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.exbin.bined.swing.section.SectCodeArea;
 import org.exbin.framework.App;
 import org.exbin.framework.bined.BinEdFileHandler;
 import org.exbin.framework.bined.BinEdFileManager;
 import org.exbin.framework.bined.BinedModule;
+import org.exbin.framework.bined.UndoRedoWrapper;
 import org.exbin.framework.bined.handler.CodeAreaPopupMenuHandler;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
@@ -226,8 +226,8 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
     @Nonnull
     @Override
     public UndoRedo getUndoRedo() {
-// TODO        BinaryUndoSwingHandler undoHandler = (BinaryUndoSwingHandler) ((UndoHandlerWrapper) editorFile.getUndoHandler());
-        return null; // undoHandler.getUndoManager();
+        UndoRedoWrapper undoWrapper = (UndoRedoWrapper) (fileHandler.getUndoRedo().orElse(null));
+        return undoWrapper != null ? ((BinaryUndoSwingHandler) undoWrapper.getUndoRedo()).getUndoManager() : null;
     }
 
     @Nonnull
