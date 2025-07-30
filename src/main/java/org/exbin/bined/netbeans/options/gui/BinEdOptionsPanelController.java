@@ -103,6 +103,10 @@ public final class BinEdOptionsPanelController extends OptionsPanelController {
         if (panel == null) {
             panel = new OptionsListPanel();
             PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
+            String optionsRootCaption = App.getModule(OptionsModuleApi.class).getOptionsRootCaption().orElse(null);
+            if (optionsRootCaption != null) {
+                panel.setRootCaption(optionsRootCaption);
+            }
             OptionsAction.OptionsPagesProvider optionsPagesProvider = (OptionsPageReceiver optionsTreePanel) -> {
                 OptionsModule optionsModule = (OptionsModule) App.getModule(OptionsModuleApi.class);
                 optionsModule.getOptionsPageManager().passOptionsPages(optionsTreePanel);

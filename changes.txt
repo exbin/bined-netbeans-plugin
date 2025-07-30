@@ -1,4 +1,5 @@
 0.2.7
+- Fix for native file mode
 - Added Base 64 conversion
 - Added option for inspector input fields font
 - Added icon set support

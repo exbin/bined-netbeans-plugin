@@ -319,6 +319,7 @@ public class Installer extends ModuleInstall {
             AboutModuleApi aboutModule = App.getModule(AboutModuleApi.class);
             OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
             optionsModule.setOptionsPanelType(OptionsPanelType.LIST);
+            optionsModule.setOptionsRootCaption(App.getModule(LanguageModuleApi.class).getBundle(IntegrationOptionsPanel.class).getString("options.caption"));
             // optionsModule.registerMenuAction();
 
             HelpOnlineModule helpOnlineModule = App.getModule(HelpOnlineModule.class);

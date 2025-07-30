@@ -110,10 +110,9 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         setName(NbBundle.getMessage(BinaryEditorTopComponent.class, BINARY_EDITOR_TOP_COMPONENT_STRING));
         setToolTipText(NbBundle.getMessage(BinaryEditorTopComponent.class, BINARY_EDITOR_TOP_COMPONENT_HINT_STRING));
 
-        // TODO
-//        editorFile.setModifiedChangeListener(() -> {
-//            updateModified();
-//        });
+        undoHandler.addChangeListener(() -> {
+            updateModified();
+        });
 
         associateLookup(new AbstractLookup(content));
     }
@@ -259,7 +258,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
         boolean editable = dataObject.getPrimaryFile().canWrite();
         URI fileUri = dataObject.getPrimaryFile().toURI();
         // TODO pass handling mode correctly
-        
+
         PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
         OptionsStorage optionsStorage = preferencesModule.getAppPreferences();
         BinaryEditorOptions editorOptions = new BinaryEditorOptions(optionsStorage);
