@@ -302,6 +302,7 @@ dependencies {
     providedCompile netbeansApi('org-netbeans-spi-debugger-ui')
     providedCompile netbeansApi('org-netbeans-spi-debugger-jpda-ui')
     providedCompile netbeansApi('org-netbeans-spi-viewmodel')
+    providedCompile netbeansApi('org-netbeans-modules-diff')
     providedCompile netbeansModule('org.netbeans.modules', 'org-netbeans-modules-projectapi-nb')
 
     implementation(exbinFrameworkLibrary("exbin-framework"))

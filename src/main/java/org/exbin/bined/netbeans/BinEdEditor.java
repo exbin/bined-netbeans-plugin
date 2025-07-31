@@ -19,7 +19,9 @@ import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
@@ -33,6 +35,7 @@ import javax.swing.event.PopupMenuListener;
 import org.exbin.bined.EditMode;
 import org.exbin.bined.netbeans.gui.BinEdFilePanel;
 import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
+import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.exbin.bined.swing.section.SectCodeArea;
 import org.exbin.framework.App;
 import org.exbin.framework.bined.BinEdFileHandler;
@@ -49,6 +52,8 @@ import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
+import org.openide.text.CloneableEditor;
+import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
@@ -68,7 +73,7 @@ import org.openide.windows.TopComponent;
         position = BinEdEditor.POSITION_ATTRIBUTE
 )
 @ParametersAreNonnullByDefault
-public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // extends CloneableEditor
+public class BinEdEditor extends CloneableEditor implements MultiViewElement, HelpCtx.Provider {
 
     public static final String ELEMENT_ID = "org.exbin.bined.netbeans.BinEdEditor";
     public static final String ELEMENT_NAME = "org-exbin-bined-netbeans-BinEdEditor";
@@ -83,7 +88,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
 
     private final BinEdFilePanel filePanel;
     private final BinEdFileHandler fileHandler;
-    private transient MultiViewElementCallback callback;
+    protected transient MultiViewElementCallback callback;
     private final Lookup lookup;
 
     public BinEdEditor(Lookup lookup) {
@@ -124,8 +129,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
     }
 
     public static void registerIntegration() {
-        // TODO: Multiview doesn't work
-        /* Installer.addIntegrationOptionsListener(new Installer.IntegrationOptionsListener() {
+        Installer.addIntegrationOptionsListener(new Installer.IntegrationOptionsListener() {
             @Override
             public void integrationInit(IntegrationOptions integrationOptions) {
                 if (integrationOptions.isRegisterBinaryMultiview()) {
@@ -139,7 +143,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
             public void uninstallIntegration() {
                 uninstall();
             }
-        }); */
+        });
     }
 
     @Nonnull
@@ -162,7 +166,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
     @Override
     public CloseOperationState canCloseElement() {
         if (fileHandler.canSave()) {
-            return CloseOperationState.STATE_OK;        
+            return CloseOperationState.STATE_OK;
         }
 
         return MultiViewFactory.createUnsafeCloseState("", null, null);
@@ -273,12 +277,12 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
         FileObject allTypesFolder = FileUtil.getSystemConfigFile("Editors/" + MULTIVIEW_FOLDER);
         FileObject binaryTypeFolder = FileUtil.getSystemConfigFile("Editors/application/octet-stream/" + MULTIVIEW_FOLDER);
         try {
-            FileObject allTypesObject = allTypesFolder.getFileObject(BinEdEditorAll.ELEMENT_ALL_NAME, "disabled");
+            FileObject allTypesObject = allTypesFolder.getFileObject(BinEdEditorMulti.ELEMENT_MULTI_NAME, "disabled");
             if (allTypesObject != null) {
                 FileLock lock = null;
                 try {
                     lock = allTypesObject.lock();
-                    allTypesObject.rename(lock, BinEdEditorAll.ELEMENT_ALL_NAME, "instance");
+                    allTypesObject.rename(lock, BinEdEditorMulti.ELEMENT_MULTI_NAME, "instance");
                 } finally {
                     if (lock != null) {
                         lock.releaseLock();
@@ -303,6 +307,15 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
             Logger.getLogger(BinEdEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        final FileObject editors = FileUtil.getConfigFile(EDITORS_FOLDER);
+        for (FileObject mimeType : editors.getChildren()) {
+            String type = mimeType.getName();
+            for (FileObject mimeSubType : mimeType.getChildren()) {
+                String subType = mimeSubType.getName();
+                installForMimeType(mimeSubType, type, subType);
+            }
+        }
+        
         /*        FileObject targetFolder = FileUtil.getSystemConfigFile(EDITORS_FOLDER + "/" + MULTIVIEW_FOLDER);
         targetFolder.move(FileLock.NONE, targetFolder, ELEMENT_ID, SHADOW_EXT)
         FileObject elementRecord = targetFolder.getFileObject(ELEMENT_ID + "." + SHADOW_EXT);
@@ -322,12 +335,12 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
         FileObject allTypesFolder = FileUtil.getSystemConfigFile("Editors/" + MULTIVIEW_FOLDER);
         FileObject binaryTypeFolder = FileUtil.getSystemConfigFile("Editors/application/octet-stream/" + MULTIVIEW_FOLDER);
         try {
-            FileObject allTypesObject = allTypesFolder.getFileObject(BinEdEditorAll.ELEMENT_ALL_NAME, "instance");
+            FileObject allTypesObject = allTypesFolder.getFileObject(BinEdEditorMulti.ELEMENT_MULTI_NAME, "instance");
             if (allTypesObject != null) {
                 FileLock lock = null;
                 try {
                     lock = allTypesObject.lock();
-                    allTypesObject.rename(lock, BinEdEditorAll.ELEMENT_ALL_NAME, "disabled");
+                    allTypesObject.rename(lock, BinEdEditorMulti.ELEMENT_MULTI_NAME, "disabled");
                 } finally {
                     if (lock != null) {
                         lock.releaseLock();
@@ -387,7 +400,7 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
             }
         }
     }
-
+*/
     private static void installForMimeType(FileObject fileType, String mimeType, String mimeSubType) {
         if (!fileType.isFolder()) {
             return;
@@ -406,24 +419,30 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
 
             final FileObject editorRecord = multiViewFolder.getFileObject(ELEMENT_ID + "." + SHADOW_EXT);
             if (editorRecord == null) {
-                final FileObject record = multiViewFolder.createData(ELEMENT_ID + "." + SHADOW_EXT);
+                FileObject record = multiViewFolder.createData(ELEMENT_ID + "." + SHADOW_EXT);
                 record.setAttribute(ORIGINAL_FILE_ATTRIBUTE, ELEMENT_INSTANCE);
                 record.setAttribute("position", POSITION_ATTRIBUTE);
                 record.setAttribute("persistenceType", TopComponent.PERSISTENCE_NEVER);
                 
-/ *                    
-                final FileObject record = multiViewFolder.createData(ELEMENT_ID, INSTANCE_EXT);
+                // Register multiview
+                record = multiViewFolder.createData(BinEdEditorMulti.ELEMENT_MULTI_ID);
                 record.setAttribute("displayName", "Binary");
-                record.setAttribute("class", "org.exbin.bined.netbeans.BinEdMultiViewElement");
+                record.setAttribute("mimeType", "");
+                record.setAttribute("class", "org.exbin.bined.netbeans.BinEdEditorMulti");
                 Method method = org.netbeans.core.spi.multiview.MultiViewFactory.class.getMethod("createMultiViewDescription", Map.class);
                 record.setAttribute("instanceCreate", method);
                 record.setAttribute("instanceClass", "org.netbeans.core.multiview.ContextAwareDescription");
-                record.setAttribute("preferredID", ELEMENT_ID);
-                record.setAttribute("position", POSITION_ATTRIBUTE);
-                record.setAttribute("persistenceType", TopComponent.PERSISTENCE_NEVER); * /
+                record.setAttribute("iconBase", "org/exbin/bined/netbeans/resources/icons/icon.png");
+                record.setAttribute("preferredID", BinEdEditorMulti.ELEMENT_ID);
+                record.setAttribute("position", BinEdEditorMulti.POSITION_ATTRIBUTE);
+                record.setAttribute("persistenceType", TopComponent.PERSISTENCE_NEVER);
             }
         } catch (IOException ex) {
             Logger.getLogger(BinEdEditor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchMethodException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (SecurityException ex) {
+            Exceptions.printStackTrace(ex);
         }
     }
 
@@ -458,5 +477,4 @@ public class BinEdEditor implements MultiViewElement, HelpCtx.Provider { // exte
             Logger.getLogger(BinEdEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-     */
 }

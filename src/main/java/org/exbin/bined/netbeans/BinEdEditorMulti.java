@@ -15,7 +15,9 @@
  */
 package org.exbin.bined.netbeans;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import javax.swing.JComponent;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
@@ -25,23 +27,22 @@ import org.openide.windows.TopComponent;
  *
  * @author ExBin Project (https://exbin.org)
  */
-/*
 @MultiViewElement.Registration(
         displayName = "#BinEdEditor.displayName",
         mimeType = "",
         persistenceType = TopComponent.PERSISTENCE_NEVER,
         iconBase = "org/exbin/bined/netbeans/resources/icons/icon.png",
-        preferredID = BinEdEditorAll.ELEMENT_ALL_ID,
-        position = BinEdEditorAll.POSITION_ALL_ATTRIBUTE
-) */
+        preferredID = BinEdEditorMulti.ELEMENT_MULTI_ID,
+        position = BinEdEditorMulti.POSITION_ALL_ATTRIBUTE
+)
 @ParametersAreNonnullByDefault
-public class BinEdEditorAll extends BinEdEditor {
+public class BinEdEditorMulti extends BinEdEditor implements MultiViewElement {
 
-    public static final String ELEMENT_ALL_ID = "org.exbin.bined.netbeans.BinEdEditorAll";
-    public static final String ELEMENT_ALL_NAME = "org-exbin-bined-netbeans-BinEdEditorAll";
+    public static final String ELEMENT_MULTI_ID = "org.exbin.bined.netbeans.BinEdEditorMulti";
+    public static final String ELEMENT_MULTI_NAME = "org-exbin-bined-netbeans-BinEdEditorMulti";
     public static final int POSITION_ALL_ATTRIBUTE = 900006;
 
-    public BinEdEditorAll(Lookup lookup) {
+    public BinEdEditorMulti(Lookup lookup) {
         super(lookup);
     }
 }
