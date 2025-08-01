@@ -86,46 +86,13 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
     private static final String SHADOW_EXT = "shadow";
     private static final String ORIGINAL_FILE_ATTRIBUTE = "originalFile";
 
-    private final BinEdFilePanel filePanel;
-    private final BinEdFileHandler fileHandler;
+    private BinEdFilePanel filePanel;
+    private BinEdFileHandler fileHandler;
     protected transient MultiViewElementCallback callback;
     private final Lookup lookup;
 
     public BinEdEditor(Lookup lookup) {
         this.lookup = lookup;
-        fileHandler = new BinEdFileHandler();
-        filePanel = new BinEdFilePanel();
-        BinedModule binedModule = App.getModule(BinedModule.class);
-        BinEdFileManager fileManager = binedModule.getFileManager();
-        fileManager.initFileHandler(fileHandler);
-        BinaryUndoSwingHandler undoHandler = new BinaryUndoSwingHandler(fileHandler.getCodeArea(), new UndoRedo.Manager());
-        fileHandler.getComponent().setUndoRedo(undoHandler);
-
-        SectCodeArea codeArea = fileHandler.getCodeArea();
-        CodeAreaPopupMenuHandler codeAreaPopupMenuHandler = binedModule.createCodeAreaPopupMenuHandler(BinedModule.PopupMenuVariant.EDITOR);
-        codeArea.setComponentPopupMenu(new JPopupMenu() {
-            @Override
-            public void show(Component invoker, int x, int y) {
-                String popupMenuId = "BinEdFilePanel.popup";
-                JPopupMenu popupMenu = codeAreaPopupMenuHandler.createPopupMenu(codeArea, popupMenuId, x, y);
-                popupMenu.addPopupMenuListener(new PopupMenuListener() {
-                    @Override
-                    public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-                    }
-
-                    @Override
-                    public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-                        codeAreaPopupMenuHandler.dropPopupMenu(popupMenuId);
-                    }
-
-                    @Override
-                    public void popupMenuCanceled(PopupMenuEvent e) {
-                    }
-                });
-                popupMenu.show(invoker, x, y);
-            }
-        });
-        filePanel.setFileHandler(fileHandler);
     }
 
     public static void registerIntegration() {
@@ -149,6 +116,41 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
     @Nonnull
     @Override
     public JComponent getVisualRepresentation() {
+        if (filePanel == null) {
+            fileHandler = new BinEdFileHandler();
+            filePanel = new BinEdFilePanel();
+            BinedModule binedModule = App.getModule(BinedModule.class);
+            BinEdFileManager fileManager = binedModule.getFileManager();
+            fileManager.initFileHandler(fileHandler);
+            BinaryUndoSwingHandler undoHandler = new BinaryUndoSwingHandler(fileHandler.getCodeArea(), new UndoRedo.Manager());
+            fileHandler.getComponent().setUndoRedo(undoHandler);
+
+            SectCodeArea codeArea = fileHandler.getCodeArea();
+            CodeAreaPopupMenuHandler codeAreaPopupMenuHandler = binedModule.createCodeAreaPopupMenuHandler(BinedModule.PopupMenuVariant.EDITOR);
+            codeArea.setComponentPopupMenu(new JPopupMenu() {
+                @Override
+                public void show(Component invoker, int x, int y) {
+                    String popupMenuId = "BinEdFilePanel.popup";
+                    JPopupMenu popupMenu = codeAreaPopupMenuHandler.createPopupMenu(codeArea, popupMenuId, x, y);
+                    popupMenu.addPopupMenuListener(new PopupMenuListener() {
+                        @Override
+                        public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                        }
+
+                        @Override
+                        public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                            codeAreaPopupMenuHandler.dropPopupMenu(popupMenuId);
+                        }
+
+                        @Override
+                        public void popupMenuCanceled(PopupMenuEvent e) {
+                        }
+                    });
+                    popupMenu.show(invoker, x, y);
+                }
+            });
+            filePanel.setFileHandler(fileHandler);
+        }
         return filePanel;
     }
 

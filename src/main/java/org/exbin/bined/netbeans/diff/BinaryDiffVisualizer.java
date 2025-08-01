@@ -19,11 +19,14 @@ import java.awt.Component;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
-import javax.swing.JPanel;
+import javax.annotation.Nonnull;
+import org.exbin.bined.netbeans.Installer;
+import org.exbin.bined.netbeans.options.IntegrationOptions;
+import org.exbin.bined.swing.section.diff.SectCodeAreaDiffPanel;
 import org.netbeans.api.diff.Difference;
 
 /**
- * Binary editor options panel.
+ * Binary files comparator difference visualizer.
  *
  * @author ExBin Project (https://exbin.org)
  */
@@ -31,36 +34,35 @@ import org.netbeans.api.diff.Difference;
 public class BinaryDiffVisualizer extends org.netbeans.spi.diff.DiffVisualizer implements Serializable {
 
     private boolean contextMode = true;
-    
-    static final long serialVersionUID = -2481513747957146262L;
 
-    /**
-     * Creates a new instance of TextDiffVisualizer
-     */
     public BinaryDiffVisualizer() {
     }
 
     /**
-     * Get the display name of this diff visualizer.
+     * Returns the display name of this diff visualizer.
      *
      * @return name
      */
+    @Nonnull
     public String getDisplayName() {
         return "Binary";
     }
 
     /**
-     * Get a short description of this diff visualizer.
+     * Returns a short description of this diff visualizer.
      *
      * @return description
      */
+    @Nonnull
     public String getShortDescription() {
         return "Binary";
     }
 
+    @Nonnull
     @Override
     public Component createView(Difference[] diffs, String name1, String title1, Reader r1, String name2, String title2, Reader r2, String MIMEType) throws IOException {
-        return new JPanel();
+        SectCodeAreaDiffPanel panel = new SectCodeAreaDiffPanel();
+        return panel;
     }
 
     /**
@@ -79,5 +81,31 @@ public class BinaryDiffVisualizer extends org.netbeans.spi.diff.DiffVisualizer i
      */
     public void setContextMode(boolean contextMode) {
         this.contextMode = contextMode;
+    }
+
+    public static void registerIntegration() {
+        Installer.addIntegrationOptionsListener(new Installer.IntegrationOptionsListener() {
+            @Override
+            public void integrationInit(IntegrationOptions integrationOptions) {
+                if (integrationOptions.isRegisterByteToByteDiffTool()) {
+                    install();
+                } else {
+                    uninstall();
+                }
+            }
+
+            @Override
+            public void uninstallIntegration() {
+                uninstall();
+            }
+        });
+    }
+
+    public static void install() {
+
+    }
+
+    public static void uninstall() {
+
     }
 }
