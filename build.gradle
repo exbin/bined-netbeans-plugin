@@ -240,6 +240,9 @@ nbm {
     friendPackages {
         add('org.exbin.bined.netbeans.api.*')
     }
+//    recommendsPackages {
+//        add('org.exbin.bined.netbeans.api.*')
+//    }
 
 // Uncomment for releases for self-signing nbm
 //    keyStore {

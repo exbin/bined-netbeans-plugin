@@ -30,7 +30,7 @@ import org.netbeans.api.diff.Difference;
  *
  * @author ExBin Project (https://exbin.org)
  */
-@org.openide.util.lookup.ServiceProvider(service = org.netbeans.spi.diff.DiffVisualizer.class)
+//@org.openide.util.lookup.ServiceProvider(service = org.netbeans.spi.diff.DiffVisualizer.class)
 public class BinaryDiffVisualizer extends org.netbeans.spi.diff.DiffVisualizer implements Serializable {
 
     private boolean contextMode = true;
