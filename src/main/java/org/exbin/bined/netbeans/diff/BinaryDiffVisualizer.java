@@ -102,7 +102,7 @@ public class BinaryDiffVisualizer extends org.netbeans.spi.diff.DiffVisualizer i
     }
 
     public static void install() {
-
+//        org.openide.util.Lookup lookup = org.openide.util.Lookup.getDefault();
     }
 
     public static void uninstall() {
