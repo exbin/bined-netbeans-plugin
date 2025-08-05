@@ -154,8 +154,11 @@ configurations {
 
 sourceSets {
     main {
+        java {
+            srcDirs("${rootDir}/src/main/depjava")
+        }
         resources {
-            srcDirs("${rootDir}/src/main/languages")
+            srcDirs("${rootDir}/src/main/languages", "${rootDir}/src/main/depresources")
         }
     }
 }
@@ -293,6 +296,7 @@ dependencies {
     providedCompile netbeansApi('org-openide-loaders')
     providedCompile netbeansApi('org-openide-modules')
     providedCompile netbeansApi('org-openide-nodes')
+    providedCompile netbeansApi('org-openide-text')
     providedCompile netbeansApi('org-openide-util')
     providedCompile netbeansApi('org-openide-util-lookup')
     providedCompile netbeansApi('org-openide-util-ui')

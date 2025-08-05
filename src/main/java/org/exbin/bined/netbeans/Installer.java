@@ -137,12 +137,8 @@ public class Installer extends ModuleInstall {
                 appModuleProvider.createModules();
                 App.setModuleProvider(appModuleProvider);
                 appModuleProvider.init();
-            }
-
-            if (initialIntegrationOptions == null) {
                 initIntegrations();
-
-                initialIntegrationOptions = new IntegrationOptions(App.getModule(PreferencesModuleApi.class).getAppPreferences());
+                
             }
 
             // applyIntegrationOptions(initialIntegrationOptions);

@@ -66,7 +66,7 @@ import org.openide.windows.TopComponent;
  */
 @MultiViewElement.Registration(
         displayName = "#BinEdEditor.displayName",
-        mimeType = BinEdDataObject.MIME,
+        mimeType = BinEdDataObject.MIME_TYPE,
         persistenceType = TopComponent.PERSISTENCE_NEVER,
         iconBase = "org/exbin/bined/netbeans/resources/icons/icon.png",
         preferredID = BinEdEditor.ELEMENT_ID,
@@ -258,13 +258,13 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
                     fileHandler.loadFromStream(stream);
                 }
             } catch (IOException ex) {
-                Logger.getLogger(BinEdFileHandler.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(BinEdEditor.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
                 if (stream != null) {
                     try {
                         stream.close();
                     } catch (IOException ex) {
-                        Logger.getLogger(BinEdFileHandler.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(BinEdEditor.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
@@ -409,7 +409,7 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
         }
 
         // It seems that NetBeans registers types with -nb postfix for dynamically loaded plugins
-        if (mimeType.endsWith(DYNAMIC_FILETYPE_PREFIX) || BinEdDataObject.MIME.equals(mimeType + "/" + mimeSubType)) {
+        if (mimeType.endsWith(DYNAMIC_FILETYPE_PREFIX) || BinEdDataObject.MIME_TYPE.equals(mimeType + "/" + mimeSubType)) {
             return;
         }
 
@@ -454,7 +454,7 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
         }
 
         // It seems that NetBeans registers types with -nb postfix for dynamically loaded plugins
-        if (mimeType.endsWith(DYNAMIC_FILETYPE_PREFIX) || BinEdDataObject.MIME.equals(mimeType + "/" + mimeSubType)) {
+        if (mimeType.endsWith(DYNAMIC_FILETYPE_PREFIX) || BinEdDataObject.MIME_TYPE.equals(mimeType + "/" + mimeSubType)) {
             return;
         }
 
