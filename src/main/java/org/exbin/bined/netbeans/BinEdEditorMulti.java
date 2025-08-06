@@ -18,12 +18,13 @@ package org.exbin.bined.netbeans;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JComponent;
+import javax.swing.event.DocumentListener;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
 
 /**
- * BinEd native NetBeans editor for all MIME types.
+ * BinEd multiview tab editor for all MIME types.
  *
  * @author ExBin Project (https://exbin.org)
  */
@@ -42,7 +43,13 @@ public class BinEdEditorMulti extends BinEdEditor implements MultiViewElement {
     public static final String ELEMENT_MULTI_NAME = "org-exbin-bined-netbeans-BinEdEditorMulti";
     public static final int POSITION_ALL_ATTRIBUTE = 900006;
 
+//    private final DocumentListener documentListener;
+    
     public BinEdEditorMulti(Lookup lookup) {
         super(lookup);
+    }
+    
+    public void openFile() {
+        
     }
 }

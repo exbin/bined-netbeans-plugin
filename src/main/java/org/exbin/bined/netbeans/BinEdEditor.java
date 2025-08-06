@@ -64,14 +64,14 @@ import org.openide.windows.TopComponent;
  *
  * @author ExBin Project (https://exbin.org)
  */
-@MultiViewElement.Registration(
-        displayName = "#BinEdEditor.displayName",
-        mimeType = BinEdDataObject.MIME_TYPE,
-        persistenceType = TopComponent.PERSISTENCE_NEVER,
-        iconBase = "org/exbin/bined/netbeans/resources/icons/icon.png",
-        preferredID = BinEdEditor.ELEMENT_ID,
-        position = BinEdEditor.POSITION_ATTRIBUTE
-)
+//@MultiViewElement.Registration(
+//        displayName = "#BinEdEditor.displayName",
+//        mimeType = BinEdDataObject.MIME_TYPE,
+//        persistenceType = TopComponent.PERSISTENCE_NEVER,
+//        iconBase = "org/exbin/bined/netbeans/resources/icons/icon.png",
+//        preferredID = BinEdEditor.ELEMENT_ID,
+//        position = BinEdEditor.POSITION_ATTRIBUTE
+//)
 @ParametersAreNonnullByDefault
 public class BinEdEditor extends CloneableEditor implements MultiViewElement, HelpCtx.Provider {
 
@@ -99,11 +99,11 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
         Installer.addIntegrationOptionsListener(new Installer.IntegrationOptionsListener() {
             @Override
             public void integrationInit(IntegrationOptions integrationOptions) {
-                if (integrationOptions.isRegisterBinaryMultiview()) {
-                    install();
-                } else {
-                    uninstall();
-                }
+//                if (integrationOptions.isRegisterBinaryMultiview()) {
+//                    install();
+//                } else {
+//                    uninstall();
+//                }
             }
 
             @Override
@@ -124,6 +124,10 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
             fileManager.initFileHandler(fileHandler);
             BinaryUndoSwingHandler undoHandler = new BinaryUndoSwingHandler(fileHandler.getCodeArea(), new UndoRedo.Manager());
             fileHandler.getComponent().setUndoRedo(undoHandler);
+            undoHandler.addChangeListener(() -> {
+                DataObject dataObject = lookup.lookup(DataObject.class);
+                dataObject.setModified(undoHandler.isModified());
+            });
 
             SectCodeArea codeArea = fileHandler.getCodeArea();
             CodeAreaPopupMenuHandler codeAreaPopupMenuHandler = binedModule.createCodeAreaPopupMenuHandler(BinedModule.PopupMenuVariant.EDITOR);
@@ -205,10 +209,11 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
         DataObject dataObject = lookup.lookup(DataObject.class);
         if (dataObject != null) {
             if (dataObject instanceof BinEdDataObject) {
-                ((BinEdDataObject) dataObject).setVisualEditor(this);
+                // throw new UnsupportedOperationException("Not supported yet.");
+                // ((BinEdDataObject) dataObject).setVisualEditor(this);
             }
 
-            openFile(fileHandler, dataObject);
+            openFile(dataObject);
 
             if (callback != null) {
                 callback.updateTitle(dataObject.getPrimaryFile().getNameExt());
@@ -246,7 +251,7 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
         fileHandler.saveFile();
     }
 
-    public void openFile(BinEdFileHandler fileHandler, DataObject dataObject) {
+    public void openFile(DataObject dataObject) {
         SectCodeArea codeArea = fileHandler.getCodeArea();
         boolean editable = dataObject.getPrimaryFile().canWrite();
         URI fileUri = dataObject.getPrimaryFile().toURI();

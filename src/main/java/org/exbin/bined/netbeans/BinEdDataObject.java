@@ -16,14 +16,20 @@
 package org.exbin.bined.netbeans;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.netbeans.api.actions.Savable;
+import org.openide.awt.UndoRedo;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
+import org.openide.text.DataEditorSupport;
+import org.openide.util.Lookup;
 
 /**
  * BinEd data object.
@@ -31,38 +37,53 @@ import org.openide.loaders.MultiFileLoader;
  * @author ExBin Project (https://exbin.org)
  */
 @ParametersAreNonnullByDefault
-@MIMEResolver.ExtensionRegistration(displayName = "#BinEdDataObject.extensionDisplayName", mimeType = BinEdDataObject.MIME_TYPE, extension = {BinEdDataObject.MMD_EXT}, showInFileChooser = {"#BinEdDataObject.extensionDisplayName"})
+@MIMEResolver.ExtensionRegistration(displayName = "#BinEdDataObject.extensionDisplayName", mimeType = BinEdDataObject.MIME_TYPE, extension = {BinEdDataObject.MMD_EXT})
 //@MIMEResolver.Registration(displayName = "#BinEdDataObject.extensionDisplayName", resource = "mime-resolver.xml", showInFileChooser = {"#BinEdDataObject.extensionDisplayName"})
-// Doesn't work
-//<?xml version="1.0" encoding="UTF-8"?>
-//<!DOCTYPE MIME-resolver PUBLIC "-//NetBeans//DTD MIME Resolver 1.1//EN" "http://www.netbeans.org/dtds/mime-resolver-1_1.dtd">
-//<MIME-resolver>
-//    <file>
-//        <name name="" substring="true"/>
-//        <resolver mime="application/octet-stream"/>
-//    </file>
-//</MIME-resolver>
 @DataObject.Registration(displayName = "#BinEdDataObject.displayName", mimeType = BinEdDataObject.MIME_TYPE, iconBase = "org/exbin/bined/netbeans/resources/icons/icon.png")
 public class BinEdDataObject extends MultiDataObject implements Savable {
 
     public static final String MIME_TYPE = "application/octet-stream"; //NOI18N
     public static final String MMD_EXT = "bin"; //NOI18N
     
-    private BinEdEditor visualEditor;
+    private BinEdEditorMulti visualEditor;
 
     public BinEdDataObject(FileObject fo, MultiFileLoader loader) throws DataObjectExistsException {
         super(fo, loader);
-        registerEditor(MIME_TYPE, true);
-    }
+        Lookup lookup = getCookieSet().getLookup();
+//        DataEditorSupport dataEditorSupport = lookup.lookup(DataEditorSupport.class);
+//        NbEditorDocument document = null;
+//        if (dataEditorSupport.isDocumentLoaded()) {
+//            document = (NbEditorDocument) dataEditorSupport.getDocument();
+//        } else {
+//            try {
+//                document = (NbEditorDocument) dataEditorSupport.openDocument();
+//            } catch (IOException ex) {
+//                Logger.getLogger(BinEdDataObject.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
+        visualEditor = new BinEdEditorMulti(lookup);
+        // visualEditor.openFile(fo.);
 
-    public void setVisualEditor(BinEdEditor visualEditor) {
-        this.visualEditor = visualEditor;
+        registerEditor(MIME_TYPE, true);
     }
 
     @Override
     public void save() throws IOException {
-        if (visualEditor != null) {
-            visualEditor.save();
-        }
+        visualEditor.save();
+    }
+
+    @Override
+    protected int associateLookup() {
+        return 1;
+    }
+
+    @Nonnull
+    public Lookup getLookup() {
+        return visualEditor.getLookup();
+    }
+
+    @Nonnull
+    public UndoRedo.Manager getUndoRedoManager() {
+        return (UndoRedo.Manager) visualEditor.getUndoRedo();
     }
 }
