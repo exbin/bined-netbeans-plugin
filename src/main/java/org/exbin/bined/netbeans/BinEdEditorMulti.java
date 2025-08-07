@@ -41,7 +41,7 @@ public class BinEdEditorMulti extends BinEdEditor implements MultiViewElement {
 
     public static final String ELEMENT_MULTI_ID = "org.exbin.bined.netbeans.BinEdEditorMulti";
     public static final String ELEMENT_MULTI_NAME = "org-exbin-bined-netbeans-BinEdEditorMulti";
-    public static final int POSITION_ALL_ATTRIBUTE = 900006;
+    public static final int POSITION_ALL_ATTRIBUTE = Integer.MAX_VALUE - 10000;
 
 //    private final DocumentListener documentListener;
     

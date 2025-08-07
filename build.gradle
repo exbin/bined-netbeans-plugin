@@ -304,6 +304,7 @@ dependencies {
 
     // Ideally we would like debugger group to be optional so that plugin could work for other netbeans platform apps
     // compileOnly doesn't work as optional dependency
+    // Manually modify Info/info.xml and META-INF/MANIFEST.MF in module jar file to use OpenIDE-Module-Recommends
     providedCompile netbeansApi('org-netbeans-api-debugger')
     providedCompile netbeansApi('org-netbeans-api-debugger-jpda')
     providedCompile netbeansApi('org-netbeans-spi-debugger-ui')
