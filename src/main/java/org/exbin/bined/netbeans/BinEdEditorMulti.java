@@ -34,14 +34,14 @@ import org.openide.windows.TopComponent;
         persistenceType = TopComponent.PERSISTENCE_NEVER,
         iconBase = "org/exbin/bined/netbeans/resources/icons/icon.png",
         preferredID = BinEdEditorMulti.ELEMENT_MULTI_ID,
-        position = BinEdEditorMulti.POSITION_ALL_ATTRIBUTE
+        position = BinEdEditorMulti.POSITION_MULTI_ATTRIBUTE
 )
 @ParametersAreNonnullByDefault
 public class BinEdEditorMulti extends BinEdEditor implements MultiViewElement {
 
     public static final String ELEMENT_MULTI_ID = "org.exbin.bined.netbeans.BinEdEditorMulti";
     public static final String ELEMENT_MULTI_NAME = "org-exbin-bined-netbeans-BinEdEditorMulti";
-    public static final int POSITION_ALL_ATTRIBUTE = Integer.MAX_VALUE - 10000;
+    public static final int POSITION_MULTI_ATTRIBUTE = 900006; // Between "Source" and "History"
 
 //    private final DocumentListener documentListener;
     

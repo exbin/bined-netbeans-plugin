@@ -126,24 +126,15 @@ public class Installer extends ModuleInstall {
     private static final List<IntegrationOptionsListener> INTEGRATION_OPTIONS_LISTENERS = new ArrayList<>();
 
     private static IntegrationOptions initialIntegrationOptions = null;
-    private boolean initialized = false;
+    private static boolean binEdInitialized = false;
 
     @Override
     public void restored() {
         WindowManager.getDefault().invokeWhenUIReady(() -> {
-            if (!initialized) {
-                initialized = true;
-                AppModuleProvider appModuleProvider = new AppModuleProvider();
-                appModuleProvider.createModules();
-                App.setModuleProvider(appModuleProvider);
-                appModuleProvider.init();
-                initIntegrations();
-                
-            }
-
-            // applyIntegrationOptions(initialIntegrationOptions);
+            Installer.initBinEd();
         });
     }
+    
 
     @Override
     public void uninstalled() {
@@ -151,8 +142,22 @@ public class Installer extends ModuleInstall {
             uninstallIntegration();
         });
     }
+    
+    synchronized public static void initBinEd() {
+        if (!binEdInitialized) {
+            binEdInitialized = true;
+            AppModuleProvider appModuleProvider = new AppModuleProvider();
+            appModuleProvider.createModules();
+            App.setModuleProvider(appModuleProvider);
+            appModuleProvider.init();
+            initIntegrations();
 
-    private void initIntegrations() {
+        }
+
+        // applyIntegrationOptions(initialIntegrationOptions);
+    }
+
+    private static void initIntegrations() {
         FileOpenAsBinaryAction.registerIntegration();
         OpenAsBinaryAction.registerIntegration();
         OpenAsBinaryToolsAction.registerIntegration();

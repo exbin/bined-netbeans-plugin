@@ -17,6 +17,7 @@ package org.exbin.bined.netbeans;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import javax.swing.SwingUtilities;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -64,26 +65,28 @@ public final class OpenAsBinaryToolsAction extends NodeAction {
             return;
         }
 
-        final Mode editorMode = WindowManager.getDefault().findMode("editor");
-        if (editorMode == null) {
-            return;
-        }
+        SwingUtilities.invokeLater(() -> {
+            final Mode editorMode = WindowManager.getDefault().findMode("editor");
+            if (editorMode == null) {
+                return;
+            }
 
-        final BinaryEditorTopComponent binaryEditor = new BinaryEditorTopComponent();
-        editorMode.dockInto(binaryEditor);
+            final BinaryEditorTopComponent binaryEditor = new BinaryEditorTopComponent();
+            editorMode.dockInto(binaryEditor);
 
-        Lookup lookup = nodes[0].getLookup();
-        DataObject dataObject = lookup.lookup(DataObject.class);
+            Lookup lookup = nodes[0].getLookup();
+            DataObject dataObject = lookup.lookup(DataObject.class);
 
-        if (dataObject instanceof DataShadow) {
-            dataObject = ((DataShadow) dataObject).getOriginal();
-        }
+            if (dataObject instanceof DataShadow) {
+                dataObject = ((DataShadow) dataObject).getOriginal();
+            }
 
-        if (dataObject != null) {
-            binaryEditor.openDataObject(dataObject);
-            binaryEditor.open();
-            binaryEditor.requestActive();
-        }
+            if (dataObject != null) {
+                binaryEditor.openDataObject(dataObject);
+                binaryEditor.open();
+                binaryEditor.requestActive();
+            }
+        });
     }
 
     @Override

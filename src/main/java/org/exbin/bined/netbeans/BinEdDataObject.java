@@ -50,6 +50,7 @@ public class BinEdDataObject extends MultiDataObject implements Savable {
     public BinEdDataObject(FileObject fo, MultiFileLoader loader) throws DataObjectExistsException {
         super(fo, loader);
         Lookup lookup = getCookieSet().getLookup();
+        // TODO
 //        DataEditorSupport dataEditorSupport = lookup.lookup(DataEditorSupport.class);
 //        NbEditorDocument document = null;
 //        if (dataEditorSupport.isDocumentLoaded()) {

@@ -30,6 +30,7 @@ import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JViewport;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import org.exbin.bined.EditMode;
@@ -93,6 +94,9 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
 
     public BinEdEditor(Lookup lookup) {
         this.lookup = lookup;
+        
+        // View could be restored before module is installed
+        Installer.initBinEd();
     }
 
     public static void registerIntegration() {
@@ -135,7 +139,13 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
                 @Override
                 public void show(Component invoker, int x, int y) {
                     String popupMenuId = "BinEdFilePanel.popup";
-                    JPopupMenu popupMenu = codeAreaPopupMenuHandler.createPopupMenu(codeArea, popupMenuId, x, y);
+                    int clickedX = x;
+                    int clickedY = y;
+                    if (invoker instanceof JViewport) {
+                        clickedX += ((JViewport) invoker).getParent().getX();
+                        clickedY += ((JViewport) invoker).getParent().getY();
+                    }
+                    JPopupMenu popupMenu = codeAreaPopupMenuHandler.createPopupMenu(codeArea, popupMenuId, clickedX, clickedY);
                     popupMenu.addPopupMenuListener(new PopupMenuListener() {
                         @Override
                         public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
@@ -254,8 +264,8 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
     public void openFile(DataObject dataObject) {
         SectCodeArea codeArea = fileHandler.getCodeArea();
         boolean editable = dataObject.getPrimaryFile().canWrite();
-        URI fileUri = dataObject.getPrimaryFile().toURI();
-        if (fileUri == null) {
+//        URI fileUri = dataObject.getPrimaryFile().toURI();
+//        if (fileUri == null) {
             InputStream stream = null;
             try {
                 stream = dataObject.getPrimaryFile().getInputStream();
@@ -273,11 +283,11 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
                     }
                 }
             }
-        } else {
-            codeArea.setEditMode(editable ? EditMode.EXPANDING : EditMode.READ_ONLY);
-            File file = Utilities.toFile(fileUri);
-            fileHandler.loadFromFile(file.toURI(), null);
-        }
+//        } else {
+//            codeArea.setEditMode(editable ? EditMode.EXPANDING : EditMode.READ_ONLY);
+//            File file = Utilities.toFile(fileUri);
+//            fileHandler.loadFromFile(file.toURI(), null);
+//        }
     }
 
     public static void install() {
