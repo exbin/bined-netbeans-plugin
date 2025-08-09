@@ -500,6 +500,7 @@ public class Installer extends ModuleInstall {
         public void launch(String launchModuleId, String[] args) {
         }
 
+        @SuppressWarnings("unchecked")
         @Nonnull
         @Override
         public <T extends Module> T getModule(Class<T> moduleClass) {

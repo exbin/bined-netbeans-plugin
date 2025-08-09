@@ -22,12 +22,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.netbeans.api.actions.Savable;
 import org.openide.awt.UndoRedo;
+import org.openide.cookies.OpenCookie;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
+import org.openide.nodes.CookieSet;
 import org.openide.text.DataEditorSupport;
 import org.openide.util.Lookup;
 
@@ -37,7 +39,7 @@ import org.openide.util.Lookup;
  * @author ExBin Project (https://exbin.org)
  */
 @ParametersAreNonnullByDefault
-//@MIMEResolver.ExtensionRegistration(displayName = "#BinEdDataObject.extensionDisplayName", mimeType = BinEdDataObject.MIME_TYPE, extension = {BinEdDataObject.MMD_EXT})
+@MIMEResolver.ExtensionRegistration(displayName = "#BinEdDataObject.extensionDisplayName", mimeType = BinEdDataObject.MIME_TYPE, extension = {BinEdDataObject.MMD_EXT})
 @MIMEResolver.Registration(displayName = "#BinEdDataObject.extensionDisplayName", resource = "mime-resolver.xml", showInFileChooser = {"#BinEdDataObject.extensionDisplayName"})
 @DataObject.Registration(displayName = "#BinEdDataObject.displayName", mimeType = BinEdDataObject.MIME_TYPE, iconBase = "org/exbin/bined/netbeans/resources/icons/icon.png")
 public class BinEdDataObject extends MultiDataObject implements Savable {
@@ -49,7 +51,9 @@ public class BinEdDataObject extends MultiDataObject implements Savable {
 
     public BinEdDataObject(FileObject fo, MultiFileLoader loader) throws DataObjectExistsException {
         super(fo, loader);
-        Lookup lookup = getCookieSet().getLookup();
+        CookieSet cookieSet = getCookieSet();
+        OpenCookie openCookie = cookieSet.getCookie(OpenCookie.class);
+        Lookup lookup = cookieSet.getLookup();
         // TODO
 //        DataEditorSupport dataEditorSupport = lookup.lookup(DataEditorSupport.class);
 //        NbEditorDocument document = null;
@@ -65,7 +69,7 @@ public class BinEdDataObject extends MultiDataObject implements Savable {
         visualEditor = new BinEdEditorMulti(lookup);
         // visualEditor.openFile(fo.);
 
-        registerEditor(MIME_TYPE, true);
+        // registerEditor(MIME_TYPE, true);
     }
 
     @Override
