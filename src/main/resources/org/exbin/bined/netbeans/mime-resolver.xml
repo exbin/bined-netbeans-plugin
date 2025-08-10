@@ -2,8 +2,8 @@
 <!DOCTYPE MIME-resolver PUBLIC "-//NetBeans//DTD MIME Resolver 1.1//EN" "http://www.netbeans.org/dtds/mime-resolver-1_1.dtd">
 <MIME-resolver>
     <file>
-        <ext name="" />
+        <ext name="bin" />
         <name name="" substring="true"/>
-        <resolver mime="application/octet-stream"/>
+        <resolver mime="application/x-bined-openas"/>
     </file>
 </MIME-resolver>

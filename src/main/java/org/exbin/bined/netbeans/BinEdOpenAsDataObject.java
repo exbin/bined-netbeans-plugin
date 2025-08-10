@@ -20,18 +20,22 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import javax.swing.JFileChooser;
 import org.netbeans.api.actions.Savable;
 import org.openide.awt.UndoRedo;
 import org.openide.cookies.OpenCookie;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.MIMEResolver;
 import org.openide.loaders.DataObject;
+import org.openide.loaders.DataObjectNotFoundException;
 import org.openide.loaders.DataObjectExistsException;
 import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
 import org.openide.nodes.CookieSet;
 import org.openide.text.DataEditorSupport;
 import org.openide.util.Lookup;
+import org.openide.windows.Mode;
+import org.openide.windows.WindowManager;
 
 /**
  * BinEd data object.
@@ -39,21 +43,37 @@ import org.openide.util.Lookup;
  * @author ExBin Project (https://exbin.org)
  */
 @ParametersAreNonnullByDefault
-@MIMEResolver.ExtensionRegistration(displayName = "#BinEdDataObject.extensionDisplayName", mimeType = BinEdDataObject.MIME_TYPE, extension = {BinEdDataObject.MMD_EXT})
-//@MIMEResolver.Registration(displayName = "#BinEdDataObject.extensionDisplayName", resource = "mime-resolver.xml", showInFileChooser = {"#BinEdDataObject.extensionDisplayName"})
-@DataObject.Registration(displayName = "#BinEdDataObject.displayName", mimeType = BinEdDataObject.MIME_TYPE, iconBase = "org/exbin/bined/netbeans/resources/icons/icon.png")
-public class BinEdDataObject extends MultiDataObject implements Savable {
+//@MIMEResolver.ExtensionRegistration(displayName = "#BinEdDataObject.extensionDisplayName", mimeType = BinEdOpenAsDataObject.MIME_TYPE, extension = {BinEdOpenAsDataObject.MMD_EXT})
+@MIMEResolver.Registration(displayName = "#BinEdDataObject.extensionDisplayName", resource = "mime-resolver.xml", showInFileChooser = {"#BinEdDataObject.extensionDisplayName"})
+@DataObject.Registration(displayName = "#BinEdDataObject.displayName", mimeType = BinEdOpenAsDataObject.MIME_TYPE, iconBase = "org/exbin/bined/netbeans/resources/icons/icon.png")
+public class BinEdOpenAsDataObject extends MultiDataObject implements Savable {
 
-    public static final String MIME_TYPE = "application/octet-stream"; //NOI18N
-    public static final String MMD_EXT = "bin"; //NOI18N
+    public static final String MIME_TYPE = "application/x-bined-openas"; //NOI18N
     
     private BinEdEditorMulti visualEditor;
 
-    public BinEdDataObject(FileObject fo, MultiFileLoader loader) throws DataObjectExistsException {
+    public BinEdOpenAsDataObject(FileObject fo, MultiFileLoader loader) throws DataObjectExistsException {
         super(fo, loader);
-        CookieSet cookieSet = getCookieSet();
-        OpenCookie openCookie = cookieSet.getCookie(OpenCookie.class);
-        Lookup lookup = cookieSet.getLookup();
+
+        final Mode editorMode = WindowManager.getDefault().findMode("editor");
+        if (editorMode == null) {
+            return;
+        }
+
+        try {        
+            final BinaryEditorTopComponent editorComponent = new BinaryEditorTopComponent();
+            editorMode.dockInto(editorComponent);
+            DataObject dataObject = DataObject.find(fo);
+            editorComponent.openDataObject(dataObject);
+            editorComponent.open();
+            editorComponent.requestActive();
+        } catch (DataObjectNotFoundException ex) {
+            Logger.getLogger(BinEdOpenAsDataObject.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+//        CookieSet cookieSet = getCookieSet();
+//        OpenCookie openCookie = cookieSet.getCookie(OpenCookie.class);
+//        Lookup lookup = cookieSet.getLookup();
         // TODO
 //        DataEditorSupport dataEditorSupport = lookup.lookup(DataEditorSupport.class);
 //        NbEditorDocument document = null;
@@ -66,20 +86,15 @@ public class BinEdDataObject extends MultiDataObject implements Savable {
 //                Logger.getLogger(BinEdDataObject.class.getName()).log(Level.SEVERE, null, ex);
 //            }
 //        }
-        visualEditor = new BinEdEditorMulti(lookup);
+//        visualEditor = new BinEdEditorMulti(lookup);
         // visualEditor.openFile(fo.);
 
-        registerEditor(MIME_TYPE, true);
+        // registerEditor(MIME_TYPE, true);
     }
 
     @Override
     public void save() throws IOException {
         visualEditor.save();
-    }
-
-    @Override
-    protected int associateLookup() {
-        return 1;
     }
 
     @Nonnull
