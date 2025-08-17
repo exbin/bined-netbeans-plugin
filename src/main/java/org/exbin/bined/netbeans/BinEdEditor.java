@@ -43,6 +43,7 @@ import org.exbin.framework.bined.BinEdFileHandler;
 import org.exbin.framework.bined.BinEdFileManager;
 import org.exbin.framework.bined.BinedModule;
 import org.exbin.framework.bined.UndoRedoWrapper;
+import org.exbin.framework.bined.gui.BinaryStatusPanel;
 import org.exbin.framework.bined.handler.CodeAreaPopupMenuHandler;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
@@ -288,6 +289,10 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
 //            File file = Utilities.toFile(fileUri);
 //            fileHandler.loadFromFile(file.toURI(), null);
 //        }
+        fileHandler.fileSync();
+        BinaryStatusPanel statusPanel = filePanel.getStatusPanel();
+        statusPanel.setCurrentDocumentSize(fileHandler.getCodeArea().getDataSize(), fileHandler.getDocumentOriginalSize());
+        statusPanel.updateStatus();
     }
 
     public static void install() {

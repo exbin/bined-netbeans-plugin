@@ -83,6 +83,7 @@ public class BinEdDataObject extends MultiDataObject implements Savable {
     }
 
     @Nonnull
+    @Override
     public Lookup getLookup() {
         return visualEditor.getLookup();
     }
