@@ -31,7 +31,6 @@ import javax.swing.text.*;
 import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
-import org.netbeans.modules.diff.Utils;
 
 /**
  * Imported from NetBeans diff module.

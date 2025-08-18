@@ -2,6 +2,9 @@
 <!DOCTYPE filesystem PUBLIC "-//NetBeans//DTD Filesystem 1.2//EN" "http://www.netbeans.org/dtds/filesystem-1_2.dtd">
 <filesystem>
     <folder name="Actions">
+        <folder name="Tools">
+            <file name="org-exbin-bined-netbeans-diff-BinEdDiffAction.instance"/>
+        </folder>
         <folder name="Debugger">
             <file name="org-exbin-bined-netbeans-debug-BinaryDebugAction.instance">
                 <attr name="delegate" methodvalue="org.openide.awt.Actions.inject"/>
@@ -13,6 +16,24 @@
                 <attr name="selectionType" stringvalue="ANY"/>
                 <attr name="type" stringvalue="org.netbeans.api.debugger.jpda.ObjectVariable"/>
             </file>
+        </folder>
+    </folder>
+    <folder name="UI">
+        <folder name="ToolActions">
+            <folder name="Files">
+                <file name="org-exbin-bined-netbeans-diff-BinEdDiffAction.shadow">
+                    <attr name="position" intvalue="201"/>
+                    <attr name="originalFile" stringvalue="Actions/Tools/org-exbin-bined-netbeans-diff-BinEdDiffAction.instance"/>
+                </file>
+            </folder>
+        </folder>
+    </folder>
+    <folder name="Editors">
+        <folder name="TabActions">
+              <file name="org-exbin-bined-netbeans-diff-BinEdDiffAction.shadow">
+                  <attr name="originalFile" stringvalue="Actions/Tools/org-exbin-bined-netbeans-diff-BinEdDiffAction.instance"/>
+                  <attr name="position" intvalue="301"/>
+              </file>
         </folder>
     </folder>
     <folder name="Debugger">

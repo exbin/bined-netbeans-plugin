@@ -52,7 +52,7 @@ ext {
     binedLibraryVersion = '0.3.0-SNAPSHOT'
     binedAppLibraryVersion = '0.3.0-SNAPSHOT'
     exbinFrameworkVersion = '0.3.0-SNAPSHOT'
-    binaryDataVersion = '0.3.0-SNAPSHOT'
+    auxiliaryVersion = '0.3.0-SNAPSHOT'
     repositoryName = "bined-netbeans-plugin"
     nbmVersion = version.endsWith('-SNAPSHOT') ? version.substring(0, version.length() - 9) : version
     homePageUrl = 'https://bined.exbin.org/netbeans-plugin'
@@ -279,8 +279,8 @@ def exbinFrameworkLibrary = { String libName ->
     return (exbinFrameworkVersion.endsWith('-SNAPSHOTX')) ? ":${libName}-${exbinFrameworkVersion}" : "org.exbin.framework:${libName}:${exbinFrameworkVersion}"
 }
 
-def binaryDataLibrary = { String libName ->
-    return (binaryDataVersion.endsWith('-SNAPSHOTX')) ? ":${libName}-${binaryDataVersion}" : "org.exbin.auxiliary:${libName}:${binaryDataVersion}"
+def auxiliaryLibrary = { String libName ->
+    return (auxiliaryVersion.endsWith('-SNAPSHOTX')) ? ":${libName}-${auxiliaryVersion}" : "org.exbin.auxiliary:${libName}:${auxiliaryVersion}"
 }
 
 dependencies {
@@ -289,6 +289,7 @@ dependencies {
     providedCompile netbeansApi('org-netbeans-modules-options-api')
     providedCompile netbeansApi('org-netbeans-modules-queries')
     providedCompile netbeansApi('org-netbeans-modules-settings')
+    providedCompile netbeansApi('org-netbeans-api-progress')
     providedCompile netbeansApi('org-openide-actions')
     providedCompile netbeansApi('org-openide-awt')
     providedCompile netbeansApi('org-openide-dialogs')
@@ -313,7 +314,7 @@ dependencies {
     providedCompile netbeansApi('org-netbeans-modules-diff')
     providedCompile netbeansModule('org.netbeans.modules', 'org-netbeans-modules-projectapi-nb')
 
-    implementation(exbinFrameworkLibrary("exbin-framework"))
+/*    implementation(exbinFrameworkLibrary("exbin-framework"))
     implementation(exbinFrameworkLibrary("exbin-framework-basic"))
     implementation(exbinFrameworkLibrary("exbin-framework-frame"))
     implementation(exbinFrameworkLibrary("exbin-framework-ui"))
@@ -365,11 +366,11 @@ dependencies {
     implementation(binedLibrary("bined-operation-swing"))
     implementation(binedLibrary("bined-swing"))
     implementation(binedLibrary("bined-swing-section"))
-    implementation(binaryDataLibrary("binary_data"))
-    implementation(binaryDataLibrary("binary_data-array"))
-    implementation(binaryDataLibrary("binary_data-delta"))
-    implementation(binaryDataLibrary("component-dropdownbutton"))
-    implementation(":exbin-framework-language-cs_CZ-0.2.4")
+    implementation(auxiliaryLibrary("binary_data"))
+    implementation(auxiliaryLibrary("binary_data-array"))
+    implementation(auxiliaryLibrary("binary_data-delta"))
+    implementation(auxiliaryLibrary("component-dropdownbutton")) */
+/*    implementation(":exbin-framework-language-cs_CZ-0.2.4")
     implementation(":exbin-framework-language-de_DE-0.2.4")
     implementation(":exbin-framework-language-es_ES-0.2.4")
     implementation(":exbin-framework-language-fr_FR-0.2.4")
@@ -380,7 +381,7 @@ dependencies {
     implementation(":exbin-framework-language-ru_RU-0.2.4")
     implementation(":exbin-framework-language-zh_Hans-0.2.4")
     implementation(":exbin-framework-language-zh_Hant-0.2.4")
-    implementation(":exbin-framework-material-iconset-0.2.4")
+    implementation(":exbin-framework-material-iconset-0.2.4") */
     implementation(":flatlaf-desktop-3.2")
 
     compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
