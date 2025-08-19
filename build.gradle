@@ -312,6 +312,12 @@ dependencies {
     providedCompile netbeansApi('org-netbeans-spi-debugger-jpda-ui')
     providedCompile netbeansApi('org-netbeans-spi-viewmodel')
     providedCompile netbeansApi('org-netbeans-modules-diff')
+    providedCompile netbeansApi('org-netbeans-modules-editor-fold')
+    providedCompile netbeansApi('org-netbeans-modules-editor-settings')
+    providedCompile netbeansApi('org-netbeans-modules-editor-mimelookup')
+    providedCompile netbeansApi('org-netbeans-modules-editor-util')
+    providedCompile netbeansApi('org-netbeans-modules-editor-lib')
+    providedCompile netbeansApi('org-netbeans-modules-editor-lib2')
     providedCompile netbeansModule('org.netbeans.modules', 'org-netbeans-modules-projectapi-nb')
 
 /*    implementation(exbinFrameworkLibrary("exbin-framework"))

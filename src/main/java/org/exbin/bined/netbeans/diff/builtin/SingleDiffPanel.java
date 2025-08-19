@@ -20,7 +20,6 @@ package org.exbin.bined.netbeans.diff.builtin;
 
 import java.awt.Container;
 import java.awt.EventQueue;
-import org.netbeans.api.diff.DiffController;
 import org.netbeans.api.diff.StreamSource;
 import org.netbeans.api.diff.Difference;
 import org.netbeans.api.options.OptionsDisplayer;
@@ -42,7 +41,9 @@ import java.io.InputStreamReader;
 import java.io.Writer;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+import org.exbin.bined.netbeans.diff.BinEdDiffController;
 import org.exbin.bined.netbeans.diff.Utils;
+import org.netbeans.api.diff.DiffController;
 import org.netbeans.modules.diff.options.DiffOptionsController;
 import org.openide.awt.UndoRedo;
 import org.openide.cookies.EditorCookie;
@@ -67,7 +68,7 @@ public class SingleDiffPanel extends javax.swing.JPanel implements PropertyChang
     private FileObject          modified;
     private final FileObject    type;
 
-    private DiffController      controller;
+    private BinEdDiffController      controller;
     private Action              nextAction;
     private Action              prevAction;
     private JComponent innerPanel;
@@ -140,7 +141,7 @@ public class SingleDiffPanel extends javax.swing.JPanel implements PropertyChang
         
         StreamSource ss1 = new DiffStreamSource(base, type, false);
         StreamSource ss2 = new DiffStreamSource(modified, type, true);
-        controller = DiffController.createEnhanced(ss1, ss2);
+        controller = BinEdDiffController.createEnhanced(ss1, ss2);
         controller.addPropertyChangeListener(this);
         if (keepLocation && diffIndex >= 0) {
             final int fDiffIndex = diffIndex;
@@ -148,7 +149,7 @@ public class SingleDiffPanel extends javax.swing.JPanel implements PropertyChang
 
                 @Override
                 public void propertyChange (PropertyChangeEvent evt) {
-                    if (DiffController.PROP_DIFFERENCES.equals(evt.getPropertyName())) {
+                    if (BinEdDiffController.PROP_DIFFERENCES.equals(evt.getPropertyName())) {
                         if (controller.getDifferenceCount() > controller.getDifferenceIndex()) {
                             controller.setLocation(DiffController.DiffPane.Modified, DiffController.LocationType.DifferenceIndex, fDiffIndex);
                         }

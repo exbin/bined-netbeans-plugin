@@ -29,6 +29,15 @@ import java.io.IOException;
  */
 //@org.openide.util.lookup.ServiceProvider(service=org.netbeans.spi.diff.DiffControllerProvider.class)
 public class BinEdDiffControllerProvider extends DiffControllerProvider {
+    
+    private static BinEdDiffControllerProvider instance = null;
+
+    public static BinEdDiffControllerProvider getInstance() {
+        if (instance == null) {
+            instance = new BinEdDiffControllerProvider();
+        }
+        return instance;
+    }
 
     @Override
     public DiffControllerImpl createDiffController(StreamSource base, StreamSource modified) throws IOException {

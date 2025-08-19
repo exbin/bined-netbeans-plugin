@@ -45,7 +45,6 @@ import org.openide.windows.WindowManager;
 import org.netbeans.api.diff.*;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.progress.ProgressHandle;
-import org.netbeans.modules.diff.DiffModuleConfig;
 import org.exbin.bined.netbeans.diff.builtin.DefaultDiff;
 import org.openide.DialogDisplayer;
 import org.openide.ErrorManager;

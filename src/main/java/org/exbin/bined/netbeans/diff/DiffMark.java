@@ -18,11 +18,11 @@
  */
 package org.exbin.bined.netbeans.diff;
 
-import org.netbeans.modules.editor.errorstripe.privatespi.Mark;
-import org.netbeans.modules.editor.errorstripe.privatespi.Status;
 import org.netbeans.api.diff.Difference;
 
 import java.awt.Color;
+import org.exbin.bined.netbeans.diff.errorstripe.privatespi.Mark;
+import org.exbin.bined.netbeans.diff.errorstripe.privatespi.Status;
 
 /**
  * Imported from NetBeans diff module.

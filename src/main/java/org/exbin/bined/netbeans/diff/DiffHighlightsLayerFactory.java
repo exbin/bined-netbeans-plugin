@@ -31,7 +31,7 @@ import org.netbeans.spi.editor.highlighting.ZOrder;
  */
 public class DiffHighlightsLayerFactory implements HighlightsLayerFactory {
 
-    static final String HIGHLITING_LAYER_ID = "org.netbeans.modules.diff.builtin.visualizer.editable.DiffContentPanel"; // NOI18N
+    static final String HIGHLITING_LAYER_ID = "org.exbin.bined.netbeans.diff.DiffContentPanel"; // NOI18N
     
     public HighlightsLayer[] createLayers(Context context) {
         DiffContentPanel master = (DiffContentPanel) context.getComponent().getClientProperty(HIGHLITING_LAYER_ID);

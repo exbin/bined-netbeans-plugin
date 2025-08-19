@@ -40,13 +40,12 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.TextUI;
 import javax.swing.text.*;
+import org.exbin.bined.netbeans.diff.errorstripe.privatespi.Mark;
+import org.exbin.bined.netbeans.diff.errorstripe.privatespi.MarkProvider;
 import org.netbeans.api.editor.fold.FoldHierarchy;
 import org.netbeans.api.editor.fold.FoldUtilities;
 import org.netbeans.api.editor.fold.FoldHierarchyListener;
 import org.netbeans.api.editor.fold.FoldHierarchyEvent;
-import org.netbeans.modules.diff.DiffModuleConfig;
-import org.netbeans.modules.editor.errorstripe.privatespi.MarkProvider;
-import org.netbeans.modules.editor.errorstripe.privatespi.Mark;
 import org.openide.util.RequestProcessor;
 import org.openide.util.NbBundle;
 import org.openide.ErrorManager;
@@ -69,7 +68,6 @@ import org.netbeans.spi.diff.DiffProvider;
 import org.netbeans.spi.diff.DiffControllerImpl;
 import org.netbeans.editor.EditorUI;
 import org.netbeans.lib.editor.util.swing.DocumentUtilities;
-import org.netbeans.modules.diff.builtin.visualizer.TextDiffVisualizer;
 import org.openide.DialogDisplayer;
 import org.openide.NotifyDescriptor;
 import org.openide.text.NbDocument;
@@ -223,7 +221,7 @@ public class EditableDiffView extends DiffControllerImpl implements DiffView, Do
         initComponents ();
 
         if (!binaryDiff) {
-            jEditorPane2.getEditorPane().putClientProperty("org.netbeans.modules.diff.builtin.visualizer.editable.MarkProvider" /* DiffMarkProviderCreator.MARK_PROVIDER_KEY */, diffMarkprovider);
+            jEditorPane2.getEditorPane().putClientProperty("org.exbin.bined.netbeans.diff.errorstripe.privatespi.MarkProvider" /* DiffMarkProviderCreator.MARK_PROVIDER_KEY */, diffMarkprovider);
         }
         jSplitPane1.setName(org.openide.util.NbBundle.getMessage(EditableDiffView.class, "DiffComponent.title", ss1.getName(), ss2.getName())); // NOI18N
         spui = new DiffSplitPaneUI(jSplitPane1);
@@ -378,6 +376,9 @@ public class EditableDiffView extends DiffControllerImpl implements DiffView, Do
         if (jTabbedPane != null) {
             jTabbedPane.addTab(org.openide.util.NbBundle.getMessage(EditableDiffView.class, "EditableDiffView.viewGraphical.title"), jSplitPane1); //NOI18N
             jTabbedPane.addTab(org.openide.util.NbBundle.getMessage(EditableDiffView.class, "EditableDiffView.viewTextual.title"), textualPanel); //NOI18N
+            
+            // Add binary diff
+            jTabbedPane.addTab("Test", new JPanel());
             jTabbedPane.addChangeListener(this);
         }
     }
