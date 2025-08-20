@@ -19,7 +19,7 @@
 package org.exbin.bined.netbeans.diff;
 
 import org.netbeans.api.diff.Difference;
-import org.netbeans.modules.diff.builtin.Hunk;
+import org.exbin.bined.netbeans.diff.builtin.Hunk;
 
 import java.io.*;
 

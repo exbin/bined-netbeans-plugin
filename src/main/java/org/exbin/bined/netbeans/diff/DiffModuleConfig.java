@@ -261,10 +261,11 @@ public class DiffModuleConfig {
         DiffProvider provider = null;
         for (DiffProvider p : providers) {
             provider = p;
-            if (p instanceof BuiltInDiffProvider) {
-                ((BuiltInDiffProvider) p).setOptions(getOptions());
-                break;
-            }
+            // TODO ClassNotFound: BuiltInDiffProvider
+            //if (p instanceof BuiltInDiffProvider) {
+            //    ((BuiltInDiffProvider) p).setOptions(getOptions());
+            //    break;
+            //}
         }
         return provider;
     }
