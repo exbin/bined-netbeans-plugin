@@ -20,9 +20,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
 import javax.annotation.Nonnull;
+import javax.swing.JPanel;
 import org.exbin.bined.netbeans.Installer;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
-import org.exbin.bined.swing.section.diff.SectCodeAreaDiffPanel;
 import org.netbeans.api.diff.Difference;
 
 /**
@@ -61,8 +61,8 @@ public class BinaryDiffVisualizer extends org.netbeans.spi.diff.DiffVisualizer i
     @Nonnull
     @Override
     public Component createView(Difference[] diffs, String name1, String title1, Reader r1, String name2, String title2, Reader r2, String MIMEType) throws IOException {
-        SectCodeAreaDiffPanel panel = new SectCodeAreaDiffPanel();
-        return panel;
+//        SectCodeAreaDiffPanel panel = new SectCodeAreaDiffPanel();
+        return new JPanel();
     }
 
     /**

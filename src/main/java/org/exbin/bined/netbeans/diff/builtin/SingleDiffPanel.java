@@ -423,7 +423,7 @@ public class SingleDiffPanel extends javax.swing.JPanel implements PropertyChang
         }
     }
 
-    private static class DiffStreamSource extends StreamSource {
+    public static class DiffStreamSource extends StreamSource {
         
         private final FileObject    fileObject;
         private final FileObject    type;
@@ -482,6 +482,10 @@ public class SingleDiffPanel extends javax.swing.JPanel implements PropertyChang
         @Override
         public Writer createWriter(Difference[] conflicts) throws IOException {
             return null;
+        }
+        
+        public FileObject getFileObject() {
+            return fileObject;
         }
     }
 }

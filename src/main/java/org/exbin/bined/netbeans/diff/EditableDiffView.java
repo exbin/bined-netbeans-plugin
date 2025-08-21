@@ -31,6 +31,11 @@ import java.util.logging.Level;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.CodingErrorAction;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
@@ -40,8 +45,14 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.TextUI;
 import javax.swing.text.*;
+import org.exbin.auxiliary.binary_data.BinaryData;
+import org.exbin.auxiliary.binary_data.EditableBinaryData;
+import org.exbin.auxiliary.binary_data.array.paged.ByteArrayPagedData;
+import org.exbin.bined.netbeans.diff.builtin.SingleDiffPanel;
 import org.exbin.bined.netbeans.diff.errorstripe.privatespi.Mark;
 import org.exbin.bined.netbeans.diff.errorstripe.privatespi.MarkProvider;
+import org.exbin.bined.netbeans.diff.gui.BinEdDiffPanel;
+import org.exbin.bined.netbeans.main.BinEdFileDataWrapper;
 import org.netbeans.api.editor.fold.FoldHierarchy;
 import org.netbeans.api.editor.fold.FoldUtilities;
 import org.netbeans.api.editor.fold.FoldHierarchyListener;
@@ -169,12 +180,18 @@ public class EditableDiffView extends DiffControllerImpl implements DiffView, Do
     private boolean sourcesInitialized;
     private boolean viewAdded;
     private boolean addedToHierarchy;
+    
+    private BinEdDiffPanel binaryDiffPanel;
+    private StreamSource sourceStream1;
+    private StreamSource sourceStream2;
 
     public EditableDiffView (final StreamSource ss1, final StreamSource ss2) {
         this(ss1, ss2, false);
     }
 
     public EditableDiffView(final StreamSource ss1, final StreamSource ss2, boolean enhancedView) {
+        this.sourceStream1 = ss1;
+        this.sourceStream2 = ss2;
         refreshDiffTask = rp.create(new RefreshDiffTask());
         initColors();
         String title1 = ss1.getTitle();
@@ -378,7 +395,10 @@ public class EditableDiffView extends DiffControllerImpl implements DiffView, Do
             jTabbedPane.addTab(org.openide.util.NbBundle.getMessage(EditableDiffView.class, "EditableDiffView.viewTextual.title"), textualPanel); //NOI18N
             
             // Add binary diff
-            jTabbedPane.addTab("Test", new JPanel());
+            if (binaryDiffPanel == null) {
+                binaryDiffPanel = new BinEdDiffPanel();
+            }
+            jTabbedPane.addTab("Binary", binaryDiffPanel);
             jTabbedPane.addChangeListener(this);
         }
     }
@@ -654,12 +674,66 @@ public class EditableDiffView extends DiffControllerImpl implements DiffView, Do
     @Override
     public void stateChanged(ChangeEvent e) {
         if (jTabbedPane == e.getSource()) {
-            if (jTabbedPane.getSelectedComponent() == jSplitPane1) {
+            if (jTabbedPane.getSelectedComponent() == binaryDiffPanel) {
+                if (sourceStream1 instanceof SingleDiffPanel.DiffStreamSource) {
+                    EditableBinaryData data = new BinEdFileDataWrapper(((SingleDiffPanel.DiffStreamSource) sourceStream1).getFileObject());
+                    binaryDiffPanel.setLeftContentData(data);
+                } else {
+                    try {
+                        binaryDiffPanel.setLeftContentData(readerToBinaryData(sourceStream1.createReader()));
+                    } catch (IOException ex) {
+                        Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, ex.getMessage(), ex);
+                    }
+                }
+                if (sourceStream2 instanceof SingleDiffPanel.DiffStreamSource) {
+                    EditableBinaryData data = new BinEdFileDataWrapper(((SingleDiffPanel.DiffStreamSource) sourceStream2).getFileObject());
+                    binaryDiffPanel.setRightContentData(data);
+                } else {
+                    try {
+                        binaryDiffPanel.setRightContentData(readerToBinaryData(sourceStream2.createReader()));
+                    } catch (IOException ex) {
+                        Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, ex.getMessage(), ex);
+                    }
+                }
+            } else if (jTabbedPane.getSelectedComponent() == jSplitPane1) {
                 updateCurrentDifference(null);
             } else {
                 setDifferenceIndex(-1);
             }
         }
+    }
+    
+    // TODO: Convert directly via BinaryDataReaderWrapper or find a way to access data directly
+    // Uses UTF-8, because encoding character set information is not available
+    private BinaryData readerToBinaryData(Reader reader) {
+        EditableBinaryData data = new ByteArrayPagedData();
+        CharBuffer charBuffer = CharBuffer.allocate(50);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(4000);
+        CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
+        encoder.onUnmappableCharacter(CodingErrorAction.REPLACE);
+        encoder.onMalformedInput(CodingErrorAction.REPLACE);
+        int read;
+        do {
+            try {
+                charBuffer.clear();
+                read = reader.read(charBuffer);
+                if (read > 0) {
+                    charBuffer.rewind();
+                    byteBuffer.clear();
+                    encoder.encode(charBuffer, byteBuffer, true);
+                    data.insert(data.getDataSize(), byteBuffer.array(), 0, byteBuffer.position());
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, ex.getMessage(), ex);
+                break;
+            }
+        } while (read > 0);
+        try {
+            reader.close();
+        } catch (IOException ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, ex.getMessage(), ex);
+        }
+        return data;
     }
     
     Color getColor(Difference ad) {

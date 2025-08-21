@@ -1,5 +1,5 @@
 0.2.7
-- Added diff action
+- Added diff / compare files action
 - Added Base 64 conversion
 - Added option for inspector input fields font
 - Added icon set support
