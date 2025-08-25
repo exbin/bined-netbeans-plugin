@@ -15,12 +15,9 @@
  */
 package org.exbin.bined.netbeans;
 
-import java.awt.Component;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,11 +26,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JViewport;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
-import org.exbin.bined.EditMode;
 import org.exbin.bined.netbeans.gui.BinEdFilePanel;
 import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
@@ -44,7 +36,6 @@ import org.exbin.framework.bined.BinEdFileManager;
 import org.exbin.framework.bined.BinedModule;
 import org.exbin.framework.bined.UndoRedoWrapper;
 import org.exbin.framework.bined.gui.BinaryStatusPanel;
-import org.exbin.framework.bined.handler.CodeAreaPopupMenuHandler;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.MultiViewElementCallback;
@@ -58,7 +49,6 @@ import org.openide.text.CloneableEditor;
 import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
-import org.openide.util.Utilities;
 import org.openide.windows.TopComponent;
 
 /**
@@ -124,45 +114,15 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
         if (filePanel == null) {
             fileHandler = new BinEdFileHandler();
             filePanel = new BinEdFilePanel();
+            SectCodeArea codeArea = fileHandler.getCodeArea();
             BinedModule binedModule = App.getModule(BinedModule.class);
             BinEdFileManager fileManager = binedModule.getFileManager();
             fileManager.initFileHandler(fileHandler);
-            BinaryUndoSwingHandler undoHandler = new BinaryUndoSwingHandler(fileHandler.getCodeArea(), new UndoRedo.Manager());
+            BinaryUndoSwingHandler undoHandler = new BinaryUndoSwingHandler(codeArea, new UndoRedo.Manager());
             fileHandler.getComponent().setUndoRedo(undoHandler);
             undoHandler.addChangeListener(() -> {
                 DataObject dataObject = lookup.lookup(DataObject.class);
                 dataObject.setModified(undoHandler.isModified());
-            });
-
-            SectCodeArea codeArea = fileHandler.getCodeArea();
-            CodeAreaPopupMenuHandler codeAreaPopupMenuHandler = binedModule.createCodeAreaPopupMenuHandler(BinedModule.PopupMenuVariant.EDITOR);
-            codeArea.setComponentPopupMenu(new JPopupMenu() {
-                @Override
-                public void show(Component invoker, int x, int y) {
-                    String popupMenuId = "BinEdFilePanel.popup";
-                    int clickedX = x;
-                    int clickedY = y;
-                    if (invoker instanceof JViewport) {
-                        clickedX += ((JViewport) invoker).getParent().getX();
-                        clickedY += ((JViewport) invoker).getParent().getY();
-                    }
-                    JPopupMenu popupMenu = codeAreaPopupMenuHandler.createPopupMenu(codeArea, popupMenuId, clickedX, clickedY);
-                    popupMenu.addPopupMenuListener(new PopupMenuListener() {
-                        @Override
-                        public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-                        }
-
-                        @Override
-                        public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-                            codeAreaPopupMenuHandler.dropPopupMenu(popupMenuId);
-                        }
-
-                        @Override
-                        public void popupMenuCanceled(PopupMenuEvent e) {
-                        }
-                    });
-                    popupMenu.show(invoker, x, y);
-                }
             });
             filePanel.setFileHandler(fileHandler);
         }
@@ -209,10 +169,16 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
     public void componentActivated() {
         BinedModule binedModule = App.getModule(BinedModule.class);
         ((BinEdNetBeansEditorProvider) binedModule.getEditorProvider()).setActiveFile(fileHandler);
+//        FrameModuleApi frameModule = App.getModule(FrameModuleApi.class);
+//        ComponentActivationListener componentActivationListener = frameModule.getFrameHandler().getComponentActivationListener();
+//        fileHandler.componentActivated(componentActivationListener);
     }
 
     @Override
     public void componentDeactivated() {
+//        FrameModuleApi frameModule = App.getModule(FrameModuleApi.class);
+//        ComponentActivationListener componentActivationListener = frameModule.getFrameHandler().getComponentActivationListener();
+//        fileHandler.componentDeactivated(componentActivationListener);
     }
 
     @Override

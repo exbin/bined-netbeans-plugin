@@ -35,6 +35,7 @@ import org.exbin.bined.swing.section.SectCodeArea;
 import org.exbin.framework.App;
 import org.exbin.framework.action.api.ActiveComponent;
 import org.exbin.framework.action.api.ComponentActivationListener;
+import org.exbin.framework.action.api.DialogParentComponent;
 import org.exbin.framework.bined.BinEdEditorProvider;
 import org.exbin.framework.bined.BinEdFileHandler;
 import org.exbin.framework.bined.BinaryStatusApi;
@@ -185,6 +186,7 @@ public class BinEdNetBeansEditorProvider implements MultiEditorProvider, BinEdEd
         componentActivationListener.updated(FileHandler.class, activeFile);
         componentActivationListener.updated(FileOperations.class, this);
         componentActivationListener.updated(ActiveComponent.class, binaryDataComponent);
+        componentActivationListener.updated(DialogParentComponent.class, binaryDataComponent == null ? () -> frameModule.getFrame() : binaryDataComponent::getCodeArea);
         componentActivationListener.updated(UndoRedoState.class, undoRedo);
         componentActivationListener.updated(ClipboardController.class, clipboardActionsHandler);
 

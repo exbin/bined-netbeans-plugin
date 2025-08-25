@@ -42,6 +42,7 @@ import org.exbin.framework.about.api.AboutModuleApi;
 import org.exbin.framework.action.ActionModule;
 import org.exbin.framework.action.api.ActionModuleApi;
 import org.exbin.framework.action.api.ComponentActivationListener;
+import org.exbin.framework.action.api.DialogParentComponent;
 import org.exbin.framework.menu.api.GroupMenuContributionRule;
 import org.exbin.framework.menu.api.MenuContribution;
 import org.exbin.framework.menu.api.MenuManagement;
@@ -507,6 +508,7 @@ public class Installer extends ModuleInstall {
             ComponentActivationListener componentActivationListener
                     = frameModule.getFrameHandler().getComponentActivationListener();
             componentActivationListener.updated(EditorProvider.class, editorProvider);
+            componentActivationListener.updated(DialogParentComponent.class, () -> frameModule.getFrame());
         }
 
         @Nonnull

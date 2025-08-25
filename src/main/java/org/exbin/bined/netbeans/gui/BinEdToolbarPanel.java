@@ -169,6 +169,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
 
     public void setCodeAreaControl(Control codeAreaControl) {
         this.codeAreaControl = codeAreaControl;
+        updateNonprintables();
         updateCycleButtonState();
     }
 

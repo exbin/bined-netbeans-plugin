@@ -64,7 +64,9 @@ import org.exbin.framework.bined.theme.options.CodeAreaColorOptions;
 import org.exbin.framework.bined.theme.options.CodeAreaLayoutOptions;
 import org.exbin.framework.bined.theme.options.CodeAreaThemeOptions;
 import org.exbin.framework.bined.viewer.options.CodeAreaOptions;
+import org.exbin.framework.frame.api.FrameModuleApi;
 import org.exbin.framework.language.api.LanguageModuleApi;
+import org.exbin.framework.options.action.OptionsAction;
 import org.exbin.framework.options.api.OptionsModuleApi;
 import org.exbin.framework.preferences.api.OptionsStorage;
 import org.exbin.framework.preferences.api.PreferencesModuleApi;
@@ -155,7 +157,10 @@ public class BinEdDiffPanel extends JPanel {
             }
         });
         OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
-        toolbarPanel.setOptionsAction(optionsModule.createOptionsAction());
+        OptionsAction optionsAction = (OptionsAction) optionsModule.createOptionsAction();
+        FrameModuleApi frameModule = App.getModule(FrameModuleApi.class);
+        optionsAction.setDialogParentComponent(() -> frameModule.getFrame());
+        toolbarPanel.setOptionsAction(optionsAction);
         toolbarPanel.setOnlineHelpAction(createOnlineHelpAction());
         statusPanel = new BinaryStatusPanel();
 

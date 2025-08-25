@@ -35,5 +35,4 @@ public class BinEdEditorSupport extends DataEditorSupport {
     public BinEdEditorSupport(DataObject obj, Lookup lkp, Env env) {
         super(obj, lkp, env);
     }
-
 }

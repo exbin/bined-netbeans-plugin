@@ -40,13 +40,13 @@ import org.exbin.bined.SelectionRange;
 import org.exbin.bined.highlight.swing.NonprintablesCodeAreaAssessor;
 import org.exbin.bined.netbeans.debug.DebugViewDataProvider;
 import org.exbin.bined.netbeans.gui.BinEdToolbarPanel;
-import org.exbin.bined.swing.CodeAreaCore;
 import org.exbin.bined.swing.CodeAreaSwingUtils;
 import org.exbin.bined.swing.capability.ColorAssessorPainterCapable;
 import org.exbin.bined.swing.section.SectCodeArea;
 import org.exbin.framework.App;
 import org.exbin.framework.action.api.ActiveComponent;
 import org.exbin.framework.action.api.ComponentActivationListener;
+import org.exbin.framework.action.api.DialogParentComponent;
 import org.exbin.framework.bined.BinEdDocumentView;
 import org.exbin.framework.bined.BinEdFileManager;
 import org.exbin.framework.bined.BinaryStatusApi;
@@ -64,9 +64,8 @@ import org.exbin.framework.preferences.api.PreferencesModuleApi;
 import org.exbin.framework.text.encoding.EncodingsHandler;
 import org.exbin.framework.text.encoding.options.TextEncodingOptions;
 import org.exbin.framework.action.api.clipboard.ClipboardController;
-import org.exbin.framework.action.api.clipboard.ClipboardStateListener;
-import org.exbin.framework.action.api.clipboard.TextClipboardController;
 import org.exbin.framework.bined.BinEdDataComponent;
+import org.exbin.framework.options.action.OptionsAction;
 import org.exbin.framework.utils.DesktopUtils;
 
 /**
@@ -106,7 +105,7 @@ public class DebugViewPanel extends javax.swing.JPanel {
 //        editorComponent.onInitFromPreferences(new BinaryEditorOptions(preferencesModule.getAppPreferences()));
 
         SectCodeArea codeArea = editorComponent.getCodeArea();
-        BinEdDataComponent binaryDataComponent = new BinEdDataComponent(codeArea);
+        BinEdDataComponent binEdDataComponent = new BinEdDataComponent(codeArea);
         codeArea.setEditMode(EditMode.READ_ONLY);
 
         toolbarPanel.setTargetComponent(componentPanel);
@@ -144,7 +143,10 @@ public class DebugViewPanel extends javax.swing.JPanel {
         toolbarPanel.setOnlineHelpAction(createOnlineHelpAction());
 
         OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
-        toolbarPanel.setOptionsAction(optionsModule.createOptionsAction());
+        OptionsAction optionsAction = (OptionsAction) optionsModule.createOptionsAction();
+        FrameModuleApi frameModule = App.getModule(FrameModuleApi.class);
+        optionsAction.setDialogParentComponent(() -> frameModule.getFrame());
+        toolbarPanel.setOptionsAction(optionsAction);
 
         CodeAreaPopupMenuHandler codeAreaPopupMenuHandler
                 = binedModule.createCodeAreaPopupMenuHandler(BinedModule.PopupMenuVariant.NORMAL);
@@ -155,8 +157,9 @@ public class DebugViewPanel extends javax.swing.JPanel {
                 ComponentActivationListener componentActivationListener
                         = frameModule.getFrameHandler().getComponentActivationListener();
 
-                componentActivationListener.updated(ActiveComponent.class, binaryDataComponent);
-                componentActivationListener.updated(ClipboardController.class, binaryDataComponent);
+                componentActivationListener.updated(ActiveComponent.class, binEdDataComponent);
+                componentActivationListener.updated(DialogParentComponent.class, () -> binEdDataComponent.getCodeArea());
+                componentActivationListener.updated(ClipboardController.class, binEdDataComponent);
 
                 String popupMenuId = "DebugViewPanel.popup";
                 int clickedX = x;

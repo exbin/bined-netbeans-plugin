@@ -24,9 +24,6 @@ import org.exbin.auxiliary.binary_data.BinaryData;
 import org.exbin.framework.bined.objectdata.ObjectValueConvertor;
 import org.exbin.bined.netbeans.api.BinaryViewHandler;
 import org.exbin.bined.netbeans.debug.gui.DebugViewPanel;
-//import org.exbin.framework.utils.WindowUtils.DialogWrapper;
-//import org.netbeans.api.project.Project;
-//import org.netbeans.api.project.ProjectManager;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -66,90 +63,4 @@ public class BinaryViewDataService implements BinaryViewHandler {
 
         return Optional.empty();
     }
-
-//    @Nonnull
-//    @Override
-//    public DialogWrapper createBinaryViewDialog(@Nullable BinaryData binaryData) {
-//        Project project = ProjectManager.getInstance().getDefaultProject();
-//        DataDialog dialog = new DataDialog(project, binaryData);
-//        dialog.setTitle("View Binary Data");
-//        return dialog;
-//    }
-
-//    @Nonnull
-//    @Override
-//    public DialogWrapper createBinaryViewDialog(Object instance) {
-//        Optional<BinaryData> binaryData = valueConvertor.process(instance);
-//        return createBinaryViewDialog(binaryData.orElse(null));
-//    }
-
-//    @ParametersAreNonnullByDefault
-//    private static class DataDialog extends DialogWrapper {
-//
-//        private final byte[] valuesCache = new byte[8];
-//        private final ByteBuffer byteBuffer = ByteBuffer.wrap(valuesCache);
-//
-//        private final BinEdComponentPanel viewPanel;
-//        private BinaryData binaryData;
-//
-//        private DataDialog(Project project, @Nullable BinaryData binaryData) {
-//            super(project, false);
-//            this.binaryData = binaryData;
-//            setModal(false);
-//            setCancelButtonText("Close");
-//            getOKAction().setEnabled(false);
-//            setCrossClosesWindow(true);
-//
-//            viewPanel = new BinEdComponentPanel();
-//            viewPanel.setFileApi(new BinEdComponentFileApi() {
-//                @Override
-//                public boolean isSaveSupported() {
-//                    return false;
-//                }
-//
-//                @Override
-//                public void saveDocument() {
-//                }
-//
-//                @Override
-//                public void switchFileHandlingMode(FileHandlingMode newHandlingMode) {
-//                }
-//
-//                @Override
-//                public void closeData() {
-//                }
-//            });
-//            viewPanel.setContentData(binaryData);
-//            init();
-//        }
-//
-//        @Override
-//        protected void doOKAction() {
-//            super.doOKAction();
-//        }
-//
-//        @Nonnull
-//        @Override
-//        protected Action[] createActions() {
-//            return new Action[]{getCancelAction()};
-//        }
-//
-//        @Nullable
-//        @Override
-//        public JComponent getPreferredFocusedComponent() {
-//            return viewPanel;
-//        }
-//
-//        @Override
-//        protected String getDimensionServiceKey() {
-//            return "#org.exbin.bined.intellij.debug.ViewBinaryAction";
-//        }
-//
-//        @Override
-//        protected JComponent createCenterPanel() {
-//            BorderLayoutPanel panel = JBUI.Panels.simplePanel(viewPanel);
-//            panel.setPreferredSize(JBUI.size(600, 400));
-//            return panel;
-//        }
-//    }
 }

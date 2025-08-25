@@ -27,9 +27,19 @@ import org.exbin.auxiliary.binary_data.BinaryData;
 @ParametersAreNonnullByDefault
 public interface DebugViewDataProvider {
 
+    /**
+     * Returns data provider name.
+     *
+     * @return data provider name
+     */
     @Nonnull
     String getName();
 
+    /**
+     * Returns data provider data.
+     *
+     * @return binary data
+     */
     @Nonnull
     BinaryData getData();
 }
