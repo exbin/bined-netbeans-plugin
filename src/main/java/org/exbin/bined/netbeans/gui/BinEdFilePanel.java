@@ -59,6 +59,7 @@ import org.exbin.framework.file.api.FileHandler;
 import org.exbin.framework.frame.api.FrameModuleApi;
 import org.exbin.framework.options.action.OptionsAction;
 import org.exbin.framework.options.api.OptionsModuleApi;
+import org.exbin.framework.preferences.api.OptionsStorage;
 import org.exbin.framework.preferences.api.PreferencesModuleApi;
 import org.exbin.framework.text.encoding.EncodingsHandler;
 import org.exbin.framework.text.encoding.options.TextEncodingOptions;
@@ -136,8 +137,8 @@ public class BinEdFilePanel extends JPanel {
                 int clickedX = x;
                 int clickedY = y;
                 if (invoker instanceof JViewport) {
-                    clickedX += ((JViewport) invoker).getParent().getX();
-                    clickedY += ((JViewport) invoker).getParent().getY();
+                    clickedX += invoker.getParent().getX();
+                    clickedY += invoker.getParent().getY();
                 }
 
                 // TODO Temporary workaround for unfinished rework of actions
@@ -199,6 +200,10 @@ public class BinEdFilePanel extends JPanel {
                 DesktopUtils.openDesktopURL(languageModuleApi.getAppBundle().getString("online_help_url"));
             }
         };
+    }
+
+    public void loadFromOptions(OptionsStorage appPreferences) {
+        fileHandler.getComponent().onInitFromPreferences(appPreferences);
     }
 
     @ParametersAreNonnullByDefault

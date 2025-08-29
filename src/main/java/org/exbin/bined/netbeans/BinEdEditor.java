@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -36,6 +37,7 @@ import org.exbin.framework.bined.BinEdFileManager;
 import org.exbin.framework.bined.BinedModule;
 import org.exbin.framework.bined.UndoRedoWrapper;
 import org.exbin.framework.bined.gui.BinaryStatusPanel;
+import org.exbin.framework.preferences.api.PreferencesModuleApi;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.MultiViewElementCallback;
@@ -112,6 +114,7 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
     @Override
     public JComponent getVisualRepresentation() {
         if (filePanel == null) {
+            PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
             fileHandler = new BinEdFileHandler();
             filePanel = new BinEdFilePanel();
             SectCodeArea codeArea = fileHandler.getCodeArea();
@@ -125,6 +128,7 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
                 dataObject.setModified(undoHandler.isModified());
             });
             filePanel.setFileHandler(fileHandler);
+            filePanel.loadFromOptions(preferencesModule.getAppPreferences());
         }
         return filePanel;
     }
@@ -211,7 +215,7 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
         fileHandler.closeData();
     }
 
-    @Nonnull
+    @Nullable
     @Override
     public UndoRedo getUndoRedo() {
         UndoRedoWrapper undoWrapper = (UndoRedoWrapper) (fileHandler.getUndoRedo().orElse(null));
