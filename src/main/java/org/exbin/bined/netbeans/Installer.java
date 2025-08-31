@@ -238,6 +238,7 @@ public class Installer extends ModuleInstall {
         private final Map<Class<?>, Module> modules = new HashMap<>();
 
         private void createModules() {
+            // ExBin framework modules
             modules.put(LanguageModuleApi.class, new LanguageModule());
             modules.put(ActionModuleApi.class, new ActionModule());
             modules.put(OperationUndoModuleApi.class, new OperationUndoModule());
@@ -254,6 +255,9 @@ public class Installer extends ModuleInstall {
             modules.put(FileModuleApi.class, new FileModule());
             modules.put(EditorModuleApi.class, new EditorModule());
             modules.put(HelpOnlineModule.class, new HelpOnlineModule());
+            modules.put(AboutModuleApi.class, new AboutModule());
+            
+            // BinEd modules
             modules.put(BinedModule.class, new BinedModule());
             modules.put(BinedViewerModule.class, new BinedViewerModule());
             modules.put(BinedEditorModule.class, new BinedEditorModule());
@@ -267,7 +271,6 @@ public class Installer extends ModuleInstall {
             modules.put(BinedInspectorModule.class, new BinedInspectorModule());
             modules.put(BinedBookmarksModule.class, new BinedBookmarksModule());
             modules.put(BinedMacroModule.class, new BinedMacroModule());
-            modules.put(AboutModuleApi.class, new AboutModule());
 
             // Language plugins
             modules.put(LanguageCsCzModule.class, new LanguageCsCzModule());

@@ -43,11 +43,14 @@ import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.MultiViewElementCallback;
 import org.netbeans.core.spi.multiview.MultiViewFactory;
 import org.openide.awt.UndoRedo;
+import org.openide.filesystems.FileChangeAdapter;
+import org.openide.filesystems.FileEvent;
 import org.openide.filesystems.FileLock;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.loaders.DataObject;
 import org.openide.text.CloneableEditor;
+import org.openide.text.DataEditorSupport;
 import org.openide.util.Exceptions;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
@@ -124,8 +127,18 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
             BinaryUndoSwingHandler undoHandler = new BinaryUndoSwingHandler(codeArea, new UndoRedo.Manager());
             fileHandler.getComponent().setUndoRedo(undoHandler);
             undoHandler.addChangeListener(() -> {
+                boolean modified = undoHandler.isModified();
                 DataObject dataObject = lookup.lookup(DataObject.class);
-                dataObject.setModified(undoHandler.isModified());
+                dataObject.setModified(modified);
+                TopComponent topComponent = callback.getTopComponent();
+                topComponent.putClientProperty(DataObject.PROP_MODIFIED, modified);
+                if (callback != null) {
+                    String htmlDisplayName = dataObject.getPrimaryFile().getNameExt();
+                    if (modified) {
+                        htmlDisplayName = "<html><b>" + htmlDisplayName + "</b></html>";
+                    }
+                    callback.updateTitle(htmlDisplayName);
+                }
             });
             filePanel.setFileHandler(fileHandler);
             filePanel.loadFromOptions(preferencesModule.getAppPreferences());
@@ -195,6 +208,12 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
             }
 
             openFile(dataObject);
+            dataObject.getPrimaryFile().addFileChangeListener(new FileChangeAdapter() {
+                @Override
+                public void fileChanged(FileEvent fe) {
+                    openFile(dataObject);
+                }
+            });
 
             if (callback != null) {
                 callback.updateTitle(dataObject.getPrimaryFile().getNameExt());

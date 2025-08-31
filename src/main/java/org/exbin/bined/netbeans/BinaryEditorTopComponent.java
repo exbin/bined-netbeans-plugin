@@ -114,6 +114,9 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
             updateModified();
         });
 
+        PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
+        fileHandler.getComponent().onInitFromPreferences(preferencesModule.getAppPreferences());
+
         associateLookup(new AbstractLookup(content));
     }
 
@@ -271,13 +274,13 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
                     fileHandler.loadFromStream(stream);
                 }
             } catch (IOException ex) {
-                Logger.getLogger(BinEdFileHandler.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(BinaryEditorTopComponent.class.getName()).log(Level.SEVERE, null, ex);
             } finally {
                 if (stream != null) {
                     try {
                         stream.close();
                     } catch (IOException ex) {
-                        Logger.getLogger(BinEdFileHandler.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(BinaryEditorTopComponent.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }

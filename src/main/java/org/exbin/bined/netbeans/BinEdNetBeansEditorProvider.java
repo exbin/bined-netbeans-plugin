@@ -52,6 +52,7 @@ import org.exbin.framework.text.encoding.TextEncodingStatusApi;
 import org.exbin.framework.action.api.clipboard.ClipboardController;
 import org.exbin.framework.action.api.clipboard.TextClipboardController;
 import org.exbin.framework.bined.BinEdDataComponent;
+import org.exbin.framework.preferences.api.PreferencesModuleApi;
 
 /**
  * Editor provider wrapper for NetBeans BinEd editor.
@@ -131,7 +132,6 @@ public class BinEdNetBeansEditorProvider implements MultiEditorProvider, BinEdEd
     public void addFile(BinEdFileHandler fileHandler) {
         fileHandlers.add(fileHandler);
 
-
         SectCodeArea codeArea = fileHandler.getCodeArea();
         codeArea.addDataChangedListener(() -> {
             activeFile.getComponent().notifyDataChanged();
@@ -153,6 +153,9 @@ public class BinEdNetBeansEditorProvider implements MultiEditorProvider, BinEdEd
 
         EditorModuleApi editorModule = App.getModule(EditorModuleApi.class);
         editorModule.notifyEditorComponentCreated(fileHandler.getComponent());
+
+        PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
+        fileHandler.getComponent().onInitFromPreferences(preferencesModule.getAppPreferences());
     }
 
     @Nonnull
@@ -170,8 +173,8 @@ public class BinEdNetBeansEditorProvider implements MultiEditorProvider, BinEdEd
 
     public void activeFileChanged() {
         FrameModuleApi frameModule = App.getModule(FrameModuleApi.class);
-        ComponentActivationListener componentActivationListener =
-                frameModule.getFrameHandler().getComponentActivationListener();
+        ComponentActivationListener componentActivationListener
+                = frameModule.getFrameHandler().getComponentActivationListener();
 
         BinEdDataComponent binaryDataComponent = null;
         TextClipboardController clipboardActionsHandler = null;
@@ -279,7 +282,7 @@ public class BinEdNetBeansEditorProvider implements MultiEditorProvider, BinEdEd
     public void updateRecentFilesList(URI uri, FileType fileType) {
 
     }
-    
+
     @Override
     public void registerUndoHandler() {
         throw new UnsupportedOperationException("Not supported yet.");

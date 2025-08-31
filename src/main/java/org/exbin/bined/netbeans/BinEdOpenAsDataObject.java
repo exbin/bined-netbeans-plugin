@@ -67,6 +67,7 @@ public class BinEdOpenAsDataObject extends MultiDataObject implements Savable {
             editorComponent.openDataObject(dataObject);
             editorComponent.open();
             editorComponent.requestActive();
+//            UndoRedo undoRedo = editorComponent.getUndoRedo();
         } catch (DataObjectNotFoundException ex) {
             Logger.getLogger(BinEdOpenAsDataObject.class.getName()).log(Level.SEVERE, null, ex);
         }
