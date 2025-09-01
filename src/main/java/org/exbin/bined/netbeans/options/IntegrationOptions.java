@@ -35,7 +35,7 @@ public class IntegrationOptions implements OptionsData {
     public static final String KEY_LOCALE_TAG = "locale.tag";
     public static final String KEY_ICONSET = "iconset";
     public static final String KEY_REGISTER_FILE_MENU_OPEN_AS_BINARY = "registerFileMenuOpenAsBinary";
-    public static final String KEY_REGISTER_OPEN_FILE_AS_BINARY_VIA_TOOLBAR = "registerOpenFileAsBinaryViaToolbar";
+    public static final String KEY_REGISTER_OPEN_FILE_AS_BINARY_VIA_DIALOG = "registerOpenFileAsBinaryViaDialog";
     public static final String KEY_REGISTER_CONTEXT_OPEN_AS_BINARY = "registerContextOpenAsBinary";
     public static final String KEY_REGISTER_CONTEXT_TOOLS_OPEN_AS_BINARY = "registerContextToolsBinaryEditor";
     public static final String KEY_REGISTER_BINARY_MULTIVIEW = "registerBinaryMultiview";
@@ -133,12 +133,12 @@ public class IntegrationOptions implements OptionsData {
         storage.putBoolean(KEY_REGISTER_FILE_MENU_OPEN_AS_BINARY, registerFileMenuOpenAsBinary);
     }
 
-    public boolean isRegisterOpenFileAsBinaryViaToolbar() {
-        return storage.getBoolean(KEY_REGISTER_OPEN_FILE_AS_BINARY_VIA_TOOLBAR, false);
+    public boolean isRegisterOpenFileAsBinaryViaDialog() {
+        return storage.getBoolean(KEY_REGISTER_OPEN_FILE_AS_BINARY_VIA_DIALOG, false);
     }
 
-    public void setRegisterOpenFileAsBinaryViaToolbar(boolean registerOpenFileAsBinaryViaToolbar) {
-        storage.putBoolean(KEY_REGISTER_OPEN_FILE_AS_BINARY_VIA_TOOLBAR, registerOpenFileAsBinaryViaToolbar);
+    public void setRegisterOpenFileAsBinaryViaDialog(boolean registerOpenFileAsBinaryViaDialog) {
+        storage.putBoolean(KEY_REGISTER_OPEN_FILE_AS_BINARY_VIA_DIALOG, registerOpenFileAsBinaryViaDialog);
     }
 
     public boolean isRegisterContextOpenAsBinary() {
@@ -195,7 +195,7 @@ public class IntegrationOptions implements OptionsData {
         with.setLanguageLocale(getLanguageLocale());
         with.setIconSet(getIconSet());
         with.setRegisterFileMenuOpenAsBinary(isRegisterFileMenuOpenAsBinary());
-        with.setRegisterOpenFileAsBinaryViaToolbar(isRegisterOpenFileAsBinaryViaToolbar());
+        with.setRegisterOpenFileAsBinaryViaDialog(isRegisterOpenFileAsBinaryViaDialog());
         with.setRegisterContextOpenAsBinary(isRegisterContextOpenAsBinary());
         with.setRegisterContextToolsOpenAsBinary(isRegisterContextToolsOpenAsBinary());
         with.setRegisterBinaryMultiview(isRegisterBinaryMultiview());

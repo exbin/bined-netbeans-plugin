@@ -83,6 +83,7 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
     private static final String SHADOW_EXT = "shadow";
     private static final String ORIGINAL_FILE_ATTRIBUTE = "originalFile";
 
+    // TODO private BinaryEditorTopComponent editorComponent;
     private BinEdFilePanel filePanel;
     private BinEdFileHandler fileHandler;
     protected transient MultiViewElementCallback callback;
@@ -159,7 +160,7 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
 
     @Override
     public CloseOperationState canCloseElement() {
-        if (fileHandler.canSave()) {
+        if (!fileHandler.isModified()) {
             return CloseOperationState.STATE_OK;
         }
 

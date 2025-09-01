@@ -24,10 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import org.exbin.bined.EditMode;
 import org.exbin.bined.netbeans.gui.BinEdFilePanel;
@@ -43,9 +40,6 @@ import org.exbin.framework.file.api.FileModuleApi;
 import org.exbin.framework.preferences.api.OptionsStorage;
 import org.exbin.framework.preferences.api.PreferencesModuleApi;
 import org.netbeans.api.settings.ConvertAsProperties;
-import org.netbeans.core.spi.multiview.CloseOperationState;
-import org.netbeans.core.spi.multiview.MultiViewElement;
-import org.netbeans.core.spi.multiview.MultiViewElementCallback;
 import org.openide.awt.UndoRedo;
 import org.openide.loaders.DataObject;
 import org.openide.nodes.Node;
@@ -66,7 +60,7 @@ import org.openide.windows.TopComponent;
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @TopComponent.OpenActionRegistration(displayName = "#CTL_BinaryEditorAction", preferredID = "BinaryEditorTopComponent")
 @ParametersAreNonnullByDefault
-public final class BinaryEditorTopComponent extends TopComponent implements MultiViewElement, Serializable, UndoRedo.Provider {
+public final class BinaryEditorTopComponent extends TopComponent implements Serializable, UndoRedo.Provider {
 
     private static final String BINARY_EDITOR_TOP_COMPONENT_STRING = "CTL_BinaryEditorTopComponent";
     private static final String BINARY_EDITOR_TOP_COMPONENT_HINT_STRING = "HINT_BinaryEditorTopComponent";
@@ -205,33 +199,6 @@ public final class BinaryEditorTopComponent extends TopComponent implements Mult
 
     public void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
-    }
-
-    @Override
-    public JComponent getVisualRepresentation() {
-        return this;
-    }
-
-    @Override
-    public JComponent getToolbarRepresentation() {
-        return new JLabel("Test");
-    }
-
-    @Override
-    public void setMultiViewCallback(MultiViewElementCallback callback) {
-//        this.callback = callback;
-    }
-
-    @Nonnull
-    @Override
-    public CloseOperationState canCloseElement() {
-        boolean modified = fileHandler.isModified();
-        if (modified) {
-            throw new UnsupportedOperationException("Not supported yet.");
-//            return new CloseOperationState();
-        } else {
-            return CloseOperationState.STATE_OK;
-        }
     }
 
     @Override

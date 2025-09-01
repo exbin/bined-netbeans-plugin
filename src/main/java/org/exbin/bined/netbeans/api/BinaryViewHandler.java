@@ -50,7 +50,7 @@ public interface BinaryViewHandler {
     JComponent createBinaryViewPanel(@Nullable BinaryData binaryData);
 
     /**
-     * creates panel for object instance if possible.
+     * Creates panel for object instance if possible.
      *
      * @param instance class instance
      * @return binary view panel if instance supported
