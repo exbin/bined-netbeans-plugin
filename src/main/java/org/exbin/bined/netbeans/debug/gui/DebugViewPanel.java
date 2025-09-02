@@ -146,7 +146,15 @@ public class DebugViewPanel extends javax.swing.JPanel {
         OptionsAction optionsAction = (OptionsAction) optionsModule.createOptionsAction();
         FrameModuleApi frameModule = App.getModule(FrameModuleApi.class);
         optionsAction.setDialogParentComponent(() -> frameModule.getFrame());
-        toolbarPanel.setOptionsAction(optionsAction);
+        AbstractAction wrapperAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                optionsAction.actionPerformed(e);
+                toolbarPanel.applyFromCodeArea();
+                statusPanel.updateStatus();
+            }
+        };
+        toolbarPanel.setOptionsAction(wrapperAction);
 
         CodeAreaPopupMenuHandler codeAreaPopupMenuHandler
                 = binedModule.createCodeAreaPopupMenuHandler(BinedModule.PopupMenuVariant.NORMAL);

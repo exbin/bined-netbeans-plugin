@@ -109,7 +109,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Seri
         });
 
         PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
-        fileHandler.getComponent().onInitFromPreferences(preferencesModule.getAppPreferences());
+        filePanel.loadFromOptions(preferencesModule.getAppPreferences());
 
         associateLookup(new AbstractLookup(content));
     }
