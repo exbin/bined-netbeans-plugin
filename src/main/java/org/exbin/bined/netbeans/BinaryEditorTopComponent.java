@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.SwingUtilities;
 import org.exbin.bined.EditMode;
@@ -160,6 +161,11 @@ public final class BinaryEditorTopComponent extends TopComponent implements Seri
         }
     }
 
+    @Nonnull
+    public BinEdFileHandler getFileHandler() {
+        return fileHandler;
+    }
+
     @Override
     public UndoRedo getUndoRedo() {
         return undoHandler.getUndoManager();
@@ -257,6 +263,10 @@ public final class BinaryEditorTopComponent extends TopComponent implements Seri
             fileHandler.loadFromFile(file.toURI(), null);
         }
 
+        updateStatus();
+    }
+    
+    public void updateStatus() {
         BinaryStatusPanel statusPanel = filePanel.getStatusPanel();
         statusPanel.setCurrentDocumentSize(fileHandler.getCodeArea().getDataSize(), fileHandler.getDocumentOriginalSize());
         statusPanel.updateStatus();

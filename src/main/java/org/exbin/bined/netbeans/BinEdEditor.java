@@ -17,6 +17,7 @@ package org.exbin.bined.netbeans;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.logging.Level;
@@ -27,21 +28,16 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import org.exbin.bined.netbeans.gui.BinEdFilePanel;
 import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.exbin.bined.swing.section.SectCodeArea;
-import org.exbin.framework.App;
 import org.exbin.framework.bined.BinEdFileHandler;
-import org.exbin.framework.bined.BinEdFileManager;
-import org.exbin.framework.bined.BinedModule;
 import org.exbin.framework.bined.UndoRedoWrapper;
-import org.exbin.framework.bined.gui.BinaryStatusPanel;
-import org.exbin.framework.preferences.api.PreferencesModuleApi;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.MultiViewElementCallback;
 import org.netbeans.core.spi.multiview.MultiViewFactory;
+import org.openide.actions.SaveAction;
 import org.openide.awt.UndoRedo;
 import org.openide.filesystems.FileChangeAdapter;
 import org.openide.filesystems.FileEvent;
@@ -83,9 +79,7 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
     private static final String SHADOW_EXT = "shadow";
     private static final String ORIGINAL_FILE_ATTRIBUTE = "originalFile";
 
-    // TODO private BinaryEditorTopComponent editorComponent;
-    private BinEdFilePanel filePanel;
-    private BinEdFileHandler fileHandler;
+    private BinaryEditorTopComponent editorComponent;
     protected transient MultiViewElementCallback callback;
     private final Lookup lookup;
 
@@ -117,34 +111,10 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
     @Nonnull
     @Override
     public JComponent getVisualRepresentation() {
-        if (filePanel == null) {
-            PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
-            fileHandler = new BinEdFileHandler();
-            filePanel = new BinEdFilePanel();
-            SectCodeArea codeArea = fileHandler.getCodeArea();
-            BinedModule binedModule = App.getModule(BinedModule.class);
-            BinEdFileManager fileManager = binedModule.getFileManager();
-            fileManager.initFileHandler(fileHandler);
-            BinaryUndoSwingHandler undoHandler = new BinaryUndoSwingHandler(codeArea, new UndoRedo.Manager());
-            fileHandler.getComponent().setUndoRedo(undoHandler);
-            undoHandler.addChangeListener(() -> {
-                boolean modified = undoHandler.isModified();
-                DataObject dataObject = lookup.lookup(DataObject.class);
-                dataObject.setModified(modified);
-                TopComponent topComponent = callback.getTopComponent();
-                topComponent.putClientProperty(DataObject.PROP_MODIFIED, modified);
-                if (callback != null) {
-                    String htmlDisplayName = dataObject.getPrimaryFile().getNameExt();
-                    if (modified) {
-                        htmlDisplayName = "<html><b>" + htmlDisplayName + "</b></html>";
-                    }
-                    callback.updateTitle(htmlDisplayName);
-                }
-            });
-            filePanel.setFileHandler(fileHandler);
-            filePanel.loadFromOptions(preferencesModule.getAppPreferences());
+        if (editorComponent == null) {
+            editorComponent = new BinaryEditorTopComponent();
         }
-        return filePanel;
+        return editorComponent;
     }
 
     @Nonnull
@@ -160,11 +130,14 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
 
     @Override
     public CloseOperationState canCloseElement() {
-        if (!fileHandler.isModified()) {
+        if (!editorComponent.getFileHandler().isModified()) {
             return CloseOperationState.STATE_OK;
         }
 
-        return MultiViewFactory.createUnsafeCloseState("", null, null);
+        SaveAction saveAction = new SaveAction();
+        DataObject dataObject = lookup.lookup(DataObject.class);
+        saveAction.putValue(Action.LONG_DESCRIPTION, String.format("File %s is modified. Save?", dataObject.getPrimaryFile().getNameExt()));
+        return MultiViewFactory.createUnsafeCloseState("editor", saveAction, MultiViewFactory.NOOP_CLOSE_ACTION);
     }
 
     @Nonnull
@@ -185,8 +158,7 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
 
     @Override
     public void componentActivated() {
-        BinedModule binedModule = App.getModule(BinedModule.class);
-        ((BinEdNetBeansEditorProvider) binedModule.getEditorProvider()).setActiveFile(fileHandler);
+        editorComponent.componentActivated();
 //        FrameModuleApi frameModule = App.getModule(FrameModuleApi.class);
 //        ComponentActivationListener componentActivationListener = frameModule.getFrameHandler().getComponentActivationListener();
 //        fileHandler.componentActivated(componentActivationListener);
@@ -194,6 +166,7 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
 
     @Override
     public void componentDeactivated() {
+        editorComponent.componentDeactivated();
 //        FrameModuleApi frameModule = App.getModule(FrameModuleApi.class);
 //        ComponentActivationListener componentActivationListener = frameModule.getFrameHandler().getComponentActivationListener();
 //        fileHandler.componentDeactivated(componentActivationListener);
@@ -232,13 +205,13 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
 
     @Override
     public void componentClosed() {
-        fileHandler.closeData();
+        editorComponent.getFileHandler().closeData();
     }
 
     @Nullable
     @Override
     public UndoRedo getUndoRedo() {
-        UndoRedoWrapper undoWrapper = (UndoRedoWrapper) (fileHandler.getUndoRedo().orElse(null));
+        UndoRedoWrapper undoWrapper = (UndoRedoWrapper) (editorComponent.getFileHandler().getUndoRedo().orElse(null));
         return undoWrapper != null ? ((BinaryUndoSwingHandler) undoWrapper.getUndoRedo()).getUndoManager() : null;
     }
 
@@ -249,10 +222,37 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
     }
 
     public void save() {
-        fileHandler.saveFile();
+//        try {
+//            getEditorSupport().saveDocument();
+//        } catch (IOException ex) {
+//            Logger.getLogger(BinEdEditor.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        editorComponent.getFileHandler().saveFile();
+        DataObject dataObject = lookup.lookup(DataObject.class);
+        BinEdFileHandler fileHandler = editorComponent.getFileHandler();
+        OutputStream stream = null;
+        try {
+            stream = dataObject.getPrimaryFile().getOutputStream();
+            if (stream != null) {
+                fileHandler.saveToStream(stream);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(BinEdEditor.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(BinEdEditor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        fileHandler.fileSync();
+        editorComponent.updateStatus();
     }
 
     public void openFile(DataObject dataObject) {
+        BinEdFileHandler fileHandler = editorComponent.getFileHandler();
         SectCodeArea codeArea = fileHandler.getCodeArea();
         boolean editable = dataObject.getPrimaryFile().canWrite();
 //        URI fileUri = dataObject.getPrimaryFile().toURI();
@@ -280,9 +280,11 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
 //            fileHandler.loadFromFile(file.toURI(), null);
 //        }
         fileHandler.fileSync();
-        BinaryStatusPanel statusPanel = filePanel.getStatusPanel();
-        statusPanel.setCurrentDocumentSize(fileHandler.getCodeArea().getDataSize(), fileHandler.getDocumentOriginalSize());
-        statusPanel.updateStatus();
+        editorComponent.updateStatus();
+    }
+
+    private DataEditorSupport getEditorSupport() {
+        return (DataEditorSupport) cloneableEditorSupport();
     }
 
     public static void install() {

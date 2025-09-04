@@ -32,6 +32,7 @@ import org.openide.loaders.MultiFileLoader;
 import org.openide.nodes.CookieSet;
 import org.openide.text.DataEditorSupport;
 import org.openide.util.Lookup;
+import org.openide.windows.TopComponent;
 
 /**
  * BinEd data object.
@@ -47,7 +48,7 @@ public class BinEdDataObject extends MultiDataObject implements Savable {
     public static final String MIME_TYPE = "application/octet-stream"; //NOI18N
     public static final String MMD_EXT = "bin"; //NOI18N
     
-    private BinEdEditorMulti visualEditor;
+//    private BinEdEditorMulti visualEditor;
 
     public BinEdDataObject(FileObject fo, MultiFileLoader loader) throws DataObjectExistsException {
         super(fo, loader);
@@ -66,7 +67,7 @@ public class BinEdDataObject extends MultiDataObject implements Savable {
 //                Logger.getLogger(BinEdDataObject.class.getName()).log(Level.SEVERE, null, ex);
 //            }
 //        }
-        visualEditor = new BinEdEditorMulti(lookup);
+//        visualEditor = new BinEdEditorMulti(lookup);
         // visualEditor.openFile(fo.);
 
         registerEditor(MIME_TYPE, true);
@@ -74,7 +75,8 @@ public class BinEdDataObject extends MultiDataObject implements Savable {
 
     @Override
     public void save() throws IOException {
-        visualEditor.save();
+        DataEditorSupport dataEditorSupport = getLookup().lookup(DataEditorSupport.class);
+        dataEditorSupport.saveDocument();
     }
 
     @Override
@@ -82,14 +84,14 @@ public class BinEdDataObject extends MultiDataObject implements Savable {
         return 1;
     }
 
-    @Nonnull
-    @Override
-    public Lookup getLookup() {
-        return visualEditor.getLookup();
-    }
+//    @Nonnull
+//    @Override
+//    public Lookup getLookup() {
+//        return visualEditor.getLookup();
+//    }
 
-    @Nonnull
-    public UndoRedo.Manager getUndoRedoManager() {
-        return (UndoRedo.Manager) visualEditor.getUndoRedo();
-    }
+//    @Nonnull
+//    public UndoRedo.Manager getUndoRedoManager() {
+//        return (UndoRedo.Manager) visualEditor.getUndoRedo();
+//    }
 }
