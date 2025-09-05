@@ -50,7 +50,7 @@ public class BinEdOpenAsDataObject extends MultiDataObject implements Savable {
 
     public static final String MIME_TYPE = "application/x-bined-openas"; //NOI18N
     
-    private BinEdEditorMulti visualEditor;
+    private BinaryEditorTopComponent editorComponent;
 
     public BinEdOpenAsDataObject(FileObject fo, MultiFileLoader loader) throws DataObjectExistsException {
         super(fo, loader);
@@ -61,7 +61,7 @@ public class BinEdOpenAsDataObject extends MultiDataObject implements Savable {
         }
 
         try {        
-            final BinaryEditorTopComponent editorComponent = new BinaryEditorTopComponent();
+            editorComponent = new BinaryEditorTopComponent();
             editorMode.dockInto(editorComponent);
             DataObject dataObject = DataObject.find(fo);
             editorComponent.openDataObject(dataObject);
@@ -95,17 +95,17 @@ public class BinEdOpenAsDataObject extends MultiDataObject implements Savable {
 
     @Override
     public void save() throws IOException {
-        visualEditor.save();
+        editorComponent.saveFile();
     }
 
     @Nonnull
     @Override
     public Lookup getLookup() {
-        return visualEditor.getLookup();
+        return editorComponent.getLookup();
     }
 
     @Nonnull
     public UndoRedo.Manager getUndoRedoManager() {
-        return (UndoRedo.Manager) visualEditor.getUndoRedo();
+        return (UndoRedo.Manager) editorComponent.getUndoRedo();
     }
 }

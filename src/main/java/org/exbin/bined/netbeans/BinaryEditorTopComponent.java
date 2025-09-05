@@ -266,6 +266,10 @@ public final class BinaryEditorTopComponent extends TopComponent implements Seri
         updateStatus();
     }
     
+    public void saveFile() {
+        fileHandler.saveFile();
+    }
+    
     public void updateStatus() {
         BinaryStatusPanel statusPanel = filePanel.getStatusPanel();
         statusPanel.setCurrentDocumentSize(fileHandler.getCodeArea().getDataSize(), fileHandler.getDocumentOriginalSize());

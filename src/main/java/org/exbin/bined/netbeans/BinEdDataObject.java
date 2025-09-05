@@ -48,8 +48,6 @@ public class BinEdDataObject extends MultiDataObject implements Savable {
     public static final String MIME_TYPE = "application/octet-stream"; //NOI18N
     public static final String MMD_EXT = "bin"; //NOI18N
     
-//    private BinEdEditorMulti visualEditor;
-
     public BinEdDataObject(FileObject fo, MultiFileLoader loader) throws DataObjectExistsException {
         super(fo, loader);
         CookieSet cookieSet = getCookieSet();
@@ -67,8 +65,6 @@ public class BinEdDataObject extends MultiDataObject implements Savable {
 //                Logger.getLogger(BinEdDataObject.class.getName()).log(Level.SEVERE, null, ex);
 //            }
 //        }
-//        visualEditor = new BinEdEditorMulti(lookup);
-        // visualEditor.openFile(fo.);
 
         registerEditor(MIME_TYPE, true);
     }
@@ -83,15 +79,4 @@ public class BinEdDataObject extends MultiDataObject implements Savable {
     protected int associateLookup() {
         return 1;
     }
-
-//    @Nonnull
-//    @Override
-//    public Lookup getLookup() {
-//        return visualEditor.getLookup();
-//    }
-
-//    @Nonnull
-//    public UndoRedo.Manager getUndoRedoManager() {
-//        return (UndoRedo.Manager) visualEditor.getUndoRedo();
-//    }
 }

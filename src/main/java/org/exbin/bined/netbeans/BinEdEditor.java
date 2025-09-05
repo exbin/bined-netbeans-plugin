@@ -15,6 +15,7 @@
  */
 package org.exbin.bined.netbeans;
 
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -25,6 +26,7 @@ import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -134,7 +136,12 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
             return CloseOperationState.STATE_OK;
         }
 
-        SaveAction saveAction = new SaveAction();
+        AbstractAction saveAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                save();
+            }
+        };
         DataObject dataObject = lookup.lookup(DataObject.class);
         saveAction.putValue(Action.LONG_DESCRIPTION, String.format("File %s is modified. Save?", dataObject.getPrimaryFile().getNameExt()));
         return MultiViewFactory.createUnsafeCloseState("editor", saveAction, MultiViewFactory.NOOP_CLOSE_ACTION);

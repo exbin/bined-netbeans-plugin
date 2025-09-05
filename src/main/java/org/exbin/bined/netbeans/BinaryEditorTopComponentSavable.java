@@ -30,7 +30,7 @@ import org.openide.loaders.DataObject;
  * @author ExBin Project (https://exbin.org)
  */
 @ParametersAreNonnullByDefault
-class BinaryEditorTopComponentSavable extends AbstractSavable {
+public class BinaryEditorTopComponentSavable extends AbstractSavable {
 
     private DataObject dataObject;
     private final BinEdFileHandler fileApi;
