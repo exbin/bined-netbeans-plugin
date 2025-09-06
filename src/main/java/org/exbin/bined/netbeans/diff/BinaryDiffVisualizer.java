@@ -21,8 +21,6 @@ import java.io.Reader;
 import java.io.Serializable;
 import javax.annotation.Nonnull;
 import javax.swing.JPanel;
-import org.exbin.bined.netbeans.Installer;
-import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.netbeans.api.diff.Difference;
 
 /**
@@ -81,31 +79,5 @@ public class BinaryDiffVisualizer extends org.netbeans.spi.diff.DiffVisualizer i
      */
     public void setContextMode(boolean contextMode) {
         this.contextMode = contextMode;
-    }
-
-    public static void registerIntegration() {
-        Installer.addIntegrationOptionsListener(new Installer.IntegrationOptionsListener() {
-            @Override
-            public void integrationInit(IntegrationOptions integrationOptions) {
-                if (integrationOptions.isRegisterByteToByteDiffTool()) {
-                    install();
-                } else {
-                    uninstall();
-                }
-            }
-
-            @Override
-            public void uninstallIntegration() {
-                uninstall();
-            }
-        });
-    }
-
-    public static void install() {
-//        org.openide.util.Lookup lookup = org.openide.util.Lookup.getDefault();
-    }
-
-    public static void uninstall() {
-
     }
 }

@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JFileChooser;
+import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.netbeans.api.actions.Savable;
 import org.openide.awt.UndoRedo;
 import org.openide.cookies.OpenCookie;
@@ -107,5 +108,23 @@ public class BinEdOpenAsDataObject extends MultiDataObject implements Savable {
     @Nonnull
     public UndoRedo.Manager getUndoRedoManager() {
         return (UndoRedo.Manager) editorComponent.getUndoRedo();
+    }
+
+    public static void registerIntegration() {
+        Installer.addIntegrationOptionsListener(new Installer.IntegrationOptionsListener() {
+            @Override
+            public void integrationInit(IntegrationOptions integrationOptions) {
+                if (integrationOptions.isRegisterOpenFileAsBinaryViaDialog()) {
+                    // install();
+                } else {
+                    // uninstall();
+                }
+            }
+
+            @Override
+            public void uninstallIntegration() {
+                // uninstall();
+            }
+        });
     }
 }

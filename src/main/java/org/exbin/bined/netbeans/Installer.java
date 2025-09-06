@@ -31,6 +31,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
+import org.exbin.bined.netbeans.diff.BinEdDiffAction;
 import org.exbin.bined.netbeans.diff.BinaryDiffVisualizer;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.exbin.bined.netbeans.options.gui.IntegrationOptionsPanel;
@@ -170,8 +171,9 @@ public class Installer extends ModuleInstall {
         FileOpenAsBinaryAction.registerIntegration();
         OpenAsBinaryAction.registerIntegration();
         OpenAsBinaryToolsAction.registerIntegration();
-        BinEdEditor.registerIntegration();
-        BinaryDiffVisualizer.registerIntegration();
+        BinEdEditorMulti.registerIntegration();
+        BinEdDiffAction.registerIntegration();
+        BinEdOpenAsDataObject.registerIntegration();
     }
 
     public static void addIntegrationOptionsListener(IntegrationOptionsListener integrationOptionsListener) {

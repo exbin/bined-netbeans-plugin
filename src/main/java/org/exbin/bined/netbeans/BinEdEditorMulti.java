@@ -15,11 +15,18 @@
  */
 package org.exbin.bined.netbeans;
 
-import javax.annotation.Nullable;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.ParametersAreNonnullByDefault;
-import javax.swing.JComponent;
-import javax.swing.event.DocumentListener;
+import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.netbeans.core.spi.multiview.MultiViewElement;
+import org.openide.filesystems.FileLock;
+import org.openide.filesystems.FileObject;
+import org.openide.filesystems.FileUtil;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.windows.TopComponent;
 
@@ -44,12 +51,238 @@ public class BinEdEditorMulti extends BinEdEditor implements MultiViewElement {
     public static final int POSITION_MULTI_ATTRIBUTE = 900006; // Between "Source" and "History"
 
 //    private final DocumentListener documentListener;
+    private static final String EDITORS_FOLDER = "Editors";
+    private static final String MULTIVIEW_FOLDER = "MultiView";
+    private static final String DYNAMIC_FILETYPE_PREFIX = "-nb";
+    private static final String ELEMENT_INSTANCE = "Editors/application/octet-stream/" + MULTIVIEW_FOLDER + "/" + ELEMENT_NAME + ".instance";
+    private static final String SHADOW_EXT = "shadow";
+    private static final String ORIGINAL_FILE_ATTRIBUTE = "originalFile";
+
     
     public BinEdEditorMulti(Lookup lookup) {
         super(lookup);
     }
     
-    public void openFile() {
+    public static void registerIntegration() {
+        Installer.addIntegrationOptionsListener(new Installer.IntegrationOptionsListener() {
+            @Override
+            public void integrationInit(IntegrationOptions integrationOptions) {
+                if (integrationOptions.isRegisterBinaryMultiview()) {
+                    // install();
+                } else {
+                    // uninstall();
+                }
+            }
+
+            @Override
+            public void uninstallIntegration() {
+                uninstall();
+            }
+        });
+    }
+
+    public static void install() {
+        FileObject allTypesFolder = FileUtil.getSystemConfigFile("Editors/" + MULTIVIEW_FOLDER);
+        FileObject binaryTypeFolder = FileUtil.getSystemConfigFile("Editors/application/octet-stream/" + MULTIVIEW_FOLDER);
+        try {
+            FileObject allTypesObject = allTypesFolder.getFileObject(BinEdEditorMulti.ELEMENT_MULTI_NAME, "disabled");
+            if (allTypesObject != null) {
+                FileLock lock = null;
+                try {
+                    lock = allTypesObject.lock();
+                    allTypesObject.rename(lock, BinEdEditorMulti.ELEMENT_MULTI_NAME, "instance");
+                } finally {
+                    if (lock != null) {
+                        lock.releaseLock();
+                    }
+                }
+                allTypesFolder.refresh();
+            }
+            FileObject binaryTypeObject = binaryTypeFolder.getFileObject(ELEMENT_NAME, "instance");
+            if (binaryTypeObject != null) {
+                FileLock lock = null;
+                try {
+                    lock = binaryTypeObject.lock();
+                    binaryTypeObject.rename(lock, ELEMENT_NAME, "disabled");
+                } finally {
+                    if (lock != null) {
+                        lock.releaseLock();
+                    }
+                }
+                binaryTypeFolder.refresh();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(BinEdEditorMulti.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        final FileObject editors = FileUtil.getConfigFile(EDITORS_FOLDER);
+        for (FileObject mimeType : editors.getChildren()) {
+            String type = mimeType.getName();
+            for (FileObject mimeSubType : mimeType.getChildren()) {
+                String subType = mimeSubType.getName();
+                installForMimeType(mimeSubType, type, subType);
+            }
+        }
         
+        /*        FileObject targetFolder = FileUtil.getSystemConfigFile(EDITORS_FOLDER + "/" + MULTIVIEW_FOLDER);
+        targetFolder.move(FileLock.NONE, targetFolder, ELEMENT_ID, SHADOW_EXT)
+        FileObject elementRecord = targetFolder.getFileObject(ELEMENT_ID + "." + SHADOW_EXT);
+        if (elementRecord == null) {
+            try {
+//                final FileObject record = targetFolder.createData(ELEMENT_ID + "." + SHADOW_EXT);
+//                record.setAttribute(ORIGINAL_FILE_ATTRIBUTE, ELEMENT_INSTANCE);
+//                record.setAttribute("position", POSITION_ATTRIBUTE);
+//                targetFolder.refresh();
+            } catch (IOException ex) {
+                Logger.getLogger(BinEdEditorMulti.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } */
+    }
+
+    public static void uninstall() {
+        FileObject allTypesFolder = FileUtil.getSystemConfigFile("Editors/" + MULTIVIEW_FOLDER);
+        FileObject binaryTypeFolder = FileUtil.getSystemConfigFile("Editors/application/octet-stream/" + MULTIVIEW_FOLDER);
+        try {
+            FileObject allTypesObject = allTypesFolder.getFileObject(BinEdEditorMulti.ELEMENT_MULTI_NAME, "instance");
+            if (allTypesObject != null) {
+                FileLock lock = null;
+                try {
+                    lock = allTypesObject.lock();
+                    allTypesObject.rename(lock, BinEdEditorMulti.ELEMENT_MULTI_NAME, "disabled");
+                } finally {
+                    if (lock != null) {
+                        lock.releaseLock();
+                    }
+                }
+                allTypesFolder.refresh();
+            }
+            FileObject binaryTypeObject = binaryTypeFolder.getFileObject(ELEMENT_NAME, "disabled");
+            if (binaryTypeObject != null) {
+                FileLock lock = null;
+                try {
+                    lock = binaryTypeObject.lock();
+                    binaryTypeObject.rename(lock, ELEMENT_NAME, "instance");
+                } finally {
+                    if (lock != null) {
+                        lock.releaseLock();
+                    }
+                }
+                binaryTypeFolder.refresh();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(BinEdEditorMulti.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        /*        
+        FileObject targetFolder = FileUtil.getSystemConfigFile(EDITORS_FOLDER + "/" + MULTIVIEW_FOLDER);
+        FileObject elementRecord = targetFolder.getFileObject(ELEMENT_ID + "." + SHADOW_EXT);
+        if (elementRecord != null) {
+            try {
+                elementRecord.delete();
+                targetFolder.refresh();
+            } catch (IOException ex) {
+                Logger.getLogger(BinEdEditorMulti.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } */
+    }
+
+    /*
+    public static void install() {
+        final FileObject editors = FileUtil.getConfigFile(EDITORS_FOLDER);
+        for (FileObject mimeType : editors.getChildren()) {
+            String type = mimeType.getName();
+            for (FileObject mimeSubType : mimeType.getChildren()) {
+                String subType = mimeSubType.getName();
+                installForMimeType(mimeSubType, type, subType);
+            }
+        }
+    }
+
+    public static void uninstall() {
+        final FileObject editors = FileUtil.getConfigFile(EDITORS_FOLDER);
+        for (FileObject mimeType : editors.getChildren()) {
+            String type = mimeType.getName();
+            for (FileObject mimeSubType : mimeType.getChildren()) {
+                String subType = mimeSubType.getName();
+                uninstallForMimeType(mimeSubType, type, subType);
+            }
+        }
+    }
+*/
+    private static void installForMimeType(FileObject fileType, String mimeType, String mimeSubType) {
+        if (!fileType.isFolder()) {
+            return;
+        }
+
+        // It seems that NetBeans registers types with -nb postfix for dynamically loaded plugins
+        if (mimeType.endsWith(DYNAMIC_FILETYPE_PREFIX) || BinEdDataObject.MIME_TYPE.equals(mimeType + "/" + mimeSubType)) {
+            return;
+        }
+
+        try {
+            FileObject multiViewFolder = fileType.getFileObject(MULTIVIEW_FOLDER);
+            if (multiViewFolder == null) {
+                multiViewFolder = FileUtil.createFolder(fileType, MULTIVIEW_FOLDER);
+            }
+
+            final FileObject editorRecord = multiViewFolder.getFileObject(ELEMENT_ID + "." + SHADOW_EXT);
+            if (editorRecord == null) {
+                FileObject record = multiViewFolder.createData(ELEMENT_ID + "." + SHADOW_EXT);
+                record.setAttribute(ORIGINAL_FILE_ATTRIBUTE, ELEMENT_INSTANCE);
+                record.setAttribute("position", POSITION_ATTRIBUTE);
+                record.setAttribute("persistenceType", TopComponent.PERSISTENCE_NEVER);
+                
+                // Register multiview
+                record = multiViewFolder.createData(BinEdEditorMulti.ELEMENT_MULTI_ID);
+                record.setAttribute("displayName", "Binary");
+                record.setAttribute("mimeType", "");
+                record.setAttribute("class", "org.exbin.bined.netbeans.BinEdEditorMulti");
+                Method method = org.netbeans.core.spi.multiview.MultiViewFactory.class.getMethod("createMultiViewDescription", Map.class);
+                record.setAttribute("instanceCreate", method);
+                record.setAttribute("instanceClass", "org.netbeans.core.multiview.ContextAwareDescription");
+                record.setAttribute("iconBase", "org/exbin/bined/netbeans/resources/icons/icon.png");
+                record.setAttribute("preferredID", BinEdEditorMulti.ELEMENT_ID);
+                record.setAttribute("position", BinEdEditorMulti.POSITION_ATTRIBUTE);
+                record.setAttribute("persistenceType", TopComponent.PERSISTENCE_NEVER);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(BinEdEditorMulti.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchMethodException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (SecurityException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+
+    private static void uninstallForMimeType(FileObject fileType, String mimeType, String mimeSubType) {
+        if (!fileType.isFolder()) {
+            return;
+        }
+
+        // It seems that NetBeans registers types with -nb postfix for dynamically loaded plugins
+        if (mimeType.endsWith(DYNAMIC_FILETYPE_PREFIX) || BinEdDataObject.MIME_TYPE.equals(mimeType + "/" + mimeSubType)) {
+            return;
+        }
+
+        try {
+            FileObject multiViewFolder = fileType.getFileObject(MULTIVIEW_FOLDER);
+            if (multiViewFolder == null) {
+                return;
+            }
+
+            final FileObject editorRecord = multiViewFolder.getFileObject(ELEMENT_ID + "." + SHADOW_EXT);
+            if (editorRecord != null) {
+                editorRecord.delete();
+                multiViewFolder.refresh();
+
+                boolean hasAttributes = multiViewFolder.getAttributes().hasMoreElements();
+                boolean hasChildren = multiViewFolder.getChildren().length > 0;
+                if (!hasAttributes && !hasChildren) {
+                    multiViewFolder.delete();
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(BinEdEditorMulti.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

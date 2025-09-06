@@ -66,7 +66,7 @@ public class IntegrationOptionsPanel extends javax.swing.JPanel implements Optio
         options.setRegisterOpenFileAsBinaryViaDialog(openFileDialogBinaryCheckBox.isSelected());
         options.setRegisterContextOpenAsBinary(contextOpenAsBinaryCheckBox.isSelected());
         options.setRegisterContextToolsOpenAsBinary(contextToolsOpenAsBinaryCheckBox.isSelected());
-//        options.setRegisterBinaryMultiview(binaryMultiviewCheckBox.isSelected());
+        options.setRegisterBinaryMultiview(binaryMultiviewCheckBox.isSelected());
         options.setRegisterDebugViewAsBinary(openAsBinaryInDebugViewCheckBox.isSelected());
         options.setRegisterByteToByteDiffTool(byteToByteDiffToolCheckBox.isSelected());
 //        options.setRegisterEditAsBinaryForDbColumn(editAsBinaryForDbColumnCheckBox.isSelected());
@@ -88,7 +88,7 @@ public class IntegrationOptionsPanel extends javax.swing.JPanel implements Optio
         openFileDialogBinaryCheckBox.setSelected(options.isRegisterOpenFileAsBinaryViaDialog());
         contextOpenAsBinaryCheckBox.setSelected(options.isRegisterContextOpenAsBinary());
         contextToolsOpenAsBinaryCheckBox.setSelected(options.isRegisterContextToolsOpenAsBinary());
-//        binaryMultiviewCheckBox.setSelected(options.isRegisterBinaryMultiview());
+        binaryMultiviewCheckBox.setSelected(options.isRegisterBinaryMultiview());
         openAsBinaryInDebugViewCheckBox.setSelected(options.isRegisterDebugViewAsBinary());
         byteToByteDiffToolCheckBox.setSelected(options.isRegisterByteToByteDiffTool());
 //        editAsBinaryForDbColumnCheckBox.setSelected(options.isRegisterEditAsBinaryForDbColumn());
@@ -196,7 +196,6 @@ public class IntegrationOptionsPanel extends javax.swing.JPanel implements Optio
         });
 
         openFileDialogBinaryCheckBox.setText(resourceBundle.getString("openFileDialogBinaryCheckBox.text")); // NOI18N
-        openFileDialogBinaryCheckBox.setEnabled(false);
         openFileDialogBinaryCheckBox.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 openFileDialogBinaryCheckBoxStateChanged(evt);

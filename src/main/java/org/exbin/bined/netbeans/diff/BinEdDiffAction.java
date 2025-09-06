@@ -25,6 +25,7 @@ import java.io.File;
 import java.util.*;
 import java.awt.event.ActionEvent;
 import javax.swing.*;
+import org.exbin.bined.netbeans.Installer;
 import org.exbin.bined.netbeans.diff.builtin.SingleDiffPanel;
 
 import org.openide.NotifyDescriptor;
@@ -46,6 +47,7 @@ import org.netbeans.api.diff.*;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.progress.ProgressHandle;
 import org.exbin.bined.netbeans.diff.builtin.DefaultDiff;
+import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.openide.DialogDisplayer;
 import org.openide.ErrorManager;
 import org.openide.awt.ActionID;
@@ -68,12 +70,13 @@ import org.openide.awt.ActionRegistration;
 )
 public class BinEdDiffAction extends NodeAction {
 
+    private static boolean enabled = true;
+    private static boolean diffAvailable = true;
+
     public BinEdDiffAction() {
         putValue("noIconInMenu", Boolean.TRUE); // NOI18N
     }
 
-    private static boolean diffAvailable = true;
-    
     private class DiffActionImpl extends AbstractAction {
         
         private final Node [] nodes;
@@ -124,7 +127,7 @@ public class BinEdDiffAction extends NodeAction {
     
     public boolean enable(Node[] nodes) {
         //System.out.println("BinEdDiffAction.enable() = "+(nodes.length == 2));
-        if (!diffAvailable) {
+        if (!enabled || !diffAvailable) {
             return false;
         }
         if (nodes.length == 2) {
@@ -282,6 +285,22 @@ public class BinEdDiffAction extends NodeAction {
         return new HelpCtx(BinEdDiffAction.class);
     }
 
+
+    public static void registerIntegration() {
+        Installer.addIntegrationOptionsListener(new Installer.IntegrationOptionsListener() {
+
+            @Override
+            public void integrationInit(IntegrationOptions integrationOptions) {
+                enabled = integrationOptions.isRegisterByteToByteDiffTool();
+            }
+
+            @Override
+            public void uninstallIntegration() {
+                enabled = false;
+            }
+        });
+    }
+    
     public static class AccessibleJFileChooser extends JFileChooser {
 
         private final String acsd;

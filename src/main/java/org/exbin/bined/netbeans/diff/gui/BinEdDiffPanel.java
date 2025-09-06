@@ -97,7 +97,7 @@ public class BinEdDiffPanel extends JPanel {
     private final BinaryStatusPanel rightStatusPanel;
     private EncodingsHandler encodingsHandler;
     private GoToPositionAction goToPositionAction = new GoToPositionAction();
-    
+
     public BinEdDiffPanel() {
         setLayout(new java.awt.BorderLayout());
 
@@ -108,13 +108,13 @@ public class BinEdDiffPanel extends JPanel {
         SectCodeArea rightCodeArea = diffPanel.getRightCodeArea();
 
         CodeAreaPainter leftPainter = leftCodeArea.getPainter();
-        BinEdCodeAreaAssessor codeAreaAssessor = new BinEdCodeAreaAssessor(((ColorAssessorPainterCapable)leftPainter).getColorAssessor(), ((CharAssessorPainterCapable)leftPainter).getCharAssessor());
-        ((ColorAssessorPainterCapable)leftPainter).setColorAssessor(codeAreaAssessor);
-        ((CharAssessorPainterCapable)leftPainter).setCharAssessor(codeAreaAssessor);
+        BinEdCodeAreaAssessor codeAreaAssessor = new BinEdCodeAreaAssessor(((ColorAssessorPainterCapable) leftPainter).getColorAssessor(), ((CharAssessorPainterCapable) leftPainter).getCharAssessor());
+        ((ColorAssessorPainterCapable) leftPainter).setColorAssessor(codeAreaAssessor);
+        ((CharAssessorPainterCapable) leftPainter).setCharAssessor(codeAreaAssessor);
         CodeAreaPainter rightPainter = rightCodeArea.getPainter();
-        codeAreaAssessor = new BinEdCodeAreaAssessor(((ColorAssessorPainterCapable)rightPainter).getColorAssessor(), ((CharAssessorPainterCapable)rightPainter).getCharAssessor());
-        ((ColorAssessorPainterCapable)rightPainter).setColorAssessor(codeAreaAssessor);
-        ((CharAssessorPainterCapable)rightPainter).setCharAssessor(codeAreaAssessor);
+        codeAreaAssessor = new BinEdCodeAreaAssessor(((ColorAssessorPainterCapable) rightPainter).getColorAssessor(), ((CharAssessorPainterCapable) rightPainter).getCharAssessor());
+        ((ColorAssessorPainterCapable) rightPainter).setColorAssessor(codeAreaAssessor);
+        ((CharAssessorPainterCapable) rightPainter).setCharAssessor(codeAreaAssessor);
 
         defaultLayoutProfile = leftCodeArea.getLayoutProfile();
         defaultThemeProfile = leftCodeArea.getThemeProfile();
@@ -208,7 +208,7 @@ public class BinEdDiffPanel extends JPanel {
         CodeAreaPopupMenuHandler codeAreaPopupMenuHandler = binedModule.createCodeAreaPopupMenuHandler(BinedModule.PopupMenuVariant.BASIC);
         diffPanel.getLeftCodeArea().setComponentPopupMenu(createPopupMenu(codeAreaPopupMenuHandler, "compareLeft"));
         diffPanel.getRightCodeArea().setComponentPopupMenu(createPopupMenu(codeAreaPopupMenuHandler, "compareRight"));
- 
+
         diffPanel.getLeftPanel().add(leftStatusPanel, BorderLayout.SOUTH);
         diffPanel.getRightPanel().add(rightStatusPanel, BorderLayout.SOUTH);
         this.add(diffPanel, BorderLayout.CENTER);
@@ -217,7 +217,7 @@ public class BinEdDiffPanel extends JPanel {
         revalidate();
         repaint();
     }
-    
+
     public void registerBinaryStatus(BinaryStatusApi binaryStatus, SectCodeArea codeArea) {
         codeArea.addCaretMovedListener((CodeAreaCaretPosition caretPosition) -> {
             binaryStatus.setCursorPosition(caretPosition);
@@ -321,9 +321,9 @@ public class BinEdDiffPanel extends JPanel {
         ((CharsetCapable) codeArea).setCharset(Charset.forName(applyOptions.getEncodingOptions()
                 .getSelectedEncoding()));
         encodingsHandler.setEncodings(applyOptions.getEncodingOptions().getEncodings());
-        ((FontCapable) codeArea).setCodeFont(applyOptions.getFontOptions().isUseDefaultFont() ?
-                defaultFont :
-                applyOptions.getFontOptions().getFont(defaultFont));
+        ((FontCapable) codeArea).setCodeFont(
+                applyOptions.getFontOptions().isUseDefaultFont() ? defaultFont : applyOptions.getFontOptions().getFont(defaultFont)
+        );
 
         BinaryEditorOptions editorOptions = applyOptions.getEditorOptions();
         //        switchShowValuesPanel(editorOptions.isShowValuesPanel());
@@ -371,7 +371,7 @@ public class BinEdDiffPanel extends JPanel {
             }
         };
     }
-    
+
     public void setLeftContentData(BinaryData contentData) {
         diffPanel.setLeftContentData(contentData);
         updateBinaryStatus(leftStatusPanel, diffPanel.getLeftCodeArea());
@@ -420,9 +420,10 @@ public class BinEdDiffPanel extends JPanel {
             }
         };
     }
-    
+
     @ParametersAreNonnullByDefault
     private class BinaryStatusController implements BinaryStatusPanel.Controller, BinaryStatusPanel.EncodingsController, BinaryStatusPanel.MemoryModeController {
+
         @Override
         public void changeEditOperation(EditOperation editOperation) {
             SectCodeArea leftCodeArea = diffPanel.getLeftCodeArea();

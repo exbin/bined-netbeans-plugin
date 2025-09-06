@@ -24,7 +24,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.swing.JFileChooser;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.openide.awt.ActionID;
-import org.openide.awt.ActionReference;
 import org.openide.awt.ActionRegistration;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
@@ -60,24 +59,6 @@ public final class FileOpenAsBinaryAction implements ActionListener {
 
     public FileOpenAsBinaryAction() {
     }
-    
-    public static void registerIntegration() {
-        Installer.addIntegrationOptionsListener(new Installer.IntegrationOptionsListener() {
-            @Override
-            public void integrationInit(IntegrationOptions integrationOptions) {
-                if (integrationOptions.isRegisterFileMenuOpenAsBinary()) {
-                    install();
-                } else {
-                    uninstall();
-                }
-            }
-
-            @Override
-            public void uninstallIntegration() {
-                uninstall();
-            }
-        });
-    }
 
     @Override
     public void actionPerformed(ActionEvent event) {
@@ -102,6 +83,24 @@ public final class FileOpenAsBinaryAction implements ActionListener {
                 Logger.getLogger(FileOpenAsBinaryAction.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+
+    public static void registerIntegration() {
+        Installer.addIntegrationOptionsListener(new Installer.IntegrationOptionsListener() {
+            @Override
+            public void integrationInit(IntegrationOptions integrationOptions) {
+                if (integrationOptions.isRegisterFileMenuOpenAsBinary()) {
+                    install();
+                } else {
+                    uninstall();
+                }
+            }
+
+            @Override
+            public void uninstallIntegration() {
+                uninstall();
+            }
+        });
     }
 
     public static void install() {
