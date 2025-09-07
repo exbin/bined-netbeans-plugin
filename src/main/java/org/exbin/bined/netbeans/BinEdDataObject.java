@@ -16,12 +16,8 @@
 package org.exbin.bined.netbeans;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.netbeans.api.actions.Savable;
-import org.openide.awt.UndoRedo;
 import org.openide.cookies.OpenCookie;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.MIMEResolver;
@@ -32,7 +28,6 @@ import org.openide.loaders.MultiFileLoader;
 import org.openide.nodes.CookieSet;
 import org.openide.text.DataEditorSupport;
 import org.openide.util.Lookup;
-import org.openide.windows.TopComponent;
 
 /**
  * BinEd data object.
@@ -41,7 +36,6 @@ import org.openide.windows.TopComponent;
  */
 @ParametersAreNonnullByDefault
 @MIMEResolver.ExtensionRegistration(displayName = "#BinEdDataObject.extensionDisplayName", mimeType = BinEdDataObject.MIME_TYPE, extension = {BinEdDataObject.MMD_EXT})
-//@MIMEResolver.Registration(displayName = "#BinEdDataObject.extensionDisplayName", resource = "mime-resolver.xml", showInFileChooser = {"#BinEdDataObject.extensionDisplayName"})
 @DataObject.Registration(displayName = "#BinEdDataObject.displayName", mimeType = BinEdDataObject.MIME_TYPE, iconBase = "org/exbin/bined/netbeans/resources/icons/icon.png")
 public class BinEdDataObject extends MultiDataObject implements Savable {
 

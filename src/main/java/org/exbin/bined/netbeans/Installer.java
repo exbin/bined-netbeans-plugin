@@ -32,7 +32,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import org.exbin.bined.netbeans.diff.BinEdDiffAction;
-import org.exbin.bined.netbeans.diff.BinaryDiffVisualizer;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.exbin.bined.netbeans.options.gui.IntegrationOptionsPanel;
 import org.exbin.framework.App;

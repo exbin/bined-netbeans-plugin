@@ -37,7 +37,7 @@ import org.openide.windows.TopComponent;
  */
 @MultiViewElement.Registration(
         displayName = "#BinEdEditor.displayName",
-        mimeType = "",
+        mimeType = BinEdDataObject.MIME_TYPE,
         persistenceType = TopComponent.PERSISTENCE_NEVER,
         iconBase = "org/exbin/bined/netbeans/resources/icons/icon.png",
         preferredID = BinEdEditorMulti.ELEMENT_MULTI_ID,
@@ -54,7 +54,7 @@ public class BinEdEditorMulti extends BinEdEditor implements MultiViewElement {
     private static final String EDITORS_FOLDER = "Editors";
     private static final String MULTIVIEW_FOLDER = "MultiView";
     private static final String DYNAMIC_FILETYPE_PREFIX = "-nb";
-    private static final String ELEMENT_INSTANCE = "Editors/application/octet-stream/" + MULTIVIEW_FOLDER + "/" + ELEMENT_NAME + ".instance";
+    private static final String ELEMENT_INSTANCE = "Editors/" + BinEdDataObject.MIME_TYPE + "/" + MULTIVIEW_FOLDER + "/" + ELEMENT_NAME + ".instance";
     private static final String SHADOW_EXT = "shadow";
     private static final String ORIGINAL_FILE_ATTRIBUTE = "originalFile";
 
@@ -67,25 +67,29 @@ public class BinEdEditorMulti extends BinEdEditor implements MultiViewElement {
         Installer.addIntegrationOptionsListener(new Installer.IntegrationOptionsListener() {
             @Override
             public void integrationInit(IntegrationOptions integrationOptions) {
-                if (integrationOptions.isRegisterBinaryMultiview()) {
-                    // install();
-                } else {
-                    // uninstall();
-                }
+//                if (integrationOptions.isRegisterBinaryMultiview()) {
+//                    install();
+//                } else {
+//                    uninstall();
+//                }
             }
 
             @Override
             public void uninstallIntegration() {
-                uninstall();
+//                uninstall();
             }
         });
     }
 
     public static void install() {
-        FileObject allTypesFolder = FileUtil.getSystemConfigFile("Editors/" + MULTIVIEW_FOLDER);
-        FileObject binaryTypeFolder = FileUtil.getSystemConfigFile("Editors/application/octet-stream/" + MULTIVIEW_FOLDER);
+        FileObject multiViewFolder = FileUtil.getSystemConfigFile("Editors/" + MULTIVIEW_FOLDER);
+        FileObject binaryTypeFolder = FileUtil.getSystemConfigFile("Editors/" + BinEdDataObject.MIME_TYPE + "/" + MULTIVIEW_FOLDER);
+        FileObject[] children = multiViewFolder.getChildren();
+        for (FileObject fileObject : children) {
+            System.out.println(fileObject.getName() + "." + fileObject.getExt());
+        }
         try {
-            FileObject allTypesObject = allTypesFolder.getFileObject(BinEdEditorMulti.ELEMENT_MULTI_NAME, "disabled");
+            FileObject allTypesObject = multiViewFolder.getFileObject(BinEdEditorMulti.ELEMENT_MULTI_NAME, "disabled");
             if (allTypesObject != null) {
                 FileLock lock = null;
                 try {
@@ -96,14 +100,14 @@ public class BinEdEditorMulti extends BinEdEditor implements MultiViewElement {
                         lock.releaseLock();
                     }
                 }
-                allTypesFolder.refresh();
+                multiViewFolder.refresh();
             }
-            FileObject binaryTypeObject = binaryTypeFolder.getFileObject(ELEMENT_NAME, "instance");
+            FileObject binaryTypeObject = binaryTypeFolder.getFileObject(ELEMENT_MULTI_ID, "instance");
             if (binaryTypeObject != null) {
                 FileLock lock = null;
                 try {
                     lock = binaryTypeObject.lock();
-                    binaryTypeObject.rename(lock, ELEMENT_NAME, "disabled");
+                    binaryTypeObject.rename(lock, ELEMENT_MULTI_NAME, "disabled");
                 } finally {
                     if (lock != null) {
                         lock.releaseLock();
@@ -140,10 +144,30 @@ public class BinEdEditorMulti extends BinEdEditor implements MultiViewElement {
     }
 
     public static void uninstall() {
-        FileObject allTypesFolder = FileUtil.getSystemConfigFile("Editors/" + MULTIVIEW_FOLDER);
+/*        FileObject multiViewFolder = FileUtil.getSystemConfigFile("Editors/" + MULTIVIEW_FOLDER);
+        FileObject[] children = multiViewFolder.getChildren();
+        for (FileObject fileObject : children) {
+            System.out.println(fileObject.getName() + "." + fileObject.getExt());
+        }
+        FileObject fileObject = multiViewFolder.getFileObject(BinEdEditorMulti.ELEMENT_MULTI_NAME, "instance");
+        if (fileObject == null) {
+            fileObject = multiViewFolder.getFileObject(BinEdEditorMulti.ELEMENT_MULTI_NAME, "disabled");
+        }
+        if (fileObject != null && fileObject.isValid()) {
+            try {
+                fileObject.delete();
+            } catch (IOException ex) {
+                Logger.getLogger(BinEdEditorMulti.class.getName()).log(Level.SEVERE, null, ex);
+                throw new IllegalStateException();
+            }
+        } else {
+            throw new IllegalStateException();
+        } */
+        
+        FileObject multiViewFolder = FileUtil.getSystemConfigFile("Editors/" + MULTIVIEW_FOLDER);
         FileObject binaryTypeFolder = FileUtil.getSystemConfigFile("Editors/application/octet-stream/" + MULTIVIEW_FOLDER);
         try {
-            FileObject allTypesObject = allTypesFolder.getFileObject(BinEdEditorMulti.ELEMENT_MULTI_NAME, "instance");
+            FileObject allTypesObject = multiViewFolder.getFileObject(BinEdEditorMulti.ELEMENT_MULTI_NAME, "instance");
             if (allTypesObject != null) {
                 FileLock lock = null;
                 try {
@@ -154,14 +178,14 @@ public class BinEdEditorMulti extends BinEdEditor implements MultiViewElement {
                         lock.releaseLock();
                     }
                 }
-                allTypesFolder.refresh();
+                multiViewFolder.refresh();
             }
-            FileObject binaryTypeObject = binaryTypeFolder.getFileObject(ELEMENT_NAME, "disabled");
+            FileObject binaryTypeObject = binaryTypeFolder.getFileObject(BinEdEditor.ELEMENT_NAME, "disabled");
             if (binaryTypeObject != null) {
                 FileLock lock = null;
                 try {
                     lock = binaryTypeObject.lock();
-                    binaryTypeObject.rename(lock, ELEMENT_NAME, "instance");
+                    binaryTypeObject.rename(lock, BinEdEditor.ELEMENT_NAME, "instance");
                 } finally {
                     if (lock != null) {
                         lock.releaseLock();
@@ -173,7 +197,7 @@ public class BinEdEditorMulti extends BinEdEditor implements MultiViewElement {
             Logger.getLogger(BinEdEditorMulti.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        /*        
+        /*
         FileObject targetFolder = FileUtil.getSystemConfigFile(EDITORS_FOLDER + "/" + MULTIVIEW_FOLDER);
         FileObject elementRecord = targetFolder.getFileObject(ELEMENT_ID + "." + SHADOW_EXT);
         if (elementRecord != null) {
@@ -186,7 +210,7 @@ public class BinEdEditorMulti extends BinEdEditor implements MultiViewElement {
         } */
     }
 
-    /*
+/*
     public static void install() {
         final FileObject editors = FileUtil.getConfigFile(EDITORS_FOLDER);
         for (FileObject mimeType : editors.getChildren()) {
@@ -225,9 +249,9 @@ public class BinEdEditorMulti extends BinEdEditor implements MultiViewElement {
                 multiViewFolder = FileUtil.createFolder(fileType, MULTIVIEW_FOLDER);
             }
 
-            final FileObject editorRecord = multiViewFolder.getFileObject(ELEMENT_ID + "." + SHADOW_EXT);
+            final FileObject editorRecord = multiViewFolder.getFileObject(BinEdEditor.ELEMENT_ID + "." + SHADOW_EXT);
             if (editorRecord == null) {
-                FileObject record = multiViewFolder.createData(ELEMENT_ID + "." + SHADOW_EXT);
+                FileObject record = multiViewFolder.createData(BinEdEditor.ELEMENT_ID + "." + SHADOW_EXT);
                 record.setAttribute(ORIGINAL_FILE_ATTRIBUTE, ELEMENT_INSTANCE);
                 record.setAttribute("position", POSITION_ATTRIBUTE);
                 record.setAttribute("persistenceType", TopComponent.PERSISTENCE_NEVER);
@@ -248,9 +272,9 @@ public class BinEdEditorMulti extends BinEdEditor implements MultiViewElement {
         } catch (IOException ex) {
             Logger.getLogger(BinEdEditorMulti.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NoSuchMethodException ex) {
-            Exceptions.printStackTrace(ex);
+            Logger.getLogger(BinEdEditorMulti.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SecurityException ex) {
-            Exceptions.printStackTrace(ex);
+            Logger.getLogger(BinEdEditorMulti.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
