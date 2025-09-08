@@ -17,6 +17,7 @@ package org.exbin.bined.netbeans;
 
 import java.io.IOException;
 import javax.annotation.ParametersAreNonnullByDefault;
+import javax.swing.Action;
 import org.netbeans.api.actions.Savable;
 import org.openide.cookies.OpenCookie;
 import org.openide.filesystems.FileObject;
@@ -41,13 +42,14 @@ public class BinEdDataObject extends MultiDataObject implements Savable {
 
     public static final String MIME_TYPE = "application/octet-stream"; //NOI18N
     public static final String MMD_EXT = "bin"; //NOI18N
+    private Action saveAction = null;
     
     public BinEdDataObject(FileObject fo, MultiFileLoader loader) throws DataObjectExistsException {
         super(fo, loader);
-        CookieSet cookieSet = getCookieSet();
-        OpenCookie openCookie = cookieSet.getCookie(OpenCookie.class);
-        Lookup lookup = cookieSet.getLookup();
         // TODO
+//        CookieSet cookieSet = getCookieSet();
+//        OpenCookie openCookie = cookieSet.getCookie(OpenCookie.class);
+//        Lookup lookup = cookieSet.getLookup();
 //        DataEditorSupport dataEditorSupport = lookup.lookup(DataEditorSupport.class);
 //        NbEditorDocument document = null;
 //        if (dataEditorSupport.isDocumentLoaded()) {
@@ -65,12 +67,21 @@ public class BinEdDataObject extends MultiDataObject implements Savable {
 
     @Override
     public void save() throws IOException {
-        DataEditorSupport dataEditorSupport = getLookup().lookup(DataEditorSupport.class);
-        dataEditorSupport.saveDocument();
+        if (saveAction != null) {
+            saveAction.actionPerformed(null);
+        } else {
+            // Doesn't work at the moment
+            DataEditorSupport dataEditorSupport = getLookup().lookup(DataEditorSupport.class);
+            dataEditorSupport.saveDocument();
+        }
     }
 
     @Override
     protected int associateLookup() {
         return 1;
+    }
+
+    public void setSaveAction(Action saveAction) {
+        this.saveAction = saveAction;
     }
 }

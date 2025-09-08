@@ -44,30 +44,31 @@ import org.openide.text.CloneableEditor;
 import org.openide.text.DataEditorSupport;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
+import org.openide.windows.TopComponent;
 
 /**
  * BinEd native NetBeans editor.
  *
  * @author ExBin Project (https://exbin.org)
  */
-//@MultiViewElement.Registration(
-//        displayName = "#BinEdEditor.displayName",
-//        mimeType = BinEdDataObject.MIME_TYPE,
-//        persistenceType = TopComponent.PERSISTENCE_NEVER,
-//        iconBase = "org/exbin/bined/netbeans/resources/icons/icon.png",
-//        preferredID = BinEdEditor.ELEMENT_ID,
-//        position = BinEdEditor.POSITION_ATTRIBUTE
-//)
+@MultiViewElement.Registration(
+        displayName = "#BinEdEditor.displayName",
+        mimeType = BinEdDataObject.MIME_TYPE,
+        persistenceType = TopComponent.PERSISTENCE_NEVER,
+        iconBase = "org/exbin/bined/netbeans/resources/icons/icon.png",
+        preferredID = BinEdEditor.ELEMENT_ID,
+        position = BinEdEditor.POSITION_ATTRIBUTE
+)
 @ParametersAreNonnullByDefault
 public class BinEdEditor extends CloneableEditor implements MultiViewElement, HelpCtx.Provider {
 
     public static final String ELEMENT_ID = "org.exbin.bined.netbeans.BinEdEditor";
     public static final String ELEMENT_NAME = "org-exbin-bined-netbeans-BinEdEditor";
-    public static final int POSITION_ATTRIBUTE = 900005;
+    public static final int POSITION_ATTRIBUTE = 900005; // Between "Source" and "History"
 
-    private BinaryEditorTopComponent editorComponent;
+    protected BinaryEditorTopComponent editorComponent;
     protected transient MultiViewElementCallback callback;
-    private final Lookup lookup;
+    protected final Lookup lookup;
 
     public BinEdEditor(Lookup lookup) {
         this.lookup = lookup;
@@ -105,7 +106,7 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
         AbstractAction saveAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                save();
+                saveFile();
             }
         };
         DataObject dataObject = lookup.lookup(DataObject.class);
@@ -150,8 +151,13 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
         DataObject dataObject = lookup.lookup(DataObject.class);
         if (dataObject != null) {
             if (dataObject instanceof BinEdDataObject) {
-                // throw new UnsupportedOperationException("Not supported yet.");
-                // ((BinEdDataObject) dataObject).setVisualEditor(this);
+                // TODO: Workaround for using multiview, find proper solution later
+                ((BinEdDataObject) dataObject).setSaveAction(new AbstractAction() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        saveFile();
+                    }
+                });
             }
 
             openFile(dataObject);
@@ -194,36 +200,6 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
         return HelpCtx.DEFAULT_HELP;
     }
 
-    public void save() {
-//        try {
-//            getEditorSupport().saveDocument();
-//        } catch (IOException ex) {
-//            Logger.getLogger(BinEdEditor.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        editorComponent.getFileHandler().saveFile();
-        DataObject dataObject = lookup.lookup(DataObject.class);
-        BinEdFileHandler fileHandler = editorComponent.getFileHandler();
-        OutputStream stream = null;
-        try {
-            stream = dataObject.getPrimaryFile().getOutputStream();
-            if (stream != null) {
-                fileHandler.saveToStream(stream);
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(BinEdEditor.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException ex) {
-                    Logger.getLogger(BinEdEditor.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-        fileHandler.fileSync();
-        editorComponent.updateStatus();
-    }
-
     public void openFile(DataObject dataObject) {
         BinEdFileHandler fileHandler = editorComponent.getFileHandler();
         SectCodeArea codeArea = fileHandler.getCodeArea();
@@ -252,6 +228,36 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
 //            File file = Utilities.toFile(fileUri);
 //            fileHandler.loadFromFile(file.toURI(), null);
 //        }
+        fileHandler.fileSync();
+        editorComponent.updateStatus();
+    }
+
+    public void saveFile() {
+//        try {
+//            getEditorSupport().saveDocument();
+//        } catch (IOException ex) {
+//            Logger.getLogger(BinEdEditor.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        editorComponent.getFileHandler().saveFile();
+        DataObject dataObject = lookup.lookup(DataObject.class);
+        BinEdFileHandler fileHandler = editorComponent.getFileHandler();
+        OutputStream stream = null;
+        try {
+            stream = dataObject.getPrimaryFile().getOutputStream();
+            if (stream != null) {
+                fileHandler.saveToStream(stream);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(BinEdEditor.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(BinEdEditor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
         fileHandler.fileSync();
         editorComponent.updateStatus();
     }

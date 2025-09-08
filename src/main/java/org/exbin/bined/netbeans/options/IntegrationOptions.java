@@ -158,7 +158,7 @@ public class IntegrationOptions implements OptionsData {
     }
 
     public boolean isRegisterBinaryMultiview() {
-        return storage.getBoolean(KEY_REGISTER_BINARY_MULTIVIEW, true);
+        return storage.getBoolean(KEY_REGISTER_BINARY_MULTIVIEW, false);
     }
 
     public void setRegisterBinaryMultiview(boolean registerBinaryMultiview) {

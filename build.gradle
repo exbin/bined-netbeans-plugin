@@ -387,8 +387,8 @@ dependencies {
     implementation(":exbin-framework-language-ru_RU-0.2.4")
     implementation(":exbin-framework-language-zh_Hans-0.2.4")
     implementation(":exbin-framework-language-zh_Hant-0.2.4")
-    implementation(":exbin-framework-material-iconset-0.2.4") */
-    implementation(":flatlaf-desktop-3.2")
+    implementation(":exbin-framework-material-iconset-0.2.4")
+    implementation(":flatlaf-desktop-3.2") */
 
     compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
     implementation group: 'org.bouncycastle', name: 'bcprov-jdk18on', version: '1.78.1'
