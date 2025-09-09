@@ -40,7 +40,7 @@ ext.scriptFile = { String fileName ->
     return new File(new File(rootDir, 'gradle'), fileName)
 }
 
-version = '0.2.7'
+version = '0.2.8-SNAPSHOT'
 group = 'org.exbin.bined.netbeans'
 
 sourceCompatibility = '1.8'
@@ -320,7 +320,7 @@ dependencies {
     providedCompile netbeansApi('org-netbeans-modules-editor-lib2')
     providedCompile netbeansModule('org.netbeans.modules', 'org-netbeans-modules-projectapi-nb')
 
-/*    implementation(exbinFrameworkLibrary("exbin-framework"))
+    implementation(exbinFrameworkLibrary("exbin-framework"))
     implementation(exbinFrameworkLibrary("exbin-framework-basic"))
     implementation(exbinFrameworkLibrary("exbin-framework-frame"))
     implementation(exbinFrameworkLibrary("exbin-framework-ui"))
@@ -375,20 +375,28 @@ dependencies {
     implementation(auxiliaryLibrary("binary_data"))
     implementation(auxiliaryLibrary("binary_data-array"))
     implementation(auxiliaryLibrary("binary_data-delta"))
-    implementation(auxiliaryLibrary("component-dropdownbutton")) */
-/*    implementation(":exbin-framework-language-cs_CZ-0.2.4")
-    implementation(":exbin-framework-language-de_DE-0.2.4")
-    implementation(":exbin-framework-language-es_ES-0.2.4")
-    implementation(":exbin-framework-language-fr_FR-0.2.4")
-    implementation(":exbin-framework-language-it_IT-0.2.4")
-    implementation(":exbin-framework-language-ja_JP-0.2.4")
-    implementation(":exbin-framework-language-ko_KR-0.2.4")
-    implementation(":exbin-framework-language-pl_PL-0.2.4")
-    implementation(":exbin-framework-language-ru_RU-0.2.4")
-    implementation(":exbin-framework-language-zh_Hans-0.2.4")
-    implementation(":exbin-framework-language-zh_Hant-0.2.4")
-    implementation(":exbin-framework-material-iconset-0.2.4")
-    implementation(":flatlaf-desktop-3.2") */
+    implementation(auxiliaryLibrary("component-dropdownbutton"))
+    implementation(":exbin-framework-language-cs_CZ-0.3.0-SNAPSHOT")
+    implementation(":exbin-framework-language-de_DE-0.3.0-SNAPSHOT")
+    implementation(":exbin-framework-language-es_ES-0.3.0-SNAPSHOT")
+    implementation(":exbin-framework-language-fi_FI-0.3.0-SNAPSHOT")
+    implementation(":exbin-framework-language-fr_FR-0.3.0-SNAPSHOT")
+    implementation(":exbin-framework-language-hi_IN-0.3.0-SNAPSHOT")
+    implementation(":exbin-framework-language-in_ID-0.3.0-SNAPSHOT")
+    implementation(":exbin-framework-language-it_IT-0.3.0-SNAPSHOT")
+    implementation(":exbin-framework-language-ja_JP-0.3.0-SNAPSHOT")
+    implementation(":exbin-framework-language-ko_KR-0.3.0-SNAPSHOT")
+    implementation(":exbin-framework-language-pl_PL-0.3.0-SNAPSHOT")
+    implementation(":exbin-framework-language-pt_PT-0.3.0-SNAPSHOT")
+    implementation(":exbin-framework-language-ru_RU-0.3.0-SNAPSHOT")
+    implementation(":exbin-framework-language-sv_SE-0.3.0-SNAPSHOT")
+    implementation(":exbin-framework-language-vi_VN-0.3.0-SNAPSHOT")
+    implementation(":exbin-framework-language-zh_Hans-0.3.0-SNAPSHOT")
+    implementation(":exbin-framework-language-zh_Hant-0.3.0-SNAPSHOT")
+    implementation(":exbin-framework-language-zh_HK-0.3.0-SNAPSHOT")
+    implementation(":exbin-framework-language-zh_TW-0.3.0-SNAPSHOT")
+    implementation(":exbin-framework-material-iconset-0.3.0-SNAPSHOT")
+    implementation(":flatlaf-desktop-3.2")
 
     compileOnly 'com.google.code.findbugs:jsr305:3.0.2'
     implementation group: 'org.bouncycastle', name: 'bcprov-jdk18on', version: '1.78.1'

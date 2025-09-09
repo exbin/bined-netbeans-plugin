@@ -217,7 +217,6 @@ public class IntegrationOptionsPanel extends javax.swing.JPanel implements Optio
             }
         });
 
-        binaryMultiviewCheckBox.setSelected(true);
         binaryMultiviewCheckBox.setText(resourceBundle.getString("binaryMultiviewCheckBox.text")); // NOI18N
         binaryMultiviewCheckBox.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
