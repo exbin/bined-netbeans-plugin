@@ -72,9 +72,9 @@ public abstract class MarkProvider {
     
     /**Fire property change event to all registered listener. Subclasses should call
      * this method when they need to fire the {@link java.beans.PropertyChangeEvent}
-     * because property {@link #PROP_UP_TO_DATE} or {@link #PROP_MARKS} have changed.
+     * because property {link #PROP_UP_TO_DATE} or {link #PROP_MARKS} have changed.
      *
-     * @param name name of the property ({@link #PROP_UP_TO_DATE} or {@link #PROP_MARKS})
+     * @param name name of the property ({link #PROP_UP_TO_DATE} or {link #PROP_MARKS})
      * @param old  previous value of the property or null if unknown
      * @param nue  current value of the property or null if unknown
      */

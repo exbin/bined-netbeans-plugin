@@ -111,8 +111,12 @@ public class BinEdDiffAction extends NodeAction {
     static FileObject getFileFromNode(Node node) {
         FileObject fo = (FileObject) node.getLookup().lookup(FileObject.class);
         if (fo == null) {
-            Project p = (Project) node.getLookup().lookup(Project.class);
-            if (p != null) return p.getProjectDirectory();
+            try {
+                Project p = (Project) node.getLookup().lookup(Project.class);
+                if (p != null) return p.getProjectDirectory();
+            } catch (NoClassDefFoundError ex) {
+                // ignore
+            }
 
             DataObject dobj = (DataObject) node.getCookie(DataObject.class);
             if (dobj instanceof DataShadow) {

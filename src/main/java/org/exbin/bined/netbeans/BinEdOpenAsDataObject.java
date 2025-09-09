@@ -20,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import javax.swing.SwingUtilities;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.netbeans.api.actions.Savable;
 import org.openide.awt.UndoRedo;
@@ -59,7 +60,9 @@ public class BinEdOpenAsDataObject extends MultiDataObject implements Savable {
 
         try {
             editorComponent = new BinaryEditorTopComponent();
-            editorMode.dockInto(editorComponent);
+            SwingUtilities.invokeLater(() -> {
+                editorMode.dockInto(editorComponent);
+            });
             DataObject dataObject = DataObject.find(fo);
             editorComponent.openDataObject(dataObject);
             editorComponent.open();

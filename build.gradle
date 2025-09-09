@@ -40,7 +40,7 @@ ext.scriptFile = { String fileName ->
     return new File(new File(rootDir, 'gradle'), fileName)
 }
 
-version = '0.2.7-SNAPSHOT'
+version = '0.2.7'
 group = 'org.exbin.bined.netbeans'
 
 sourceCompatibility = '1.8'
@@ -540,13 +540,16 @@ if (gradle.startParameter.taskNames.contains("uploadArchives") && !version.endsW
                 //    MavenDeployment deployment -> signing.signPom(deployment)
                 // }
 
-                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                repository(url: "file:///~/.m2/upload/") {
                 }
 
-                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
-                }
+//                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+//                    authentication(userName: ossrhUsername, password: ossrhPassword)
+//                }
+
+//                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+//                    authentication(userName: ossrhUsername, password: ossrhPassword)
+//                }
 
                 pom.project {
                     name deployName

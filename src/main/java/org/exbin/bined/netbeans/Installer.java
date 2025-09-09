@@ -57,6 +57,7 @@ import org.exbin.framework.bined.macro.BinedMacroModule;
 import org.exbin.framework.bined.objectdata.BinedObjectDataModule;
 import org.exbin.framework.bined.operation.BinedOperationModule;
 import org.exbin.framework.bined.operation.bouncycastle.BinedOperationBouncycastleModule;
+import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
 import org.exbin.framework.bined.search.BinedSearchModule;
 import org.exbin.framework.bined.theme.BinedThemeModule;
 import org.exbin.framework.bined.tool.content.BinedToolContentModule;
@@ -107,6 +108,7 @@ import org.exbin.framework.plugin.language.zh_Hant.LanguageZhHantModule;
 import org.exbin.framework.plugin.language.zh_TW.LanguageZhTwModule;
 import org.exbin.framework.plugins.iconset.material.IconSetMaterialModule;
 import org.exbin.framework.preferences.PreferencesModule;
+import org.exbin.framework.preferences.PreferencesWrapper;
 import org.exbin.framework.preferences.api.OptionsStorage;
 import org.exbin.framework.preferences.api.PreferencesModuleApi;
 import org.exbin.framework.toolbar.ToolBarModule;
@@ -121,6 +123,7 @@ import org.exbin.framework.ui.theme.api.UiThemeModuleApi;
 import org.exbin.framework.window.WindowModule;
 import org.exbin.framework.window.api.WindowModuleApi;
 import org.openide.modules.ModuleInstall;
+import org.openide.util.NbPreferences;
 import org.openide.windows.WindowManager;
 
 /**
@@ -299,8 +302,8 @@ public class Installer extends ModuleInstall {
         }
 
         private void init() {
-            PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
-            preferencesModule.setupAppPreferences(BinEdNetBeansPlugin.class);
+            PreferencesModule preferencesModule = (PreferencesModule) App.getModule(PreferencesModuleApi.class);
+            preferencesModule.setAppPreferences(new PreferencesWrapper(NbPreferences.forModule(BinaryEditorPreferences.class)));
             OptionsStorage optionsStorage = preferencesModule.getAppPreferences();
 
             App.getModule(LanguageCsCzModule.class).register();

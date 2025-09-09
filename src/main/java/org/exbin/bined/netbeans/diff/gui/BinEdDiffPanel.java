@@ -17,6 +17,7 @@ package org.exbin.bined.netbeans.diff.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
@@ -121,7 +122,9 @@ public class BinEdDiffPanel extends JPanel {
         defaultColorProfile = leftCodeArea.getColorsProfile();
         toolbarPanel = new BinEdToolbarPanel();
         leftStatusPanel = new BinaryStatusPanel();
+        leftStatusPanel.setMinimumSize(new Dimension(0, getMinimumSize().height));
         rightStatusPanel = new BinaryStatusPanel();
+        rightStatusPanel.setMinimumSize(new Dimension(0, getMinimumSize().height));
         toolbarPanel.setTargetComponent(diffPanel);
         toolbarPanel.setCodeAreaControl(new BinEdToolbarPanel.Control() {
             @Nonnull

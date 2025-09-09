@@ -34,6 +34,7 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.Optional;
@@ -60,7 +61,6 @@ import org.exbin.framework.bined.viewer.BinedViewerModule;
 import org.exbin.framework.file.api.FileHandler;
 import org.exbin.framework.frame.api.FrameModuleApi;
 import org.exbin.framework.options.action.OptionsAction;
-import static org.exbin.framework.options.action.OptionsAction.ACTION_ID;
 import org.exbin.framework.options.api.OptionsModuleApi;
 import org.exbin.framework.preferences.api.OptionsStorage;
 import org.exbin.framework.preferences.api.PreferencesModuleApi;
@@ -137,7 +137,7 @@ public class BinEdFilePanel extends JPanel {
         LanguageModuleApi languageModule = App.getModule(LanguageModuleApi.class);
         java.util.ResourceBundle optionsResourceBundle = languageModule.getBundle(org.exbin.framework.options.OptionsModule.class);
         ActionModuleApi actionModule = App.getModule(ActionModuleApi.class);
-        actionModule.initAction(wrapperAction, optionsResourceBundle, ACTION_ID);
+        actionModule.initAction(wrapperAction, optionsResourceBundle, OptionsAction.ACTION_ID);
         wrapperAction.putValue(ActionConsts.ACTION_DIALOG_MODE, true);
         toolbarPanel.setOptionsAction(wrapperAction);
 
@@ -196,6 +196,7 @@ public class BinEdFilePanel extends JPanel {
         PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
         encodingsHandler.loadFromOptions(new TextEncodingOptions(preferencesModule.getAppPreferences()));
         statusPanel = fileManager.getBinaryStatusPanel();
+        statusPanel.setMinimumSize(new Dimension(0, getMinimumSize().height));
         add(statusPanel, BorderLayout.SOUTH);
 
         add(componentPanel, BorderLayout.CENTER);

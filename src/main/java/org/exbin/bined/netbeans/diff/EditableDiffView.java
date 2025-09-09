@@ -400,6 +400,7 @@ public class EditableDiffView extends DiffControllerImpl implements DiffView, Do
             }
             jTabbedPane.addTab("Binary", binaryDiffPanel);
             jTabbedPane.addChangeListener(this);
+            jTabbedPane.setSelectedIndex(2);
         }
     }
 

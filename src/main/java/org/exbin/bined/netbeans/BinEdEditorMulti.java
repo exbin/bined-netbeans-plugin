@@ -111,11 +111,16 @@ public class BinEdEditorMulti extends BinEdEditor implements MultiViewElement {
                     continue;
                 }
 
-                FileObject elementRecord = mimeType.getFileObject(BinEdEditorMulti.ELEMENT_MULTI_NAME + "." + SHADOW_EXT);
+                FileObject multiViewFolder = mimeSubType.getFileObject(MULTIVIEW_FOLDER);
+                if (multiViewFolder == null) {
+                    continue;
+                }
+
+                FileObject elementRecord = multiViewFolder.getFileObject(ELEMENT_MULTI_NAME, SHADOW_EXT);
                 if (elementRecord != null) {
                     try {
                         elementRecord.delete();
-                        mimeType.refresh();
+                        multiViewFolder.refresh();
                     } catch (IOException ex) {
                         Logger.getLogger(BinEdEditorMulti.class.getName()).log(Level.SEVERE, null, ex);
                     }

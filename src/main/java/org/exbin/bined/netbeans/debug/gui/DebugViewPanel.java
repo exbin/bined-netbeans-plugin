@@ -17,6 +17,7 @@ package org.exbin.bined.netbeans.debug.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -200,6 +201,7 @@ public class DebugViewPanel extends javax.swing.JPanel {
         encodingsHandler.loadFromOptions(new TextEncodingOptions(preferencesModule.getAppPreferences()));
         statusPanel.setController(new BinaryStatusController());
         statusPanel.loadFromOptions(new StatusOptions(preferencesModule.getAppPreferences()));
+        statusPanel.setMinimumSize(new Dimension(0, getMinimumSize().height));
         registerBinaryStatus(statusPanel);
 
         panel.add(toolbarPanel, BorderLayout.NORTH);
