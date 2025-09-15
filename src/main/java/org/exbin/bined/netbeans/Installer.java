@@ -43,11 +43,7 @@ import org.exbin.framework.action.ActionModule;
 import org.exbin.framework.action.api.ActionModuleApi;
 import org.exbin.framework.action.api.ComponentActivationListener;
 import org.exbin.framework.action.api.DialogParentComponent;
-import org.exbin.framework.menu.api.GroupMenuContributionRule;
-import org.exbin.framework.menu.api.MenuContribution;
 import org.exbin.framework.menu.api.MenuManagement;
-import org.exbin.framework.menu.api.PositionMenuContributionRule;
-import org.exbin.framework.menu.api.SeparationMenuContributionRule;
 import org.exbin.framework.bined.BinedModule;
 import org.exbin.framework.bined.bookmarks.BinedBookmarksModule;
 import org.exbin.framework.bined.compare.BinedCompareModule;
@@ -64,6 +60,12 @@ import org.exbin.framework.bined.tool.content.BinedToolContentModule;
 import org.exbin.framework.bined.viewer.BinedViewerModule;
 import org.exbin.framework.component.ComponentModule;
 import org.exbin.framework.component.api.ComponentModuleApi;
+import org.exbin.framework.contribution.ContributionModule;
+import org.exbin.framework.contribution.api.ContributionModuleApi;
+import org.exbin.framework.contribution.api.GroupSequenceContributionRule;
+import org.exbin.framework.contribution.api.PositionSequenceContributionRule;
+import org.exbin.framework.contribution.api.SeparationSequenceContributionRule;
+import org.exbin.framework.contribution.api.SequenceContribution;
 import org.exbin.framework.editor.api.EditorModuleApi;
 import org.exbin.framework.editor.api.EditorProvider;
 import org.exbin.framework.editor.EditorModule;
@@ -244,6 +246,7 @@ public class Installer extends ModuleInstall {
         private void createModules() {
             // ExBin framework modules
             modules.put(LanguageModuleApi.class, new LanguageModule());
+            modules.put(ContributionModuleApi.class, new ContributionModule());
             modules.put(ActionModuleApi.class, new ActionModule());
             modules.put(OperationUndoModuleApi.class, new OperationUndoModule());
             modules.put(OptionsModuleApi.class, new OptionsModule());
@@ -493,24 +496,24 @@ public class Installer extends ModuleInstall {
                 }
             };
             // toolsSubMenuAction.putValue(Action.SHORT_DESCRIPTION, ((FrameModule) frameModule).getResourceBundle().getString("toolsMenu.shortDescription"));
-            MenuContribution menuContribution = menuManagement.registerMenuItem(toolsSubMenuId, toolsSubMenuAction);
-            menuManagement.registerMenuRule(menuContribution, new PositionMenuContributionRule(PositionMenuContributionRule.PositionMode.BOTTOM_LAST));
+            SequenceContribution contribution = menuManagement.registerMenuItem(toolsSubMenuId, toolsSubMenuAction);
+            menuManagement.registerMenuRule(contribution, new PositionSequenceContributionRule(PositionSequenceContributionRule.PositionMode.BOTTOM_LAST));
             MenuManagement subMenu = menuManagement.getSubMenu(toolsSubMenuId);
-            menuContribution = subMenu.registerMenuItem(binedCompareModule.createCompareFilesAction());
-            menuManagement.registerMenuRule(menuContribution, new PositionMenuContributionRule(PositionMenuContributionRule.PositionMode.TOP));
-            menuContribution = subMenu.registerMenuItem(binedToolContentModule.createClipboardContentAction());
-            menuManagement.registerMenuRule(menuContribution, new PositionMenuContributionRule(PositionMenuContributionRule.PositionMode.TOP));
-            menuContribution = subMenu.registerMenuItem(binedToolContentModule.createDragDropContentAction());
-            menuManagement.registerMenuRule(menuContribution, new PositionMenuContributionRule(PositionMenuContributionRule.PositionMode.TOP));
+            contribution = subMenu.registerMenuItem(binedCompareModule.createCompareFilesAction());
+            menuManagement.registerMenuRule(contribution, new PositionSequenceContributionRule(PositionSequenceContributionRule.PositionMode.TOP));
+            contribution = subMenu.registerMenuItem(binedToolContentModule.createClipboardContentAction());
+            menuManagement.registerMenuRule(contribution, new PositionSequenceContributionRule(PositionSequenceContributionRule.PositionMode.TOP));
+            contribution = subMenu.registerMenuItem(binedToolContentModule.createDragDropContentAction());
+            menuManagement.registerMenuRule(contribution, new PositionSequenceContributionRule(PositionSequenceContributionRule.PositionMode.TOP));
 
             String aboutMenuGroup = BinEdNetBeansPlugin.PLUGIN_PREFIX + "helpAboutMenuGroup";
-            menuContribution = menuManagement.registerMenuGroup(aboutMenuGroup);
-            menuManagement.registerMenuRule(menuContribution, new PositionMenuContributionRule(PositionMenuContributionRule.PositionMode.BOTTOM_LAST));
-            menuManagement.registerMenuRule(menuContribution, new SeparationMenuContributionRule(SeparationMenuContributionRule.SeparationMode.ABOVE));
-            menuContribution = menuManagement.registerMenuItem(helpOnlineModule.createOnlineHelpAction());
-            menuManagement.registerMenuRule(menuContribution, new GroupMenuContributionRule(aboutMenuGroup));
-            menuContribution = menuManagement.registerMenuItem(aboutModule.createAboutAction());
-            menuManagement.registerMenuRule(menuContribution, new GroupMenuContributionRule(aboutMenuGroup));
+            contribution = menuManagement.registerMenuGroup(aboutMenuGroup);
+            menuManagement.registerMenuRule(contribution, new PositionSequenceContributionRule(PositionSequenceContributionRule.PositionMode.BOTTOM_LAST));
+            menuManagement.registerMenuRule(contribution, new SeparationSequenceContributionRule(SeparationSequenceContributionRule.SeparationMode.ABOVE));
+            contribution = menuManagement.registerMenuItem(helpOnlineModule.createOnlineHelpAction());
+            menuManagement.registerMenuRule(contribution, new GroupSequenceContributionRule(aboutMenuGroup));
+            contribution = menuManagement.registerMenuItem(aboutModule.createAboutAction());
+            menuManagement.registerMenuRule(contribution, new GroupSequenceContributionRule(aboutMenuGroup));
 
             ComponentActivationListener componentActivationListener
                     = frameModule.getFrameHandler().getComponentActivationListener();
