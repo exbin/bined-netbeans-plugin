@@ -10,7 +10,7 @@ import java.util.zip.ZipFile
 buildscript {
     repositories {
         maven {
-            url "https://plugins.gradle.org/m2/"
+            url = "https://plugins.gradle.org/m2/"
         }
         flatDir {
             dirs "lib"
@@ -71,10 +71,10 @@ repositories {
     String nbRepo = netbeansVersion.endsWith('-SNAPSHOT')
     ? 'https://bits.netbeans.org/netbeans/trunk/new-maven-snapshot'
 : 'https://bits.netbeans.org/nexus/content/groups/netbeans'
-    maven { url nbRepo }
+    maven { url = nbRepo }
 */
-    maven { url 'https://netbeans.apidesign.org/maven2' }
-    maven { url 'https://repo.gradle.org/gradle/libs-releases-local' }
+    maven { url = 'https://netbeans.apidesign.org/maven2' }
+    maven { url = 'https://repo.gradle.org/gradle/libs-releases-local' }
     flatDir {
         dirs("lib", "plugins")
     }
@@ -119,7 +119,9 @@ if (!gradle.startParameter.taskNames.any {it.endsWith("test")}) {
 task testJar(type: Jar, dependsOn: testClasses) {
     if (VersionNumber.parse(gradle.gradleVersion) >= VersionNumber.parse('5.0')) {
         archiveClassifier = 'tests'
-    	archiveBaseName = "test-${project.archivesBaseName}"
+        base {
+            archivesName = "test-${project.name}"
+        }
     } else {
     	classifier = 'tests'
     	archiveName = "test-${project.archivesBaseName}"
@@ -462,10 +464,18 @@ publishing {
                 }
             }
             artifact (javadocJar) {
-                classifier = 'javadoc'
+                if (VersionNumber.parse(gradle.gradleVersion) >= VersionNumber.parse('5.0')) {
+                    archiveClassifier = 'javadoc'
+                } else {
+                    classifier = 'javadoc'
+                }
             }
             artifact (nbmFile) {
-                classifier = 'nbm'
+                if (VersionNumber.parse(gradle.gradleVersion) >= VersionNumber.parse('5.0')) {
+                    archiveClassifier = 'nbm'
+                } else {
+                    classifier = 'nbm'
+                }
                 extension = 'nbm'
             }
 

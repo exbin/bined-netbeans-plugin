@@ -78,7 +78,7 @@ import org.exbin.framework.text.font.options.TextFontOptions;
 import org.exbin.framework.utils.DesktopUtils;
 
 /**
- * BinEd diff support provider to compare binary files.
+ * BinEd diff panel to compare binary files.
  *
  * @author ExBin Project (https://exbin.org)
  */
