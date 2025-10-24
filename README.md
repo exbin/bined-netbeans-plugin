@@ -1,6 +1,8 @@
 BinEd - Binary/Hex Editor - NetBeans Plugin
 ===========================================
 
+![Downloads](https://img.shields.io/endpoint?url=https://openbeans.org/plugin-counter/api/59)
+
 Hex viewer/editor plugin module for NetBeans platform.
 
 Homepage: https://bined.exbin.org/netbeans-plugin  
