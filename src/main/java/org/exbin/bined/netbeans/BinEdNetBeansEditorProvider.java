@@ -1,5 +1,5 @@
 /*
- * Copyright (C) ExBin Project
+ * Copyright (C) ExBin Project, https://exbin.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,12 +52,10 @@ import org.exbin.framework.text.encoding.TextEncodingStatusApi;
 import org.exbin.framework.action.api.clipboard.ClipboardController;
 import org.exbin.framework.action.api.clipboard.TextClipboardController;
 import org.exbin.framework.bined.BinEdDataComponent;
-import org.exbin.framework.preferences.api.PreferencesModuleApi;
+import org.exbin.framework.options.api.OptionsModuleApi;
 
 /**
  * Editor provider wrapper for NetBeans BinEd editor.
- *
- * @author ExBin Project (https://exbin.org)
  */
 @ParametersAreNonnullByDefault
 public class BinEdNetBeansEditorProvider implements MultiEditorProvider, BinEdEditorProvider {
@@ -154,8 +152,8 @@ public class BinEdNetBeansEditorProvider implements MultiEditorProvider, BinEdEd
         EditorModuleApi editorModule = App.getModule(EditorModuleApi.class);
         editorModule.notifyEditorComponentCreated(fileHandler.getComponent());
 
-        PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
-        fileHandler.getComponent().onInitFromPreferences(preferencesModule.getAppPreferences());
+        OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
+        fileHandler.getComponent().onInitFromPreferences(optionsModule.getAppOptions());
     }
 
     @Nonnull

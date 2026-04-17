@@ -1,5 +1,5 @@
 /*
- * Copyright (C) ExBin Project
+ * Copyright (C) ExBin Project, https://exbin.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,15 +26,13 @@ import org.exbin.framework.options.action.OptionsAction;
 import org.exbin.framework.options.api.OptionsModuleApi;
 import org.exbin.framework.options.api.OptionsPageReceiver;
 import org.exbin.framework.options.gui.OptionsListPanel;
-import org.exbin.framework.preferences.api.PreferencesModuleApi;
+import org.exbin.framework.options.api.OptionsModuleApi;
 import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
 
 /**
  * Binary editor options panel.
- *
- * @author ExBin Project (https://exbin.org)
  */
 @OptionsPanelController.SubRegistration(
         location = "Advanced",
@@ -102,7 +100,7 @@ public final class BinEdOptionsPanelController extends OptionsPanelController {
     private OptionsListPanel getPanel() {
         if (panel == null) {
             panel = new OptionsListPanel();
-            PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
+            OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
             String optionsRootCaption = App.getModule(OptionsModuleApi.class).getOptionsRootCaption().orElse(null);
             if (optionsRootCaption != null) {
                 panel.setRootCaption(optionsRootCaption);
@@ -113,7 +111,7 @@ public final class BinEdOptionsPanelController extends OptionsPanelController {
             };
 
             optionsPagesProvider.registerOptionsPages(panel);
-            panel.setPreferences(preferencesModule.getAppPreferences());
+            panel.setPreferences(optionsModule.getAppPreferences());
             panel.pagesFinished();
             panel.loadAllFromPreferences();
         }

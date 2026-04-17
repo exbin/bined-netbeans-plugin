@@ -1,5 +1,5 @@
 /*
- * Copyright (C) ExBin Project
+ * Copyright (C) ExBin Project, https://exbin.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,13 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.exbin.framework.options.api.OptionsData;
-import org.exbin.framework.preferences.api.OptionsStorage;
+import org.exbin.framework.options.api.OptionsStorage;
 
 /**
  * BinEd plugin preferences.
- *
- * @author ExBin Project (https://exbin.org)
  */
 @ParametersAreNonnullByDefault
-public class IntegrationOptions implements OptionsData {
+public class IntegrationOptions implements SettingsOptions {
 
     public static final String KEY_LOCALE_LANGUAGE = "locale.language";
     public static final String KEY_LOCALE_COUNTRY = "locale.country";
@@ -190,7 +188,7 @@ public class IntegrationOptions implements OptionsData {
     }
 
     @Override
-    public void copyTo(OptionsData options) {
+    public void copyTo(SettingsOptions options) {
         IntegrationOptions with = (IntegrationOptions) options;
         with.setLanguageLocale(getLanguageLocale());
         with.setIconSet(getIconSet());

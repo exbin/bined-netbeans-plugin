@@ -1,5 +1,5 @@
 /*
- * Copyright (C) ExBin Project
+ * Copyright (C) ExBin Project, https://exbin.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,6 @@ import java.io.IOException;
 
 /**
  * BinEd alternative diff controller provider.
- *
- * @author ExBin Project (https://exbin.org)
  */
 //@org.openide.util.lookup.ServiceProvider(service=org.netbeans.spi.diff.DiffControllerProvider.class)
 public class BinEdDiffControllerProvider extends DiffControllerProvider {

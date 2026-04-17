@@ -1,5 +1,5 @@
 /*
- * Copyright (C) ExBin Project
+ * Copyright (C) ExBin Project, https://exbin.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,17 +24,15 @@ import javax.swing.event.UndoableEditEvent;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoableEdit;
-import org.exbin.bined.operation.BinaryDataCommand;
-import org.exbin.bined.operation.undo.BinaryDataUndoRedoChangeListener;
-import org.exbin.bined.operation.undo.BinaryDataUndoRedo;
-import org.exbin.bined.operation.undo.BinaryDataUndoableCommand;
+import org.exbin.bined.operation.command.BinaryDataCommand;
+import org.exbin.bined.operation.BinaryDataUndoRedoChangeListener;
+import org.exbin.bined.operation.command.BinaryDataUndoRedo;
+import org.exbin.bined.operation.command.BinaryDataUndoableCommand;
 import org.exbin.bined.swing.CodeAreaCore;
 import org.openide.awt.UndoRedo;
 
 /**
  * Undo handler for binary editor using AWT undo.
- *
- * @author ExBin Project (https://exbin.org)
  */
 @ParametersAreNonnullByDefault
 public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {

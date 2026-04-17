@@ -1,5 +1,5 @@
 /*
- * Copyright (C) ExBin Project
+ * Copyright (C) ExBin Project, https://exbin.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ import org.exbin.framework.bined.viewer.BinedViewerModule;
 import org.exbin.framework.frame.api.FrameModuleApi;
 import org.exbin.framework.language.api.LanguageModuleApi;
 import org.exbin.framework.options.api.OptionsModuleApi;
-import org.exbin.framework.preferences.api.PreferencesModuleApi;
+import org.exbin.framework.options.api.OptionsModuleApi;
 import org.exbin.framework.text.encoding.EncodingsHandler;
 import org.exbin.framework.text.encoding.options.TextEncodingOptions;
 import org.exbin.framework.action.api.clipboard.ClipboardController;
@@ -71,8 +71,6 @@ import org.exbin.framework.utils.DesktopUtils;
 
 /**
  * Panel to show debug view.
- *
- * @author ExBin Project (https://exbin.org)
  */
 @ParametersAreNonnullByDefault
 public class DebugViewPanel extends javax.swing.JPanel {
@@ -102,7 +100,7 @@ public class DebugViewPanel extends javax.swing.JPanel {
         BinEdComponentPanel componentPanel = (BinEdComponentPanel) editorComponent.getComponent();
         fileManager.initComponentPanel(componentPanel);
 
-        PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
+        OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
 //        editorComponent.onInitFromPreferences(new BinaryEditorOptions(preferencesModule.getAppPreferences()));
 
         SectCodeArea codeArea = editorComponent.getCodeArea();
@@ -198,9 +196,9 @@ public class DebugViewPanel extends javax.swing.JPanel {
         });
 
         EncodingsHandler encodingsHandler = binedViewerModule.getEncodingsHandler();
-        encodingsHandler.loadFromOptions(new TextEncodingOptions(preferencesModule.getAppPreferences()));
+        encodingsHandler.loadFromOptions(new TextEncodingOptions(optionsModule.getAppPreferences()));
         statusPanel.setController(new BinaryStatusController());
-        statusPanel.loadFromOptions(new StatusOptions(preferencesModule.getAppPreferences()));
+        statusPanel.loadFromOptions(new StatusOptions(optionsModule.getAppPreferences()));
         statusPanel.setMinimumSize(new Dimension(0, getMinimumSize().height));
         registerBinaryStatus(statusPanel);
 

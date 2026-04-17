@@ -1,5 +1,5 @@
 /*
- * Copyright (C) ExBin Project
+ * Copyright (C) ExBin Project, https://exbin.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,9 +110,9 @@ import org.exbin.framework.plugin.language.zh_Hant.LanguageZhHantModule;
 import org.exbin.framework.plugin.language.zh_TW.LanguageZhTwModule;
 import org.exbin.framework.plugins.iconset.material.IconSetMaterialModule;
 import org.exbin.framework.preferences.PreferencesModule;
-import org.exbin.framework.preferences.PreferencesWrapper;
-import org.exbin.framework.preferences.api.OptionsStorage;
-import org.exbin.framework.preferences.api.PreferencesModuleApi;
+import org.exbin.framework.options.PreferencesWrapper;
+import org.exbin.framework.options.api.OptionsStorage;
+import org.exbin.framework.options.api.OptionsModuleApi;
 import org.exbin.framework.toolbar.ToolBarModule;
 import org.exbin.framework.toolbar.api.ToolBarModuleApi;
 import org.exbin.framework.ui.UiModule;
@@ -130,8 +130,6 @@ import org.openide.windows.WindowManager;
 
 /**
  * Installer for BinEd plugin.
- *
- * @author ExBin Project (https://exbin.org)
  */
 @ParametersAreNonnullByDefault
 public class Installer extends ModuleInstall {
@@ -250,7 +248,7 @@ public class Installer extends ModuleInstall {
             modules.put(ActionModuleApi.class, new ActionModule());
             modules.put(OperationUndoModuleApi.class, new OperationUndoModule());
             modules.put(OptionsModuleApi.class, new OptionsModule());
-            modules.put(PreferencesModuleApi.class, new PreferencesModule());
+            modules.put(OptionsSettingsModuleApi.class, new OptionsSettingsModule());
             modules.put(UiModuleApi.class, new UiModule());
             modules.put(UiThemeModuleApi.class, new UiThemeModule());
             modules.put(HelpModuleApi.class, new HelpModule());

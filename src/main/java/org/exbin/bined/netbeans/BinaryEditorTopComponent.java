@@ -1,5 +1,5 @@
 /*
- * Copyright (C) ExBin Project
+ * Copyright (C) ExBin Project, https://exbin.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,8 +38,8 @@ import org.exbin.framework.bined.UndoRedoWrapper;
 import org.exbin.framework.bined.editor.options.BinaryEditorOptions;
 import org.exbin.framework.bined.gui.BinaryStatusPanel;
 import org.exbin.framework.file.api.FileModuleApi;
-import org.exbin.framework.preferences.api.OptionsStorage;
-import org.exbin.framework.preferences.api.PreferencesModuleApi;
+import org.exbin.framework.options.api.OptionsStorage;
+import org.exbin.framework.options.api.OptionsModuleApi;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.UndoRedo;
 import org.openide.loaders.DataObject;
@@ -52,8 +52,6 @@ import org.openide.windows.TopComponent;
 
 /**
  * Binary editor top component.
- *
- * @author ExBin Project (https://exbin.org)
  */
 @ConvertAsProperties(dtd = "-//org.exbin.bined//BinaryEditor//EN", autostore = false)
 @TopComponent.Description(preferredID = "BinaryEditorTopComponent", iconBase = "org/exbin/bined/netbeans/resources/icons/icon.png",
@@ -109,8 +107,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Seri
             updateModified();
         });
 
-        PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
-        filePanel.loadFromOptions(preferencesModule.getAppPreferences());
+        OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
+        filePanel.loadFromOptions(optionsModule.getAppOptions());
 
         associateLookup(new AbstractLookup(content));
     }
@@ -235,8 +233,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Seri
         URI fileUri = dataObject.getPrimaryFile().toURI();
         // TODO pass handling mode correctly
 
-        PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
-        OptionsStorage optionsStorage = preferencesModule.getAppPreferences();
+        OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
+        OptionsStorage optionsStorage = optionsModule.getAppOptions();
         BinaryEditorOptions editorOptions = new BinaryEditorOptions(optionsStorage);
         fileHandler.setNewData(editorOptions.getFileHandlingMode());
         if (fileUri == null) {

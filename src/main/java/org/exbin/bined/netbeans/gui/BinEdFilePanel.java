@@ -1,5 +1,5 @@
 /*
- * Copyright (C) ExBin Project
+ * Copyright (C) ExBin Project, https://exbin.org
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,15 +62,13 @@ import org.exbin.framework.file.api.FileHandler;
 import org.exbin.framework.frame.api.FrameModuleApi;
 import org.exbin.framework.options.action.OptionsAction;
 import org.exbin.framework.options.api.OptionsModuleApi;
-import org.exbin.framework.preferences.api.OptionsStorage;
-import org.exbin.framework.preferences.api.PreferencesModuleApi;
+import org.exbin.framework.options.api.OptionsStorage;
+import org.exbin.framework.options.api.OptionsModuleApi;
 import org.exbin.framework.text.encoding.EncodingsHandler;
 import org.exbin.framework.text.encoding.options.TextEncodingOptions;
 
 /**
  * Binary editor file panel.
- *
- * @author ExBin Project (https://exbin.org)
  */
 @ParametersAreNonnullByDefault
 public class BinEdFilePanel extends JPanel {
@@ -193,8 +191,8 @@ public class BinEdFilePanel extends JPanel {
         fileManager.registerStatusBar(new BinaryStatusPanel());
         fileManager.setStatusControlHandler(new BinaryStatusController());
 
-        PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
-        encodingsHandler.loadFromOptions(new TextEncodingOptions(preferencesModule.getAppPreferences()));
+        OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
+        encodingsHandler.loadFromOptions(new TextEncodingOptions(optionsModule.getAppOptions()));
         statusPanel = fileManager.getBinaryStatusPanel();
         statusPanel.setMinimumSize(new Dimension(0, getMinimumSize().height));
         add(statusPanel, BorderLayout.SOUTH);
@@ -276,8 +274,8 @@ public class BinEdFilePanel extends JPanel {
                 FileHandlingMode fileHandlingMode = fileHandler.getFileHandlingMode();
                 FileHandlingMode newHandlingMode = memoryMode == BinaryStatusApi.MemoryMode.DELTA_MODE ? FileHandlingMode.DELTA : FileHandlingMode.MEMORY;
                 if (newHandlingMode != fileHandlingMode) {
-                    PreferencesModuleApi preferencesModule = App.getModule(PreferencesModuleApi.class);
-                    BinaryEditorOptions options = new BinaryEditorOptions(preferencesModule.getAppPreferences());
+                    OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
+                    BinaryEditorOptions options = new BinaryEditorOptions(optionsModule.getAppOptions());
                     if (editorProvider.releaseFile(fileHandler)) {
                         fileHandler.switchFileHandlingMode(newHandlingMode);
                         options.setFileHandlingMode(newHandlingMode);
