@@ -18,8 +18,7 @@ package org.exbin.bined.netbeans;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.SwingUtilities;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.netbeans.api.actions.Savable;
@@ -39,7 +38,7 @@ import org.openide.windows.WindowManager;
 /**
  * BinEd data object.
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 @MIMEResolver.Registration(displayName = "#BinEdDataObject.extensionDisplayName", resource = "mime-resolver.xml", showInFileChooser = {"#BinEdDataObject.extensionDisplayName"})
 @DataObject.Registration(displayName = "#BinEdDataObject.displayName", mimeType = BinEdOpenAsDataObject.MIME_TYPE, iconBase = "org/exbin/bined/netbeans/resources/icons/icon.png")
 public class BinEdOpenAsDataObject extends MultiDataObject implements Savable {
@@ -75,13 +74,11 @@ public class BinEdOpenAsDataObject extends MultiDataObject implements Savable {
         editorComponent.saveFile();
     }
 
-    @Nonnull
     @Override
     public Lookup getLookup() {
         return editorComponent.getLookup();
     }
 
-    @Nonnull
     public UndoRedo.Manager getUndoRedoManager() {
         return (UndoRedo.Manager) editorComponent.getUndoRedo();
     }

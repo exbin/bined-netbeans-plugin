@@ -20,8 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 import org.exbin.auxiliary.binary_data.BinaryData;
 import org.exbin.auxiliary.binary_data.array.ByteArrayData;
 import org.exbin.auxiliary.binary_data.EditableBinaryData;
@@ -34,7 +33,7 @@ import org.openide.filesystems.FileObject;
 /**
  * File data wrapper for netbeans with caching.
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 public class BinEdFileDataWrapper implements EditableBinaryData {
 
 	public static final String BROKEN_VIRTUAL_FILE = "Broken virtual file";
@@ -77,7 +76,6 @@ public class BinEdFileDataWrapper implements EditableBinaryData {
         return cachePages[usedPage].page[pageOffset];
     }
 
-    @Nonnull
     @Override
     public BinaryData copy() {
         try {
@@ -87,7 +85,6 @@ public class BinEdFileDataWrapper implements EditableBinaryData {
         }
     }
 
-    @Nonnull
     @Override
     public synchronized BinaryData copy(long startFrom, long length) {
         long pageIndex = startFrom / PAGE_SIZE;
@@ -157,7 +154,6 @@ public class BinEdFileDataWrapper implements EditableBinaryData {
         }
     }
 
-    @Nonnull
     @Override
     public InputStream getDataInputStream() {
         try {
@@ -449,7 +445,6 @@ public class BinEdFileDataWrapper implements EditableBinaryData {
         resetCache();
     }
 
-    @Nonnull
     private InputStream getInputStream(long position) throws IOException {
         if (cacheInputStream != null && cachePosition <= position) {
             if (cachePosition < position) {
@@ -473,7 +468,6 @@ public class BinEdFileDataWrapper implements EditableBinaryData {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Nonnull
     @Override
     public OutputStream getDataOutputStream() {
         throw new UnsupportedOperationException("Not supported yet.");

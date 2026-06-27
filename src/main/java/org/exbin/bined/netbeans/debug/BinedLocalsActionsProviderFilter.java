@@ -15,8 +15,7 @@
  */
 package org.exbin.bined.netbeans.debug;
 
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.Action;
 import org.exbin.bined.netbeans.BinaryDebugAction;
 import org.netbeans.spi.debugger.DebuggerServiceRegistration;
@@ -34,10 +33,9 @@ import org.openide.windows.WindowManager;
 @DebuggerServiceRegistration(path = "netbeans-JPDASession/LocalsView",
         types = NodeActionsProviderFilter.class,
         position = 720)
-@ParametersAreNonnullByDefault
+@NullMarked
 public class BinedLocalsActionsProviderFilter implements NodeActionsProviderFilter {
 
-    @Nonnull
     private final Action BINARY_DEBUG_ACTION = Models.createAction("View as Binary...", new Models.ActionPerformer() {
         @Override
         public boolean isEnabled(Object node) {
@@ -64,7 +62,6 @@ public class BinedLocalsActionsProviderFilter implements NodeActionsProviderFilt
         original.performDefaultAction(node);
     }
 
-    @Nonnull
     @Override
     public Action[] getActions(NodeActionsProvider original, Object node) throws UnknownTypeException {
         Action[] originalActions = original.getActions(node);

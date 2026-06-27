@@ -24,22 +24,21 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.SwingUtilities;
 import org.exbin.bined.EditMode;
 import org.exbin.bined.netbeans.gui.BinEdFilePanel;
 import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
 import org.exbin.bined.swing.section.SectCodeArea;
-import org.exbin.framework.App;
-import org.exbin.framework.bined.BinEdFileHandler;
-import org.exbin.framework.bined.BinedModule;
-import org.exbin.framework.bined.UndoRedoWrapper;
-import org.exbin.framework.bined.editor.options.BinaryEditorOptions;
-import org.exbin.framework.bined.gui.BinaryStatusPanel;
-import org.exbin.framework.file.api.FileModuleApi;
-import org.exbin.framework.options.api.OptionsStorage;
-import org.exbin.framework.options.api.OptionsModuleApi;
+import org.exbin.jaguif.App;
+import org.exbin.bined.jaguif.BinEdFileHandler;
+import org.exbin.bined.jaguif.BinedModule;
+import org.exbin.bined.jaguif.component.UndoRedoWrapper;
+import org.exbin.bined.jaguif.editor.options.BinaryEditorOptions;
+import org.exbin.bined.jaguif.gui.BinaryStatusPanel;
+import org.exbin.jaguif.file.api.FileModuleApi;
+import org.exbin.jaguif.options.api.OptionsStorage;
+import org.exbin.jaguif.options.api.OptionsModuleApi;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.UndoRedo;
 import org.openide.loaders.DataObject;
@@ -58,7 +57,7 @@ import org.openide.windows.TopComponent;
         persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @TopComponent.OpenActionRegistration(displayName = "#CTL_BinaryEditorAction", preferredID = "BinaryEditorTopComponent")
-@ParametersAreNonnullByDefault
+@NullMarked
 public final class BinaryEditorTopComponent extends TopComponent implements Serializable, UndoRedo.Provider {
 
     private static final String BINARY_EDITOR_TOP_COMPONENT_STRING = "CTL_BinaryEditorTopComponent";
@@ -159,7 +158,6 @@ public final class BinaryEditorTopComponent extends TopComponent implements Seri
         }
     }
 
-    @Nonnull
     public BinEdFileHandler getFileHandler() {
         return fileHandler;
     }
@@ -236,7 +234,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Seri
         OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
         OptionsStorage optionsStorage = optionsModule.getAppOptions();
         BinaryEditorOptions editorOptions = new BinaryEditorOptions(optionsStorage);
-        fileHandler.setNewData(editorOptions.getFileHandlingMode());
+        fileHandler.setNewData(editorOptions.getFileProcessingMode());
         if (fileUri == null) {
             InputStream stream = null;
             try {

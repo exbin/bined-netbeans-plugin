@@ -15,14 +15,14 @@
  */
 package org.exbin.bined.netbeans;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 
 /**
  * Binary editor node.
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 public class BinaryEditorNode extends AbstractNode {
 
     private final BinaryEditorTopComponent editorTopComponent;

@@ -17,16 +17,14 @@ package org.exbin.bined.netbeans.options.gui;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import javax.annotation.Nonnull;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
-import org.exbin.framework.App;
-import org.exbin.framework.options.OptionsModule;
-import org.exbin.framework.options.action.OptionsAction;
-import org.exbin.framework.options.api.OptionsModuleApi;
-import org.exbin.framework.options.api.OptionsPageReceiver;
-import org.exbin.framework.options.gui.OptionsListPanel;
-import org.exbin.framework.options.api.OptionsModuleApi;
+import org.exbin.jaguif.App;
+import org.exbin.jaguif.options.OptionsModule;
+import org.exbin.jaguif.options.api.OptionsModuleApi;
+import org.exbin.jaguif.options.api.OptionsPageReceiver;
+import org.exbin.jaguif.options.gui.OptionsListPanel;
 import org.netbeans.spi.options.OptionsPanelController;
 import org.openide.util.HelpCtx;
 import org.openide.util.Lookup;
@@ -34,6 +32,7 @@ import org.openide.util.Lookup;
 /**
  * Binary editor options panel.
  */
+@NullMarked
 @OptionsPanelController.SubRegistration(
         location = "Advanced",
         displayName = "#AdvancedOption_DisplayName_BinEd",
@@ -96,7 +95,6 @@ public final class BinEdOptionsPanelController extends OptionsPanelController {
         pcs.removePropertyChangeListener(l);
     }
 
-    @Nonnull
     private OptionsListPanel getPanel() {
         if (panel == null) {
             panel = new OptionsListPanel();

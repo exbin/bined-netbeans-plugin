@@ -17,16 +17,17 @@ package org.exbin.bined.netbeans.gui;
 
 import org.exbin.bined.CodeType;
 import org.exbin.bined.swing.section.SectCodeArea;
-import org.exbin.framework.App;
-import org.exbin.framework.bined.BinEdFileHandler;
-import org.exbin.framework.bined.BinedModule;
-import org.exbin.framework.bined.gui.BinEdComponentPanel;
-import org.exbin.framework.bined.gui.BinaryStatusPanel;
-import org.exbin.framework.bined.handler.CodeAreaPopupMenuHandler;
-import org.exbin.framework.language.api.LanguageModuleApi;
-import org.exbin.framework.utils.DesktopUtils;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.exbin.jaguif.App;
+import org.exbin.bined.jaguif.document.BinaryFileDocument;
+import org.exbin.bined.jaguif.BinedModule;
+import org.exbin.bined.jaguif.component.gui.BinEdComponentPanel;
+import org.exbin.bined.jaguif.gui.BinaryStatusPanel;
+import org.exbin.bined.jaguif.handler.CodeAreaPopupMenuHandler;
+import org.exbin.jaguif.language.api.LanguageModuleApi;
+import org.exbin.jaguif.utils.DesktopUtils;
+import org.exbin.jaguif.statusbar.api.StatusBar;
+import org.exbin.jaguif.statusbar.api.StatusBarModuleApi;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -46,49 +47,63 @@ import org.exbin.bined.netbeans.BinEdNetBeansEditorProvider;
 import org.exbin.bined.netbeans.utils.ActionUtils;
 import org.exbin.bined.swing.CodeAreaSwingUtils;
 import org.exbin.bined.swing.capability.ColorAssessorPainterCapable;
-import org.exbin.framework.action.api.ActionConsts;
-import org.exbin.framework.action.api.ActionContextService;
-import org.exbin.framework.action.api.ActionModuleApi;
-import org.exbin.framework.bined.BinEdEditorProvider;
-import org.exbin.framework.bined.BinEdFileManager;
-import org.exbin.framework.bined.BinaryStatusApi;
-import org.exbin.framework.bined.FileHandlingMode;
-import org.exbin.framework.bined.action.GoToPositionAction;
-import org.exbin.framework.bined.bookmarks.BinedBookmarksModule;
-import org.exbin.framework.bined.editor.options.BinaryEditorOptions;
-import org.exbin.framework.bined.macro.BinedMacroModule;
-import org.exbin.framework.bined.viewer.BinedViewerModule;
-import org.exbin.framework.file.api.FileHandler;
-import org.exbin.framework.frame.api.FrameModuleApi;
-import org.exbin.framework.options.action.OptionsAction;
-import org.exbin.framework.options.api.OptionsModuleApi;
-import org.exbin.framework.options.api.OptionsStorage;
-import org.exbin.framework.options.api.OptionsModuleApi;
-import org.exbin.framework.text.encoding.EncodingsHandler;
-import org.exbin.framework.text.encoding.options.TextEncodingOptions;
+import org.exbin.jaguif.action.api.ActionConsts;
+import org.exbin.jaguif.action.api.ActionContextService;
+import org.exbin.jaguif.action.api.ActionModuleApi;
+import org.exbin.bined.jaguif.BinEdEditorProvider;
+import org.exbin.bined.jaguif.BinEdFileManager;
+import org.exbin.bined.jaguif.BinaryStatusApi;
+import org.exbin.bined.jaguif.document.FileProcessingMode;
+import org.exbin.bined.jaguif.component.action.GoToPositionAction;
+import org.exbin.bined.jaguif.bookmarks.BinedBookmarksModule;
+import org.exbin.bined.jaguif.editor.options.BinaryEditorOptions;
+import org.exbin.bined.jaguif.macro.BinedMacroModule;
+import org.exbin.bined.jaguif.viewer.BinedViewerModule;
+import org.exbin.jaguif.context.ActiveContextManager;
+import org.exbin.jaguif.context.api.ActiveContextManagement;
+import org.exbin.jaguif.context.api.ContextModuleApi;
+import org.exbin.jaguif.context.api.ContextRegistration;
+import org.exbin.jaguif.context.api.ContextUpdateManagement;
+import org.exbin.jaguif.docking.api.ContextDocking;
+import org.exbin.jaguif.document.api.ContextDocument;
+import org.exbin.jaguif.frame.api.FrameModuleApi;
+import org.exbin.jaguif.options.action.OptionsAction;
+import org.exbin.jaguif.options.api.OptionsModuleApi;
+import org.exbin.jaguif.options.api.OptionsStorage;
+import org.exbin.jaguif.options.api.OptionsModuleApi;
+import org.exbin.jaguif.text.encoding.EncodingsHandler;
+import org.exbin.jaguif.text.encoding.settings.TextEncodingOptions;
 
 /**
- * Binary editor file panel.
+ * TODO: Binary editor file panel.
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 public class BinEdFilePanel extends JPanel {
 
-    private BinEdFileHandler fileHandler;
+    private BinaryFileDocument fileDocument;
     private BinEdToolbarPanel toolbarPanel = new BinEdToolbarPanel();
-    private BinaryStatusPanel statusPanel = new BinaryStatusPanel();
+    private StatusBar statusBar;
 
     public BinEdFilePanel() {
         super(new BorderLayout());
         add(toolbarPanel, BorderLayout.NORTH);
+
+        FrameModuleApi frameModule = App.getModule(FrameModuleApi.class);
+        StatusBarModuleApi statusBarModule = App.getModule(StatusBarModuleApi.class);
+        ContextModuleApi contextModule = App.getModule(ContextModuleApi.class);
+        ActiveContextManagement contextManager = frameModule.getFrameController().getContextManager();
+        ContextUpdateManagement updateManager = frameModule.getFrameController().getUpdateManager();
+        ContextRegistration contextRegistrator = contextModule.createContextRegistrator(FrameModuleApi.MAIN_STATUS_BAR_ID,  updateManager, contextManager);
+        statusBar = statusBarModule.createStatusBar(BinedComponentModule.BINARY_STATUS_BAR_ID, contextRegistrator);
     }
 
-    public void setFileHandler(BinEdFileHandler fileHandler) {
-        this.fileHandler = fileHandler;
-        BinEdComponentPanel componentPanel = fileHandler.getComponent();
-        SectCodeArea codeArea = fileHandler.getCodeArea();
+    public void setDocument(BinaryFileDocument fileDocument) {
+        this.fileDocument = fileDocument;
+        BinEdComponentPanel componentPanel = fileDocument.getComponent();
+        SectCodeArea codeArea = fileDocument.getCodeArea();
+
         toolbarPanel.setTargetComponent(componentPanel);
         toolbarPanel.setCodeAreaControl(new BinEdToolbarPanel.Control() {
-            @Nonnull
             @Override
             public CodeType getCodeType() {
                 return codeArea.getCodeType();
@@ -193,21 +208,21 @@ public class BinEdFilePanel extends JPanel {
 
         OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
         encodingsHandler.loadFromOptions(new TextEncodingOptions(optionsModule.getAppOptions()));
-        statusPanel = fileManager.getBinaryStatusPanel();
-        statusPanel.setMinimumSize(new Dimension(0, getMinimumSize().height));
-        add(statusPanel, BorderLayout.SOUTH);
+        add(statusBar, BorderLayout.SOUTH);
 
         add(componentPanel, BorderLayout.CENTER);
         revalidate();
         repaint();
     }
 
-    @Nonnull
-    public BinaryStatusPanel getStatusPanel() {
-        return statusPanel;
+    public BinEdToolbarPanel getToolbarPanel() {
+        return toolbarPanel;
     }
 
-    @Nonnull
+    public SectCodeArea getCodeArea() {
+        return (SectCodeArea) fileDocument.getCodeArea();
+    }
+
     private AbstractAction createOnlineHelpAction() {
         return new AbstractAction() {
             @Override
@@ -219,11 +234,11 @@ public class BinEdFilePanel extends JPanel {
     }
 
     public void loadFromOptions(OptionsStorage appPreferences) {
-        fileHandler.getComponent().onInitFromPreferences(appPreferences);
+        fileDocument.getComponent().onInitFromPreferences(appPreferences);
         toolbarPanel.applyFromCodeArea();
     }
 
-    @ParametersAreNonnullByDefault
+/*    @NullMarked
     private class BinaryStatusController implements BinaryStatusPanel.Controller, BinaryStatusPanel.EncodingsController, BinaryStatusPanel.MemoryModeController {
 
         @Override
@@ -271,18 +286,18 @@ public class BinEdFilePanel extends JPanel {
             Optional<FileHandler> activeFile = editorProvider.getActiveFile();
             if (activeFile.isPresent()) {
                 BinEdFileHandler fileHandler = (BinEdFileHandler) activeFile.get();
-                FileHandlingMode fileHandlingMode = fileHandler.getFileHandlingMode();
-                FileHandlingMode newHandlingMode = memoryMode == BinaryStatusApi.MemoryMode.DELTA_MODE ? FileHandlingMode.DELTA : FileHandlingMode.MEMORY;
-                if (newHandlingMode != fileHandlingMode) {
+                FileProcessingMode fileProcessingMode = fileHandler.getFileProcessingMode();
+                FileProcessingMode newProcessingMode = memoryMode == BinaryStatusApi.MemoryMode.DELTA_MODE ? FileProcessingMode.DELTA : FileProcessingMode.MEMORY;
+                if (newProcessingMode != fileProcessingMode) {
                     OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
                     BinaryEditorOptions options = new BinaryEditorOptions(optionsModule.getAppOptions());
                     if (editorProvider.releaseFile(fileHandler)) {
-                        fileHandler.switchFileHandlingMode(newHandlingMode);
-                        options.setFileHandlingMode(newHandlingMode);
+                        fileHandler.switchFileHandlingMode(newProcessingMode);
+                        options.setFileHandlingMode(newProcessingMode);
                     }
                     ((BinEdEditorProvider) editorProvider).updateStatus();
                 }
             }
         }
-    }
+    } */
 }

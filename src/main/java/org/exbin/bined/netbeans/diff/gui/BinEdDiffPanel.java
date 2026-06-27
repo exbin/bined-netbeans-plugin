@@ -24,8 +24,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseEvent;
 import java.nio.charset.Charset;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -40,7 +39,6 @@ import org.exbin.bined.EditOperation;
 import org.exbin.bined.capability.CharsetCapable;
 import org.exbin.bined.highlight.swing.NonprintablesCodeAreaAssessor;
 import org.exbin.bined.netbeans.gui.BinEdToolbarPanel;
-import org.exbin.bined.netbeans.options.BinEdApplyOptions;
 import org.exbin.bined.operation.swing.CodeAreaOperationCommandHandler;
 import org.exbin.bined.section.layout.SectionCodeAreaLayoutProfile;
 import org.exbin.bined.swing.CodeAreaPainter;
@@ -52,38 +50,39 @@ import org.exbin.bined.swing.capability.FontCapable;
 import org.exbin.bined.swing.section.SectCodeArea;
 import org.exbin.bined.swing.section.diff.SectCodeAreaDiffPanel;
 import org.exbin.bined.swing.section.theme.SectionCodeAreaThemeProfile;
-import org.exbin.framework.App;
-import org.exbin.framework.bined.BinEdCodeAreaAssessor;
-import org.exbin.framework.bined.BinaryStatusApi;
-import org.exbin.framework.bined.BinedModule;
-import org.exbin.framework.bined.action.GoToPositionAction;
-import org.exbin.framework.bined.editor.options.BinaryEditorOptions;
-import org.exbin.framework.bined.gui.BinaryStatusPanel;
-import org.exbin.framework.bined.handler.CodeAreaPopupMenuHandler;
-import org.exbin.framework.bined.options.StatusOptions;
-import org.exbin.framework.bined.theme.options.CodeAreaColorOptions;
-import org.exbin.framework.bined.theme.options.CodeAreaLayoutOptions;
-import org.exbin.framework.bined.theme.options.CodeAreaThemeOptions;
-import org.exbin.framework.bined.viewer.options.CodeAreaOptions;
-import org.exbin.framework.frame.api.FrameModuleApi;
-import org.exbin.framework.language.api.LanguageModuleApi;
-import org.exbin.framework.options.action.OptionsAction;
-import org.exbin.framework.options.api.OptionsModuleApi;
-import org.exbin.framework.options.api.OptionsStorage;
-import org.exbin.framework.options.api.OptionsModuleApi;
-import org.exbin.framework.text.encoding.EncodingsHandler;
-import org.exbin.framework.text.encoding.TextEncodingStatusApi;
-import org.exbin.framework.text.encoding.options.TextEncodingOptions;
-import org.exbin.framework.text.font.options.TextFontOptions;
-import org.exbin.framework.utils.DesktopUtils;
+import org.exbin.jaguif.App;
+import org.exbin.bined.jaguif.BinEdCodeAreaAssessor;
+import org.exbin.bined.jaguif.BinaryStatusApi;
+import org.exbin.bined.jaguif.component.BinedComponentModule;
+import org.exbin.bined.jaguif.component.action.GoToPositionAction;
+import org.exbin.bined.jaguif.editor.options.BinaryEditorOptions;
+import org.exbin.bined.jaguif.gui.BinaryStatusPanel;
+import org.exbin.bined.jaguif.handler.CodeAreaPopupMenuHandler;
+import org.exbin.bined.jaguif.options.StatusOptions;
+import org.exbin.bined.jaguif.theme.options.CodeAreaColorOptions;
+import org.exbin.bined.jaguif.theme.options.CodeAreaLayoutOptions;
+import org.exbin.bined.jaguif.theme.options.CodeAreaThemeOptions;
+import org.exbin.bined.jaguif.viewer.options.CodeAreaOptions;
+import org.exbin.jaguif.frame.api.FrameModuleApi;
+import org.exbin.jaguif.language.api.LanguageModuleApi;
+import org.exbin.jaguif.options.action.OptionsAction;
+import org.exbin.jaguif.options.api.OptionsModuleApi;
+import org.exbin.jaguif.options.api.OptionsStorage;
+import org.exbin.jaguif.text.encoding.EncodingsHandler;
+import org.exbin.jaguif.text.encoding.TextEncodingStatusApi;
+import org.exbin.jaguif.text.encoding.settings.TextEncodingOptions;
+import org.exbin.jaguif.text.encoding.EncodingsManager;
+import org.exbin.jaguif.text.font.options.TextFontOptions;
+import org.exbin.jaguif.statusbar.api.StatusBar;
+import org.exbin.jaguif.statusbar.api.StatusBarModuleApi;
+import org.exbin.jaguif.utils.DesktopUtils;
 
 /**
  * BinEd diff panel to compare binary files.
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 public class BinEdDiffPanel extends JPanel {
 
-    private final OptionsStorage preferences;
     private final SectCodeAreaDiffPanel diffPanel = new SectCodeAreaDiffPanel();
 
     private final Font defaultFont;
@@ -92,16 +91,14 @@ public class BinEdDiffPanel extends JPanel {
     private final CodeAreaColorsProfile defaultColorProfile;
 
     private final BinEdToolbarPanel toolbarPanel;
-    private final BinaryStatusPanel leftStatusPanel;
-    private final BinaryStatusPanel rightStatusPanel;
-    private EncodingsHandler encodingsHandler;
+    private final StatusBar leftStatusBar;
+    private final StatusBar rightStatusBar;
+    private EncodingsManager encodingsHandler;
     private GoToPositionAction goToPositionAction = new GoToPositionAction();
 
     public BinEdDiffPanel() {
         setLayout(new java.awt.BorderLayout());
 
-        OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
-        preferences = optionsModule.getAppOptions();
         defaultFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
         SectCodeArea leftCodeArea = diffPanel.getLeftCodeArea();
         SectCodeArea rightCodeArea = diffPanel.getRightCodeArea();
@@ -119,13 +116,12 @@ public class BinEdDiffPanel extends JPanel {
         defaultThemeProfile = leftCodeArea.getThemeProfile();
         defaultColorProfile = leftCodeArea.getColorsProfile();
         toolbarPanel = new BinEdToolbarPanel();
-        leftStatusPanel = new BinaryStatusPanel();
-        leftStatusPanel.setMinimumSize(new Dimension(0, getMinimumSize().height));
-        rightStatusPanel = new BinaryStatusPanel();
-        rightStatusPanel.setMinimumSize(new Dimension(0, getMinimumSize().height));
+        leftStatusBar = new BinaryStatusPanel();
+        leftStatusBar.setMinimumSize(new Dimension(0, getMinimumSize().height));
+        rightStatusBar = new BinaryStatusPanel();
+        rightStatusBar.setMinimumSize(new Dimension(0, getMinimumSize().height));
         toolbarPanel.setTargetComponent(diffPanel);
         toolbarPanel.setCodeAreaControl(new BinEdToolbarPanel.Control() {
-            @Nonnull
             @Override
             public CodeType getCodeType() {
                 return leftCodeArea.getCodeType();
@@ -169,8 +165,8 @@ public class BinEdDiffPanel extends JPanel {
                 optionsAction.actionPerformed(e);
                 // TODO Options are not applied due to no active file handler is present
                 toolbarPanel.applyFromCodeArea();
-                leftStatusPanel.updateStatus();
-                rightStatusPanel.updateStatus();
+                leftStatusBar.updateStatus();
+                rightStatusBar.updateStatus();
             }
         };
         toolbarPanel.setOptionsAction(wrapperAction);
@@ -184,34 +180,33 @@ public class BinEdDiffPanel extends JPanel {
         encodingsHandler = new EncodingsHandler();
         encodingsHandler.init();
         encodingsHandler.setTextEncodingStatus(new TextEncodingStatusApi() {
-            @Nonnull
             @Override
             public String getEncoding() {
-                return leftStatusPanel.getEncoding();
+                return leftStatusBar.getEncoding();
             }
 
             @Override
             public void setEncoding(String encodingName) {
                 diffPanel.getLeftCodeArea().setCharset(Charset.forName(encodingName));
                 diffPanel.getRightCodeArea().setCharset(Charset.forName(encodingName));
-                leftStatusPanel.setEncoding(encodingName);
-                rightStatusPanel.setEncoding(encodingName);
+                leftStatusBar.setEncoding(encodingName);
+                rightStatusBar.setEncoding(encodingName);
                 new TextEncodingOptions(preferences).setSelectedEncoding(encodingName);
             }
         });
         goToPositionAction.setup(App.getModule(LanguageModuleApi.class).getBundle(BinedModule.class));
 
-        registerBinaryStatus(leftStatusPanel, diffPanel.getLeftCodeArea());
-        registerBinaryStatus(rightStatusPanel, diffPanel.getRightCodeArea());
+        registerBinaryStatus(leftStatusBar, diffPanel.getLeftCodeArea());
+        registerBinaryStatus(rightStatusBar, diffPanel.getRightCodeArea());
 
         initialLoadFromPreferences();
-        BinedModule binedModule = App.getModule(BinedModule.class);
-        CodeAreaPopupMenuHandler codeAreaPopupMenuHandler = binedModule.createCodeAreaPopupMenuHandler(BinedModule.PopupMenuVariant.BASIC);
+        BinedComponentModule binedComponentModule = App.getModule(BinedComponentModule.class);
+        CodeAreaPopupMenuHandler codeAreaPopupMenuHandler = binedComponentModule.createCodeAreaPopupMenuHandler(BinedComponentModule.PopupMenuVariant.BASIC);
         diffPanel.getLeftCodeArea().setComponentPopupMenu(createPopupMenu(codeAreaPopupMenuHandler, "compareLeft"));
         diffPanel.getRightCodeArea().setComponentPopupMenu(createPopupMenu(codeAreaPopupMenuHandler, "compareRight"));
 
-        diffPanel.getLeftPanel().add(leftStatusPanel, BorderLayout.SOUTH);
-        diffPanel.getRightPanel().add(rightStatusPanel, BorderLayout.SOUTH);
+        diffPanel.getLeftPanel().add(leftStatusBar, BorderLayout.SOUTH);
+        diffPanel.getRightPanel().add(rightStatusBar, BorderLayout.SOUTH);
         this.add(diffPanel, BorderLayout.CENTER);
         diffPanel.revalidate();
         diffPanel.repaint();
@@ -251,64 +246,21 @@ public class BinEdDiffPanel extends JPanel {
     }
 
     private void initialLoadFromPreferences() {
-        applyOptions(new BinEdApplyOptions() {
-            @Nonnull
-            @Override
-            public CodeAreaOptions getCodeAreaOptions() {
-                return new CodeAreaOptions(preferences);
-            }
+        OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
+        OptionsStorage preferences = optionsModule.getAppOptions();
 
-            @Nonnull
-            @Override
-            public TextEncodingOptions getEncodingOptions() {
-                return new TextEncodingOptions(preferences);
-            }
+        applyOptions(preferences, diffPanel.getLeftCodeArea());
+        applyOptions(preferences, diffPanel.getRightCodeArea());
 
-            @Nonnull
-            @Override
-            public TextFontOptions getFontOptions() {
-                return new TextFontOptions(preferences);
-            }
-
-            @Nonnull
-            @Override
-            public BinaryEditorOptions getEditorOptions() {
-                return new BinaryEditorOptions(preferences);
-            }
-
-            @Nonnull
-            @Override
-            public StatusOptions getStatusOptions() {
-                return new StatusOptions(preferences);
-            }
-
-            @Nonnull
-            @Override
-            public CodeAreaLayoutOptions getLayoutOptions() {
-                return new CodeAreaLayoutOptions(preferences);
-            }
-
-            @Nonnull
-            @Override
-            public CodeAreaColorOptions getColorOptions() {
-                return new CodeAreaColorOptions(preferences);
-            }
-
-            @Nonnull
-            @Override
-            public CodeAreaThemeOptions getThemeOptions() {
-                return new CodeAreaThemeOptions(preferences);
-            }
-        });
-
-        encodingsHandler.loadFromOptions(new TextEncodingOptions(preferences));
-        leftStatusPanel.loadFromOptions(new StatusOptions(preferences));
-        rightStatusPanel.loadFromOptions(new StatusOptions(preferences));
+//        encodingsHandler.loadFromOptions(new TextEncodingOptions(preferences));
+//        leftStatusBar.loadFromOptions(new StatusOptions(preferences));
+//        rightStatusBar.loadFromOptions(new StatusOptions(preferences));
+        toolbarPanel.applyFromCodeArea();
         toolbarPanel.loadFromOptions(preferences);
 
-        BinaryStatusApi.MemoryMode memoryMode = BinaryStatusApi.MemoryMode.READ_ONLY;
-        leftStatusPanel.setMemoryMode(memoryMode);
-        rightStatusPanel.setMemoryMode(memoryMode);
+//        BinaryStatusApi.MemoryMode memoryMode = BinaryStatusApi.MemoryMode.READ_ONLY;
+//        leftStatusBar.setMemoryMode(memoryMode);
+//        rightStatusBar.setMemoryMode(memoryMode);
     }
 
     private void applyOptions(BinEdApplyOptions applyOptions) {
@@ -333,8 +285,8 @@ public class BinEdDiffPanel extends JPanel {
         }
 
         StatusOptions statusOptions = applyOptions.getStatusOptions();
-        leftStatusPanel.setStatusOptions(statusOptions);
-        rightStatusPanel.setStatusOptions(statusOptions);
+        leftStatusBar.setStatusOptions(statusOptions);
+        rightStatusBar.setStatusOptions(statusOptions);
         toolbarPanel.applyFromCodeArea();
 
         CodeAreaLayoutOptions layoutOptions = applyOptions.getLayoutOptions();
@@ -362,7 +314,6 @@ public class BinEdDiffPanel extends JPanel {
         }
     }
 
-    @Nonnull
     private AbstractAction createOnlineHelpAction() {
         return new AbstractAction() {
             @Override
@@ -375,15 +326,14 @@ public class BinEdDiffPanel extends JPanel {
 
     public void setLeftContentData(BinaryData contentData) {
         diffPanel.setLeftContentData(contentData);
-        updateBinaryStatus(leftStatusPanel, diffPanel.getLeftCodeArea());
+        updateBinaryStatus(leftStatusBar, diffPanel.getLeftCodeArea());
     }
 
     public void setRightContentData(BinaryData contentData) {
         diffPanel.setRightContentData(contentData);
-        updateBinaryStatus(rightStatusPanel, diffPanel.getRightCodeArea());
+        updateBinaryStatus(rightStatusBar, diffPanel.getRightCodeArea());
     }
 
-    @Nonnull
     private JPopupMenu createPopupMenu(final CodeAreaPopupMenuHandler codeAreaPopupMenuHandler, String popupMenuId) {
         return new JPopupMenu() {
             @Override
@@ -420,48 +370,5 @@ public class BinEdDiffPanel extends JPanel {
                 popupMenu.show(invoker, x, y);
             }
         };
-    }
-
-    @ParametersAreNonnullByDefault
-    private class BinaryStatusController implements BinaryStatusPanel.Controller, BinaryStatusPanel.EncodingsController, BinaryStatusPanel.MemoryModeController {
-
-        @Override
-        public void changeEditOperation(EditOperation editOperation) {
-            SectCodeArea leftCodeArea = diffPanel.getLeftCodeArea();
-            SectCodeArea rightCodeArea = diffPanel.getRightCodeArea();
-            leftCodeArea.setEditOperation(editOperation);
-            rightCodeArea.setEditOperation(editOperation);
-        }
-
-        @Override
-        public void changeCursorPosition() {
-            goToPositionAction.actionPerformed(new ActionEvent(BinEdDiffPanel.this, 0, ""));
-        }
-
-        @Override
-        public void cycleNextEncoding() {
-            if (encodingsHandler != null) {
-                encodingsHandler.cycleNextEncoding();
-            }
-        }
-
-        @Override
-        public void cyclePreviousEncoding() {
-            if (encodingsHandler != null) {
-                encodingsHandler.cyclePreviousEncoding();
-            }
-        }
-
-        @Override
-        public void encodingsPopupEncodingsMenu(MouseEvent mouseEvent) {
-            if (encodingsHandler != null) {
-                encodingsHandler.popupEncodingsMenu(mouseEvent);
-            }
-        }
-
-        @Override
-        public void changeMemoryMode(BinaryStatusApi.MemoryMode memoryMode) {
-            // Ignore
-        }
     }
 }

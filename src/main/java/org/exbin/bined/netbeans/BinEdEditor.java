@@ -21,17 +21,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
 import org.exbin.bined.swing.section.SectCodeArea;
-import org.exbin.framework.bined.BinEdFileHandler;
-import org.exbin.framework.bined.UndoRedoWrapper;
+import org.exbin.bined.jaguif.BinEdFileHandler;
+import org.exbin.bined.jaguif.component.UndoRedoWrapper;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.MultiViewElementCallback;
@@ -57,7 +56,7 @@ import org.openide.windows.TopComponent;
         preferredID = BinEdEditor.ELEMENT_ID,
         position = BinEdEditor.POSITION_ATTRIBUTE
 )
-@ParametersAreNonnullByDefault
+@NullMarked
 public class BinEdEditor extends CloneableEditor implements MultiViewElement, HelpCtx.Provider {
 
     public static final String ELEMENT_ID = "org.exbin.bined.netbeans.BinEdEditor";
@@ -75,7 +74,6 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
         Installer.initBinEd();
     }
 
-    @Nonnull
     @Override
     public JComponent getVisualRepresentation() {
         if (editorComponent == null) {
@@ -84,7 +82,6 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
         return editorComponent;
     }
 
-    @Nonnull
     @Override
     public JComponent getToolbarRepresentation() {
         return new JPanel(); // TODO editorFile.getComponent().getToolbarPanel().getToolBar();
@@ -112,7 +109,6 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
         return MultiViewFactory.createUnsafeCloseState("editor", saveAction, MultiViewFactory.NOOP_CLOSE_ACTION);
     }
 
-    @Nonnull
     @Override
     public Action[] getActions() {
         if (callback != null) {
@@ -122,7 +118,6 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
         return new Action[0];
     }
 
-    @Nonnull
     @Override
     public Lookup getLookup() {
         return lookup;
@@ -192,7 +187,6 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
         return undoWrapper != null ? ((BinaryUndoSwingHandler) undoWrapper.getUndoRedo()).getUndoManager() : null;
     }
 
-    @Nonnull
     @Override
     public HelpCtx getHelpCtx() {
         return HelpCtx.DEFAULT_HELP;

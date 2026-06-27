@@ -17,17 +17,16 @@ package org.exbin.bined.netbeans;
 
 import java.io.IOException;
 import java.util.Objects;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-import org.exbin.framework.bined.BinEdFileHandler;
+import org.jspecify.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
+import org.exbin.bined.jaguif.BinEdFileHandler;
 import org.netbeans.spi.actions.AbstractSavable;
 import org.openide.loaders.DataObject;
 
 /**
  * Saving capability for binary editor.
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 public class BinaryEditorTopComponentSavable extends AbstractSavable {
 
     private DataObject dataObject;
@@ -49,7 +48,6 @@ public class BinaryEditorTopComponentSavable extends AbstractSavable {
         this.dataObject = dataObject;
     }
 
-    @Nonnull
     @Override
     protected String findDisplayName() {
         return dataObject == null ? "<unknown file>" : dataObject.getPrimaryFile().getName();

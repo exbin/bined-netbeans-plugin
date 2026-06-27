@@ -19,45 +19,45 @@ import java.awt.Component;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JList;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
-import org.exbin.framework.App;
-import org.exbin.framework.language.api.LanguageModuleApi;
-import org.exbin.framework.utils.WindowUtils;
-import org.exbin.framework.options.api.OptionsModifiedListener;
-import org.exbin.framework.options.api.OptionsComponent;
-import org.exbin.framework.ui.model.LanguageRecord;
-import org.exbin.framework.utils.TestApplication;
+import org.exbin.jaguif.App;
+import org.exbin.jaguif.language.api.LanguageModuleApi;
+import org.exbin.jaguif.options.settings.api.SettingsComponent;
+import org.exbin.jaguif.options.settings.api.SettingsModifiedListener;
+import org.exbin.jaguif.options.settings.api.SettingsOptionsProvider;
+import org.exbin.jaguif.utils.WindowUtils;
+import org.exbin.jaguif.ui.model.LanguageRecord;
+import org.exbin.jaguif.utils.TestApplication;
 
 /**
  * Integration preference parameters panel.
  */
-@ParametersAreNonnullByDefault
-public class IntegrationOptionsPanel extends javax.swing.JPanel implements SettingsComponent {
+@NullMarked
+public class IntegrationSettingsPanel extends javax.swing.JPanel implements SettingsComponent {
 
-    private final java.util.ResourceBundle resourceBundle = App.getModule(LanguageModuleApi.class).getBundle(IntegrationOptionsPanel.class);
-    private OptionsModifiedListener optionsModifiedListener;
+    private final java.util.ResourceBundle resourceBundle = App.getModule(LanguageModuleApi.class).getBundle(IntegrationSettingsPanel.class);
+    private SettingsModifiedListener settingsModifiedListener;
     private String defaultLocaleName = "";
 
-    public IntegrationOptionsPanel() {
+    public IntegrationSettingsPanel() {
         initComponents();
     }
 
-    @Nonnull
     @Override
     public ResourceBundle getResourceBundle() {
         return resourceBundle;
     }
 
     @Override
-    public void saveToOptions(IntegrationOptions options) {
+    public void saveToOptions(SettingsOptionsProvider settingsOptionsProvider) {
+        IntegrationOptions options = settingsOptionsProvider.getSettingsOptions(IntegrationOptions.class);
         options.setLanguageLocale(((LanguageRecord) languageComboBox.getSelectedItem()).getLocale());
         options.setIconSet((String) iconSetComboBox.getSelectedItem());
         options.setRegisterFileMenuOpenAsBinary(openFileAsBinaryCheckBox.isSelected());
@@ -71,8 +71,9 @@ public class IntegrationOptionsPanel extends javax.swing.JPanel implements Setti
     }
 
     @Override
-    public void loadFromOptions(IntegrationOptions options) {
-        Locale languageLocale = options.getLanguageLocale();
+    public void loadFromOptions(SettingsOptionsProvider settingsOptionsProvider) {
+        IntegrationOptions options = settingsOptionsProvider.getSettingsOptions(IntegrationOptions.class);
+            Locale languageLocale = options.getLanguageLocale();
         ComboBoxModel<LanguageRecord> languageComboBoxModel = languageComboBox.getModel();
         for (int i = 0; i < languageComboBoxModel.getSize(); i++) {
             LanguageRecord languageRecord = languageComboBoxModel.getElementAt(i);
@@ -135,7 +136,6 @@ public class IntegrationOptionsPanel extends javax.swing.JPanel implements Setti
         });
         iconSetComboBox.setModel(iconSetComboBoxModel);
         iconSetComboBox.setRenderer(new DefaultListCellRenderer() {
-            @Nonnull
             @Override
             public Component getListCellRendererComponent(JList<?> list, @Nullable Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 if (index >= 0) {
@@ -350,7 +350,7 @@ public class IntegrationOptionsPanel extends javax.swing.JPanel implements Setti
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        TestApplication.run(() -> WindowUtils.invokeWindow(new IntegrationOptionsPanel()));
+        TestApplication.run(() -> WindowUtils.invokeWindow(new IntegrationSettingsPanel()));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -369,13 +369,13 @@ public class IntegrationOptionsPanel extends javax.swing.JPanel implements Setti
     // End of variables declaration//GEN-END:variables
 
     private void notifyModified() {
-        if (optionsModifiedListener != null) {
-            optionsModifiedListener.wasModified();
+        if (settingsModifiedListener != null) {
+            settingsModifiedListener.notifyModified();
         }
     }
 
     @Override
-    public void setOptionsModifiedListener(OptionsModifiedListener listener) {
-        optionsModifiedListener = listener;
+    public void setSettingsModifiedListener(SettingsModifiedListener listener) {
+        settingsModifiedListener = listener;
     }
 }

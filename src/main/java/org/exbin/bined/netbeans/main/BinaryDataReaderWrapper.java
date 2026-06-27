@@ -21,8 +21,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 import org.exbin.auxiliary.binary_data.BinaryData;
 
 /**
@@ -30,7 +29,7 @@ import org.exbin.auxiliary.binary_data.BinaryData;
  * <p>
  * Diff comparators currently only provides character readers in NB...
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 public class BinaryDataReaderWrapper implements BinaryData {
     
     private final ReaderProvider readerProvider;
@@ -56,13 +55,11 @@ public class BinaryDataReaderWrapper implements BinaryData {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Nonnull
     @Override
     public BinaryData copy() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Nonnull
     @Override
     public BinaryData copy(long startFrom, long length) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -78,7 +75,6 @@ public class BinaryDataReaderWrapper implements BinaryData {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Nonnull
     @Override
     public InputStream getDataInputStream() {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -94,7 +90,6 @@ public class BinaryDataReaderWrapper implements BinaryData {
     }
     
     public interface ReaderProvider {
-        @Nonnull
         Reader createReader();
     }
 }

@@ -19,7 +19,7 @@ import java.awt.Component;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
-import javax.annotation.Nonnull;
+import javax.annotation.NullMarked;
 import javax.swing.JPanel;
 import org.netbeans.api.diff.Difference;
 
@@ -27,6 +27,7 @@ import org.netbeans.api.diff.Difference;
  * Binary files comparator difference visualizer.
  */
 //@org.openide.util.lookup.ServiceProvider(service = org.netbeans.spi.diff.DiffVisualizer.class)
+@NullMarked
 public class BinaryDiffVisualizer extends org.netbeans.spi.diff.DiffVisualizer implements Serializable {
 
     private boolean contextMode = true;
@@ -39,7 +40,6 @@ public class BinaryDiffVisualizer extends org.netbeans.spi.diff.DiffVisualizer i
      *
      * @return name
      */
-    @Nonnull
     public String getDisplayName() {
         return "Binary";
     }
@@ -49,12 +49,10 @@ public class BinaryDiffVisualizer extends org.netbeans.spi.diff.DiffVisualizer i
      *
      * @return description
      */
-    @Nonnull
     public String getShortDescription() {
         return "Binary";
     }
 
-    @Nonnull
     @Override
     public Component createView(Difference[] diffs, String name1, String title1, Reader r1, String name2, String title2, Reader r2, String MIMEType) throws IOException {
 //        SectCodeAreaDiffPanel panel = new SectCodeAreaDiffPanel();

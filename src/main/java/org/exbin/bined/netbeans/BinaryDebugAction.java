@@ -24,9 +24,8 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.ResourceBundle;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.JPanel;
 import org.exbin.bined.netbeans.debug.DebugViewData;
 import org.exbin.bined.netbeans.debug.array.BooleanArrayPageProvider;
@@ -38,19 +37,19 @@ import org.exbin.bined.netbeans.debug.array.IntegerArrayPageProvider;
 import org.exbin.bined.netbeans.debug.array.LongArrayPageProvider;
 import org.exbin.bined.netbeans.debug.array.ShortArrayPageProvider;
 import org.exbin.bined.netbeans.debug.gui.DebugViewPanel;
-import org.exbin.framework.bined.inspector.gui.BasicValuesPanel;
-import org.exbin.framework.utils.WindowUtils;
-import org.exbin.framework.window.api.gui.CloseControlPanel;
+import org.exbin.bined.jaguif.inspector.gui.BasicValuesPanel;
+import org.exbin.jaguif.utils.WindowUtils;
+import org.exbin.jaguif.window.api.gui.CloseControlPanel;
 import org.exbin.auxiliary.binary_data.BinaryData;
 import org.exbin.auxiliary.binary_data.array.ByteArrayData;
 import org.exbin.bined.netbeans.debug.DebugViewDataProvider;
 import org.exbin.bined.netbeans.debug.DefaultDebugViewDataProvider;
-import org.exbin.framework.App;
-import org.exbin.framework.language.api.LanguageModuleApi;
-import org.exbin.framework.options.api.OptionsStorage;
-import org.exbin.framework.options.api.OptionsModuleApi;
-import org.exbin.framework.window.api.WindowHandler;
-import org.exbin.framework.window.api.WindowModuleApi;
+import org.exbin.jaguif.App;
+import org.exbin.jaguif.language.api.LanguageModuleApi;
+import org.exbin.jaguif.options.api.OptionsStorage;
+import org.exbin.jaguif.options.api.OptionsModuleApi;
+import org.exbin.jaguif.window.api.WindowHandler;
+import org.exbin.jaguif.window.api.WindowModuleApi;
 import org.netbeans.api.debugger.jpda.ClassVariable;
 import org.netbeans.api.debugger.jpda.Field;
 import org.netbeans.api.debugger.jpda.JPDAArrayType;
@@ -76,7 +75,7 @@ import org.openide.windows.WindowManager;
         displayName = "#CTL_BinaryDebugAction"
 )
 //@Messages("CTL_BinaryDebugAction=Show as Binary")
-@ParametersAreNonnullByDefault
+@NullMarked
 public final class BinaryDebugAction implements ActionListener {
 
     public static final String SHOW_WATCHES = "show_watches"; // NOI18N
@@ -334,7 +333,6 @@ public final class BinaryDebugAction implements ActionListener {
         openComponent(viewName, false).requestVisible();
     }
 
-    @Nonnull
     static TopComponent openComponent(String viewName, boolean activate) {
         TopComponent view = WindowManager.getDefault().findTopComponent(viewName);
         if (view == null) {

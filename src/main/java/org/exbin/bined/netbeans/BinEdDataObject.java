@@ -16,7 +16,7 @@
 package org.exbin.bined.netbeans;
 
 import java.io.IOException;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.Action;
 import org.netbeans.api.actions.Savable;
 import org.openide.cookies.OpenCookie;
@@ -33,7 +33,7 @@ import org.openide.util.Lookup;
 /**
  * BinEd data object.
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 @MIMEResolver.ExtensionRegistration(displayName = "#BinEdDataObject.extensionDisplayName", mimeType = BinEdDataObject.MIME_TYPE, extension = {BinEdDataObject.MMD_EXT})
 @DataObject.Registration(displayName = "#BinEdDataObject.displayName", mimeType = BinEdDataObject.MIME_TYPE, iconBase = "org/exbin/bined/netbeans/resources/icons/icon.png")
 public class BinEdDataObject extends MultiDataObject implements Savable {

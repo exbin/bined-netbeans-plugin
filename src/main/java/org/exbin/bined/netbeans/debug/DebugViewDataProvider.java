@@ -15,14 +15,13 @@
  */
 package org.exbin.bined.netbeans.debug;
 
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 import org.exbin.auxiliary.binary_data.BinaryData;
 
 /**
  * Data source for debugging.
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 public interface DebugViewDataProvider {
 
     /**
@@ -30,7 +29,6 @@ public interface DebugViewDataProvider {
      *
      * @return data provider name
      */
-    @Nonnull
     String getName();
 
     /**
@@ -38,6 +36,5 @@ public interface DebugViewDataProvider {
      *
      * @return binary data
      */
-    @Nonnull
     BinaryData getData();
 }

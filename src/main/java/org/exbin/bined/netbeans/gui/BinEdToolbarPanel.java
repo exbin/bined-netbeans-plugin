@@ -17,8 +17,7 @@ package org.exbin.bined.netbeans.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
@@ -30,15 +29,15 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JToolBar;
 import org.exbin.auxiliary.dropdownbutton.DropDownButton;
 import org.exbin.bined.CodeType;
-import org.exbin.framework.App;
-import org.exbin.framework.bined.viewer.options.CodeAreaOptions;
-import org.exbin.framework.language.api.LanguageModuleApi;
-import org.exbin.framework.options.api.OptionsStorage;
+import org.exbin.jaguif.App;
+import org.exbin.bined.jaguif.viewer.options.CodeAreaOptions;
+import org.exbin.jaguif.language.api.LanguageModuleApi;
+import org.exbin.jaguif.options.api.OptionsStorage;
 
 /**
  * Binary editor toolbar panel.
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 public class BinEdToolbarPanel extends javax.swing.JPanel {
 
     private final java.util.ResourceBundle resourceBundle;
@@ -233,7 +232,6 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         }
     }
 
-    @Nonnull
     public JToolBar getToolBar() {
         return controlToolBar;
     }
@@ -284,10 +282,9 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     private javax.swing.JToggleButton showNonprintablesToggleButton;
     // End of variables declaration//GEN-END:variables
 
-    @ParametersAreNonnullByDefault
+    @NullMarked
     public interface Control {
 
-        @Nonnull
         CodeType getCodeType();
 
         void setCodeType(CodeType codeType);

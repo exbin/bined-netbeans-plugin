@@ -21,9 +21,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.JComponent;
 import org.exbin.auxiliary.binary_data.delta.DeltaDocument;
 import org.exbin.bined.CodeAreaCaretPosition;
@@ -32,32 +31,32 @@ import org.exbin.bined.EditOperation;
 import org.exbin.bined.SelectionRange;
 import org.exbin.bined.capability.EditModeCapable;
 import org.exbin.bined.swing.section.SectCodeArea;
-import org.exbin.framework.App;
-import org.exbin.framework.action.api.ActiveComponent;
-import org.exbin.framework.action.api.ComponentActivationListener;
-import org.exbin.framework.action.api.DialogParentComponent;
-import org.exbin.framework.bined.BinEdEditorProvider;
-import org.exbin.framework.bined.BinEdFileHandler;
-import org.exbin.framework.bined.BinaryStatusApi;
-import org.exbin.framework.editor.api.EditorModuleApi;
-import org.exbin.framework.editor.api.MultiEditorProvider;
-import org.exbin.framework.file.api.EditableFileHandler;
-import org.exbin.framework.file.api.FileHandler;
-import org.exbin.framework.file.api.FileModuleApi;
-import org.exbin.framework.file.api.FileOperations;
-import org.exbin.framework.file.api.FileType;
-import org.exbin.framework.frame.api.FrameModuleApi;
-import org.exbin.framework.operation.undo.api.UndoRedoState;
-import org.exbin.framework.text.encoding.TextEncodingStatusApi;
-import org.exbin.framework.action.api.clipboard.ClipboardController;
-import org.exbin.framework.action.api.clipboard.TextClipboardController;
-import org.exbin.framework.bined.BinEdDataComponent;
-import org.exbin.framework.options.api.OptionsModuleApi;
+import org.exbin.jaguif.App;
+import org.exbin.jaguif.action.api.ActiveComponent;
+import org.exbin.jaguif.action.api.ComponentActivationListener;
+import org.exbin.jaguif.action.api.DialogParentComponent;
+import org.exbin.bined.jaguif.BinEdEditorProvider;
+import org.exbin.bined.jaguif.BinEdFileHandler;
+import org.exbin.bined.jaguif.BinaryStatusApi;
+import org.exbin.jaguif.editor.api.EditorModuleApi;
+import org.exbin.jaguif.editor.api.MultiEditorProvider;
+import org.exbin.jaguif.file.api.EditableFileHandler;
+import org.exbin.jaguif.file.api.FileHandler;
+import org.exbin.jaguif.file.api.FileModuleApi;
+import org.exbin.jaguif.file.api.FileOperations;
+import org.exbin.jaguif.file.api.FileType;
+import org.exbin.jaguif.frame.api.FrameModuleApi;
+import org.exbin.jaguif.operation.undo.api.UndoRedoState;
+import org.exbin.jaguif.text.encoding.TextEncodingStatusApi;
+import org.exbin.jaguif.action.api.clipboard.ClipboardOperationController;
+import org.exbin.jaguif.action.api.clipboard.TextClipboardOperationController;
+import org.exbin.bined.jaguif.BinEdDataComponent;
+import org.exbin.jaguif.options.api.OptionsModuleApi;
 
 /**
  * Editor provider wrapper for NetBeans BinEd editor.
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 public class BinEdNetBeansEditorProvider implements MultiEditorProvider, BinEdEditorProvider {
 
     protected final List<FileHandler> fileHandlers = new ArrayList<>();
@@ -70,13 +69,11 @@ public class BinEdNetBeansEditorProvider implements MultiEditorProvider, BinEdEd
     public BinEdNetBeansEditorProvider() {
     }
 
-    @Nonnull
     @Override
     public List<FileHandler> getFileHandlers() {
         return fileHandlers;
     }
 
-    @Nonnull
     @Override
     public String getName(FileHandler fileHandler) {
         return fileHandler.getTitle();
@@ -117,7 +114,6 @@ public class BinEdNetBeansEditorProvider implements MultiEditorProvider, BinEdEd
 
     }
 
-    @Nonnull
     @Override
     public JComponent getEditorComponent() {
         if (activeFile != null) {
@@ -156,7 +152,6 @@ public class BinEdNetBeansEditorProvider implements MultiEditorProvider, BinEdEd
         fileHandler.getComponent().onInitFromPreferences(optionsModule.getAppOptions());
     }
 
-    @Nonnull
     @Override
     public Optional<FileHandler> getActiveFile() {
         return Optional.ofNullable(activeFile);
@@ -175,13 +170,13 @@ public class BinEdNetBeansEditorProvider implements MultiEditorProvider, BinEdEd
                 = frameModule.getFrameHandler().getComponentActivationListener();
 
         BinEdDataComponent binaryDataComponent = null;
-        TextClipboardController clipboardActionsHandler = null;
+        TextClipboardOperationController clipboardOperationController = null;
         UndoRedoState undoRedo = null;
         if (activeFile instanceof BinEdFileHandler) {
             BinEdFileHandler binEdFileHandler = (BinEdFileHandler) activeFile;
             binaryDataComponent = new BinEdDataComponent(binEdFileHandler.getCodeArea());
             undoRedo = binEdFileHandler.getUndoRedo().orElse(null);
-            clipboardActionsHandler = binEdFileHandler.getClipboardActionsController();
+            clipboardOperationController = binEdFileHandler.getClipboardActionsController();
         }
 
         componentActivationListener.updated(FileHandler.class, activeFile);
@@ -189,14 +184,13 @@ public class BinEdNetBeansEditorProvider implements MultiEditorProvider, BinEdEd
         componentActivationListener.updated(ActiveComponent.class, binaryDataComponent);
         componentActivationListener.updated(DialogParentComponent.class, binaryDataComponent == null ? () -> frameModule.getFrame() : binaryDataComponent::getCodeArea);
         componentActivationListener.updated(UndoRedoState.class, undoRedo);
-        componentActivationListener.updated(ClipboardController.class, clipboardActionsHandler);
+        componentActivationListener.updated(ClipboardOperationController.class, clipboardOperationController);
 
         //        if (this.undoHandler != null) {
 //            this.undoHandler.setActiveFile(this.activeFile);
 //        }
     }
 
-    @Nonnull
     @Override
     public String getWindowTitle(String windowTitle) {
         if (activeFile == null) {
@@ -265,7 +259,6 @@ public class BinEdNetBeansEditorProvider implements MultiEditorProvider, BinEdEd
 
     }
 
-    @Nonnull
     @Override
     public Optional<File> getLastUsedDirectory() {
         return Optional.empty();

@@ -15,8 +15,7 @@
  */
 package org.exbin.bined.netbeans;
 
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.SwingUtilities;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.openide.awt.ActionID;
@@ -44,7 +43,7 @@ import org.openide.windows.WindowManager;
     @ActionReference(path = OpenAsBinaryToolsAction.ACTION_PATH_TOOLS, position = OpenAsBinaryToolsAction.ACTION_POSITION_TOOLS)
 })
 @NbBundle.Messages("CTL_OpenAsBinaryToolsAction=Open as Binary")
-@ParametersAreNonnullByDefault
+@NullMarked
 public final class OpenAsBinaryToolsAction extends NodeAction {
 
     public static final String ACTION_ID = "org.exbin.bined.OpenAsBinaryToolsAction";
@@ -108,13 +107,11 @@ public final class OpenAsBinaryToolsAction extends NodeAction {
         return primaryFile != null && !primaryFile.isFolder();
     }
 
-    @Nonnull
     @Override
     public String getName() {
         return NbBundle.getMessage(OpenAsBinaryToolsAction.class, "CTL_OpenAsBinaryAction");
     }
 
-    @Nonnull
     @Override
     public HelpCtx getHelpCtx() {
         return HelpCtx.DEFAULT_HELP;

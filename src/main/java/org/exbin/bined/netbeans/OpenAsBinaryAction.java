@@ -20,7 +20,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionRegistration;
@@ -39,7 +39,7 @@ import org.openide.windows.WindowManager;
 @ActionID(category = "File", id = OpenAsBinaryAction.ACTION_ID)
 @ActionRegistration(displayName = "#CTL_OpenAsBinaryAction")
 @NbBundle.Messages("CTL_OpenAsBinaryAction=Open as Binary")
-@ParametersAreNonnullByDefault
+@NullMarked
 public final class OpenAsBinaryAction implements ActionListener {
 
     public static final String ACTION_ID = "org.exbin.bined.OpenAsBinaryAction";

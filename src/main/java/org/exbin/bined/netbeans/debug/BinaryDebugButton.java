@@ -16,14 +16,14 @@
 package org.exbin.bined.netbeans.debug;
 
 import org.exbin.bined.netbeans.BinaryDebugAction;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.JButton;
 import org.openide.util.ImageUtilities;
 
 /**
  * Debug view button.
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 public final class BinaryDebugButton extends JButton {
 
     public BinaryDebugButton() {

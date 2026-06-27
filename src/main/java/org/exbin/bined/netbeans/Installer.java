@@ -26,104 +26,102 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import org.exbin.bined.netbeans.diff.BinEdDiffAction;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
-import org.exbin.bined.netbeans.options.gui.IntegrationOptionsPanel;
-import org.exbin.framework.App;
-import org.exbin.framework.Module;
-import org.exbin.framework.ModuleProvider;
-import org.exbin.framework.about.AboutModule;
-import org.exbin.framework.about.api.AboutModuleApi;
-import org.exbin.framework.action.ActionModule;
-import org.exbin.framework.action.api.ActionModuleApi;
-import org.exbin.framework.action.api.ComponentActivationListener;
-import org.exbin.framework.action.api.DialogParentComponent;
-import org.exbin.framework.menu.api.MenuManagement;
-import org.exbin.framework.bined.BinedModule;
-import org.exbin.framework.bined.bookmarks.BinedBookmarksModule;
-import org.exbin.framework.bined.compare.BinedCompareModule;
-import org.exbin.framework.bined.editor.BinedEditorModule;
-import org.exbin.framework.bined.inspector.BinedInspectorModule;
-import org.exbin.framework.bined.macro.BinedMacroModule;
-import org.exbin.framework.bined.objectdata.BinedObjectDataModule;
-import org.exbin.framework.bined.operation.BinedOperationModule;
-import org.exbin.framework.bined.operation.bouncycastle.BinedOperationBouncycastleModule;
-import org.exbin.framework.bined.preferences.BinaryEditorPreferences;
-import org.exbin.framework.bined.search.BinedSearchModule;
-import org.exbin.framework.bined.theme.BinedThemeModule;
-import org.exbin.framework.bined.tool.content.BinedToolContentModule;
-import org.exbin.framework.bined.viewer.BinedViewerModule;
-import org.exbin.framework.component.ComponentModule;
-import org.exbin.framework.component.api.ComponentModuleApi;
-import org.exbin.framework.contribution.ContributionModule;
-import org.exbin.framework.contribution.api.ContributionModuleApi;
-import org.exbin.framework.contribution.api.GroupSequenceContributionRule;
-import org.exbin.framework.contribution.api.PositionSequenceContributionRule;
-import org.exbin.framework.contribution.api.SeparationSequenceContributionRule;
-import org.exbin.framework.contribution.api.SequenceContribution;
-import org.exbin.framework.editor.api.EditorModuleApi;
-import org.exbin.framework.editor.api.EditorProvider;
-import org.exbin.framework.editor.EditorModule;
-import org.exbin.framework.file.FileModule;
-import org.exbin.framework.file.api.FileModuleApi;
-import org.exbin.framework.frame.FrameModule;
-import org.exbin.framework.frame.api.FrameModuleApi;
-import org.exbin.framework.help.HelpModule;
-import org.exbin.framework.help.api.HelpModuleApi;
-import org.exbin.framework.help.online.HelpOnlineModule;
-import org.exbin.framework.language.LanguageModule;
-import org.exbin.framework.language.api.IconSetProvider;
-import org.exbin.framework.language.api.LanguageModuleApi;
-import org.exbin.framework.language.api.LanguageProvider;
-import org.exbin.framework.menu.MenuModule;
-import org.exbin.framework.menu.api.MenuModuleApi;
-import org.exbin.framework.operation.undo.OperationUndoModule;
-import org.exbin.framework.operation.undo.api.OperationUndoModuleApi;
-import org.exbin.framework.options.OptionsModule;
-import org.exbin.framework.options.api.DefaultOptionsPage;
-import org.exbin.framework.options.api.OptionsComponent;
-import org.exbin.framework.options.api.OptionsModuleApi;
-import org.exbin.framework.options.api.OptionsPanelType;
-import org.exbin.framework.plugin.language.cs_CZ.LanguageCsCzModule;
-import org.exbin.framework.plugin.language.de_DE.LanguageDeDeModule;
-import org.exbin.framework.plugin.language.es_ES.LanguageEsEsModule;
-import org.exbin.framework.plugin.language.fi_FI.LanguageFiFiModule;
-import org.exbin.framework.plugin.language.fr_FR.LanguageFrFrModule;
-import org.exbin.framework.plugin.language.hi_IN.LanguageHiInModule;
-import org.exbin.framework.plugin.language.in_ID.LanguageInIdModule;
-import org.exbin.framework.plugin.language.it_IT.LanguageItItModule;
-import org.exbin.framework.plugin.language.ja_JP.LanguageJaJpModule;
-import org.exbin.framework.plugin.language.ko_KR.LanguageKoKrModule;
-import org.exbin.framework.plugin.language.pl_PL.LanguagePlPlModule;
-import org.exbin.framework.plugin.language.pt_PT.LanguagePtPtModule;
-import org.exbin.framework.plugin.language.ru_RU.LanguageRuRuModule;
-import org.exbin.framework.plugin.language.sv_SE.LanguageSvSeModule;
-import org.exbin.framework.plugin.language.vi_VN.LanguageViVnModule;
-import org.exbin.framework.plugin.language.zh_HK.LanguageZhHkModule;
-import org.exbin.framework.plugin.language.zh_Hans.LanguageZhHansModule;
-import org.exbin.framework.plugin.language.zh_Hant.LanguageZhHantModule;
-import org.exbin.framework.plugin.language.zh_TW.LanguageZhTwModule;
-import org.exbin.framework.plugins.iconset.material.IconSetMaterialModule;
-import org.exbin.framework.preferences.PreferencesModule;
-import org.exbin.framework.options.PreferencesWrapper;
-import org.exbin.framework.options.api.OptionsStorage;
-import org.exbin.framework.options.api.OptionsModuleApi;
-import org.exbin.framework.toolbar.ToolBarModule;
-import org.exbin.framework.toolbar.api.ToolBarModuleApi;
-import org.exbin.framework.ui.UiModule;
-import org.exbin.framework.ui.api.UiModuleApi;
-import org.exbin.framework.ui.gui.LanguageOptionsPanel;
-import org.exbin.framework.ui.model.LanguageRecord;
-import org.exbin.framework.ui.theme.ThemeOptionsManager;
-import org.exbin.framework.ui.theme.UiThemeModule;
-import org.exbin.framework.ui.theme.api.UiThemeModuleApi;
-import org.exbin.framework.window.WindowModule;
-import org.exbin.framework.window.api.WindowModuleApi;
+import org.exbin.bined.netbeans.options.gui.IntegrationSettingsPanel;
+import org.exbin.jaguif.App;
+import org.exbin.jaguif.Module;
+import org.exbin.jaguif.ModuleProvider;
+import org.exbin.jaguif.about.AboutModule;
+import org.exbin.jaguif.about.api.AboutModuleApi;
+import org.exbin.jaguif.action.ActionModule;
+import org.exbin.jaguif.action.api.ActionModuleApi;
+import org.exbin.jaguif.action.api.DialogParentComponent;
+import org.exbin.jaguif.menu.api.MenuManagement;
+import org.exbin.bined.jaguif.BinedModule;
+import org.exbin.bined.jaguif.bookmarks.BinedBookmarksModule;
+import org.exbin.bined.jaguif.compare.BinedCompareModule;
+import org.exbin.bined.jaguif.editor.BinedEditorModule;
+import org.exbin.bined.jaguif.inspector.BinedInspectorModule;
+import org.exbin.bined.jaguif.macro.BinedMacroModule;
+import org.exbin.bined.jaguif.objectdata.BinedObjectDataModule;
+import org.exbin.bined.jaguif.operation.BinedOperationModule;
+import org.exbin.bined.jaguif.operation.bouncycastle.BinedOperationBouncycastleModule;
+import org.exbin.bined.jaguif.preferences.BinaryEditorPreferences;
+import org.exbin.bined.jaguif.search.BinedSearchModule;
+import org.exbin.bined.jaguif.theme.BinedThemeModule;
+import org.exbin.bined.jaguif.tool.content.BinedToolContentModule;
+import org.exbin.bined.jaguif.viewer.BinedViewerModule;
+import org.exbin.jaguif.component.ComponentModule;
+import org.exbin.jaguif.component.api.ComponentModuleApi;
+import org.exbin.jaguif.contribution.ContributionModule;
+import org.exbin.jaguif.contribution.api.ContributionModuleApi;
+import org.exbin.jaguif.contribution.api.GroupSequenceContributionRule;
+import org.exbin.jaguif.contribution.api.PositionSequenceContributionRule;
+import org.exbin.jaguif.contribution.api.SeparationSequenceContributionRule;
+import org.exbin.jaguif.contribution.api.SequenceContribution;
+import org.exbin.jaguif.editor.api.EditorModuleApi;
+import org.exbin.jaguif.editor.api.EditorProvider;
+import org.exbin.jaguif.editor.EditorModule;
+import org.exbin.jaguif.file.FileModule;
+import org.exbin.jaguif.file.api.FileModuleApi;
+import org.exbin.jaguif.frame.FrameModule;
+import org.exbin.jaguif.frame.api.FrameModuleApi;
+import org.exbin.jaguif.help.HelpModule;
+import org.exbin.jaguif.help.api.HelpModuleApi;
+import org.exbin.jaguif.help.online.HelpOnlineModule;
+import org.exbin.jaguif.language.LanguageModule;
+import org.exbin.jaguif.language.api.IconSetProvider;
+import org.exbin.jaguif.language.api.LanguageModuleApi;
+import org.exbin.jaguif.language.api.LanguageProvider;
+import org.exbin.jaguif.menu.MenuModule;
+import org.exbin.jaguif.menu.api.MenuModuleApi;
+import org.exbin.jaguif.operation.undo.OperationUndoModule;
+import org.exbin.jaguif.operation.undo.api.OperationUndoModuleApi;
+import org.exbin.jaguif.options.OptionsModule;
+import org.exbin.jaguif.options.api.DefaultOptionsPage;
+import org.exbin.jaguif.options.api.OptionsComponent;
+import org.exbin.jaguif.options.api.OptionsModuleApi;
+import org.exbin.jaguif.options.api.OptionsPanelType;
+import org.exbin.jaguif.plugin.language.cs_CZ.LanguageCsCzModule;
+import org.exbin.jaguif.plugin.language.de_DE.LanguageDeDeModule;
+import org.exbin.jaguif.plugin.language.es_ES.LanguageEsEsModule;
+import org.exbin.jaguif.plugin.language.fi_FI.LanguageFiFiModule;
+import org.exbin.jaguif.plugin.language.fr_FR.LanguageFrFrModule;
+import org.exbin.jaguif.plugin.language.hi_IN.LanguageHiInModule;
+import org.exbin.jaguif.plugin.language.in_ID.LanguageInIdModule;
+import org.exbin.jaguif.plugin.language.it_IT.LanguageItItModule;
+import org.exbin.jaguif.plugin.language.ja_JP.LanguageJaJpModule;
+import org.exbin.jaguif.plugin.language.ko_KR.LanguageKoKrModule;
+import org.exbin.jaguif.plugin.language.pl_PL.LanguagePlPlModule;
+import org.exbin.jaguif.plugin.language.pt_PT.LanguagePtPtModule;
+import org.exbin.jaguif.plugin.language.ru_RU.LanguageRuRuModule;
+import org.exbin.jaguif.plugin.language.sv_SE.LanguageSvSeModule;
+import org.exbin.jaguif.plugin.language.vi_VN.LanguageViVnModule;
+import org.exbin.jaguif.plugin.language.zh_HK.LanguageZhHkModule;
+import org.exbin.jaguif.plugin.language.zh_Hans.LanguageZhHansModule;
+import org.exbin.jaguif.plugin.language.zh_Hant.LanguageZhHantModule;
+import org.exbin.jaguif.plugin.language.zh_TW.LanguageZhTwModule;
+import org.exbin.jaguif.plugins.iconset.material.IconSetMaterialModule;
+import org.exbin.jaguif.preferences.PreferencesModule;
+import org.exbin.jaguif.options.PreferencesWrapper;
+import org.exbin.jaguif.options.api.OptionsStorage;
+import org.exbin.jaguif.options.api.OptionsModuleApi;
+import org.exbin.jaguif.toolbar.ToolBarModule;
+import org.exbin.jaguif.toolbar.api.ToolBarModuleApi;
+import org.exbin.jaguif.ui.UiModule;
+import org.exbin.jaguif.ui.api.UiModuleApi;
+import org.exbin.jaguif.ui.gui.LanguageOptionsPanel;
+import org.exbin.jaguif.ui.model.LanguageRecord;
+import org.exbin.jaguif.ui.theme.ThemeOptionsManager;
+import org.exbin.jaguif.ui.theme.UiThemeModule;
+import org.exbin.jaguif.ui.theme.api.UiThemeModuleApi;
+import org.exbin.jaguif.window.WindowModule;
+import org.exbin.jaguif.window.api.WindowModuleApi;
 import org.openide.modules.ModuleInstall;
 import org.openide.util.NbPreferences;
 import org.openide.windows.WindowManager;
@@ -131,7 +129,7 @@ import org.openide.windows.WindowManager;
 /**
  * Installer for BinEd plugin.
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 public class Installer extends ModuleInstall {
 
     private static final String BINARY_PLUGIN_ID = "binary";
@@ -228,7 +226,7 @@ public class Installer extends ModuleInstall {
         }
     }
 
-    @ParametersAreNonnullByDefault
+    @NullMarked
     public interface IntegrationOptionsListener {
 
         void integrationInit(IntegrationOptions integrationOptions);
@@ -236,15 +234,16 @@ public class Installer extends ModuleInstall {
         void uninstallIntegration();
     }
 
-    @ParametersAreNonnullByDefault
+    @NullMarked
     private static class AppModuleProvider implements ModuleProvider {
 
         private final Map<Class<?>, Module> modules = new HashMap<>();
 
         private void createModules() {
-            // ExBin framework modules
+            // Jaguif framework modules
             modules.put(LanguageModuleApi.class, new LanguageModule());
             modules.put(ContributionModuleApi.class, new ContributionModule());
+            modules.put(ContextModuleApi.class, new ContextModule());
             modules.put(ActionModuleApi.class, new ActionModule());
             modules.put(OperationUndoModuleApi.class, new OperationUndoModule());
             modules.put(OptionsModuleApi.class, new OptionsModule());
@@ -254,21 +253,26 @@ public class Installer extends ModuleInstall {
             modules.put(HelpModuleApi.class, new HelpModule());
             modules.put(MenuModuleApi.class, new MenuModule());
             modules.put(ToolBarModuleApi.class, new ToolBarModule());
+            modules.put(StatusBarModuleApi.class, new StatusBarModule());
             modules.put(ComponentModuleApi.class, new ComponentModule());
             modules.put(WindowModuleApi.class, new WindowModule());
             modules.put(FrameModuleApi.class, new FrameModule());
+            modules.put(TabPagesModuleApi.class, new TabPagesModule());
+            modules.put(LicenseModuleApi.class, new LicenseModule());
+            modules.put(DocumentModuleApi.class, new DocumentModule());
             modules.put(FileModuleApi.class, new FileModule());
-            modules.put(EditorModuleApi.class, new EditorModule());
+            modules.put(DockingModuleApi.class, new DockingModule());
             modules.put(HelpOnlineModule.class, new HelpOnlineModule());
-            modules.put(AboutModuleApi.class, new AboutModule());
             
             // BinEd modules
-            modules.put(BinedModule.class, new BinedModule());
+            modules.put(BinedComponentModule.class, new BinedComponentModule());
             modules.put(BinedViewerModule.class, new BinedViewerModule());
             modules.put(BinedEditorModule.class, new BinedEditorModule());
+            modules.put(BinedDocumentModule.class, new BinedDocumentModule());
             modules.put(BinedThemeModule.class, new BinedThemeModule());
             modules.put(BinedSearchModule.class, new BinedSearchModule());
-            modules.put(BinedOperationModule.class, new BinedOperationModule());
+            modules.put(BinedOperationMethodModule.class, new BinedOperationMethodModule());
+            modules.put(BinedOperationCodeModule.class, new BinedOperationCodeModule());
             modules.put(BinedOperationBouncycastleModule.class, new BinedOperationBouncycastleModule());
             modules.put(BinedObjectDataModule.class, new BinedObjectDataModule());
             modules.put(BinedToolContentModule.class, new BinedToolContentModule());
@@ -354,7 +358,7 @@ public class Installer extends ModuleInstall {
             AboutModuleApi aboutModule = App.getModule(AboutModuleApi.class);
             OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
             optionsModule.setOptionsPanelType(OptionsPanelType.LIST);
-            optionsModule.setOptionsRootCaption(App.getModule(LanguageModuleApi.class).getBundle(IntegrationOptionsPanel.class).getString("options.caption"));
+            optionsModule.setOptionsRootCaption(App.getModule(LanguageModuleApi.class).getBundle(IntegrationSettingsPanel.class).getString("options.caption"));
             // optionsModule.registerMenuAction();
 
             HelpOnlineModule helpOnlineModule = App.getModule(HelpOnlineModule.class);
@@ -394,19 +398,17 @@ public class Installer extends ModuleInstall {
 
                 public static final String PAGE_ID = "integration";
 
-                private IntegrationOptionsPanel panel;
+                private IntegrationSettingsPanel panel;
 
-                @Nonnull
                 @Override
                 public String getId() {
                     return PAGE_ID;
                 }
 
-                @Nonnull
                 @Override
                 public OptionsComponent<IntegrationOptions> createComponent() {
                     if (panel == null) {
-                        panel = new IntegrationOptionsPanel();
+                        panel = new IntegrationSettingsPanel();
                         ResourceBundle resourceBundle = App.getModule(LanguageModuleApi.class).getBundle(LanguageOptionsPanel.class);
                         panel.setDefaultLocaleName("<" + resourceBundle.getString("locale.defaultLanguage") + ">");
                         List<LanguageRecord> languageLocales = new ArrayList<>();
@@ -438,13 +440,11 @@ public class Installer extends ModuleInstall {
                     return panel;
                 }
 
-                @Nonnull
                 @Override
                 public ResourceBundle getResourceBundle() {
-                    return App.getModule(LanguageModuleApi.class).getBundle(IntegrationOptionsPanel.class);
+                    return App.getModule(LanguageModuleApi.class).getBundle(IntegrationSettingsPanel.class);
                 }
 
-                @Nonnull
                 @Override
                 public IntegrationOptions createOptions() {
                     return new IntegrationOptions(optionsStorage);
@@ -519,7 +519,6 @@ public class Installer extends ModuleInstall {
             componentActivationListener.updated(DialogParentComponent.class, () -> frameModule.getFrame());
         }
 
-        @Nonnull
         @Override
         public Class getManifestClass() {
             return BinEdNetBeansPlugin.class;
@@ -534,7 +533,6 @@ public class Installer extends ModuleInstall {
         }
 
         @SuppressWarnings("unchecked")
-        @Nonnull
         @Override
         public <T extends Module> T getModule(Class<T> moduleClass) {
             return (T) modules.get(moduleClass);

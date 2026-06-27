@@ -16,18 +16,17 @@
 package org.exbin.bined.netbeans.debug.array;
 
 import java.math.BigInteger;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import org.exbin.framework.bined.objectdata.PageProvider;
+import org.jspecify.annotations.NullMarked;
+import org.exbin.bined.jaguif.objectdata.PageProvider;
 import org.exbin.bined.netbeans.debug.DebugViewData;
-import org.exbin.framework.bined.inspector.gui.BasicValuesPanel;
+import org.exbin.bined.jaguif.inspector.gui.BasicValuesPanel;
 import org.netbeans.api.debugger.jpda.Field;
 import org.netbeans.api.debugger.jpda.ObjectVariable;
 
 /**
  * Long array data source for debugger view.
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 public class LongArrayPageProvider implements PageProvider {
 
     private final ObjectVariable arrayRef;
@@ -36,7 +35,6 @@ public class LongArrayPageProvider implements PageProvider {
         this.arrayRef = arrayRef;
     }
 
-    @Nonnull
     @Override
     public byte[] getPage(long pageIndex) {
         int pageSize = DebugViewData.PAGE_SIZE / 8;

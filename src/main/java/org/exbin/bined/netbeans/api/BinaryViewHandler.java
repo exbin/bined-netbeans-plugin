@@ -17,16 +17,15 @@ package org.exbin.bined.netbeans.api;
 
 import org.exbin.auxiliary.binary_data.BinaryData;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.JComponent;
 import java.util.Optional;
 
 /**
  * BinEd View Data Handler.
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 public interface BinaryViewHandler {
 
     /**
@@ -35,7 +34,6 @@ public interface BinaryViewHandler {
      * @param instance instance
      * @return binary data if supported
      */
-    @Nonnull
     Optional<BinaryData> instanceToBinaryData(Object instance);
 
     /**
@@ -44,7 +42,6 @@ public interface BinaryViewHandler {
      * @param binaryData binary data
      * @return binary view panel
      */
-    @Nonnull
     JComponent createBinaryViewPanel(@Nullable BinaryData binaryData);
 
     /**
@@ -53,7 +50,6 @@ public interface BinaryViewHandler {
      * @param instance class instance
      * @return binary view panel if instance supported
      */
-    @Nonnull
     Optional<JComponent> createBinaryViewPanel(Object instance);
 
     /**
@@ -62,7 +58,6 @@ public interface BinaryViewHandler {
      * @param binaryData binary data
      * @return binary view dialog
      */
-//    @Nonnull
 //    DialogWrapper createBinaryViewDialog(@Nullable BinaryData binaryData);
 
     /**
@@ -71,6 +66,5 @@ public interface BinaryViewHandler {
      * @param instance class instance
      * @return binary view dialog
      */
-//    @Nonnull
 //    DialogWrapper createBinaryViewDialog(Object instance);
 }

@@ -16,15 +16,14 @@
 package org.exbin.bined.netbeans.options;
 
 import java.util.Locale;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
-import org.exbin.framework.options.api.OptionsData;
-import org.exbin.framework.options.api.OptionsStorage;
+import org.jspecify.annotations.NullMarked;
+import org.exbin.jaguif.options.api.OptionsStorage;
+import org.exbin.jaguif.options.settings.api.SettingsOptions;
 
 /**
  * BinEd plugin preferences.
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 public class IntegrationOptions implements SettingsOptions {
 
     public static final String KEY_LOCALE_LANGUAGE = "locale.language";
@@ -48,27 +47,22 @@ public class IntegrationOptions implements SettingsOptions {
         this.storage = storage;
     }
 
-    @Nonnull
     public String getLocaleLanguage() {
         return storage.get(KEY_LOCALE_LANGUAGE, "");
     }
 
-    @Nonnull
     public String getLocaleCountry() {
         return storage.get(KEY_LOCALE_COUNTRY, "");
     }
 
-    @Nonnull
     public String getLocaleVariant() {
         return storage.get(KEY_LOCALE_VARIANT, "");
     }
 
-    @Nonnull
     public String getLocaleTag() {
         return storage.get(KEY_LOCALE_TAG, "");
     }
 
-    @Nonnull
     public Locale getLanguageLocale() {
         String localeTag = getLocaleTag();
         if (!localeTag.trim().isEmpty()) {
@@ -114,7 +108,6 @@ public class IntegrationOptions implements SettingsOptions {
         setLocaleVariant(locale.getVariant());
     }
 
-    @Nonnull
     public String getIconSet() {
         return storage.get(KEY_ICONSET, "");
     }

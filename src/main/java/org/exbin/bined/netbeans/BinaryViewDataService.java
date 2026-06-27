@@ -16,12 +16,11 @@
 package org.exbin.bined.netbeans;
 
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.JComponent;
 import org.exbin.auxiliary.binary_data.BinaryData;
-import org.exbin.framework.bined.objectdata.ObjectValueConvertor;
+import org.exbin.bined.jaguif.objectdata.ObjectValueConvertor;
 import org.exbin.bined.netbeans.api.BinaryViewHandler;
 import org.exbin.bined.netbeans.debug.gui.DebugViewPanel;
 import org.openide.util.lookup.ServiceProvider;
@@ -29,19 +28,17 @@ import org.openide.util.lookup.ServiceProvider;
 /**
  * BinEd View Data service.
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 @ServiceProvider(service = BinaryViewHandler.class)
 public class BinaryViewDataService implements BinaryViewHandler {
 
     private final ObjectValueConvertor valueConvertor = new ObjectValueConvertor();
 
-    @Nonnull
     @Override
     public Optional<BinaryData> instanceToBinaryData(Object instance) {
         return valueConvertor.process(instance);
     }
 
-    @Nonnull
     @Override
     public JComponent createBinaryViewPanel(@Nullable BinaryData binaryData) {
         DebugViewPanel viewPanel = new DebugViewPanel();
@@ -49,7 +46,6 @@ public class BinaryViewDataService implements BinaryViewHandler {
         return viewPanel;
     }
 
-    @Nonnull
     @Override
     public Optional<JComponent> createBinaryViewPanel(Object instance) {
         Optional<BinaryData> binaryData = valueConvertor.process(instance);

@@ -15,7 +15,7 @@
  */
 package org.exbin.bined.netbeans;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 import org.openide.loaders.DataObject;
 import org.openide.text.DataEditorSupport;
 import org.openide.util.Lookup;
@@ -23,7 +23,7 @@ import org.openide.util.Lookup;
 /**
  * BinEd editor support.
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 public class BinEdEditorSupport extends DataEditorSupport {
 
     public BinEdEditorSupport(DataObject obj, Env env) {

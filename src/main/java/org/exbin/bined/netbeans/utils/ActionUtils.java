@@ -16,18 +16,18 @@
 package org.exbin.bined.netbeans.utils;
 
 import java.awt.Component;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.Action;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import org.exbin.framework.App;
-import org.exbin.framework.action.api.ActionConsts;
-import org.exbin.framework.action.api.ActionModuleApi;
+import org.exbin.jaguif.App;
+import org.exbin.jaguif.action.api.ActionConsts;
+import org.exbin.jaguif.action.api.ActionModuleApi;
 
 /**
  * Utilities for action manipulations.
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 public final class ActionUtils {
 
     public static void replaceAction(JPopupMenu menu, String actionId, Action action) {

@@ -18,13 +18,14 @@ package org.exbin.bined.netbeans.debug.gui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.Nullable;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.AbstractAction;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -42,52 +43,66 @@ import org.exbin.bined.highlight.swing.NonprintablesCodeAreaAssessor;
 import org.exbin.bined.netbeans.debug.DebugViewDataProvider;
 import org.exbin.bined.netbeans.gui.BinEdToolbarPanel;
 import org.exbin.bined.swing.CodeAreaSwingUtils;
+import org.exbin.bined.swing.basic.color.CodeAreaColorsProfile;
 import org.exbin.bined.swing.capability.ColorAssessorPainterCapable;
 import org.exbin.bined.swing.section.SectCodeArea;
-import org.exbin.framework.App;
-import org.exbin.framework.action.api.ActiveComponent;
-import org.exbin.framework.action.api.ComponentActivationListener;
-import org.exbin.framework.action.api.DialogParentComponent;
-import org.exbin.framework.bined.BinEdDocumentView;
-import org.exbin.framework.bined.BinEdFileManager;
-import org.exbin.framework.bined.BinaryStatusApi;
-import org.exbin.framework.bined.BinedModule;
-import org.exbin.framework.bined.action.GoToPositionAction;
-import org.exbin.framework.bined.gui.BinEdComponentPanel;
-import org.exbin.framework.bined.gui.BinaryStatusPanel;
-import org.exbin.framework.bined.handler.CodeAreaPopupMenuHandler;
-import org.exbin.framework.bined.options.StatusOptions;
-import org.exbin.framework.bined.viewer.BinedViewerModule;
-import org.exbin.framework.frame.api.FrameModuleApi;
-import org.exbin.framework.language.api.LanguageModuleApi;
-import org.exbin.framework.options.api.OptionsModuleApi;
-import org.exbin.framework.options.api.OptionsModuleApi;
-import org.exbin.framework.text.encoding.EncodingsHandler;
-import org.exbin.framework.text.encoding.options.TextEncodingOptions;
-import org.exbin.framework.action.api.clipboard.ClipboardController;
-import org.exbin.framework.bined.BinEdDataComponent;
-import org.exbin.framework.options.action.OptionsAction;
-import org.exbin.framework.utils.DesktopUtils;
+import org.exbin.bined.swing.section.theme.SectionCodeAreaThemeProfile;
+import org.exbin.jaguif.App;
+import org.exbin.jaguif.action.api.ActiveComponent;
+import org.exbin.jaguif.action.api.ComponentActivationListener;
+import org.exbin.jaguif.action.api.DialogParentComponent;
+import org.exbin.bined.jaguif.BinEdDocumentView;
+import org.exbin.bined.jaguif.BinEdFileManager;
+import org.exbin.bined.jaguif.BinaryStatusApi;
+import org.exbin.bined.jaguif.BinedModule;
+import org.exbin.bined.jaguif.component.action.GoToPositionAction;
+import org.exbin.bined.jaguif.component.gui.BinEdComponentPanel;
+import org.exbin.bined.jaguif.gui.BinaryStatusPanel;
+import org.exbin.bined.jaguif.handler.CodeAreaPopupMenuHandler;
+import org.exbin.bined.jaguif.options.StatusOptions;
+import org.exbin.bined.jaguif.viewer.BinedViewerModule;
+import org.exbin.bined.section.layout.SectionCodeAreaLayoutProfile;
+import org.exbin.jaguif.frame.api.FrameModuleApi;
+import org.exbin.jaguif.language.api.LanguageModuleApi;
+import org.exbin.jaguif.options.api.OptionsModuleApi;
+import org.exbin.jaguif.options.api.OptionsModuleApi;
+import org.exbin.jaguif.statusbar.api.StatusBar;
+import org.exbin.jaguif.statusbar.api.StatusBarModuleApi;
+import org.exbin.jaguif.text.encoding.EncodingsHandler;
+import org.exbin.jaguif.text.encoding.settings.TextEncodingOptions;
+import org.exbin.jaguif.action.api.clipboard.ClipboardOperationController;
+import org.exbin.bined.jaguif.component.BinEdDataComponent;
+import org.exbin.jaguif.options.action.OptionsAction;
+import org.exbin.jaguif.utils.DesktopUtils;
 
 /**
  * Panel to show debug view.
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 public class DebugViewPanel extends javax.swing.JPanel {
 
     private final List<DebugViewDataProvider> providers = new ArrayList<>();
     private int selectedProvider = 0;
 
+    protected final Font defaultFont;
+    protected final SectionCodeAreaLayoutProfile defaultLayoutProfile;
+    protected final SectionCodeAreaThemeProfile defaultThemeProfile;
+    protected final CodeAreaColorsProfile defaultColorProfile;
+
     private final JPanel panel;
     private BinEdToolbarPanel toolbarPanel = new BinEdToolbarPanel();
-    private BinaryStatusPanel statusPanel = new BinaryStatusPanel();
-    private BinaryStatusApi binaryStatus;
-    private final BinEdDocumentView editorComponent;
-    private long documentOriginalSize = 0;
+    private StatusBar statusBar;
+    private final BinEdDataComponent dataComponent;
 
     public DebugViewPanel() {
         panel = new JPanel(new BorderLayout());
-        editorComponent = new BinEdDocumentView();
+        dataComponent = new BinEdDocumentView();
+
+        SectCodeArea codeArea = (SectCodeArea) dataComponent.getCodeArea();
+        defaultFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
+        defaultLayoutProfile = codeArea.getLayoutProfile();
+        defaultThemeProfile = codeArea.getThemeProfile();
+        defaultColorProfile = codeArea.getColorsProfile();
 
         initComponents();
         init();
@@ -97,19 +112,18 @@ public class DebugViewPanel extends javax.swing.JPanel {
         BinedModule binedModule = App.getModule(BinedModule.class);
         BinedViewerModule binedViewerModule = App.getModule(BinedViewerModule.class);
         BinEdFileManager fileManager = binedModule.getFileManager();
-        BinEdComponentPanel componentPanel = (BinEdComponentPanel) editorComponent.getComponent();
+        BinEdComponentPanel componentPanel = (BinEdComponentPanel) dataComponent.getComponent();
         fileManager.initComponentPanel(componentPanel);
 
         OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
 //        editorComponent.onInitFromPreferences(new BinaryEditorOptions(preferencesModule.getAppPreferences()));
 
-        SectCodeArea codeArea = editorComponent.getCodeArea();
+        SectCodeArea codeArea = dataComponent.getCodeArea();
         BinEdDataComponent binEdDataComponent = new BinEdDataComponent(codeArea);
         codeArea.setEditMode(EditMode.READ_ONLY);
 
         toolbarPanel.setTargetComponent(componentPanel);
         toolbarPanel.setCodeAreaControl(new BinEdToolbarPanel.Control() {
-            @Nonnull
             @Override
             public CodeType getCodeType() {
                 return codeArea.getCodeType();
@@ -150,7 +164,7 @@ public class DebugViewPanel extends javax.swing.JPanel {
             public void actionPerformed(ActionEvent e) {
                 optionsAction.actionPerformed(e);
                 toolbarPanel.applyFromCodeArea();
-                statusPanel.updateStatus();
+                statusBar.updateStatus();
             }
         };
         toolbarPanel.setOptionsAction(wrapperAction);
@@ -166,7 +180,7 @@ public class DebugViewPanel extends javax.swing.JPanel {
 
                 componentActivationListener.updated(ActiveComponent.class, binEdDataComponent);
                 componentActivationListener.updated(DialogParentComponent.class, () -> binEdDataComponent.getCodeArea());
-                componentActivationListener.updated(ClipboardController.class, binEdDataComponent);
+                componentActivationListener.updated(ClipboardOperationController.class, binEdDataComponent);
 
                 String popupMenuId = "DebugViewPanel.popup";
                 int clickedX = x;
@@ -197,14 +211,14 @@ public class DebugViewPanel extends javax.swing.JPanel {
 
         EncodingsHandler encodingsHandler = binedViewerModule.getEncodingsHandler();
         encodingsHandler.loadFromOptions(new TextEncodingOptions(optionsModule.getAppPreferences()));
-        statusPanel.setController(new BinaryStatusController());
-        statusPanel.loadFromOptions(new StatusOptions(optionsModule.getAppPreferences()));
-        statusPanel.setMinimumSize(new Dimension(0, getMinimumSize().height));
-        registerBinaryStatus(statusPanel);
+        statusBar.setController(new BinaryStatusController());
+        statusBar.loadFromOptions(new StatusOptions(optionsModule.getAppPreferences()));
+        statusBar.setMinimumSize(new Dimension(0, getMinimumSize().height));
+        registerBinaryStatus(statusBar);
 
         panel.add(toolbarPanel, BorderLayout.NORTH);
-        panel.add(statusPanel, BorderLayout.SOUTH);
-        panel.add(editorComponent.getComponent(), BorderLayout.CENTER);
+        panel.add(statusBar, BorderLayout.SOUTH);
+        panel.add(dataComponent.getComponent(), BorderLayout.CENTER);
         panel.revalidate();
         panel.repaint();
 
@@ -256,13 +270,12 @@ public class DebugViewPanel extends javax.swing.JPanel {
     }
 
     public void setContentData(@Nullable BinaryData data) {
-        editorComponent.setContentData(data);
+        dataComponent.setContentData(data);
         long dataSize = data == null ? 0 : data.getDataSize();
         documentOriginalSize = dataSize;
-        statusPanel.setCurrentDocumentSize(dataSize, documentOriginalSize);
+        statusBar.setCurrentDocumentSize(dataSize, documentOriginalSize);
     }
 
-    @Nonnull
     private AbstractAction createOnlineHelpAction() {
         return new AbstractAction() {
             @Override
@@ -276,7 +289,7 @@ public class DebugViewPanel extends javax.swing.JPanel {
     public void registerBinaryStatus(BinaryStatusApi binaryStatus) {
         this.binaryStatus = binaryStatus;
 
-        SectCodeArea codeArea = editorComponent.getCodeArea();
+        SectCodeArea codeArea = dataComponent.getCodeArea();
         codeArea.addDataChangedListener(() -> {
             updateCurrentDocumentSize();
         });
@@ -309,7 +322,7 @@ public class DebugViewPanel extends javax.swing.JPanel {
             return;
         }
 
-        SectCodeArea codeArea = editorComponent.getCodeArea();
+        SectCodeArea codeArea = dataComponent.getCodeArea();
         long dataSize = codeArea.getDataSize();
         binaryStatus.setCurrentDocumentSize(dataSize, documentOriginalSize);
     }
@@ -319,7 +332,7 @@ public class DebugViewPanel extends javax.swing.JPanel {
             return;
         }
 
-        SectCodeArea codeArea = editorComponent.getCodeArea();
+        SectCodeArea codeArea = dataComponent.getCodeArea();
         CodeAreaCaretPosition caretPosition = codeArea.getActiveCaretPosition();
         binaryStatus.setCursorPosition(caretPosition);
     }
@@ -329,7 +342,7 @@ public class DebugViewPanel extends javax.swing.JPanel {
             return;
         }
 
-        SectCodeArea codeArea = editorComponent.getCodeArea();
+        SectCodeArea codeArea = dataComponent.getCodeArea();
         SelectionRange selectionRange = codeArea.getSelection();
         binaryStatus.setSelectionRange(selectionRange);
     }
@@ -339,7 +352,7 @@ public class DebugViewPanel extends javax.swing.JPanel {
             return;
         }
 
-        SectCodeArea codeArea = editorComponent.getCodeArea();
+        SectCodeArea codeArea = dataComponent.getCodeArea();
         binaryStatus.setEditMode(codeArea.getEditMode(), codeArea.getActiveOperation());
     }
 
@@ -347,13 +360,13 @@ public class DebugViewPanel extends javax.swing.JPanel {
 
         @Override
         public void changeEditOperation(EditOperation editOperation) {
-            SectCodeArea codeArea = editorComponent.getCodeArea();
+            SectCodeArea codeArea = dataComponent.getCodeArea();
             codeArea.setEditOperation(editOperation);
         }
 
         @Override
         public void changeCursorPosition() {
-            SectCodeArea codeArea = editorComponent.getCodeArea();
+            SectCodeArea codeArea = dataComponent.getCodeArea();
             GoToPositionAction action = new GoToPositionAction();
             action.setCodeArea(codeArea);
             action.actionPerformed(null);

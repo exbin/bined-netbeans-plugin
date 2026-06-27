@@ -18,7 +18,7 @@ package org.exbin.bined.netbeans;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 import org.exbin.bined.netbeans.options.IntegrationOptions;
 import org.netbeans.api.editor.mimelookup.MimeLookup;
 import org.netbeans.core.spi.multiview.MultiViewElement;
@@ -38,7 +38,7 @@ import org.openide.windows.TopComponent;
         preferredID = BinEdEditorMulti.ELEMENT_MULTI_ID,
         position = BinEdEditorMulti.POSITION_MULTI_ATTRIBUTE
 )
-@ParametersAreNonnullByDefault
+@NullMarked
 public class BinEdEditorMulti extends BinEdEditor implements MultiViewElement {
 
     public static final String FAKE_MIME_TYPE = "application/x-bined-fake";

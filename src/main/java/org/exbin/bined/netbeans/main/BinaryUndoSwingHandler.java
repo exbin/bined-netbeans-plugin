@@ -18,8 +18,7 @@ package org.exbin.bined.netbeans.main;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
@@ -34,7 +33,7 @@ import org.openide.awt.UndoRedo;
 /**
  * Undo handler for binary editor using AWT undo.
  */
-@ParametersAreNonnullByDefault
+@NullMarked
 public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
 
     private final CodeAreaCore codeArea;
@@ -116,19 +115,16 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
                 return true;
             }
 
-            @Nonnull
             @Override
             public String getPresentationName() {
                 return command.getType().getClass().getTypeName();
             }
 
-            @Nonnull
             @Override
             public String getUndoPresentationName() {
                 return "";
             }
 
-            @Nonnull
             @Override
             public String getRedoPresentationName() {
                 return "";
@@ -219,7 +215,6 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
         setCommandPosition(syncPosition);
     }
 
-    @Nonnull
     public UndoRedo.Manager getUndoManager() {
         return undoManager;
     }
@@ -257,13 +252,11 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
         listeners.forEach((listener) -> listener.undoChanged());
     }
 
-    @Nonnull
     @Override
     public List<BinaryDataCommand> getCommandList() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Nonnull
     @Override
     public Optional<BinaryDataCommand> getTopUndoCommand() {
         throw new UnsupportedOperationException("Not supported yet.");
