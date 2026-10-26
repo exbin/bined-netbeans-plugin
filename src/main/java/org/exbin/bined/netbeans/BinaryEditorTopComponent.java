@@ -29,16 +29,26 @@ import javax.swing.SwingUtilities;
 import org.exbin.bined.EditMode;
 import org.exbin.bined.netbeans.gui.BinEdFilePanel;
 import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
-import org.exbin.bined.swing.section.SectCodeArea;
+import org.exbin.bined.swing.CodeAreaCore;
 import org.exbin.jaguif.App;
-import org.exbin.bined.jaguif.BinEdFileHandler;
-import org.exbin.bined.jaguif.BinedModule;
+import org.exbin.bined.capability.EditModeCapable;
 import org.exbin.bined.jaguif.component.UndoRedoWrapper;
-import org.exbin.bined.jaguif.editor.options.BinaryEditorOptions;
-import org.exbin.bined.jaguif.gui.BinaryStatusPanel;
+import org.exbin.bined.jaguif.component.BinEdDataComponent;
+import org.exbin.bined.jaguif.document.BinEdFileManager;
+import org.exbin.bined.jaguif.document.BinaryFileDocument;
+import org.exbin.bined.jaguif.document.BinedDocumentModule;
+import org.exbin.bined.jaguif.document.settings.BinaryFileProcessingOptions;
+import org.exbin.jaguif.context.api.ContextStateManagement;
+import org.exbin.jaguif.docking.api.ContextDocking;
+import org.exbin.jaguif.file.api.FileDocumentSource;
 import org.exbin.jaguif.file.api.FileModuleApi;
+import org.exbin.jaguif.file.api.SaveModifiedResult;
+import org.exbin.jaguif.frame.api.FrameModuleApi;
 import org.exbin.jaguif.options.api.OptionsStorage;
 import org.exbin.jaguif.options.api.OptionsModuleApi;
+import org.exbin.jaguif.options.settings.api.OptionsSettingsManagement;
+import org.exbin.jaguif.options.settings.api.OptionsSettingsModuleApi;
+import org.exbin.jaguif.options.settings.api.SettingsOptionsProvider;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.UndoRedo;
 import org.openide.loaders.DataObject;
@@ -60,38 +70,39 @@ import org.openide.windows.TopComponent;
 @NullMarked
 public final class BinaryEditorTopComponent extends TopComponent implements Serializable, UndoRedo.Provider {
 
-    private static final String BINARY_EDITOR_TOP_COMPONENT_STRING = "CTL_BinaryEditorTopComponent";
-    private static final String BINARY_EDITOR_TOP_COMPONENT_HINT_STRING = "HINT_BinaryEditorTopComponent";
+    protected static final String BINARY_EDITOR_TOP_COMPONENT_STRING = "CTL_BinaryEditorTopComponent";
+    protected static final String BINARY_EDITOR_TOP_COMPONENT_HINT_STRING = "HINT_BinaryEditorTopComponent";
 
-    private DataObject dataObject;
-    private final InstanceContent content = new InstanceContent();
+    protected DataObject dataObject;
+    protected final InstanceContent content = new InstanceContent();
 
-    private final BinEdFilePanel filePanel;
-    private final BinEdFileHandler fileHandler;
-    private final BinaryUndoSwingHandler undoHandler;
+    protected final BinEdFilePanel filePanel;
+    protected final BinaryFileDocument fileDocument;
+    protected final BinaryUndoSwingHandler undoHandler;
 
-    private final BinaryEditorNode node;
+    protected final BinaryEditorNode node;
 
-    private final BinaryEditorTopComponentSavable savable;
-    private boolean opened = false;
+    protected final BinaryEditorTopComponentSavable savable;
+    protected boolean opened = false;
     protected String displayName;
 
     public BinaryEditorTopComponent() {
         initComponents();
 
         node = new BinaryEditorNode(this);
-        fileHandler = new BinEdFileHandler();
+        fileDocument = new BinaryFileDocument();
         filePanel = new BinEdFilePanel();
-        filePanel.setFileHandler(fileHandler);
-        BinedModule binedModule = App.getModule(BinedModule.class);
-        binedModule.getFileManager().initFileHandler(fileHandler);
-
-        undoHandler = new BinaryUndoSwingHandler(fileHandler.getCodeArea(), new UndoRedo.Manager());
-        ((UndoRedoWrapper) fileHandler.getUndoRedo().get()).setUndoRedo(undoHandler);
-        fileHandler.getComponent().setUndoRedo(undoHandler);
+        filePanel.setDocument(fileDocument);
+        BinedDocumentModule binedDocumentModule = App.getModule(BinedDocumentModule.class);
+        BinEdFileManager fileManager = binedDocumentModule.getFileManager();
+        BinEdDataComponent dataComponent = fileDocument.getDataComponent();
+        fileManager.initDataComponent(dataComponent);
+        undoHandler = new BinaryUndoSwingHandler(fileDocument.getCodeArea(), new UndoRedo.Manager());
+        ((UndoRedoWrapper) fileDocument.getUndoHandler().get()).setUndoRedo(undoHandler);
+        fileDocument.setUndoHandler(undoHandler);
         // Setting undo handler resets command handler so let's reiniciate - rework later
-        binedModule.getFileManager().initCommandHandler(fileHandler.getComponent());
-        savable = new BinaryEditorTopComponentSavable(fileHandler);
+        fileManager.initCommandHandler(dataComponent);
+        savable = new BinaryEditorTopComponentSavable(fileDocument);
 
         this.add(filePanel, BorderLayout.CENTER);
 
@@ -106,6 +117,11 @@ public final class BinaryEditorTopComponent extends TopComponent implements Seri
             updateModified();
         });
 
+        OptionsSettingsModuleApi optionsSettingsModule = App.getModule(OptionsSettingsModuleApi.class);
+        OptionsSettingsManagement settingsManager = optionsSettingsModule.getMainSettingsManager();
+        SettingsOptionsProvider settingsOptionsProvider = settingsManager.getSettingsOptionsProvider();
+        fileDocument.applySettings(settingsOptionsProvider);
+
         OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
         filePanel.loadFromOptions(optionsModule.getAppOptions());
 
@@ -117,23 +133,33 @@ public final class BinaryEditorTopComponent extends TopComponent implements Seri
         setHtmlDisplayName(displayName);
 
         this.dataObject = dataObject;
-        openFile(fileHandler);
+        openFile(fileDocument);
         savable.setDataObject(dataObject);
         opened = true;
     }
 
     @Override
     public boolean canClose() {
-        if (!fileHandler.isModified()) {
+        if (!fileDocument.isModified()) {
             return true;
         }
 
         FileModuleApi fileModule = App.getModule(FileModuleApi.class);
-        return fileModule.getFileActions().showAskForSaveDialog(fileHandler, null, null);
+        SaveModifiedResult result;
+//        do {
+            result = fileModule.showSaveModified(fileDocument.getComponent());
+            if (result == SaveModifiedResult.CANCEL) {
+                return false;
+            } else if (result == SaveModifiedResult.SAVE) {
+                saveFile();
+                return true;
+            }
+//        } while (result != SaveModifiedResult.DISCARD);
+        return true;
     }
 
     private void updateModified() {
-        boolean modified = fileHandler.isModified();
+        boolean modified = fileDocument.isModified();
         final String htmlDisplayName;
         if (modified && opened) {
             savable.activate();
@@ -158,8 +184,8 @@ public final class BinaryEditorTopComponent extends TopComponent implements Seri
         }
     }
 
-    public BinEdFileHandler getFileHandler() {
-        return fileHandler;
+    public BinaryFileDocument getFileDocument() {
+        return fileDocument;
     }
 
     @Override
@@ -183,7 +209,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Seri
     @Override
     public void componentOpened() {
         super.componentOpened();
-        fileHandler.requestFocus();
+        fileDocument.getComponent().requestFocus();
     }
 
     @Override
@@ -191,7 +217,7 @@ public final class BinaryEditorTopComponent extends TopComponent implements Seri
         if (savable != null) {
             savable.deactivate();
         }
-        fileHandler.closeData();
+        fileDocument.closeData();
         super.componentClosed();
     }
 
@@ -205,8 +231,10 @@ public final class BinaryEditorTopComponent extends TopComponent implements Seri
 
     @Override
     public void componentActivated() {
-        BinedModule binedModule = App.getModule(BinedModule.class);
-        ((BinEdNetBeansEditorProvider) binedModule.getEditorProvider()).setActiveFile(fileHandler);
+        FrameModuleApi frameModule = App.getModule(FrameModuleApi.class);
+        ContextStateManagement contextManager = frameModule.getFrameStateManager();
+        BinEdNetBeansDocking docking = (BinEdNetBeansDocking) contextManager.getActiveState(ContextDocking.class);
+        docking.setActiveDocument(fileDocument);
         super.componentActivated();
     }
 
@@ -225,50 +253,22 @@ public final class BinaryEditorTopComponent extends TopComponent implements Seri
         super.componentDeactivated();
     }
 
-    public void openFile(BinEdFileHandler fileHandler) {
-        SectCodeArea codeArea = fileHandler.getCodeArea();
+    public void openFile(BinaryFileDocument fileDocument) {
+        CodeAreaCore codeArea = fileDocument.getCodeArea();
         boolean editable = dataObject.getPrimaryFile().canWrite();
         URI fileUri = dataObject.getPrimaryFile().toURI();
         // TODO pass handling mode correctly
 
-        OptionsModuleApi optionsModule = App.getModule(OptionsModuleApi.class);
-        OptionsStorage optionsStorage = optionsModule.getAppOptions();
-        BinaryEditorOptions editorOptions = new BinaryEditorOptions(optionsStorage);
-        fileHandler.setNewData(editorOptions.getFileProcessingMode());
         if (fileUri == null) {
-            InputStream stream = null;
-            try {
-                stream = dataObject.getPrimaryFile().getInputStream();
-                if (stream != null) {
-                    fileHandler.loadFromStream(stream);
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(BinaryEditorTopComponent.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                if (stream != null) {
-                    try {
-                        stream.close();
-                    } catch (IOException ex) {
-                        Logger.getLogger(BinaryEditorTopComponent.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
+            fileDocument.loadFrom(new FileObjectDocumentSource(dataObject.getPrimaryFile()));
         } else {
-            codeArea.setEditMode(editable ? EditMode.EXPANDING : EditMode.READ_ONLY);
+            ((EditModeCapable) codeArea).setEditMode(editable ? EditMode.EXPANDING : EditMode.READ_ONLY);
             File file = Utilities.toFile(fileUri);
-            fileHandler.loadFromFile(file.toURI(), null);
+            fileDocument.loadFrom(new FileDocumentSource(file));
         }
-
-        updateStatus();
     }
     
     public void saveFile() {
-        fileHandler.saveFile();
-    }
-    
-    public void updateStatus() {
-        BinaryStatusPanel statusPanel = filePanel.getStatusPanel();
-        statusPanel.setCurrentDocumentSize(fileHandler.getCodeArea().getDataSize(), fileHandler.getDocumentOriginalSize());
-        statusPanel.updateStatus();
+        fileDocument.saveTo(fileDocument.getDocumentSource().get());
     }
 }

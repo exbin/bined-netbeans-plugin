@@ -20,7 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jspecify.annotations.NullMarked;
 import javax.swing.SwingUtilities;
-import org.exbin.bined.netbeans.options.IntegrationOptions;
+import org.exbin.bined.netbeans.settings.IntegrationOptions;
 import org.netbeans.api.actions.Savable;
 import org.openide.awt.UndoRedo;
 import org.openide.filesystems.FileObject;

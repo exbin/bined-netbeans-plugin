@@ -18,6 +18,7 @@ package org.exbin.bined.netbeans.gui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import org.jspecify.annotations.NullMarked;
+import org.jspecify.annotations.Nullable;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
@@ -30,7 +31,7 @@ import javax.swing.JToolBar;
 import org.exbin.auxiliary.dropdownbutton.DropDownButton;
 import org.exbin.bined.CodeType;
 import org.exbin.jaguif.App;
-import org.exbin.bined.jaguif.viewer.options.CodeAreaOptions;
+import org.exbin.bined.jaguif.viewer.settings.CodeAreaOptions;
 import org.exbin.jaguif.language.api.LanguageModuleApi;
 import org.exbin.jaguif.options.api.OptionsStorage;
 
@@ -40,27 +41,29 @@ import org.exbin.jaguif.options.api.OptionsStorage;
 @NullMarked
 public class BinEdToolbarPanel extends javax.swing.JPanel {
 
-    private final java.util.ResourceBundle resourceBundle;
-    private final java.util.ResourceBundle optionsResourceBundle;
-    private final java.util.ResourceBundle onlineHelpResourceBundle;
+    protected final java.util.ResourceBundle componentResourceBundle;
+    protected final java.util.ResourceBundle viewerResourceBundle;
+    protected final java.util.ResourceBundle optionsSettingsResourceBundle;
+    protected final java.util.ResourceBundle onlineHelpResourceBundle;
 
-    private Control codeAreaControl;
-    private ActionListener optionsAction;
-    private ActionListener onlineHelpAction;
+    protected @Nullable Control codeAreaControl;
+    protected ActionListener optionsAction;
+    protected ActionListener onlineHelpAction;
 
-    private final AbstractAction cycleCodeTypesAction;
-    private final JRadioButtonMenuItem binaryCodeTypeMenuItem;
-    private final JRadioButtonMenuItem octalCodeTypeMenuItem;
-    private final JRadioButtonMenuItem decimalCodeTypeMenuItem;
-    private final JRadioButtonMenuItem hexadecimalCodeTypeMenuItem;
-    private final ButtonGroup codeTypeButtonGroup;
-    private DropDownButton codeTypeDropDown;
+    protected final AbstractAction cycleCodeTypesAction;
+    protected final JRadioButtonMenuItem binaryCodeTypeMenuItem;
+    protected final JRadioButtonMenuItem octalCodeTypeMenuItem;
+    protected final JRadioButtonMenuItem decimalCodeTypeMenuItem;
+    protected final JRadioButtonMenuItem hexadecimalCodeTypeMenuItem;
+    protected final ButtonGroup codeTypeButtonGroup;
+    protected DropDownButton codeTypeDropDown;
 
     public BinEdToolbarPanel() {
         LanguageModuleApi languageModule = App.getModule(LanguageModuleApi.class);
-        resourceBundle = languageModule.getBundle(org.exbin.framework.bined.BinedModule.class);
-        optionsResourceBundle = languageModule.getBundle(org.exbin.framework.options.OptionsModule.class);
-        onlineHelpResourceBundle = languageModule.getBundle(org.exbin.framework.help.online.action.OnlineHelpAction.class);
+        componentResourceBundle = languageModule.getBundle(org.exbin.bined.jaguif.component.BinedComponentModule.class);
+        viewerResourceBundle = languageModule.getBundle(org.exbin.bined.jaguif.viewer.BinedViewerModule.class);
+        optionsSettingsResourceBundle = languageModule.getBundle(org.exbin.jaguif.options.settings.OptionsSettingsModule.class);
+        onlineHelpResourceBundle = languageModule.getBundle(org.exbin.jaguif.help.online.action.OnlineHelpAction.class);
 
         codeTypeButtonGroup = new ButtonGroup();
         Action binaryCodeTypeAction = new AbstractAction() {
@@ -70,8 +73,8 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
                 updateCycleButtonState();
             }
         };
-        binaryCodeTypeAction.putValue(Action.NAME, resourceBundle.getString("binaryCodeTypeAction.text"));
-        binaryCodeTypeAction.putValue(Action.SHORT_DESCRIPTION, resourceBundle.getString("binaryCodeTypeAction.shortDescription"));
+        binaryCodeTypeAction.putValue(Action.NAME, viewerResourceBundle.getString("binaryCodeTypeAction.text"));
+        binaryCodeTypeAction.putValue(Action.SHORT_DESCRIPTION, viewerResourceBundle.getString("binaryCodeTypeAction.shortDescription"));
         binaryCodeTypeMenuItem = new JRadioButtonMenuItem(binaryCodeTypeAction);
         codeTypeButtonGroup.add(binaryCodeTypeMenuItem);
         Action octalCodeTypeAction = new AbstractAction() {
@@ -81,8 +84,8 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
                 updateCycleButtonState();
             }
         };
-        octalCodeTypeAction.putValue(Action.NAME, resourceBundle.getString("octalCodeTypeAction.text"));
-        octalCodeTypeAction.putValue(Action.SHORT_DESCRIPTION, resourceBundle.getString("octalCodeTypeAction.shortDescription"));
+        octalCodeTypeAction.putValue(Action.NAME, viewerResourceBundle.getString("octalCodeTypeAction.text"));
+        octalCodeTypeAction.putValue(Action.SHORT_DESCRIPTION, viewerResourceBundle.getString("octalCodeTypeAction.shortDescription"));
         octalCodeTypeMenuItem = new JRadioButtonMenuItem(octalCodeTypeAction);
         codeTypeButtonGroup.add(octalCodeTypeMenuItem);
         Action decimalCodeTypeAction = new AbstractAction() {
@@ -92,8 +95,8 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
                 updateCycleButtonState();
             }
         };
-        decimalCodeTypeAction.putValue(Action.NAME, resourceBundle.getString("decimalCodeTypeAction.text"));
-        decimalCodeTypeAction.putValue(Action.SHORT_DESCRIPTION, resourceBundle.getString("decimalCodeTypeAction.shortDescription"));
+        decimalCodeTypeAction.putValue(Action.NAME, viewerResourceBundle.getString("decimalCodeTypeAction.text"));
+        decimalCodeTypeAction.putValue(Action.SHORT_DESCRIPTION, viewerResourceBundle.getString("decimalCodeTypeAction.shortDescription"));
         decimalCodeTypeMenuItem = new JRadioButtonMenuItem(decimalCodeTypeAction);
         codeTypeButtonGroup.add(decimalCodeTypeMenuItem);
         Action hexadecimalCodeTypeAction = new AbstractAction() {
@@ -103,8 +106,8 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
                 updateCycleButtonState();
             }
         };
-        hexadecimalCodeTypeAction.putValue(Action.NAME, resourceBundle.getString("hexadecimalCodeTypeAction.text"));
-        hexadecimalCodeTypeAction.putValue(Action.SHORT_DESCRIPTION, resourceBundle.getString("hexadecimalCodeTypeAction.shortDescription"));
+        hexadecimalCodeTypeAction.putValue(Action.NAME, viewerResourceBundle.getString("hexadecimalCodeTypeAction.text"));
+        hexadecimalCodeTypeAction.putValue(Action.SHORT_DESCRIPTION, viewerResourceBundle.getString("hexadecimalCodeTypeAction.shortDescription"));
         hexadecimalCodeTypeMenuItem = new JRadioButtonMenuItem(hexadecimalCodeTypeAction);
         codeTypeButtonGroup.add(hexadecimalCodeTypeMenuItem);
         cycleCodeTypesAction = new AbstractAction() {
@@ -123,7 +126,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
     }
 
     private void init() {
-        cycleCodeTypesAction.putValue(Action.SHORT_DESCRIPTION, resourceBundle.getString("cycleCodeTypesAction.shortDescription"));
+        cycleCodeTypesAction.putValue(Action.SHORT_DESCRIPTION, viewerResourceBundle.getString("cycleCodeTypesAction.shortDescription"));
         JPopupMenu cycleCodeTypesPopupMenu = new JPopupMenu();
         cycleCodeTypesPopupMenu.add(binaryCodeTypeMenuItem);
         cycleCodeTypesPopupMenu.add(octalCodeTypeMenuItem);
@@ -142,8 +145,8 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
                 }
             }
         });
-        optionsButton.setToolTipText(optionsResourceBundle.getString("optionsAction.text"));
-        optionsButton.setIcon(new ImageIcon(getClass().getResource(optionsResourceBundle.getString("optionsAction.smallIcon"))));
+        optionsButton.setToolTipText(optionsSettingsResourceBundle.getString("settingsAction.text"));
+        optionsButton.setIcon(new ImageIcon(getClass().getResource(optionsSettingsResourceBundle.getString("settingsAction.smallIcon"))));
         controlToolBar.add(optionsButton);
 
         JButton onlineHelpButton = new JButton();
@@ -246,8 +249,8 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         controlToolBar.setBorder(null);
         controlToolBar.setRollover(true);
 
-        showNonprintablesToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource(resourceBundle.getString("viewNonprintablesToolbarAction.smallIcon"))));
-        showNonprintablesToggleButton.setToolTipText(resourceBundle.getString("viewNonprintablesAction.text")); // NOI18N
+        showNonprintablesToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource(componentResourceBundle.getString("viewNonprintablesToolbarAction.smallIcon"))));
+        showNonprintablesToggleButton.setToolTipText(componentResourceBundle.getString("viewNonprintablesAction.text")); // NOI18N
         showNonprintablesToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showNonprintablesToggleButtonActionPerformed(evt);

@@ -16,21 +16,16 @@
 package org.exbin.bined.netbeans;
 
 import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jspecify.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import org.exbin.bined.swing.CodeAreaCore;
 import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
-import org.exbin.bined.swing.section.SectCodeArea;
-import org.exbin.bined.jaguif.BinEdFileHandler;
 import org.exbin.bined.jaguif.component.UndoRedoWrapper;
+import org.exbin.bined.jaguif.document.BinaryFileDocument;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.netbeans.core.spi.multiview.MultiViewElementCallback;
@@ -94,7 +89,7 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
 
     @Override
     public CloseOperationState canCloseElement() {
-        if (!editorComponent.getFileHandler().isModified()) {
+        if (!editorComponent.getFileDocument().isModified()) {
             return CloseOperationState.STATE_OK;
         }
 
@@ -177,13 +172,13 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
 
     @Override
     public void componentClosed() {
-        editorComponent.getFileHandler().closeData();
+        editorComponent.getFileDocument().closeData();
     }
 
     @Nullable
     @Override
     public UndoRedo getUndoRedo() {
-        UndoRedoWrapper undoWrapper = (UndoRedoWrapper) (editorComponent.getFileHandler().getUndoRedo().orElse(null));
+        UndoRedoWrapper undoWrapper = (UndoRedoWrapper) (editorComponent.getFileDocument().getUndoHandler().orElse(null));
         return undoWrapper != null ? ((BinaryUndoSwingHandler) undoWrapper.getUndoRedo()).getUndoManager() : null;
     }
 
@@ -193,35 +188,18 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
     }
 
     public void openFile(DataObject dataObject) {
-        BinEdFileHandler fileHandler = editorComponent.getFileHandler();
-        SectCodeArea codeArea = fileHandler.getCodeArea();
+        BinaryFileDocument fileDocument = editorComponent.getFileDocument();
+        CodeAreaCore codeArea = fileDocument.getCodeArea();
         boolean editable = dataObject.getPrimaryFile().canWrite();
 //        URI fileUri = dataObject.getPrimaryFile().toURI();
 //        if (fileUri == null) {
-            InputStream stream = null;
-            try {
-                stream = dataObject.getPrimaryFile().getInputStream();
-                if (stream != null) {
-                    fileHandler.loadFromStream(stream);
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(BinEdEditor.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                if (stream != null) {
-                    try {
-                        stream.close();
-                    } catch (IOException ex) {
-                        Logger.getLogger(BinEdEditor.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
+            fileDocument.loadFrom(new FileObjectDocumentSource(dataObject.getPrimaryFile()));
 //        } else {
 //            codeArea.setEditMode(editable ? EditMode.EXPANDING : EditMode.READ_ONLY);
 //            File file = Utilities.toFile(fileUri);
 //            fileHandler.loadFromFile(file.toURI(), null);
 //        }
-        fileHandler.fileSync();
-        editorComponent.updateStatus();
+        fileDocument.fileSync();
     }
 
     public void saveFile() {
@@ -232,26 +210,9 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
 //        }
 //        editorComponent.getFileHandler().saveFile();
         DataObject dataObject = lookup.lookup(DataObject.class);
-        BinEdFileHandler fileHandler = editorComponent.getFileHandler();
-        OutputStream stream = null;
-        try {
-            stream = dataObject.getPrimaryFile().getOutputStream();
-            if (stream != null) {
-                fileHandler.saveToStream(stream);
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(BinEdEditor.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException ex) {
-                    Logger.getLogger(BinEdEditor.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-        fileHandler.fileSync();
-        editorComponent.updateStatus();
+        BinaryFileDocument fileDocument = editorComponent.getFileDocument();
+        fileDocument.saveTo(new FileObjectDocumentSource(dataObject.getPrimaryFile()));
+        fileDocument.fileSync();
     }
 
     private DataEditorSupport getEditorSupport() {

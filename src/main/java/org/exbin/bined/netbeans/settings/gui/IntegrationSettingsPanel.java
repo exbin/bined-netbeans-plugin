@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.exbin.bined.netbeans.options.gui;
+package org.exbin.bined.netbeans.settings.gui;
 
 import java.awt.Component;
 import java.util.List;
@@ -26,14 +26,14 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JList;
-import org.exbin.bined.netbeans.options.IntegrationOptions;
+import org.exbin.bined.netbeans.settings.IntegrationOptions;
 import org.exbin.jaguif.App;
 import org.exbin.jaguif.language.api.LanguageModuleApi;
 import org.exbin.jaguif.options.settings.api.SettingsComponent;
 import org.exbin.jaguif.options.settings.api.SettingsModifiedListener;
 import org.exbin.jaguif.options.settings.api.SettingsOptionsProvider;
 import org.exbin.jaguif.utils.WindowUtils;
-import org.exbin.jaguif.ui.model.LanguageRecord;
+import org.exbin.jaguif.ui.LanguageRecord;
 import org.exbin.jaguif.utils.TestApplication;
 
 /**

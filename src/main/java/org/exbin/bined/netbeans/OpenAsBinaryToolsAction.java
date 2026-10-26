@@ -17,7 +17,7 @@ package org.exbin.bined.netbeans;
 
 import org.jspecify.annotations.NullMarked;
 import javax.swing.SwingUtilities;
-import org.exbin.bined.netbeans.options.IntegrationOptions;
+import org.exbin.bined.netbeans.settings.IntegrationOptions;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;

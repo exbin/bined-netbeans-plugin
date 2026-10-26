@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jspecify.annotations.NullMarked;
-import org.exbin.bined.netbeans.options.IntegrationOptions;
+import org.exbin.bined.netbeans.settings.IntegrationOptions;
 import org.netbeans.api.editor.mimelookup.MimeLookup;
 import org.netbeans.core.spi.multiview.MultiViewElement;
 import org.openide.filesystems.FileObject;

@@ -4,7 +4,7 @@
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="1"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
-    <AuxValue name="FormSettings_formBundle" type="java.lang.String" value="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel"/>
+    <AuxValue name="FormSettings_formBundle" type="java.lang.String" value="org/exbin/bined/netbeans/settings/gui/resources/IntegrationSetingsPanel"/>
     <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
     <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="true"/>
@@ -82,7 +82,7 @@
     <Component class="javax.swing.JLabel" name="languageLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="languageLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;) + &quot; *&quot;"/>
+          <ResourceString bundle="org/exbin/bined/netbeans/settings/gui/resources/IntegrationSetingsPanel.properties" key="languageLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;) + &quot; *&quot;"/>
         </Property>
       </Properties>
     </Component>
@@ -98,7 +98,7 @@
     <Component class="javax.swing.JLabel" name="iconSetLabel">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="iconSetLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/exbin/bined/netbeans/settings/gui/resources/IntegrationSetingsPanel.properties" key="iconSetLabel.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
     </Component>
@@ -114,7 +114,7 @@
       <Properties>
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="openFileAsBinaryCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/exbin/bined/netbeans/settings/gui/resources/IntegrationSetingsPanel.properties" key="openFileAsBinaryCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>
@@ -124,7 +124,7 @@
     <Component class="javax.swing.JCheckBox" name="openFileDialogBinaryCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="openFileDialogBinaryCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/exbin/bined/netbeans/settings/gui/resources/IntegrationSetingsPanel.properties" key="openFileDialogBinaryCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>
@@ -134,7 +134,7 @@
     <Component class="javax.swing.JCheckBox" name="contextOpenAsBinaryCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="contextOpenAsBinaryCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/exbin/bined/netbeans/settings/gui/resources/IntegrationSetingsPanel.properties" key="contextOpenAsBinaryCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>
@@ -145,7 +145,7 @@
       <Properties>
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="contextToolsOpenAsBinaryCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/exbin/bined/netbeans/settings/gui/resources/IntegrationSetingsPanel.properties" key="contextToolsOpenAsBinaryCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>
@@ -155,7 +155,7 @@
     <Component class="javax.swing.JCheckBox" name="binaryMultiviewCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="binaryMultiviewCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/exbin/bined/netbeans/settings/gui/resources/IntegrationSetingsPanel.properties" key="binaryMultiviewCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>
@@ -166,7 +166,7 @@
       <Properties>
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="openAsBinaryInDebugViewCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/exbin/bined/netbeans/settings/gui/resources/IntegrationSetingsPanel.properties" key="openAsBinaryInDebugViewCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
         </Property>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
@@ -178,7 +178,7 @@
       <Properties>
         <Property name="selected" type="boolean" value="true"/>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="byteToByteDiffToolCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/exbin/bined/netbeans/settings/gui/resources/IntegrationSetingsPanel.properties" key="byteToByteDiffToolCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
         </Property>
       </Properties>
       <Events>
@@ -188,7 +188,7 @@
     <Component class="javax.swing.JCheckBox" name="editAsBinaryForDbColumnCheckBox">
       <Properties>
         <Property name="text" type="java.lang.String" editor="org.netbeans.modules.i18n.form.FormI18nStringEditor">
-          <ResourceString bundle="org/exbin/bined/netbeans/options/gui/resources/IntegrationOptionsPanel.properties" key="editAsBinaryForDbColumnCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
+          <ResourceString bundle="org/exbin/bined/netbeans/settings/gui/resources/IntegrationSetingsPanel.properties" key="editAsBinaryForDbColumnCheckBox.text" replaceFormat="resourceBundle.getString(&quot;{key}&quot;)"/>
         </Property>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>

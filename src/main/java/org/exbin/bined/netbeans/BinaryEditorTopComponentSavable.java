@@ -17,9 +17,9 @@ package org.exbin.bined.netbeans;
 
 import java.io.IOException;
 import java.util.Objects;
+import org.exbin.bined.jaguif.document.BinaryFileDocument;
 import org.jspecify.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
-import org.exbin.bined.jaguif.BinEdFileHandler;
 import org.netbeans.spi.actions.AbstractSavable;
 import org.openide.loaders.DataObject;
 
@@ -30,10 +30,10 @@ import org.openide.loaders.DataObject;
 public class BinaryEditorTopComponentSavable extends AbstractSavable {
 
     private DataObject dataObject;
-    private final BinEdFileHandler fileApi;
+    private final BinaryFileDocument document;
 
-    public BinaryEditorTopComponentSavable(BinEdFileHandler fileApi) {
-        this.fileApi = fileApi;
+    public BinaryEditorTopComponentSavable(BinaryFileDocument document) {
+        this.document = document;
     }
 
     public void activate() {
@@ -65,7 +65,7 @@ public class BinaryEditorTopComponentSavable extends AbstractSavable {
             return false;
         }
         final BinaryEditorTopComponentSavable other = (BinaryEditorTopComponentSavable) obj;
-        return Objects.equals(this.fileApi, other.fileApi);
+        return Objects.equals(this.document, other.document);
     }
 
     @Override
@@ -75,6 +75,6 @@ public class BinaryEditorTopComponentSavable extends AbstractSavable {
 
     @Override
     protected void handleSave() throws IOException {
-        fileApi.saveFile();
+        document.saveTo(document.getDocumentSource().get());
     }
 }

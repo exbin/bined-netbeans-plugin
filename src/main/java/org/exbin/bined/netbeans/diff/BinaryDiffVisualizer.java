@@ -19,7 +19,7 @@ import java.awt.Component;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
-import javax.annotation.NullMarked;
+import org.jspecify.annotations.NullMarked;
 import javax.swing.JPanel;
 import org.netbeans.api.diff.Difference;
 
