@@ -17,8 +17,6 @@ package org.exbin.bined.netbeans;
 
 import java.awt.BorderLayout;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
@@ -32,19 +30,17 @@ import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
 import org.exbin.bined.swing.CodeAreaCore;
 import org.exbin.jaguif.App;
 import org.exbin.bined.capability.EditModeCapable;
-import org.exbin.bined.jaguif.component.UndoRedoWrapper;
 import org.exbin.bined.jaguif.component.BinEdDataComponent;
 import org.exbin.bined.jaguif.document.BinEdFileManager;
 import org.exbin.bined.jaguif.document.BinaryFileDocument;
 import org.exbin.bined.jaguif.document.BinedDocumentModule;
-import org.exbin.bined.jaguif.document.settings.BinaryFileProcessingOptions;
+import org.exbin.bined.jaguif.search.BinedSearchModule;
 import org.exbin.jaguif.context.api.ContextStateManagement;
 import org.exbin.jaguif.docking.api.ContextDocking;
 import org.exbin.jaguif.file.api.FileDocumentSource;
 import org.exbin.jaguif.file.api.FileModuleApi;
 import org.exbin.jaguif.file.api.SaveModifiedResult;
 import org.exbin.jaguif.frame.api.FrameModuleApi;
-import org.exbin.jaguif.options.api.OptionsStorage;
 import org.exbin.jaguif.options.api.OptionsModuleApi;
 import org.exbin.jaguif.options.settings.api.OptionsSettingsManagement;
 import org.exbin.jaguif.options.settings.api.OptionsSettingsModuleApi;
@@ -92,17 +88,19 @@ public final class BinaryEditorTopComponent extends TopComponent implements Seri
         node = new BinaryEditorNode(this);
         fileDocument = new BinaryFileDocument();
         filePanel = new BinEdFilePanel();
-        filePanel.setDocument(fileDocument);
         BinedDocumentModule binedDocumentModule = App.getModule(BinedDocumentModule.class);
         BinEdFileManager fileManager = binedDocumentModule.getFileManager();
         BinEdDataComponent dataComponent = fileDocument.getDataComponent();
         fileManager.initDataComponent(dataComponent);
         undoHandler = new BinaryUndoSwingHandler(fileDocument.getCodeArea(), new UndoRedo.Manager());
-        ((UndoRedoWrapper) fileDocument.getUndoHandler().get()).setUndoRedo(undoHandler);
+//        ((UndoRedoWrapper) fileDocument.getUndoHandler().get()).setUndoRedo(undoHandler);
         fileDocument.setUndoHandler(undoHandler);
         // Setting undo handler resets command handler so let's reiniciate - rework later
         fileManager.initCommandHandler(dataComponent);
+        BinedSearchModule searchModule = App.getModule(BinedSearchModule.class);
+        dataComponent.setSearchController(searchModule.createBinarySearchController(dataComponent));
         savable = new BinaryEditorTopComponentSavable(fileDocument);
+        filePanel.setDocument(fileDocument);
 
         this.add(filePanel, BorderLayout.CENTER);
 

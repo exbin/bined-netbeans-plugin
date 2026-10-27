@@ -249,7 +249,7 @@ public class BinEdToolbarPanel extends javax.swing.JPanel {
         controlToolBar.setBorder(null);
         controlToolBar.setRollover(true);
 
-        showNonprintablesToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource(componentResourceBundle.getString("viewNonprintablesToolbarAction.smallIcon"))));
+        showNonprintablesToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource(componentResourceBundle.getString("toggleNonprintablesAction.smallIcon"))));
         showNonprintablesToggleButton.setToolTipText(componentResourceBundle.getString("viewNonprintablesAction.text")); // NOI18N
         showNonprintablesToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

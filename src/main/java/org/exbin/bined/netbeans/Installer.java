@@ -49,6 +49,8 @@ import org.exbin.bined.jaguif.component.BinedComponentModule;
 import org.exbin.bined.jaguif.document.BinedDocumentModule;
 import org.exbin.bined.jaguif.editor.BinedEditorModule;
 import org.exbin.bined.jaguif.inspector.BinedInspectorModule;
+import org.exbin.bined.jaguif.inspector.settings.DataInspectorFontContextInference;
+import org.exbin.bined.jaguif.inspector.settings.DataInspectorFontInference;
 import org.exbin.bined.jaguif.macro.BinedMacroModule;
 import org.exbin.bined.jaguif.objectdata.BinedObjectDataModule;
 import org.exbin.bined.jaguif.operation.bouncycastle.BinedOperationBouncycastleModule;
@@ -132,6 +134,12 @@ import org.exbin.jaguif.tabpages.api.TabPagesModuleApi;
 import org.exbin.jaguif.options.preferences.PreferencesWrapper;
 import org.exbin.jaguif.options.api.OptionsStorage;
 import org.exbin.jaguif.options.api.OptionsModuleApi;
+import org.exbin.jaguif.text.encoding.settings.TextEncodingContextInference;
+import org.exbin.jaguif.text.encoding.settings.TextEncodingInference;
+import org.exbin.jaguif.text.encoding.settings.TextEncodingsContextInference;
+import org.exbin.jaguif.text.encoding.settings.TextEncodingsInference;
+import org.exbin.jaguif.text.font.settings.TextFontContextInference;
+import org.exbin.jaguif.text.font.settings.TextFontInference;
 import org.exbin.jaguif.toolbar.ToolBarModule;
 import org.exbin.jaguif.toolbar.api.ToolBarModuleApi;
 import org.exbin.jaguif.ui.UiModule;
@@ -355,11 +363,14 @@ public class Installer extends ModuleInstall {
             binedBookmarksModule.register();
             BinedMacroModule binedMacroModule = App.getModule(BinedMacroModule.class);
             binedMacroModule.register();
+            BinedOperationCodeModule binedOperationCodeModule = App.getModule(BinedOperationCodeModule.class);
+            binedOperationCodeModule.register();
             BinedOperationBouncycastleModule binedOperationBouncycastleModule = App.getModule(BinedOperationBouncycastleModule.class);
             binedOperationBouncycastleModule.register();
 
             LanguageModuleApi languageModule = App.getModule(LanguageModuleApi.class);
             ResourceBundle bundle = languageModule.getBundle(BinEdNetBeansPlugin.class);
+            App.setAppBundle(bundle);
             languageModule.setAppBundle(bundle);
 
             initialIntegrationOptions = new IntegrationOptions(optionsStorage);
@@ -370,6 +381,8 @@ public class Installer extends ModuleInstall {
             FrameModuleApi frameModule = App.getModule(FrameModuleApi.class);
             frameModule.init();
             MenuModuleApi menuModule = App.getModule(MenuModuleApi.class);
+            FileModuleApi fileModule = App.getModule(FileModuleApi.class);
+            fileModule.registerFileProviders();
 
             WindowModuleApi windowModule = App.getModule(WindowModuleApi.class);
             windowModule.setHideHeaderPanels(true);
@@ -397,8 +410,8 @@ public class Installer extends ModuleInstall {
             BinedEditorModule binedEditorModule = App.getModule(BinedEditorModule.class);
             BinedDocumentModule binedDocumentModule = App.getModule(BinedDocumentModule.class);
             BinedThemeModule binedThemeModule = App.getModule(BinedThemeModule.class);
-
             BinedSearchModule binedSearchModule = App.getModule(BinedSearchModule.class);
+            binedSearchModule.registerSearchComponent();
 
             BinedOperationMethodModule binedOperationModule = App.getModule(BinedOperationMethodModule.class);
             binedOperationModule.addBasicMethods();
@@ -406,6 +419,9 @@ public class Installer extends ModuleInstall {
             BinedToolContentModule binedToolContentModule = App.getModule(BinedToolContentModule.class);
 
             BinedInspectorModule binedInspectorModule = App.getModule(BinedInspectorModule.class);
+            binedInspectorModule.registerBasicInspector();
+            binedInspectorModule.registerShowParsingPanelMenuActions();
+            binedInspectorModule.registerShowParsingPanelPopupMenuActions();
 
             BinedCompareModule binedCompareModule = App.getModule(BinedCompareModule.class);
             binedCompareModule.registerToolsOptionsMenuActions();
@@ -420,12 +436,19 @@ public class Installer extends ModuleInstall {
             binedComponentModule.registerCodeAreaPopupMenu();
             binedViewerModule.registerCodeAreaPopupMenu();
             binedEditorModule.registerCodeAreaPopupMenu();
+            binedDocumentModule.registerDocument();
+            binedDocumentModule.registerStatusBar();
+            binedViewerModule.registerCursorPositionStatusMenu();
+            binedViewerModule.registerDataSizeStatusMenu();
+            binedViewerModule.registerBinaryEncodingStatusMenu();
+            binedEditorModule.registerEditModeStatusMenu();
+            binedDocumentModule.registerProcessingModeStatusMenu();
+            binedDocumentModule.registerEncodings();
             binedViewerModule.registerViewModeMenu();
             binedViewerModule.registerCodeTypeMenu();
             binedViewerModule.registerPositionCodeTypeMenu();
             binedViewerModule.registerHexCharactersCaseHandlerMenu();
             binedViewerModule.registerLayoutMenu();
-            binedSearchModule.registerSearchComponent();
             binedViewerModule.registerSettings();
             binedEditorModule.registerSettings();
             binedDocumentModule.registerSettings();
@@ -434,8 +457,15 @@ public class Installer extends ModuleInstall {
             binedOperationModule.registerBlockEditPopupMenuActions();
             binedToolContentModule.registerClipboardContentMenu();
             binedToolContentModule.registerDragDropContentMenu();
-            binedInspectorModule.registerShowParsingPanelMenuActions();
-            binedInspectorModule.registerShowParsingPanelPopupMenuActions();
+            binedInspectorModule.registerSettings();
+            binedViewerModule.registerFrameStatusBar();
+
+            FrameModuleApi frameModuleApi = App.getModule(FrameModuleApi.class);
+            ContextStateManagement contextManagement = frameModuleApi.getFrameStateManager();
+            settingsManager.registerInferenceOptions(TextEncodingInference.class, new TextEncodingContextInference(contextManagement));
+            settingsManager.registerInferenceOptions(TextEncodingsInference.class, new TextEncodingsContextInference(contextManagement));
+            settingsManager.registerInferenceOptions(TextFontInference.class, new TextFontContextInference((contextManagement)));
+            settingsManager.registerInferenceOptions(DataInspectorFontInference.class, new DataInspectorFontContextInference(contextManagement));
 
             String toolsSubMenuId = BinEdNetBeansPlugin.PLUGIN_PREFIX + "toolsMenu";
             MenuDefinitionManagement menuManagement = menuModule.getMainMenuDefinition(BinedComponentModule.CODE_AREA_POPUP_MENU_ID, BinedComponentModule.MODULE_ID);

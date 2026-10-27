@@ -48,6 +48,7 @@ import javax.swing.text.*;
 import org.exbin.auxiliary.binary_data.BinaryData;
 import org.exbin.auxiliary.binary_data.EditableBinaryData;
 import org.exbin.auxiliary.binary_data.array.paged.ByteArrayPagedData;
+import org.exbin.bined.netbeans.diff.builtin.ExportPatch;
 import org.exbin.bined.netbeans.diff.builtin.SingleDiffPanel;
 import org.exbin.bined.netbeans.diff.errorstripe.privatespi.Mark;
 import org.exbin.bined.netbeans.diff.errorstripe.privatespi.MarkProvider;
@@ -1479,9 +1480,10 @@ public class EditableDiffView extends DiffControllerImpl implements DiffView, Do
                 if (isCanceled()) {
                     return;
                 }
+                String diffDevNull = "<NULL>"; // TODO was: Bundle.Diff_dev_null
                 TextDiffVisualizer.TextDiffInfo info = new TextDiffVisualizer.TextDiffInfo(
-                        firstSourceAvailable ? "a/" + name1 : Bundle.Diff_dev_null(),
-                        secondSourceAvailable ? "b/" + name2 : Bundle.Diff_dev_null(),
+                        firstSourceAvailable ? "a/" + name1 : diffDevNull,
+                        secondSourceAvailable ? "b/" + name2 : diffDevNull,
                         null, null, r1, r2, differences);
                 info.setContextMode(true, 3);
                 final String diffText = TextDiffVisualizer.differenceToUnifiedDiffText(info);

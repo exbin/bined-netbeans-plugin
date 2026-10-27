@@ -158,7 +158,7 @@ class DiffSplitPaneDivider extends BasicSplitPaneDivider implements MouseMotionL
             }
 
         };
-        private final DividerAction jumpToCurrentAction = new DividerAction(Bundle.TT_DiffPanel_JumpToCurrent(), null) {
+        private final DividerAction jumpToCurrentAction = new DividerAction("Go to Current Difference", null) { // TODO was: Bundle.TT_DiffPanel_JumpToCurrent()
 
             @Override
             public void actionPerformed (ActionEvent e) {

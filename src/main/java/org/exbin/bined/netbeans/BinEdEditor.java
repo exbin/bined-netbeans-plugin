@@ -24,7 +24,6 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import org.exbin.bined.swing.CodeAreaCore;
 import org.exbin.bined.netbeans.main.BinaryUndoSwingHandler;
-import org.exbin.bined.jaguif.component.UndoRedoWrapper;
 import org.exbin.bined.jaguif.document.BinaryFileDocument;
 import org.netbeans.core.spi.multiview.CloseOperationState;
 import org.netbeans.core.spi.multiview.MultiViewElement;
@@ -178,8 +177,8 @@ public class BinEdEditor extends CloneableEditor implements MultiViewElement, He
     @Nullable
     @Override
     public UndoRedo getUndoRedo() {
-        UndoRedoWrapper undoWrapper = (UndoRedoWrapper) (editorComponent.getFileDocument().getUndoHandler().orElse(null));
-        return undoWrapper != null ? ((BinaryUndoSwingHandler) undoWrapper.getUndoRedo()).getUndoManager() : null;
+        BinaryUndoSwingHandler undoRedo = (BinaryUndoSwingHandler) (editorComponent.getFileDocument().getUndoHandler().orElse(null));
+        return undoRedo != null ? undoRedo.getUndoManager() : null;
     }
 
     @Override
