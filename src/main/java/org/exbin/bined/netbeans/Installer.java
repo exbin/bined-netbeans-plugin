@@ -503,6 +503,8 @@ public class Installer extends ModuleInstall {
                     frameModule.getFrameStateManager();
             contextManager.changeActiveState(ContextDocking.class, docking);
             contextManager.changeActiveState(DialogParentComponent.class, () -> frameModule.getFrame());
+
+            optionsSettingsModule.initialLoadFromPreferences();
         }
 
         @Override
