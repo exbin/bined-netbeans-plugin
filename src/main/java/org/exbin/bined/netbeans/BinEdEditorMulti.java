@@ -120,7 +120,7 @@ public class BinEdEditorMulti extends BinEdEditor implements MultiViewElement {
                         elementRecord.delete();
                         multiViewFolder.refresh();
                     } catch (IOException ex) {
-                        Logger.getLogger(BinEdEditorMulti.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(BinEdEditorMulti.class.getName()).log(Level.INFO, null, ex);
                     }
                 }
             }
@@ -152,9 +152,9 @@ public class BinEdEditorMulti extends BinEdEditor implements MultiViewElement {
                 multiViewFolder.refresh();
             }
         } catch (IOException ex) {
-            Logger.getLogger(BinEdEditorMulti.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(BinEdEditorMulti.class.getName()).log(Level.INFO, null, ex);
         } catch (SecurityException ex) {
-            Logger.getLogger(BinEdEditorMulti.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(BinEdEditorMulti.class.getName()).log(Level.INFO, null, ex);
         }
     }
 }

@@ -113,9 +113,9 @@ public class BinEdDiffPanel extends JPanel {
     protected ContextStateManagement rightContextManager;
     protected ContextMonitoringRegistration leftContextRegistrator;
     protected ContextMonitoringRegistration rightContextRegistrator;
-    private final BinEdToolbarPanel toolbarPanel;
-    private final StatusBar leftStatusBar;
-    private final StatusBar rightStatusBar;
+    protected final BinEdToolbarPanel toolbarPanel;
+    protected final StatusBar leftStatusBar;
+    protected final StatusBar rightStatusBar;
 
     public BinEdDiffPanel() {
         setLayout(new java.awt.BorderLayout());
@@ -443,7 +443,7 @@ public class BinEdDiffPanel extends JPanel {
 
         @Override
         public Optional<ContextStateManagement> getStateManagement() {
-            return Optional.of(stateManagement);
+            return Optional.ofNullable(stateManagement);
         }
 
         @Override
