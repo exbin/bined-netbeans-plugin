@@ -30,7 +30,7 @@ plugins {
 	id 'java'
 	id 'maven-publish'
     id 'signing'
-// Old publishing
+// Uncomment for old publishing
 //	id 'maven'
 }
 
@@ -40,7 +40,7 @@ ext.scriptFile = { String fileName ->
     return new File(new File(rootDir, 'gradle'), fileName)
 }
 
-version = '0.2.8-SNAPSHOT'
+version = '0.2.8'
 group = 'org.exbin.bined.netbeans'
 
 sourceCompatibility = '1.8'
@@ -428,7 +428,7 @@ dependencies {
     implementation(":flatlaf-desktop-3.2")
 
     compileOnly group: 'org.jspecify', name: 'jspecify', version: '1.0.0'
-    implementation group: 'org.bouncycastle', name: 'bcprov-jdk18on', version: '1.78.1'
+    implementation group: 'org.bouncycastle', name: 'bcprov-jdk18on', version: '1.86'
 
 //    testImplementation 'junit:junit:4.12.2'
 
