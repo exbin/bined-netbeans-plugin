@@ -18,6 +18,7 @@ package org.exbin.bined.netbeans.main;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.undo.CannotRedoException;
@@ -25,20 +26,23 @@ import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoableEdit;
 import org.exbin.bined.operation.command.BinaryDataCommand;
 import org.exbin.bined.operation.BinaryDataUndoRedoChangeListener;
+import org.exbin.bined.operation.command.BinaryDataAppendableCommand;
+import org.exbin.bined.operation.command.BinaryDataAppendableUndoRedo;
 import org.exbin.bined.operation.command.BinaryDataUndoRedo;
 import org.exbin.bined.operation.command.BinaryDataUndoableCommand;
 import org.exbin.bined.swing.CodeAreaCore;
 import org.openide.awt.UndoRedo;
 
 /**
- * Undo handler for binary editor using AWT undo.
+ * Undo handler for binary editor using OpenIde undo manager.
  */
 @NullMarked
-public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
+public class BinaryUndoSwingHandler implements BinaryDataUndoRedo, BinaryDataAppendableUndoRedo {
 
     private final CodeAreaCore codeArea;
     private final List<BinaryDataUndoRedoChangeListener> listeners = new ArrayList<>();
     private final UndoRedo.Manager undoManager;
+    private @Nullable WrapperUndoEdit lastEdit = null;
     private int commandPosition;
     private int syncPosition = -1;
 
@@ -71,65 +75,8 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
     }
 
     private void commandAdded(final BinaryDataCommand command) {
-        UndoableEdit edit = new UndoableEdit() {
-            @Override
-            public void undo() throws CannotUndoException {
-                commandPosition--;
-                ((BinaryDataUndoableCommand) command).undo();
-                undoUpdated();
-            }
-
-            @Override
-            public boolean canUndo() {
-                return true;
-            }
-
-            @Override
-            public void redo() throws CannotRedoException {
-                commandPosition++;
-                ((BinaryDataUndoableCommand) command).redo();
-                undoUpdated();
-            }
-
-            @Override
-            public boolean canRedo() {
-                return true;
-            }
-
-            @Override
-            public void die() {
-            }
-
-            @Override
-            public boolean addEdit(UndoableEdit anEdit) {
-                return false;
-            }
-
-            @Override
-            public boolean replaceEdit(UndoableEdit anEdit) {
-                return false;
-            }
-
-            @Override
-            public boolean isSignificant() {
-                return true;
-            }
-
-            @Override
-            public String getPresentationName() {
-                return command.getType().getClass().getTypeName();
-            }
-
-            @Override
-            public String getUndoPresentationName() {
-                return "";
-            }
-
-            @Override
-            public String getRedoPresentationName() {
-                return "";
-            }
-        };
+        WrapperUndoEdit edit = new WrapperUndoEdit(command);
+        lastEdit = edit;
         undoManager.undoableEditHappened(new UndoableEditEvent(codeArea, edit));
 
         commandPosition++;
@@ -137,12 +84,32 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
         listeners.forEach((listener) -> listener.undoChanged());
     }
 
+    @Override
+    public boolean appendExecute(BinaryDataCommand command) {
+        if (commandPosition > 0) {
+            BinaryDataCommand lastCommand = lastEdit.command;
+            if (lastCommand instanceof BinaryDataAppendableCommand) {
+                if (((BinaryDataAppendableCommand) lastCommand).appendExecute(command)) {
+                    return true;
+                } else {
+                    commandAdded(command);
+                    return false;
+                }
+            }
+        }
+        
+        execute(command);
+        return false;
+    }
+    
     /**
      * Performs single undo step.
      */
     @Override
     public void performUndo() {
+        lastEdit = null;
         performUndoInt();
+        lastEdit = null;
         undoUpdated();
     }
 
@@ -155,7 +122,9 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
      */
     @Override
     public void performRedo() {
+        lastEdit = null;
         performRedoInt();
+        lastEdit = null;
         undoUpdated();
     }
 
@@ -189,7 +158,9 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
 
     @Override
     public void clear() {
+        undoManager.discardAllEdits();
         init();
+        undoUpdated();
     }
 
     @Override
@@ -233,7 +204,7 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
     public void setSyncPosition() {
         this.syncPosition = commandPosition;
     }
-
+    
     /**
      * Performs undo or redo operation to reach given position.
      *
@@ -254,17 +225,17 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
 
     @Override
     public List<BinaryDataCommand> getCommandList() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public Optional<BinaryDataCommand> getTopUndoCommand() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public int getCommandsCount() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -280,5 +251,75 @@ public class BinaryUndoSwingHandler implements BinaryDataUndoRedo {
     @Override
     public void removeChangeListener(BinaryDataUndoRedoChangeListener listener) {
         listeners.remove(listener);
+    }
+
+    @NullMarked
+    public class WrapperUndoEdit implements UndoableEdit {
+        
+        protected BinaryDataCommand command;
+
+        public WrapperUndoEdit(BinaryDataCommand command) {
+            this.command = command;
+        }
+        
+        @Override
+        public void undo() throws CannotUndoException {
+            commandPosition--;
+            ((BinaryDataUndoableCommand) command).undo();
+            lastEdit = null;
+            undoUpdated();
+        }
+
+        @Override
+        public boolean canUndo() {
+            return true;
+        }
+
+        @Override
+        public void redo() throws CannotRedoException {
+            commandPosition++;
+            ((BinaryDataUndoableCommand) command).redo();
+            lastEdit = null;
+            undoUpdated();
+        }
+
+        @Override
+        public boolean canRedo() {
+            return true;
+        }
+
+        @Override
+        public void die() {
+        }
+
+        @Override
+        public boolean addEdit(UndoableEdit anEdit) {
+            return false;
+        }
+
+        @Override
+        public boolean replaceEdit(UndoableEdit anEdit) {
+            return false;
+        }
+
+        @Override
+        public boolean isSignificant() {
+            return true;
+        }
+
+        @Override
+        public String getPresentationName() {
+            return command.getType().getClass().getTypeName();
+        }
+
+        @Override
+        public String getUndoPresentationName() {
+            return "";
+        }
+
+        @Override
+        public String getRedoPresentationName() {
+            return "";
+        }
     }
 }

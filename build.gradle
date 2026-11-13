@@ -477,6 +477,24 @@ task netBeansRun(type: Exec) {
     commandLine executable, '--userdir', "$project.buildDir/testuserdir"
 }
 
+task netBeansDebug(type: Exec) {
+    doFirst {
+        def confFile = project.file("$project.buildDir/testuserdir/etc/netbeans.conf")
+        confFile.parentFile.mkdirs()
+        confFile.write "netbeans_extraclusters=\"$project.buildDir/module\""
+    }
+
+    workingDir "${project.buildDir}"
+
+    def executable = System.getProperty('os.name').toLowerCase().contains('windows') ? 'netbeans.exe' : 'netbeans'
+    if (project.hasProperty('netBeansInstallDir')) {
+        executable = netBeansInstallDir + '/bin/' + executable
+    } else {
+        logger.warn('netBeansInstallDir property is not specified. Assuming \'netbeans\' executable is on PATH.')
+    }
+    commandLine executable, '-J-Xdebug', '-J-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006', '--userdir', "$project.buildDir/testuserdir"
+}
+
 publishing {
     publications {
         maven(MavenPublication) {

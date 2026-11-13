@@ -39,6 +39,7 @@ import org.exbin.jaguif.file.api.FileModuleApi;
 import org.exbin.jaguif.file.api.SaveModifiedResult;
 import org.exbin.jaguif.frame.api.FrameModuleApi;
 import org.exbin.jaguif.operation.undo.api.ContextUndoRedo;
+import org.exbin.jaguif.search.api.ContextSearch;
 import org.exbin.jaguif.statusbar.api.StatusBar;
 import org.exbin.jaguif.text.encoding.ContextEncoding;
 import org.exbin.jaguif.text.font.ContextFont;
@@ -166,6 +167,7 @@ public class BinEdNetBeansDocking implements MultiDocking {
         contextManager.changeActiveState(ContextEncoding.class, dataComponent);
         contextManager.changeActiveState(ContextComponent.class, dataComponent);
         contextManager.changeActiveState(ContextUndoRedo.class, dataComponent);
+        contextManager.changeActiveState(ContextSearch.class, dataComponent.getSearchController().orElse(null));
         contextManager.changeActiveState(DialogParentComponent.class, new DialogParentComponent() {
             @Override
             public Component getComponent() {

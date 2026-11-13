@@ -141,6 +141,7 @@ public class BinEdFilePanel extends JPanel {
 
     public void setDocument(BinaryFileDocument fileDocument) {
         this.fileDocument = fileDocument;
+        fileDocument.getDataComponent().setStatusBar(statusBar);
         statusContextManager.changeActiveState(ContextDocument.class, fileDocument);
         statusContextManager.changeActiveState(ContextComponent.class, fileDocument.getDataComponent());
         statusContextManager.changeActiveState(ContextEncoding.class, fileDocument.getDataComponent());

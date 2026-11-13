@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.jspecify.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 import org.exbin.auxiliary.binary_data.BinaryData;
 import org.exbin.auxiliary.binary_data.array.ByteArrayData;
@@ -37,15 +38,15 @@ import org.openide.filesystems.FileObject;
 public class BinEdFileDataWrapper implements EditableBinaryData {
 
 	public static final String BROKEN_VIRTUAL_FILE = "Broken virtual file";
-    private static final int BUFFER_SIZE = 4096;
+    protected static final int BUFFER_SIZE = 4096;
     public static final int PAGE_SIZE = 4096;
 
-    private final FileObject file;
+    protected final FileObject file;
 
-    private InputStream cacheInputStream = null;
-    private long cachePosition = 0;
-    private final DataPage[] cachePages = new DataPage[]{new DataPage(), new DataPage()};
-    private int nextCachePage = 0;
+    protected @Nullable InputStream cacheInputStream = null;
+    protected long cachePosition = 0;
+    protected final DataPage[] cachePages = new DataPage[]{new DataPage(), new DataPage()};
+    protected int nextCachePage = 0;
 
     public BinEdFileDataWrapper(FileObject fileObject) {
         this.file = fileObject;

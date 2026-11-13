@@ -16,6 +16,7 @@
 package org.exbin.bined.netbeans;
 
 import java.io.IOException;
+import org.jspecify.annotations.Nullable;
 import org.jspecify.annotations.NullMarked;
 import javax.swing.Action;
 import org.netbeans.api.actions.Savable;
@@ -40,7 +41,7 @@ public class BinEdDataObject extends MultiDataObject implements Savable {
 
     public static final String MIME_TYPE = "application/octet-stream"; //NOI18N
     public static final String MMD_EXT = "bin"; //NOI18N
-    private Action saveAction = null;
+    protected @Nullable Action saveAction = null;
     
     public BinEdDataObject(FileObject fo, MultiFileLoader loader) throws DataObjectExistsException {
         super(fo, loader);
