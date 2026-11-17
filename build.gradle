@@ -40,7 +40,7 @@ ext.scriptFile = { String fileName ->
     return new File(new File(rootDir, 'gradle'), fileName)
 }
 
-version = '0.2.9-SNAPSHOT'
+version = '0.2.8.1'
 group = 'org.exbin.bined.netbeans'
 
 sourceCompatibility = '1.8'
@@ -255,7 +255,7 @@ nbm {
 //         username = tryGetProperty('nbGradlePluginKeyStoreUser', 'bined')
 //         password = tryGetProperty('nbGradlePluginKeyStorePass', '')
 //    }
-}
+    }
 
 def netbeansModule = { String groupName, String moduleName ->
     return [
@@ -428,6 +428,7 @@ dependencies {
     implementation(":flatlaf-desktop-3.2")
 
     compileOnly group: 'org.jspecify', name: 'jspecify', version: '1.0.0'
+    // compileOnly group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
     implementation group: 'org.bouncycastle', name: 'bcprov-jdk18on', version: '1.86'
 
 //    testImplementation 'junit:junit:4.12.2'

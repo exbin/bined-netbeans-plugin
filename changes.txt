@@ -1,4 +1,5 @@
-0.2.9
+0.2.8.1 (2026-11-17)
+- Deployment fix
 
 0.2.8 (2026-11-02)
 - Added copy as / paste from dialogs

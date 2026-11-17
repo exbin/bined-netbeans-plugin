@@ -66,7 +66,8 @@ import org.openide.awt.ActionRegistration;
         id = "org.exbin.bined.netbeans.diff.BinEdDiffAction"
 )
 @ActionRegistration(
-        displayName = "#CTL_BinEdDiffAction"
+        displayName = "#CTL_BinEdDiffAction",
+        lazy = false
 )
 public class BinEdDiffAction extends NodeAction {
 
